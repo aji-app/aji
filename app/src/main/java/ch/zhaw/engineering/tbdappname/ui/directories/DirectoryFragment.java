@@ -38,11 +38,8 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     private int mColumnCount = 1;
     private boolean mMultiSelect = false;
     private OnDirectoryFragmentListener mListener;
-    private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
-
-    private List<File> mSelectedDirectories = new ArrayList<>();
-
-    private Deque<DirectoryItem> mNavigationStack = new ArrayDeque<>();
+    private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
+    private final Deque<DirectoryItem> mNavigationStack = new ArrayDeque<>();
 
     private RecyclerView mRecyclerView;
 
@@ -133,7 +130,9 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                 dirs.add(DirectoryItem.parentDirectory(mNavigationStack.peek()));
             }
             dirs.addAll(directories);
-            getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot)));
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot)));
+            }
         });
     }
 

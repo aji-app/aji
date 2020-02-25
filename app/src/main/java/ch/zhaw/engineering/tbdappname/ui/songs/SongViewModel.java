@@ -14,7 +14,7 @@ import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepositor
 
 public class SongViewModel extends AndroidViewModel {
     private final SongRepository songRepository;
-    private MediatorLiveData<List<Song>> songs;
+    private final MediatorLiveData<List<Song>> songs;
     private boolean mAscending = true;
     private SongRepository.SortType mSortType = SongRepository.SortType.TITLE;
 
@@ -28,7 +28,7 @@ public class SongViewModel extends AndroidViewModel {
         super(application);
         songRepository = SongRepository.getInstance(application);
         songs = new MediatorLiveData<>();
-        songs.addSource(songRepository.getSortedSongs(mSortType, mAscending, ""), value -> songs.setValue(value));
+        songs.addSource(songRepository.getSortedSongs(mSortType, mAscending, ""), songs::setValue);
     }
 
     public void changeSortType(SongRepository.SortType sortType) {

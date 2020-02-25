@@ -15,12 +15,9 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 
 public class PlaylistRepository {
-
-    public final LiveData<List<PlaylistWithSongs>> allPlaylists;
     private final PlaylistDao mPlaylistDao;
 
     public PlaylistRepository(PlaylistDao playlistDao) {
-        allPlaylists = playlistDao.getPlaylistsWithSongs();
         mPlaylistDao = playlistDao;
     }
 

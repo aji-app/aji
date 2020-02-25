@@ -18,6 +18,7 @@ import java.util.UUID;
 import ch.zhaw.engineering.tbdappname.services.database.dto.SongDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import lombok.Cleanup;
 
 public class StorageHelper {
 
@@ -57,7 +58,7 @@ public class StorageHelper {
         String filenameIdentifier = song.getMediaStoreSongId() != null ? song.getMediaStoreSongId().toString() : UUID.randomUUID().toString();
         File albumArtPath = new File(directory, "albumart_" + filenameIdentifier + ".png");
 
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         try {
             fos = new FileOutputStream(albumArtPath);
             song.getAlbumArt().compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -123,6 +124,7 @@ public class StorageHelper {
                 }
             }
         }
+        cursor.close();
     }
 
     private interface SongDtoOperationCallback {

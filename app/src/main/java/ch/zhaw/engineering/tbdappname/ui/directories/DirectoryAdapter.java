@@ -21,7 +21,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     private final List<DirectoryItem> mValues;
     private final DirectoryAdapterClickListener mListener;
-    private boolean mIsRoot;
+    private final boolean mIsRoot;
 
     public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot) {
         mValues = items;
@@ -68,7 +68,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameView;
         public final ImageView mImageView;

@@ -15,4 +15,9 @@ public class PlaylistWithSongs {
          associateBy = @Junction(PlaylistSongCrossRef.class)
     )
     public List<Song> songs;
+
+    @Override
+    public String toString() {
+        return playlist.getName();
+    }
 }

@@ -18,8 +18,8 @@ import ch.zhaw.engineering.tbdappname.services.files.StorageHelper;
 
 public class SongRepository {
 
-    private Context mContext;
-    private PlaylistRepository mPlaylistRepo;
+    private final Context mContext;
+    private final PlaylistRepository mPlaylistRepo;
     private final SongDao mSongDao;
 
     public List<Song> getSongList() {
@@ -28,6 +28,10 @@ public class SongRepository {
 
     public LiveData<List<Song>> getSongs() {
         return mSongDao.getSongsSortedByTitle(true);
+    }
+
+    public Song getRandomSong() {
+        return mSongDao.getRandomSong();
     }
 
     public LiveData<List<Song>> getSortedSongs(SortType sortType, boolean ascending, String searchText) {
@@ -106,6 +110,6 @@ public class SongRepository {
     }
 
     public enum SortType {
-        TITLE, ARTIST, ALBUM;
+        TITLE, ARTIST, ALBUM
     }
 }

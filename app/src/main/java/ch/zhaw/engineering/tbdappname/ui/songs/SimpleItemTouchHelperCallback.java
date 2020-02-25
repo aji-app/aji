@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private final ItemHolder.ItemTouchHelperAdapter mAdapter;
+    private final ItemTouchHelperAdapter mAdapter;
 
-    public SimpleItemTouchHelperCallback(ItemHolder.ItemTouchHelperAdapter adapter) {
+    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
         mAdapter = adapter;
     }
 

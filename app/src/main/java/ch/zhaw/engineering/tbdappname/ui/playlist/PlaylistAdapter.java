@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.playlist;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,17 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
     private final List<PlaylistWithSongs> mValues;
-    private PlaylistListInteractionListener mPlaylistListInteractionListener;
+    private final PlaylistListInteractionListener mPlaylistListInteractionListener;
+    private final Context mContext;
 
-    public PlaylistAdapter(List<PlaylistWithSongs> items, PlaylistListInteractionListener playlistListInteractionListener) {
+    public PlaylistAdapter(List<PlaylistWithSongs> items, PlaylistListInteractionListener playlistListInteractionListener, Context context) {
         mValues = items;
         mPlaylistListInteractionListener = playlistListInteractionListener;
+        mContext = context;
         setHasStableIds(true);
     }
 
@@ -63,7 +65,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         public void bind(PlaylistWithSongs playlist) {
             mItem = playlist;
             mIdView.setText(mItem.playlist.getName());
-            mSongName.setText(mItem.songs.size() + " Songs");
+            mSongName.setText(mContext.getString(R.string.song_count, mItem.songs.size()));
 
             mView.setOnClickListener(v -> {
                 if (null != mPlaylistListInteractionListener) {
@@ -71,6 +73,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
                     // fragment is attached to one) that an item has been selected.
                     mPlaylistListInteractionListener.onPlaylistClick(mItem);
                 }
+            });
+            mView.setOnLongClickListener(v -> {
+                if (null != mPlaylistListInteractionListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mPlaylistListInteractionListener.onPlaylistLongClick(mItem);
+                    return true;
+                }
+                return false;
             });
         }
 
@@ -82,6 +93,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
     public interface PlaylistListInteractionListener {
         // TODO: Update argument type and name
-        void onPlaylistClick(PlaylistWithSongs item);
+        void onPlaylistClick(PlaylistWithSongs playlist);
+        void onPlaylistLongClick(PlaylistWithSongs playlist);
     }
 }

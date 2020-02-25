@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity(primaryKeys = {"playlistId", "songId"}, indices = {@Index(value = "songId")})
+@Entity(primaryKeys = {"playlistId", "songId"}, indices = {@Index(value = "songId"), @Index(value = "playlistId")})
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlaylistSongCrossRef {

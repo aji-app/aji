@@ -2,12 +2,10 @@ package ch.zhaw.engineering.tbdappname.services.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public interface PlaylistDao {
 
     @Transaction
     @Query("SELECT * FROM Playlist")
-    public LiveData<List<PlaylistWithSongs>> getPlaylistsWithSongs();
+    LiveData<List<PlaylistWithSongs>> getPlaylistsWithSongs();
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)

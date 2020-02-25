@@ -28,8 +28,8 @@ import static ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner.EXT
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
 
-    private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
-    private AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
+    private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
+    private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +54,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(v -> {
-            AsyncTask.execute(() -> {
-                LiveData<List<Song>> songs = songDao.getSongs();
-                runOnUiThread(() -> {
-                    songs.observe(MainActivity.this, list -> {
-                        Toast.makeText(this, "We've got " + list.size() + " Songs", Toast.LENGTH_SHORT).show();
-                    });
-                });
+        button2.setOnClickListener(v -> AsyncTask.execute(() -> {
+            LiveData<List<Song>> songs = songDao.getSongs();
+            runOnUiThread(() -> songs.observe(MainActivity.this, list -> Toast.makeText(this, "We've got " + list.size() + " Songs", Toast.LENGTH_SHORT).show()));
 
-            });
-        });
+        }));
 
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(v -> {
@@ -81,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
         Button button5 = findViewById(R.id.button5);
         button5.setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaylistListActivity.class);
+            startActivity(intent);
+        });
+
+        Button button6 = findViewById(R.id.button6);
+        button6.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CurrentlyPlayingActivity.class);
             startActivity(intent);
         });
     }

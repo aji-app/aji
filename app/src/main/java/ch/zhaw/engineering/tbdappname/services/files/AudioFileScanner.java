@@ -13,6 +13,7 @@ import java.io.File;
 
 import ch.zhaw.engineering.tbdappname.services.database.dto.SongDto;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.util.FileNameParser;
 
 public class AudioFileScanner extends JobIntentService {
 
@@ -20,6 +21,7 @@ public class AudioFileScanner extends JobIntentService {
     public static final String EXTRA_SCRAPE_ROOT_FOLDER = "scrape-root-folder";
 
     private SongRepository mSongRepository;
+    private FileNameParser mFileNameParser;
 
     public static void enqueueWork(Context context, Intent intent) {
         enqueueWork(context, AudioFileScanner.class, 2, intent);
@@ -33,6 +35,7 @@ public class AudioFileScanner extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         mSongRepository = SongRepository.getInstance(this);
+        mFileNameParser = new FileNameParser(this);
 
     }
 
@@ -48,7 +51,7 @@ public class AudioFileScanner extends JobIntentService {
 
     private void walk(File root, AudioFileScannedCallback callback) {
         File[] folders = root.listFiles(File::isDirectory);
-        File[] audioFiles = root.listFiles(new AudioFileFilter());
+        File[] audioFiles = root.listFiles(new SupportedFileTypeFilter());
 
         if (audioFiles != null) {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -68,6 +71,11 @@ public class AudioFileScanner extends JobIntentService {
                 song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
                 song.setTrackNumber(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
 
+                if (song.getTitle() == null) {
+                    // No or not enough Metadata
+                    parseFileName(f.getName(), song);
+                }
+
                 byte[] albumArt = mmr.getEmbeddedPicture();
                 if (albumArt != null) {
                     song.albumArt = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
@@ -79,6 +87,19 @@ public class AudioFileScanner extends JobIntentService {
             for (File folder : folders) {
                 walk(folder, callback);
             }
+        }
+    }
+
+    private void parseFileName(String filename, SongDto song) {
+        FileNameParser.ParsedFileName parsedFileName = mFileNameParser.parseFileName(filename);
+        if (song.getArtist() == null) {
+            song.setArtist(parsedFileName.getArtist());
+        }
+        if (song.getAlbum() == null) {
+            song.setAlbum(parsedFileName.getAlbum());
+        }
+        if (song.getTitle() == null) {
+            song.setTitle(parsedFileName.getTitle());
         }
     }
 

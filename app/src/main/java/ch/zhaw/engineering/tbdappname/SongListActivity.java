@@ -6,23 +6,19 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collections;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import ch.zhaw.engineering.tbdappname.ui.songs.SimpleItemTouchHelperCallback;
 import ch.zhaw.engineering.tbdappname.ui.songs.SongAdapter;
 import ch.zhaw.engineering.tbdappname.ui.songs.SongViewModel;
 
-public class SongListActivity extends AppCompatActivity {
-
+public class SongListActivity extends AudioInterfaceActivity {
     private SongViewModel mSongViewModel;
-    private boolean mSortAsc = false;
+    private boolean mSortAsc = true;
 
     private SongAdapter mAdapter;
 
@@ -46,7 +42,21 @@ public class SongListActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                mAdapter = new SongAdapter(songs, Collections.emptyList(),false, null);
+                mAdapter = new SongAdapter(songs, Collections.emptyList(),false, new SongAdapter.SongListInteractionListener() {
+                    @Override
+                    public void onSongClick(Song song) {
+                        SongListActivity.this.playMusic(song, false);
+                    }
+
+                    @Override
+                    public void onSongLongClick(Song song) {
+                        SongListActivity.this.playMusic(song, true);
+                    }
+
+                    @Override
+                    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                    }
+                });
                 recyclerView.setAdapter(mAdapter);
             });
 
@@ -64,17 +74,11 @@ public class SongListActivity extends AppCompatActivity {
         });
 
         Button sortByName = findViewById(R.id.sort_by_name);
-        sortByName.setOnClickListener(v -> {
-            mSongViewModel.changeSortType(SongRepository.SortType.TITLE);
-        });
+        sortByName.setOnClickListener(v -> mSongViewModel.changeSortType(SongRepository.SortType.TITLE));
         Button sortByArtist = findViewById(R.id.sort_by_artist);
-        sortByArtist.setOnClickListener(v -> {
-            mSongViewModel.changeSortType(SongRepository.SortType.ARTIST);
-        });
+        sortByArtist.setOnClickListener(v -> mSongViewModel.changeSortType(SongRepository.SortType.ARTIST));
         Button sortByAlbum = findViewById(R.id.sort_by_album);
-        sortByAlbum.setOnClickListener(v -> {
-            mSongViewModel.changeSortType(SongRepository.SortType.ALBUM);
-        });
+        sortByAlbum.setOnClickListener(v -> mSongViewModel.changeSortType(SongRepository.SortType.ALBUM));
 
         SearchView searchView = findViewById(R.id.filter);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -91,6 +95,6 @@ public class SongListActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
 
+    }
 }

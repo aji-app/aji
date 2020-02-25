@@ -24,14 +24,14 @@ import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import lombok.RequiredArgsConstructor;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> implements ItemHolder.ItemTouchHelperAdapter {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
     private List<Song> mValues;
     private final List<Song> mAllValues;
     private List<Long> mSongsInPlaylist;
     private final Dictionary<Long, Song> songsById;
-    private boolean mEnableSelection;
-    private SongListInteractionListener mSongListInteractionListener;
+    private final boolean mEnableSelection;
+    private final SongListInteractionListener mSongListInteractionListener;
     public SelectionTracker<Long> selectionTracker;
     private boolean mIsDragEnabled = false;
 
@@ -157,7 +157,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Song song = mValues.get(position);
-        holder.bind(song, mEnableSelection && selectionTracker.isSelected((long) song.getSongId()));
+        holder.bind(song, mEnableSelection && selectionTracker.isSelected(song.getSongId()));
         holder.mDragHandle.setOnTouchListener((v, event) -> {
             if (!mIsDragEnabled) {
                 return false;
@@ -232,10 +232,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> im
                     return getAdapterPosition();
                 }
 
-                @Nullable
                 @Override
                 public Long getSelectionKey() {
-                    return (long) mItem.getSongId();
+                    return mItem.getSongId();
                 }
             };
         }

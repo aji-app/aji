@@ -11,11 +11,10 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 
 public class PlaylistViewModel extends AndroidViewModel {
     private final PlaylistRepository mPlaylistRepository;
-    private MediatorLiveData<List<PlaylistWithSongs>> playlists;
+    private final MediatorLiveData<List<PlaylistWithSongs>> playlists;
     private boolean mAscending = true;
 
     private String searchText = null;

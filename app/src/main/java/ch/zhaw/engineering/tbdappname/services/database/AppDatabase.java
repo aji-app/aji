@@ -12,7 +12,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
-@Database(entities = {Song.class, Playlist.class, PlaylistSongCrossRef.class}, version = 1)
+@Database(entities = {Song.class, Playlist.class, PlaylistSongCrossRef.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
