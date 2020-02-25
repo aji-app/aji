@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TBD App Name</string>
+    <string name="title_activity_song_list">SongListActivity</string>
 </resources>

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mAudioFileContentObserver.register();
 
         // TODO: Only sync on startup if user did not disable this functionality
-        mAudioFileContentObserver.onChange(false);
+//        mAudioFileContentObserver.onChange(false);
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
@@ -70,6 +70,18 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(v -> {
             Intent directorySelect = new Intent(this, DirectorySelectionActivity.class);
             startActivityForResult(directorySelect, REQUEST_CODE_DIRECTOY_SELECT);
+        });
+
+        Button button4 = findViewById(R.id.button4);
+        button4.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SongListActivity.class);
+            startActivity(intent);
+        });
+
+        Button button5 = findViewById(R.id.button5);
+        button5.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PlaylistListActivity.class);
+            startActivity(intent);
         });
     }
 

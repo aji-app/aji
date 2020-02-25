@@ -20,7 +20,7 @@ public interface PlaylistDao {
     @Query("select * from playlist")
     LiveData<List<Playlist>> getPlaylists();
 
-    @Insert(onConflict= OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(Playlist playlist);
 
     @Transaction
@@ -33,4 +33,18 @@ public interface PlaylistDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef WHERE PlaylistSongCrossRef.songId == :songId")
     void deleteBySongId(long songId);
+
+    @Query("SELECT * FROM playlist WHERE playlist.name LIKE :text " +
+            "ORDER BY CASE WHEN :asc = 1 THEN playlist.name END ASC, CASE WHEN :asc = 0 THEN playlist.name END DESC")
+    LiveData<List<PlaylistWithSongs>> getSortedPlaylists(String text, boolean asc);
+
+    @Query("SELECT * FROM playlist ORDER BY CASE WHEN :asc = 1 THEN playlist.name END ASC, CASE WHEN :asc = 0 THEN playlist.name END DESC")
+    LiveData<List<PlaylistWithSongs>> getSortedPlaylists(boolean asc);
+
+    @Transaction
+    @Query("SELECT * FROM Playlist WHERE playlistId = :id")
+    PlaylistWithSongs findPlaylistWithSongsById(long id);
+
+    @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
+    void deleteSongsFromPlaylist(long playlistId);
 }

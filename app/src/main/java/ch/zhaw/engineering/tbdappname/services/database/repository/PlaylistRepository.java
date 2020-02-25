@@ -29,12 +29,23 @@ public class PlaylistRepository {
         return new PlaylistRepository(songDao);
     }
 
+    public LiveData<List<PlaylistWithSongs>> getSortedPlaylists(boolean ascending, String searchText) {
+
+        if (searchText == null) {
+           return mPlaylistDao.getSortedPlaylists(ascending);
+        }
+        String searchQuery = "%" + searchText + "%";
+        return mPlaylistDao.getSortedPlaylists(searchQuery, ascending);
+    }
+
+    public PlaylistWithSongs findPlaylistById(long id) {
+        return mPlaylistDao.findPlaylistWithSongsById(id);
+    }
+
     public void update(PlaylistWithSongs playlist) {
-        // TODO
-//        mPlaylistDao.update(playlist.playlist);
-//        mPlaylistDao.deleteSongsFromPlaylist(playlist.playlist.getPlaylistId());
-//        List<PlaylistSongCrossRef> songs = playlist.songs.stream().map(song -> new PlaylistSongCrossRef(playlist.playlist.getPlaylistId(), song.getSongId())).collect(Collectors.toList());
-//        mPlaylistDao.insertAll(songs);
+        // TODO: Improve
+        mPlaylistDao.deleteSongsFromPlaylist(playlist.playlist.getPlaylistId());
+        insert(playlist);
     }
 
     public void deleteSongFromPlaylists(Song song) {
@@ -42,7 +53,10 @@ public class PlaylistRepository {
     }
 
     public void insert(PlaylistWithSongs playlist) {
-        long createdPlaylist = mPlaylistDao.insert(playlist.playlist);
+        long createdPlaylist = playlist.playlist.getPlaylistId();
+        if (playlist.playlist.getPlaylistId() == 0) {
+            createdPlaylist = mPlaylistDao.insert(playlist.playlist);
+        }
         List<PlaylistSongCrossRef> songs = new ArrayList<>();
         for (int position = 0; position < playlist.songs.size(); position++) {
             Song song = playlist.songs.get(position);
