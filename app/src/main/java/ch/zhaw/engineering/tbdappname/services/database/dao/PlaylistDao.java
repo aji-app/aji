@@ -1,0 +1,36 @@
+package ch.zhaw.engineering.tbdappname.services.database.dao;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Transaction;
+import androidx.room.Update;
+
+import java.util.List;
+
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
+import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
+
+@Dao
+public interface PlaylistDao {
+    @Query("select * from playlist")
+    LiveData<List<Playlist>> getPlaylists();
+
+    @Insert(onConflict= OnConflictStrategy.IGNORE)
+    long insert(Playlist playlist);
+
+    @Transaction
+    @Query("SELECT * FROM Playlist")
+    public LiveData<List<PlaylistWithSongs>> getPlaylistsWithSongs();
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAll(List<PlaylistSongCrossRef> refs);
+
+    @Query("DELETE FROM PlaylistSongCrossRef WHERE PlaylistSongCrossRef.songId == :songId")
+    void deleteBySongId(long songId);
+}
