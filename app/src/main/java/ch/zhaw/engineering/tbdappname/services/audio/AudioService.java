@@ -103,6 +103,8 @@ public class AudioService extends LifecycleService {
                         updateCurrentSong();
                     }
                 });
+
+        mNotificationManager.start();
     }
 
     @Override

@@ -47,7 +47,7 @@ public class NotificationManager {
 
         mCurrentState.observe(mContext, state -> {
             update();
-            if (state == AudioService.PlayState.STOPPED  || state == AudioService.PlayState.PAUSED) {
+            if (state == AudioService.PlayState.STOPPED  || state == AudioService.PlayState.PAUSED || state == AudioService.PlayState.INITIAL) {
                 stop();
             }
             if (state == AudioService.PlayState.PLAYING) {

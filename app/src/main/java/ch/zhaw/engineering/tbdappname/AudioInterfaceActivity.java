@@ -120,7 +120,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mServiceStarted) {
+        if (mBound) {
             unbindService(mAudioServiceConnection);
         }
     }
