@@ -49,8 +49,9 @@ public class SupportedFileTypeFilter implements FileFilter {
      */
     public enum SupportedFileFormat {
         AAC,
-//        FLAC,
+        OGG,
         MP3,
+        WAV,
         MP4;
     }
 
