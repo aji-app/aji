@@ -27,7 +27,7 @@ public class PlaylistViewModel extends AndroidViewModel {
         super(application);
         mPlaylistRepository = PlaylistRepository.getInstance(application);
         playlists = new MediatorLiveData<>();
-        playlists.addSource(mPlaylistRepository.getSortedPlaylists(mAscending, ""), value -> playlists.setValue(value));
+        playlists.addSource(mPlaylistRepository.getSortedPlaylists(mAscending, ""), playlists::setValue);
     }
 
 
@@ -49,6 +49,6 @@ public class PlaylistViewModel extends AndroidViewModel {
     }
 
     private void update() {
-        playlists.addSource(mPlaylistRepository.getSortedPlaylists(mAscending, searchText), value -> playlists.setValue(value));
+        playlists.addSource(mPlaylistRepository.getSortedPlaylists(mAscending, searchText), playlists::setValue);
     }
 }

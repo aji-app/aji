@@ -10,14 +10,16 @@ import lombok.Value;
 public class DirectoryItem {
     File file;
     String name;
+    boolean isDirectory;
 
     public DirectoryItem(File file) {
         this.file = file;
         this.name = null;
+        this.isDirectory = file.isDirectory();
     }
 
     public static DirectoryItem parentDirectory(DirectoryItem parent) {
-        return new DirectoryItem(parent.file, "..");
+        return new DirectoryItem(parent.file, "..", true);
     }
 
     public String getName() {

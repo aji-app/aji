@@ -40,7 +40,15 @@
             android:layout_height="wrap_content"
             android:text="Auto-Queue Off"/>
 
+
+        <Button
+            android:id="@+id/web_radio_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play webradio" />
+
     </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

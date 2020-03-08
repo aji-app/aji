@@ -17,15 +17,21 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.MutableLiveData;
 
+import java.net.MalformedURLException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
 
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
@@ -37,13 +43,15 @@ public class AudioService extends LifecycleService {
 
     private final MutableLiveData<PlayState> mCurrentState = new MutableLiveData<>(PlayState.INITIAL);
     private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
-    private final MutableLiveData<Song> mCurrentSong = new MutableLiveData<>(null);
-    private final MutableLiveData<String> mCurrentPlaylistName = new MutableLiveData<>(null);
+    private final MutableLiveData<SongInformation> mCurrentSong = new MutableLiveData<>(null);
+    private String mCurrentPlaylistName = null;
 
-    private Handler mBackendThread;
+    private Handler mCurrentPositionTrackingThread;
+    private Handler mRadioStationInfoThread;
     private NotificationManager mNotificationManager;
 
     private final Dictionary<Long, Song> mCurrentSongs = new Hashtable<>();
+    private final Dictionary<Long, RadioStation> mCurrentRadioStations = new Hashtable<>();
     private MediaSessionCompat mMediaSession;
 
     private final IntentFilter mNoisyAudioIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
@@ -63,6 +71,7 @@ public class AudioService extends LifecycleService {
     private boolean mAutoQueueRandomTrack = false;
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
+    RadioStationMetadataRunnable mUpdateSongInfoRunnable;
 
     public AudioService() {
     }
@@ -70,9 +79,9 @@ public class AudioService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mNotificationManager = new NotificationManager(this, mCurrentSong, mCurrentPosition, mCurrentState, mCurrentPlaylistName);
+        mNotificationManager = new NotificationManager(this, mCurrentSong, mCurrentPosition, mCurrentState);
 
-        setupBackgroundThread();
+        setupBackgroundThreads();
         setupMediaSession();
 
         mSongRepository = SongRepository.getInstance(getApplication());
@@ -127,10 +136,14 @@ public class AudioService extends LifecycleService {
         mMediaSession.setCallback(new TbdMediaSessionCallback(mBinder));
     }
 
-    private void setupBackgroundThread() {
-        HandlerThread handlerThread = new HandlerThread("AudioServiceBackgroundThread");
-        handlerThread.start();
-        mBackendThread = new Handler(handlerThread.getLooper());
+    private void setupBackgroundThreads() {
+        HandlerThread audioServicePositionTrackingThread = new HandlerThread("AudioServicePositionTrackingThread");
+        audioServicePositionTrackingThread.start();
+        mCurrentPositionTrackingThread = new Handler(audioServicePositionTrackingThread.getLooper());
+
+        HandlerThread audioServiceRadioStationUpdateThread = new HandlerThread("AudioServiceRadioStationUpdateThread");
+        audioServiceRadioStationUpdateThread.start();
+        mRadioStationInfoThread = new Handler(audioServiceRadioStationUpdateThread.getLooper());
     }
 
     private void updateCurrentSong() {
@@ -139,8 +152,24 @@ public class AudioService extends LifecycleService {
                 if (tag != null) {
                     Song song = mCurrentSongs.get(tag);
                     if (song != null) {
-                        mCurrentSong.postValue(song);
+                        mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName));
                         mCurrentPosition.postValue(0L);
+                    } else {
+                        RadioStation station = mCurrentRadioStations.get(tag);
+                        if (station != null) {
+                            mCurrentSong.postValue(SongInformation.fromRadioStation(station));
+                            mCurrentPosition.postValue(0L);
+                            try {
+                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
+                                    if (mCurrentSong.getValue() != null) {
+                                        mCurrentSong.postValue(mCurrentSong.getValue().toBuilder().artist(artist).title(title).build());
+                                    }
+                                }, station.getUrl());
+
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             });
@@ -178,27 +207,35 @@ public class AudioService extends LifecycleService {
     }
 
     private void updateNextSong() {
-        mBackendThread.post(() -> {
+        mCurrentPositionTrackingThread.post(() -> {
             mAutoQueueSong = mSongRepository.getRandomSong();
             mCurrentSongs.put(mAutoQueueSong.getSongId(), mAutoQueueSong);
         });
     }
 
     private void trackPosition() {
+        mRadioStationInfoThread.removeCallbacksAndMessages(null);
         if (!mTrackingPosition) {
             trackPositionDelayed();
             mTrackingPosition = true;
         }
+
     }
 
     private void trackPositionDelayed() {
-        mBackendThread.postDelayed(() ->
-                mAudioBackend.getCurrentPosition(position -> {
-                    if (!position.equals(mCurrentPosition.getValue())) {
-                        mCurrentPosition.postValue(position);
-                    }
-                    trackPositionDelayed();
-                }), 500);
+        SongInformation currentSongInfo = mCurrentSong.getValue();
+        if (currentSongInfo != null && currentSongInfo.isRadio() && mUpdateSongInfoRunnable != null) {
+            mRadioStationInfoThread.post(mUpdateSongInfoRunnable);
+        }
+        mCurrentPositionTrackingThread.postDelayed(() -> {
+            mAudioBackend.getCurrentPosition(position -> {
+                if (!position.equals(mCurrentPosition.getValue())) {
+                    mCurrentPosition.postValue(position);
+                }
+                trackPositionDelayed();
+            });
+        }, 500);
+
     }
 
     private AudioBackend.RepeatModes nextRepeatMode() {
@@ -237,6 +274,7 @@ public class AudioService extends LifecycleService {
     private void playbackControlPlay() {
         mCurrentState.postValue(PlayState.PLAYING);
         mAudioBackend.play(true);
+        mUpdateSongInfoRunnable = null;
         trackPosition();
         registerReceiver(mNoisyAudioStreamReceiver, mNoisyAudioIntentFilter);
     }
@@ -247,8 +285,15 @@ public class AudioService extends LifecycleService {
         mCurrentSongs.put(song.getSongId(), song);
     }
 
+    private void playbackControlPlayRadioStation(RadioStation station) {
+        mAudioBackend.clear();
+        mCurrentRadioStations.put(station.getId(), station);
+        mAudioBackend.queueWebMedia(new RadioStationMedia(station));
+        playbackControlPlay();
+    }
+
     private void playbackControlPlayPlaylist(Playlist playlist) {
-        mBackendThread.post(() -> {
+        mCurrentPositionTrackingThread.post(() -> {
             mAudioBackend.clear();
 
             List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylist(playlist);
@@ -256,7 +301,7 @@ public class AudioService extends LifecycleService {
                 playbackControlQueueSong(song);
             }
             playbackControlPlay();
-            mCurrentPlaylistName.postValue(playlist.getName());
+            mCurrentPlaylistName = playlist.getName();
         });
         registerReceiver(mNoisyAudioStreamReceiver, mNoisyAudioIntentFilter);
     }
@@ -328,6 +373,10 @@ public class AudioService extends LifecycleService {
 
         public void play() {
             playbackControlPlay();
+        }
+
+        public void play(RadioStation station) {
+            playbackControlPlayRadioStation(station);
         }
 
         public void play(Playlist playlist) {
@@ -403,4 +452,49 @@ public class AudioService extends LifecycleService {
         }
 
     }
+
+    private static class RadioStationMedia implements AudioBackend.WebMedia {
+        private final long tag;
+        private final String url;
+
+        RadioStationMedia(RadioStation station) {
+            this.tag = station.getId();
+            this.url = station.getUrl();
+        }
+
+        @Override
+        public Object getTag() {
+            return tag;
+        }
+
+        @Override
+        public String getUrl() {
+            return url;
+        }
+
+    }
+
+    @Value
+    @Builder(toBuilder = true)
+    @AllArgsConstructor
+    static class SongInformation {
+        private long id;
+        private String title;
+        private String artist;
+        private String album;
+        private String playlistName;
+        private String path;
+        private long duration;
+        private boolean isRadio;
+
+        static SongInformation fromSong(Song song, String playlistName) {
+            return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false);
+        }
+
+        static SongInformation fromRadioStation(RadioStation station) {
+            return new SongInformation(station.getId(), "", "", "", station.getName(), station.getUrl(), 0, true);
+        }
+    }
+
+
 }

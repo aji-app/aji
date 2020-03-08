@@ -15,7 +15,6 @@ import java.util.Locale;
 
 import ch.zhaw.engineering.tbdappname.MainActivity;
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.media.app.NotificationCompat.MediaStyle;
@@ -28,26 +27,24 @@ public class NotificationManager {
 
     private final LifecycleService mContext;
     private final LiveData<AudioService.PlayState> mCurrentState;
-    private final LiveData<String> mCurrentPlaylistName;
     private final android.app.NotificationManager mNotificationManager;
-    private final LiveData<Song> mCurrentSong;
+    private final LiveData<AudioService.SongInformation> mCurrentSongInformation;
     private final LiveData<Long> mCurrentPosition;
 
-    public NotificationManager(LifecycleService context, LiveData<Song> currentSong, LiveData<Long> currentPosition, LiveData<AudioService.PlayState> currentState, LiveData<String> currentPlaylistName) {
+    public NotificationManager(LifecycleService context, LiveData<AudioService.SongInformation> currentSongInformation, LiveData<Long> currentPosition, LiveData<AudioService.PlayState> currentState) {
         mContext = context;
         mCurrentState = currentState;
-        mCurrentPlaylistName = currentPlaylistName;
         mNotificationManager = (android.app.NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mCurrentSong = currentSong;
+        mCurrentSongInformation = currentSongInformation;
         mCurrentPosition = currentPosition;
 
-        mCurrentSong.observe(mContext, song -> update());
+        mCurrentSongInformation.observe(mContext, song -> update());
 
         mCurrentPosition.observe(mContext, position -> update());
 
         mCurrentState.observe(mContext, state -> {
             update();
-            if (state == AudioService.PlayState.STOPPED  || state == AudioService.PlayState.PAUSED || state == AudioService.PlayState.INITIAL) {
+            if (state == AudioService.PlayState.STOPPED || state == AudioService.PlayState.PAUSED || state == AudioService.PlayState.INITIAL) {
                 stop();
             }
             if (state == AudioService.PlayState.PLAYING) {
@@ -99,11 +96,12 @@ public class NotificationManager {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent openAppIntent = PendingIntent.getActivity(mContext, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Song currentSong = mCurrentSong.getValue();
+        AudioService.SongInformation currentSongInformation = mCurrentSongInformation.getValue();
         AudioService.PlayState currentState = mCurrentState.getValue();
 
         boolean shouldShowPosition = currentState != AudioService.PlayState.STOPPED;
-        String currentPlaylistName = mCurrentPlaylistName.getValue() == null ? "" : (" - " + mCurrentPlaylistName.getValue());
+        long currentPosition = mCurrentPosition.getValue() == null ? 0 : mCurrentPosition.getValue();
+        String currentPlaylistName = currentSongInformation == null || currentSongInformation.getPlaylistName() == null ? "" : (" - " + currentSongInformation.getPlaylistName());
 
         return builder
                 // Show controls on lock screen even when user hides sensitive content.
@@ -111,28 +109,39 @@ public class NotificationManager {
                 .setSmallIcon(R.drawable.ic_app_icon)
                 // Add media control buttons that invoke intents in your media service
                 .addAction(R.drawable.ic_prev, "Previous", getControlIntent(AudioService.AudioServiceCommand.PREVIOUS)) // #0
-                .addAction(AudioService.PlayState.PLAYING == currentState ? R.drawable.ic_pause : R.drawable.ic_play , "Pause", getControlIntent(AudioService.AudioServiceCommand.PLAYPAUSE))  // #1
+                .addAction(AudioService.PlayState.PLAYING == currentState ? R.drawable.ic_pause : R.drawable.ic_play, "Pause", getControlIntent(AudioService.AudioServiceCommand.PLAYPAUSE))  // #1
                 .addAction(R.drawable.ic_next, "Next", getControlIntent(AudioService.AudioServiceCommand.NEXT))     // #2
                 .addAction(R.drawable.ic_stop, "Next", getControlIntent(AudioService.AudioServiceCommand.STOP))     // #2
                 // TODO: Improve time and playlist string generation
-                .setSubText(shouldShowPosition ? String.format(Locale.ENGLISH, "%s / %s", getMillisAsTime(mCurrentPosition.getValue()), getMillisAsTime(currentSong == null ? 0 : currentSong.getDuration())) + currentPlaylistName : "")
+                .setSubText(shouldShowPosition ? getPositionDurationString(currentSongInformation, currentPosition) + currentPlaylistName : "")
 //                .setContentText(currentSong == null ? "Stopped" : currentSong.toString())
                 .setStyle(new MediaStyle()
-                                .setShowActionsInCompactView(0,1,2)
+                                .setShowActionsInCompactView(0, 1, 2)
                                 .setShowCancelButton(true)
                                 .setCancelButtonIntent(getShutdownIntent())
 //                        .setMediaSession()
                 )
                 .setShowWhen(false)
                 .setContentIntent(openAppIntent)
-                .setContentTitle(currentSong == null ? "Not Playing" : currentSong.getTitle())
-                .setContentText(currentSong == null ? "" : currentSong.getArtist())
+                .setContentTitle(currentSongInformation == null ? "Not Playing" : currentSongInformation.getTitle())
+                .setContentText(currentSongInformation == null ? "" : currentSongInformation.getArtist())
                 .setOnlyAlertOnce(true)
                 .setDeleteIntent(getShutdownIntent())
 //                .setLargeIcon(albumArtBitmap)
                 .build();
 
 
+    }
+
+    private String getPositionDurationString(AudioService.SongInformation songInfo, long currentPosition) {
+        if (songInfo != null) {
+            if (songInfo.getDuration() > 0) {
+                return String.format(Locale.ENGLISH, "%s / %s", getMillisAsTime(currentPosition), getMillisAsTime(songInfo.getDuration()));
+            } else {
+                return getMillisAsTime(currentPosition);
+            }
+        }
+        return "";
     }
 
     private PendingIntent getControlIntent(AudioService.AudioServiceCommand command) {

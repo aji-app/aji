@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import com.google.android.exoplayer2.Player;
 
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class CurrentlyPlayingActivity extends AudioInterfaceActivity {
 
@@ -41,7 +42,7 @@ public class CurrentlyPlayingActivity extends AudioInterfaceActivity {
                 return;
             }
             service.toggleRepeatMode();
-            switch(service.getRepeatMode()) {
+            switch (service.getRepeatMode()) {
                 case REPEAT_ALL:
                     repeatMode.setImageResource(R.drawable.ic_repeat_all);
                     break;
@@ -66,6 +67,15 @@ public class CurrentlyPlayingActivity extends AudioInterfaceActivity {
 
                 autoQueue.setText("Auto-Queue Off");
             }
+        });
+
+        Button webRadioTest = findViewById(R.id.web_radio_test);
+        webRadioTest.setOnClickListener(v -> {
+            AudioService.AudioServiceBinder service = mAudioService.getValue();
+            if (service == null) {
+                return;
+            }
+            service.play(new RadioStation(1, "Fake Radio Station", "http://us5.internet-radio.com:8267/stream"));
         });
 
         startService();

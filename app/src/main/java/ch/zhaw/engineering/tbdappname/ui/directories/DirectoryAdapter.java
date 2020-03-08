@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
@@ -44,18 +45,21 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
         if (!mIsRoot && position == 0) {
             holder.mImageView.setImageResource(R.drawable.ic_up);
-        } else {
+        } else if (holder.mItem.isDirectory()) {
             holder.mImageView.setImageResource(R.drawable.ic_directory);
+        } else {
+            holder.mImageView.setImageResource(R.drawable.ic_file);
         }
 
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
                 if (position == 0 && !mIsRoot) {
                     mListener.onDirectoryNavigateUp();
-                } else {
+                } else if (holder.mItem.isDirectory()) {
                     mListener.onDirectoryNavigateDown(holder.mItem);
-                }
-            }
+                } else {
+                    mListener.onFileSelected(holder.mItem);
+                } }
         });
         holder.mView.setOnLongClickListener(v -> {
             mListener.onDirectorySelected(holder.mItem);
@@ -93,5 +97,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         void onDirectoryNavigateDown(DirectoryItem directory);
 
         void onDirectoryNavigateUp();
+
+        void onFileSelected(DirectoryItem file);
     }
 }

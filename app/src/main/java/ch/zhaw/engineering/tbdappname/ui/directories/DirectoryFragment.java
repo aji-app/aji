@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 
@@ -34,9 +35,11 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_MULTI_SELECT = "multi-select";
+    private static final String ARG_SHOW_FILE_EXTENSIONS = "show-files-extensions";
 
     private int mColumnCount = 1;
     private boolean mMultiSelect = false;
+    private ArrayList<String> mFileExtensionsToShow = new ArrayList<>();
     private OnDirectoryFragmentListener mListener;
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
     private final Deque<DirectoryItem> mNavigationStack = new ArrayDeque<>();
@@ -53,11 +56,12 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static DirectoryFragment newInstance(int columnCount, boolean multiSelect) {
+    public static DirectoryFragment newInstance(int columnCount, boolean multiSelect, String... fileExtensionsToShow) {
         DirectoryFragment fragment = new DirectoryFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putBoolean(ARG_MULTI_SELECT, multiSelect);
+        args.putStringArrayList(ARG_SHOW_FILE_EXTENSIONS, new ArrayList<>(Arrays.asList(fileExtensionsToShow)));
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,6 +73,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mMultiSelect = getArguments().getBoolean(ARG_MULTI_SELECT);
+            mFileExtensionsToShow = getArguments().getStringArrayList(ARG_SHOW_FILE_EXTENSIONS);
         }
     }
 
@@ -120,7 +125,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                 mNavigationStack.push(new DirectoryItem(Environment.getExternalStorageDirectory()));
             }
             List<DirectoryItem> directories = new ArrayList<>();
-            for (File file : mNavigationStack.peek().getFile().listFiles(File::isDirectory)) {
+            for (File file : mNavigationStack.peek().getFile().listFiles(this::filterFile)) {
                 DirectoryItem directoryItem = new DirectoryItem(file);
                 directories.add(directoryItem);
             }
@@ -134,6 +139,16 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                 getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot)));
             }
         });
+    }
+
+    private boolean filterFile(File file) {
+        if (file.isDirectory()) {
+            return true;
+        }
+        if (file.getName().contains(".")) {
+            return mFileExtensionsToShow.contains(file.getName().substring(file.getName().lastIndexOf(".") + 1));
+        }
+        return false;
     }
 
     @Override
@@ -159,6 +174,11 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     public void onDirectoryNavigateUp() {
         mNavigationStack.pop();
         loadCurrentDirectories();
+    }
+
+    @Override
+    public void onFileSelected(DirectoryItem file) {
+        mListener.onSelectionFinished(file.getFile());
     }
 
     /**

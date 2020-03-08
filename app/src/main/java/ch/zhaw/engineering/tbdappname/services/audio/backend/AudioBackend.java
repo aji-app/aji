@@ -23,6 +23,12 @@ public interface AudioBackend {
     void initialize(Context context, MediaSessionCompat mediaSession, @NonNull EventListener listener);
 
     /**
+     * Queues a {@link WebMedia} to play
+     * @param media A {@link WebMedia} to queue
+     */
+    void queueWebMedia(@NonNull WebMedia media);
+
+    /**
      * Queues a {@link Media} to play
      * @param media A {@link Media} to queue
      */
@@ -103,6 +109,13 @@ public interface AudioBackend {
         Object getTag();
 
         String getPath();
+    }
+
+    interface WebMedia {
+        @Nullable
+        Object getTag();
+
+        String getUrl();
     }
 
     /**

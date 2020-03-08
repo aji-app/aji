@@ -19,6 +19,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import lombok.Value;
 
@@ -79,6 +80,8 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
                     }
                 } else if (startAction.playlist != null) {
                     audioService.play(startAction.playlist);
+                } else if (startAction.station != null) {
+                    audioService.play(startAction.station);
                 }
                 startAction = null;
             }
@@ -134,7 +137,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
                 mAudioService.getValue().play(song);
             }
         } else {
-            startAction = new StartPlayingAction(song, null, queue);
+            startAction = new StartPlayingAction(song, null, null, queue);
         }
         Toast.makeText(this, (queue ? "Queued" : "Playing") + " song: " + song.toString(), Toast.LENGTH_SHORT).show();
     }
@@ -144,9 +147,19 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(playlist);
         } else {
-            startAction = new StartPlayingAction(null, playlist, false);
+            startAction = new StartPlayingAction(null, playlist, null, false);
         }
         Toast.makeText(this, "Playling playlist: " + playlist.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void playMusic(RadioStation radioStation) {
+        startService();
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().play(radioStation);
+        } else {
+            startAction = new StartPlayingAction(null, null, radioStation, false);
+        }
+        Toast.makeText(this, "Playling radioStation: " + radioStation.toString(), Toast.LENGTH_SHORT).show();
     }
 
     protected void startService() {
@@ -168,6 +181,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     private static class StartPlayingAction {
         private Song song;
         private Playlist playlist;
+        private RadioStation station;
         private boolean queue;
     }
 }

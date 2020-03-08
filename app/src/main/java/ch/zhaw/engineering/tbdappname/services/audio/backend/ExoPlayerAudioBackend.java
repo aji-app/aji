@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -19,11 +20,16 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
+
+
 public class ExoPlayerAudioBackend implements AudioBackend {
+    private static final String TAG = "ExoPlayerAudioBackend";
     private SimpleExoPlayer mPlayer;
     private Handler mAudioHandler;
     private HandlerThread mHandlerThread;
@@ -104,7 +110,6 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                         mListener.onStoppedPlaying();
                     }
                     if (playbackState == Player.STATE_READY) {
-
                         mListener.onStartedPlaying();
                     }
                 }
@@ -114,9 +119,15 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                     if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK) {
                         mListener.onPositionDiscontinuity();
                     }
+                    Log.i("BUBU", mPlayer.getCurrentTag().toString());
                 }
             });
         });
+    }
+
+    @Override
+    public void queueWebMedia(@NonNull WebMedia media) {
+        mConcatenatingMediaSource.addMediaSource(GetMediaSource(media));
     }
 
     @Override
@@ -225,6 +236,14 @@ public class ExoPlayerAudioBackend implements AudioBackend {
 
     private void queueMedia(Media media) {
         mConcatenatingMediaSource.addMediaSource(GetMediaSource(media));
+    }
+
+    private MediaSource GetMediaSource(WebMedia media) {
+        // Produces DataSource instances through which media data is loaded.
+        DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mContext, "TBDAppName"), 500, 500, true);
+        return new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .setTag(media.getTag())
+                .createMediaSource(Uri.parse(media.getUrl()));
     }
 
     private MediaSource GetMediaSource(Media media) {

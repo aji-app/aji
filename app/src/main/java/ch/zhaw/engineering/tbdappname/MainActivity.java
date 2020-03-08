@@ -15,11 +15,14 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner;
 import ch.zhaw.engineering.tbdappname.services.files.StorageHelper;
+import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
@@ -27,9 +30,11 @@ import static ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner.EXT
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
+    private static final int REQUEST_CODE_PLS_SELECT = 2;
 
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
     private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
+    private RadioStationDao mRadioStationDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
         SongDao songDao = AppDatabase.getInstance(this).songDao();
+        mRadioStationDao = AppDatabase.getInstance(this).radioStationDao();
 
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
@@ -83,6 +89,18 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CurrentlyPlayingActivity.class);
             startActivity(intent);
         });
+
+        Button button7 = findViewById(R.id.button7);
+        button7.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PlsFileSelectionActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_PLS_SELECT);
+        });
+
+        Button button8 = findViewById(R.id.button8);
+        button8.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RadioStationListActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -101,7 +119,17 @@ public class MainActivity extends AppCompatActivity {
                 scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
                 AudioFileScanner.enqueueWork(this, scrapeFiles);
             }
-
+        }
+        if (requestCode == REQUEST_CODE_PLS_SELECT) {
+            if (data != null && data.hasExtra(EXTRA_FILE)) {
+                String path = data.getStringExtra(EXTRA_FILE);
+                AsyncTask.execute(() -> {
+                    RadioStation station = WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path);
+                    if (station.getName() != null && station.getUrl() != null) {
+                        mRadioStationDao.insertRadioStation(station);
+                    }
+                });
+            }
         }
     }
 }
