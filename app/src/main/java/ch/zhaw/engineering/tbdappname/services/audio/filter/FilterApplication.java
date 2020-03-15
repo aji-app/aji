@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.resampling.Resampler;
 import lombok.Getter;
+import lombok.Value;
 
 /**
  * Applies the input to the filter in the requested sampleRate and batch size
@@ -20,16 +21,14 @@ public final class FilterApplication {
     private static final String TAG = "FilterApplication";
 
     @Getter
-    private final AudioBackend.AudioFormat outputFormat;
+    private AudioBackend.AudioFormat outputFormat;
     private final AudioBackend.AudioFilter mFilter;
-    private final AudioBackend.AudioFormat mFormat;
-    private ByteBuffer resampledUnprocessedInputBuffer;
+    private ByteBuffer mResampledUnprocessedInputBuffer;
+    private AudioBackend.AudioFormat mUnprocessedAudioFormat;
 
-    public FilterApplication(@NonNull AudioBackend.AudioFilter filter, @NonNull AudioBackend.AudioFormat format) {
+    public FilterApplication(@NonNull AudioBackend.AudioFilter filter) {
         this.mFilter = filter;
-        this.mFormat = format;
-        this.outputFormat = filter.getRequestedAudioFormat(format);
-        this.resampledUnprocessedInputBuffer = ByteBuffer.allocate(0).order(ByteOrder.nativeOrder());
+        this.mResampledUnprocessedInputBuffer = ByteBuffer.allocate(0).order(ByteOrder.nativeOrder());
     }
 
     /**
@@ -40,26 +39,39 @@ public final class FilterApplication {
      * @return The processed bytes
      */
     @NonNull
-    public ByteBuffer apply(ByteBuffer input, boolean flush) {
+    public Result apply(ByteBuffer input, boolean flush, @NonNull AudioBackend.AudioFormat inputFormat) {
+        AudioBackend.AudioFormat outputFormat = mFilter.getRequestedAudioFormat(inputFormat);
+        if (!mFilter.isEnabled()) {
+            // Check if we have unprocessed data and resample if necesary
+            if (mResampledUnprocessedInputBuffer.remaining() > 0) {
+                byte[] leftOver = new byte[mResampledUnprocessedInputBuffer.remaining()];
+                mResampledUnprocessedInputBuffer.get(leftOver);
+                if (mUnprocessedAudioFormat.getSampleRate() != inputFormat.getSampleRate()) {
+                    leftOver = Resampler.resample(leftOver, mUnprocessedAudioFormat, inputFormat);
+                }
+                ByteBuffer output = ByteBuffer.allocate(input.remaining() + leftOver.length);
+                output.put(leftOver);
+                output.put(input);
+                output.flip();
+                return new Result(output, inputFormat);
+            }
+            return new Result(input, inputFormat);
+        }
+
         byte[] inputInCorrectSampleRate = new byte[input.remaining()];
         input.get(inputInCorrectSampleRate);
-        if (mFormat.getSampleRate() != outputFormat.getSampleRate()) {
-            inputInCorrectSampleRate = Resampler.resample(inputInCorrectSampleRate, mFormat, outputFormat);
+
+        if (inputFormat.getSampleRate() != outputFormat.getSampleRate()) {
+            inputInCorrectSampleRate = Resampler.resample(inputInCorrectSampleRate, inputFormat, outputFormat);
         }
 
 
-        ByteBuffer filterInputBuffer = ByteBuffer.allocate(resampledUnprocessedInputBuffer.remaining() + inputInCorrectSampleRate.length).order(ByteOrder.nativeOrder());
-        filterInputBuffer.put(resampledUnprocessedInputBuffer);
+        ByteBuffer filterInputBuffer = ByteBuffer.allocate(mResampledUnprocessedInputBuffer.remaining() + inputInCorrectSampleRate.length).order(ByteOrder.nativeOrder());
+        filterInputBuffer.put(mResampledUnprocessedInputBuffer);
         filterInputBuffer.put(inputInCorrectSampleRate);
         filterInputBuffer.flip();
 
-        if (!mFilter.isEnabled()) {
-            // Do not apply filter if it is disabled
-            // Still resample to keep AudioFormat chain fixed
-            return filterInputBuffer;
-        }
-
-        int batchSize = mFilter.getRequestedFrameBatchSize() * mFormat.getBytesPerFrame();
+        int batchSize = mFilter.getRequestedFrameBatchSize() * outputFormat.getBytesPerFrame();
         int batches = filterInputBuffer.remaining() / batchSize;
 
         boolean needsExtraBatch = flush && (filterInputBuffer.remaining() % batchSize > 0);
@@ -84,9 +96,16 @@ public final class FilterApplication {
         }
 
         Log.i(TAG, String.format("Did not apply %d bytes to Filter %s", filterInputBuffer.remaining(), mFilter.getIdentifier()));
-        resampledUnprocessedInputBuffer = filterInputBuffer;
+        mResampledUnprocessedInputBuffer = filterInputBuffer;
+        mUnprocessedAudioFormat = outputFormat;
 
         output.flip();
-        return output;
+        return new Result(output, outputFormat);
+    }
+
+    @Value
+    public static class Result {
+        ByteBuffer output;
+        AudioBackend.AudioFormat format;
     }
 }

@@ -33,6 +33,7 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
     private boolean mRunningFilters;
     private AudioBackend.AudioFilter[] mFilters;
     private FilterApplication[] mFilterApplications;
+    private boolean mGotFlushed = false;
 
     public ExoPlayerFilterApplicationAudioProcessor(AudioBackend.AudioFilter... filters) {
         mFilters = filters;
@@ -57,6 +58,7 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
     @Override
     public void queueInput(ByteBuffer buffer) {
         if (buffer.remaining() > 0 && mInputBuffer == null) {
+            mGotFlushed = false;
             Log.i(TAG, String.format("Reading %d bytes from Input", buffer.remaining()));
             mInputBuffer = new byte[buffer.remaining()];
             buffer.get(mInputBuffer);
@@ -73,21 +75,22 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
                 ByteBuffer input = ByteBuffer.wrap(mInputBuffer);
                 mInputBuffer = null;
 
-                ByteBuffer nextFilterInput = input;
                 boolean flushFilters = mInputEnded;
+                FilterApplication.Result currentResult = new FilterApplication.Result(input, fromExoplayerAudioFormat(mInputAudioFormat));
                 for (FilterApplication application : mFilterApplications) {
-                    nextFilterInput = application.apply(nextFilterInput, flushFilters);
+                    currentResult = application.apply(currentResult.getOutput(), flushFilters, currentResult.getFormat());
                 }
-                byte[] res = new byte[nextFilterInput.remaining()];
-                nextFilterInput.get(res);
+                byte[] res = new byte[currentResult.getOutput().remaining()];
+                currentResult.getOutput().get(res);
 
-                AudioBackend.AudioFormat lastFilterFormat = mFilterApplications[mFilterApplications.length - 1].getOutputFormat();
+                AudioBackend.AudioFormat lastFilterFormat = currentResult.getFormat();
 
                 if (lastFilterFormat.getSampleRate() != mInputAudioFormat.sampleRate) {
                     res = Resampler.resample(res, lastFilterFormat, fromExoplayerAudioFormat(mInputAudioFormat));
                 }
-
-                mOutputBuffer = res;
+                if (!mGotFlushed) {
+                    mOutputBuffer = res;
+                }
                 mRunningFilters = false;
             });
         }
@@ -126,11 +129,11 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
         mInputEnded = false;
         mRunningFilters = false;
         mInputAudioFormat = mPendingInputFormat;
-        AudioBackend.AudioFormat currentFilterInputFormat = fromExoplayerAudioFormat(mInputAudioFormat);
         for (int i = 0; i < mFilters.length; i++) {
-            mFilterApplications[i] = new FilterApplication(mFilters[i], currentFilterInputFormat);
-            currentFilterInputFormat = mFilterApplications[i].getOutputFormat();
+            mFilterApplications[i] = new FilterApplication(mFilters[i]);
         }
+        Log.i(TAG, "Flushing processor");
+        mGotFlushed = true;
     }
 
     @Override
@@ -141,5 +144,6 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
         mInputAudioFormat = null;
         mInputEnded = false;
         mRunningFilters = false;
+        Log.i(TAG, "Resetting processor");
     }
 }
