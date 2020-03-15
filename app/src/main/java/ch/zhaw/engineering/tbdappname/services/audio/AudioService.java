@@ -23,7 +23,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
-import ch.zhaw.engineering.tbdappname.services.audio.backend.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.tbdappname.services.audio.exoplayer.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.tbdappname.services.audio.filter.NoopFilter;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
@@ -85,7 +86,9 @@ public class AudioService extends LifecycleService {
         setupMediaSession();
 
         mSongRepository = SongRepository.getInstance(getApplication());
-        mAudioBackend.initialize(this, mMediaSession,
+        mAudioBackend.initialize(
+                this,
+                mMediaSession,
                 new AudioBackend.EventListener() {
 
                     @Override
@@ -111,7 +114,8 @@ public class AudioService extends LifecycleService {
                     public void onPositionDiscontinuity() {
                         updateCurrentSong();
                     }
-                });
+                },
+                new NoopFilter(1, 20000, true), new NoopFilter(2, 12222, false));
 
         mNotificationManager.start();
     }

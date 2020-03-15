@@ -8,6 +8,10 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Value;
+
 /**
  * The audio backend that the AudioService uses.
  * It is used to play files in the background.
@@ -19,8 +23,9 @@ public interface AudioBackend {
      * @param context      A {@link Context}
      * @param mediaSession The {@link MediaSessionCompat} to use
      * @param listener     A {@link EventListener} to listen for events
+     * @param filters       The {@link AudioFilter}s to integrate
      */
-    void initialize(Context context, MediaSessionCompat mediaSession, @NonNull EventListener listener);
+    void initialize(Context context, MediaSessionCompat mediaSession, @NonNull EventListener listener, final AudioFilter... filters);
 
     /**
      * Queues a {@link WebMedia} to play
@@ -154,10 +159,37 @@ public interface AudioBackend {
         void receiveValue(T tag);
     }
 
+    abstract class AudioFilter {
+        @Getter
+        @Setter
+        private boolean enabled = false;
+
+        public abstract int getRequestedFrameBatchSize();
+        public abstract int getRequestedSampleRate();
+        public abstract byte[] apply(byte[] bytes, AudioFormat format);
+
+        public final AudioFormat getRequestedAudioFormat(AudioFormat input) {
+            return new AudioFormat(getRequestedSampleRate(), input.channelCount, input.encoding, input.bytesPerFrame);
+        }
+
+        public abstract String getIdentifier();
+    }
+
     /**
      * RepeatModes that the backend implements.
      */
     enum RepeatModes {
         REPEAT_OFF, REPEAT_ALL, REPEAT_ONE
+    }
+
+    /**
+     * Represents an audio format of the PCM stream that is playing.
+     */
+    @Value
+    class AudioFormat {
+        int sampleRate;
+        int channelCount;
+        int encoding;
+        int bytesPerFrame;
     }
 }

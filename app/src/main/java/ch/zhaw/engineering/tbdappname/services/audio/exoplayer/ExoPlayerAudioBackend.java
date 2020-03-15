@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.services.audio.backend;
+package ch.zhaw.engineering.tbdappname.services.audio.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -25,7 +25,9 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
-import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
+import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
+
+import static android.os.Process.THREAD_PRIORITY_URGENT_AUDIO;
 
 
 public class ExoPlayerAudioBackend implements AudioBackend {
@@ -38,10 +40,10 @@ public class ExoPlayerAudioBackend implements AudioBackend {
     private ConcatenatingMediaSource mConcatenatingMediaSource = new ConcatenatingMediaSource();
 
     @Override
-    public void initialize(Context context, MediaSessionCompat mediaSession, @NonNull EventListener listener) {
+    public void initialize(Context context, MediaSessionCompat mediaSession, @NonNull EventListener listener, final AudioFilter... filters) {
         mContext = context;
         mListener = listener;
-        mHandlerThread = new HandlerThread("ExoplayerBackendHandler");
+        mHandlerThread = new HandlerThread("ExoplayerBackendHandler", THREAD_PRIORITY_URGENT_AUDIO);
         if (mHandlerThread.getState() != Thread.State.RUNNABLE) {
             mHandlerThread.start();
         }
@@ -58,7 +60,8 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                 @NonNull
                 protected AudioProcessor[] buildAudioProcessors() {
                     return new AudioProcessor[]{
-//                            mSonicAudioProcessor
+                            new ExoPlayerBatchingAudioProcessor(),
+                            new ExoPlayerFilterApplicationAudioProcessor(filters),
                     };
                 }
             }
