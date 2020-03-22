@@ -132,6 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 long[] ids = dao.insertSongs(fakeSongs);
             });
         });
+
+        Button button10 = findViewById(R.id.button10);
+        button10.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TestActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

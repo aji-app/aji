@@ -20,7 +20,7 @@ public class SongViewModel extends AndroidViewModel {
 
     private String mSearchText = null;
 
-    public LiveData<List<Song>> getAllSongs() {
+    public LiveData<List<Song>> getSongs() {
         return mSongs;
     }
 

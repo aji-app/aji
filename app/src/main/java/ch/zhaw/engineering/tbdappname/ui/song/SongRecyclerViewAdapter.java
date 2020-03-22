@@ -9,22 +9,22 @@ import android.widget.TextView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.ui.song.SongFragment.OnListFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.dummy.DummyContent.DummyItem;
+import ch.zhaw.engineering.tbdappname.ui.songsold.SongAdapter;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link SongFragment.SongFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
 
     private final List<Song> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final SongFragment.SongFragmentInteractionListener mListener;
 
-    public SongRecyclerViewAdapter(List<Song> items, OnListFragmentInteractionListener listener) {
+    public SongRecyclerViewAdapter(List<Song> items, SongFragment.SongFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }

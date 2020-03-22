@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AddOrEditRadioStationActivity"></activity>
+        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".AddOrEditRadioStationActivity" />
         <activity android:name=".CurrentlyPlayingActivity" />
         <activity android:name=".AddOrEditPlaylistActivity" />
         <activity android:name=".PlaylistListActivity" />
