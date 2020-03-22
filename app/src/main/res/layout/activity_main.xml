@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Load songs from MediaStore"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show stored song count"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button" />
 
@@ -27,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Manually Add Songs from Directory"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button2" />
 
@@ -35,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show Song List"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button3" />
 
@@ -43,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show Playlists"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button4" />
 
@@ -51,6 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Playback Modes"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button5" />
 
@@ -59,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Pls File"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button6" />
 
@@ -67,7 +74,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show RadioStations"
+        android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button7" />
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add fake songs"
+        android:theme="?attr/primaryButtonTheme"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
