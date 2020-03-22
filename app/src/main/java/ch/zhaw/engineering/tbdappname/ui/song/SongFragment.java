@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 /**
@@ -80,12 +81,12 @@ public class SongFragment extends Fragment {
                 ((LinearLayoutManager)mRecyclerView.getLayoutManager()).getOrientation());
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mSongViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
+        mSongViewModel.getSongsAndPlaylists().observe(getViewLifecycleOwner(), songsAndPlaylists -> {
             if (getActivity() == null) {
                 return;
             }
             getActivity().runOnUiThread(() -> {
-                mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songs, mListener, getActivity()));
+                mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists()));
             });
         });
     }
@@ -119,8 +120,13 @@ public class SongFragment extends Fragment {
      */
     public interface SongFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onSongSelected(Song item);
+        void onSongSelected(Song song);
 
-        void onSongOverflowMenu(Song item);
+        void onSongPlay(Song song);
+        void onSongQueue(Song song);
+        void onSongEdit(Song song);
+        void onSongAddToPlaylist(Song song, Playlist playlist);
+        void onSongDelete(Song song);
+        void onCreatePlaylist();
     }
 }

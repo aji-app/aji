@@ -9,6 +9,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -24,6 +25,10 @@ public class PlaylistRepository {
     public static PlaylistRepository getInstance(Context context) {
         PlaylistDao songDao = AppDatabase.getInstance(context).playlistDao();
         return new PlaylistRepository(songDao);
+    }
+
+    public LiveData<List<Playlist>> getAllPlaylists() {
+        return mPlaylistDao.getPlaylists();
     }
 
     public LiveData<List<PlaylistWithSongs>> getSortedPlaylists(boolean ascending, String searchText) {

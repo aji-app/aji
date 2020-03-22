@@ -16,11 +16,11 @@
     <item android:id="@+id/song_menu_add_to_playlist"
         android:icon="@drawable/ic_playlist_add"
         android:title="@string/add_to_playlist">
-        <menu>
+        <menu >
             <item
-                android:id="@+id/first_playlist"
-                android:icon="@drawable/ic_playlist"
-                android:title="Playlist 1" />
+                android:id="@+id/song_create_playlist"
+                android:icon="@drawable/ic_add"
+                android:title="@string/new_playlist" />
         </menu>
     </item>
 

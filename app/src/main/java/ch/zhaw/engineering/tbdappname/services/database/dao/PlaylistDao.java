@@ -15,7 +15,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs
 
 @Dao
 public interface PlaylistDao {
-    @Query("select * from playlist")
+    @Query("select * from playlist ORDER BY playlist.name ASC")
     LiveData<List<Playlist>> getPlaylists();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

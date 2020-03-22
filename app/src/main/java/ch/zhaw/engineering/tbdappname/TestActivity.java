@@ -4,16 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 import ch.zhaw.engineering.tbdappname.ui.test.TestFragment;
 
-public class TestActivity extends AppCompatActivity implements  SongFragment.SongFragmentInteractionListener {
+public class TestActivity extends AppCompatActivity implements SongFragment.SongFragmentInteractionListener {
 
     private SongViewModel mSongViewModel;
 
@@ -34,12 +36,37 @@ public class TestActivity extends AppCompatActivity implements  SongFragment.Son
     }
 
     @Override
-    public void onSongSelected(Song item) {
-
+    public void onSongSelected(Song song) {
+        Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSongOverflowMenu(Song item) {
+    public void onSongPlay(Song song) {
+        Toast.makeText(this, "onSongPlay: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void onSongQueue(Song song) {
+        Toast.makeText(this, "onSongQueue: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSongEdit(Song song) {
+        Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSongAddToPlaylist(Song song, Playlist playlist) {
+        Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSongDelete(Song song) {
+        Toast.makeText(this, "onSongDelete: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCreatePlaylist() {
+        Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
     }
 }

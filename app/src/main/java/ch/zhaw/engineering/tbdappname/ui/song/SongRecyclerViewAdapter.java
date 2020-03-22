@@ -1,28 +1,27 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuPopupHelper;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
+import android.view.Menu;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.ui.song.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
  * specified {@link SongFragment.SongFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
@@ -31,11 +30,16 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private final List<Song> mValues;
     private final SongFragment.SongFragmentInteractionListener mListener;
     private Context mContext;
+    private Map<Integer, Playlist> mPlaylists;
 
-    public SongRecyclerViewAdapter(List<Song> items, SongFragment.SongFragmentInteractionListener listener, Context context) {
+    public SongRecyclerViewAdapter(List<Song> items, SongFragment.SongFragmentInteractionListener listener, Context context, List<Playlist> playlists) {
         mValues = items;
         mListener = listener;
         mContext = context;
+        mPlaylists = new HashMap<>(playlists.size());
+        for (Playlist playlist : playlists) {
+            mPlaylists.put(playlist.getPlaylistId(), playlist);
+        }
     }
 
     @Override
@@ -52,7 +56,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         holder.mSongArtist.setText(mValues.get(position).getArtist());
         holder.mSongAlbum.setText(mValues.get(position).getAlbum());
 
-        holder.mOverflowMenu.setBackgroundDrawable(null);
+        holder.mOverflowMenu.setBackground(null);
 
         holder.mOverflowMenu.setOnClickListener(v -> {
             //creating a popup menu
@@ -60,24 +64,37 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             //inflating menu from xml resource
             popup.inflate(R.menu.song_item_menu);
 
+            SubMenu playlistMenu = popup.getMenu().findItem(R.id.song_menu_add_to_playlist).getSubMenu();
+            for (Playlist playlist : mPlaylists.values()) {
+                playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_playlist);
+            }
+
             //adding click listener
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.song_menu_delete:
-                            //handle menu1 click
-                            Toast.makeText(mContext, "Delete", Toast.LENGTH_SHORT).show();
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+
+                    case R.id.song_menu_play:
+                        mListener.onSongPlay(holder.mSong);
+                        return true;
+                    case R.id.song_menu_queue:
+                        mListener.onSongQueue(holder.mSong);
+                        return true;
+                    case R.id.song_menu_edit:
+                        mListener.onSongEdit(holder.mSong);
+                        return true;
+                    case R.id.song_create_playlist:
+                        mListener.onCreatePlaylist();
+                        return true;
+                    case R.id.song_menu_delete:
+                        mListener.onSongDelete(holder.mSong);
+                        return true;
+                    default:
+                        Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
+                        if (selectedPlaylist != null) {
+                            mListener.onSongAddToPlaylist(holder.mSong, selectedPlaylist);
                             return true;
-//                        case R.id.menu2:
-//                            //handle menu2 click
-//                            return true;
-//                        case R.id.menu3:
-//                            //handle menu3 click
-//                            return true;
-                        default:
-                            return false;
-                    }
+                        }
+                        return false;
                 }
             });
             //displaying the popup
