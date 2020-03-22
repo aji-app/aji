@@ -14,7 +14,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 @Dao
 public interface RadioStationDao {
 
-    @Query("SELECT * FROM RadioStation  WHERE name like :text ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
+    @Query("SELECT * FROM RadioStation  WHERE name like :text OR genres like :text ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
     LiveData<List<RadioStation>> getRadioStations(String text, boolean asc);
 
     @Query("SELECT * FROM RadioStation ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
