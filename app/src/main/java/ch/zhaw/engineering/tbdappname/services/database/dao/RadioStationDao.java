@@ -28,4 +28,8 @@ public interface RadioStationDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insertRadioStation(RadioStation station);
+
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long[] insertRadioStations(List<RadioStation> station);
 }

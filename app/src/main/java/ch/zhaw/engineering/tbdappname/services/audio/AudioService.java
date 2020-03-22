@@ -482,14 +482,14 @@ public class AudioService extends LifecycleService {
     @Builder(toBuilder = true)
     @AllArgsConstructor
     static class SongInformation {
-        private long id;
-        private String title;
-        private String artist;
-        private String album;
-        private String playlistName;
-        private String path;
-        private long duration;
-        private boolean isRadio;
+        long id;
+        String title;
+        String artist;
+        String album;
+        String playlistName;
+        String path;
+        long duration;
+        boolean isRadio;
 
         static SongInformation fromSong(Song song, String playlistName) {
             return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false);

@@ -10,6 +10,7 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
@@ -45,5 +46,13 @@ public class RadioStationRepository {
 
     public void insert(RadioStation station) {
         mRadioStationDao.insertRadioStation(station);
+    }
+
+    public void insertAll(List<RadioStationDto> stations) {
+        List<RadioStation> radios = new ArrayList<>(stations.size());
+        for (RadioStationDto radio : stations) {
+            radios.add(radio.toRadioStation());
+        }
+        mRadioStationDao.insertRadioStations(radios);
     }
 }

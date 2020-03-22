@@ -179,9 +179,9 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
 
     @Value
     private static class StartPlayingAction {
-        private Song song;
-        private Playlist playlist;
-        private RadioStation station;
-        private boolean queue;
+        Song song;
+        Playlist playlist;
+        RadioStation station;
+        boolean queue;
     }
 }

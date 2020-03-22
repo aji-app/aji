@@ -75,7 +75,7 @@ public class CurrentlyPlayingActivity extends AudioInterfaceActivity {
             if (service == null) {
                 return;
             }
-            service.play(new RadioStation(1, "Fake Radio Station", "http://us5.internet-radio.com:8267/stream"));
+            service.play(new RadioStation(1, "Fake Radio Station", "http://us5.internet-radio.com:8267/stream", ""));
         });
 
         startService();

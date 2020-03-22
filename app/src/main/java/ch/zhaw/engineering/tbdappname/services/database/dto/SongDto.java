@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class SongDto {
+    private Long id;
     private Long mediaStoreSongId;
 
     private String filepath;
@@ -19,7 +20,7 @@ public class SongDto {
     public Bitmap albumArt;
 
     public Song toSong(String albumArtPath) {
-        return Song.builder()
+        Song.SongBuilder songBuilder = Song.builder()
                 .mediaStoreSongId(mediaStoreSongId)
                 .filepath(filepath)
                 .title(title)
@@ -29,7 +30,11 @@ public class SongDto {
                 .duration(duration)
                 .rating(null)
                 .favorite(false)
-                .albumArtPath(albumArtPath)
-                .build();
+                .albumArtPath(albumArtPath);
+        if (id != null) {
+            songBuilder.songId(id);
+        }
+
+        return songBuilder.build();
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -14,9 +15,12 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
+import ch.zhaw.engineering.tbdappname.services.files.CsvHelper;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
@@ -29,6 +33,7 @@ import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FI
 import static ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private static final int REQUEST_CODE_PLS_SELECT = 2;
 
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
 //        mAudioFileContentObserver.onChange(false);
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
+
+        RadioStationImporter.loadDefaultRadioStations(this);
 
         SongDao songDao = AppDatabase.getInstance(this).songDao();
         mRadioStationDao = AppDatabase.getInstance(this).radioStationDao();
