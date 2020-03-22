@@ -8,7 +8,7 @@
     android:layout_marginBottom="16dp"
     android:paddingStart="@dimen/fragment_margin"
     android:paddingEnd="@dimen/fragment_margin"
-    tools:context=".ui.songMeta.SongMetaFragment">
+    tools:context=".ui.song.SongMetaFragment">
         <androidx.appcompat.widget.SearchView
             android:id="@+id/song_filter"
             android:layout_width="0dp"

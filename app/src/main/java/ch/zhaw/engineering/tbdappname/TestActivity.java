@@ -12,7 +12,7 @@ import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepositor
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
-import ch.zhaw.engineering.tbdappname.ui.songMeta.SongMetaFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
 

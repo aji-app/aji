@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.songMeta;
+package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,11 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
 public class SongMetaFragment extends Fragment {
 
