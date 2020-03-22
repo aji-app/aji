@@ -6,8 +6,6 @@
     android:layout_height="44dp"
     android:orientation="horizontal"
     android:layout_marginBottom="16dp"
-    android:paddingStart="@dimen/fragment_margin"
-    android:paddingEnd="@dimen/fragment_margin"
     tools:context=".ui.song.SongMetaFragment">
         <androidx.appcompat.widget.SearchView
             android:id="@+id/song_filter"
@@ -15,7 +13,7 @@
             android:layout_weight="1"
             android:layout_height="36dp"
             />
-        <Button
+        <ImageButton
             android:id="@+id/song_meta_menu"
             android:layout_width="40dp"
             android:layout_height="match_parent"
@@ -23,6 +21,6 @@
             android:layout_marginEnd="0dp"
             android:gravity="center"
             android:padding="0dp"
-            android:text="&#8942;"
+            android:src="@drawable/ic_order"
             android:textAppearance="?android:textAppearanceLarge" />
 </LinearLayout>

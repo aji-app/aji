@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -21,7 +22,7 @@ import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepositor
 public class SongMetaFragment extends Fragment {
 
 
-    private Button mMetaMenu;
+    private ImageButton mMetaMenu;
     private SongMetaFragmentListener mListener;
 
     public static SongMetaFragment newInstance() {
