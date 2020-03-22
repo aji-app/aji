@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,7 +65,8 @@ public class SongFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             mRecyclerView = (RecyclerView) view;
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            mRecyclerView.setLayoutManager(layoutManager);
         }
 
         return view;
@@ -72,6 +75,11 @@ public class SongFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                ((LinearLayoutManager)mRecyclerView.getLayoutManager()).getOrientation());
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         mSongViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
             if (getActivity() == null) {
                 return;
@@ -112,6 +120,7 @@ public class SongFragment extends Fragment {
     public interface SongFragmentInteractionListener {
         // TODO: Update argument type and name
         void onSongSelected(Song item);
+
         void onSongOverflowMenu(Song item);
     }
 }

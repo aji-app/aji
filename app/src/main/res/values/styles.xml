@@ -8,10 +8,29 @@
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
-        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="primaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_primaryText</item>
         <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
+
+        <item name="textAppearanceListItem">
+            @style/Theme.App.Widget.ListItemTextView
+        </item>
+
+        <item name="textAppearanceListItemSecondary">
+            @style/Theme.App.Widget.ListItemTextViewSecondary
+        </item>
+    </style>
+
+    <style name="Theme.App.Widget.ListItemTextView" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textColor">?attr/primaryTextColor</item>
+        <item name="android:textSize">@dimen/listitem_primary_text_size</item>
+    </style>
+
+    <style name="Theme.App.Widget.ListItemTextViewSecondary" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textColor">?attr/secondaryTextColor</item>
+        <item name="android:textSize">@dimen/listitem_secondary_text_size</item>
     </style>
 
     <style name="App.Widget.Button.Primary"

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.ui.song.dummy.DummyContent.DummyItem;
-import ch.zhaw.engineering.tbdappname.ui.songsold.SongAdapter;
 
 import java.util.List;
 
@@ -38,9 +37,10 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getTitle());
-        holder.mContentView.setText(mValues.get(position).getAlbum());
+        holder.mSong = mValues.get(position);
+        holder.mSongTitle.setText(mValues.get(position).getTitle());
+        holder.mSongArtist.setText(mValues.get(position).getArtist());
+        holder.mSongAlbum.setText(mValues.get(position).getAlbum());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +48,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onSongSelected(holder.mItem);
+                    mListener.onSongSelected(holder.mSong);
                 }
             }
         });
@@ -59,22 +59,24 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Song mItem;
+        public final TextView mSongTitle;
+        public final TextView mSongArtist;
+        public final TextView mSongAlbum;
+        public Song mSong;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mSongTitle = view.findViewById(R.id.song_title);
+            mSongArtist = view.findViewById(R.id.song_artist);
+            mSongAlbum = view.findViewById(R.id.song_album);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mSong.toString() + "'";
         }
     }
 }
