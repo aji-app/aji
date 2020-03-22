@@ -85,7 +85,7 @@ public class SongFragment extends Fragment {
                 return;
             }
             getActivity().runOnUiThread(() -> {
-                mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songs, mListener));
+                mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songs, mListener, getActivity()));
             });
         });
     }
