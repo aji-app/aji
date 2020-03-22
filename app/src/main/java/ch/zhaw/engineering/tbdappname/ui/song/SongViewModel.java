@@ -82,7 +82,9 @@ public class SongViewModel extends AndroidViewModel {
     }
 
     private void update() {
-        mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText), mSongs::setValue);
+        mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText), value -> {
+            mSongs.setValue(value);
+        });
     }
 
     @Value

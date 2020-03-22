@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/list_item_margin"
     android:paddingBottom="@dimen/list_item_margin"
-    android:paddingStart="@dimen/text_margin"
-    android:paddingEnd="@dimen/text_margin"
+    android:paddingStart="@dimen/fragment_margin"
+    android:paddingEnd="@dimen/fragment_margin"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:id="@+id/song_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/fragment_margin"
             android:layout_marginBottom="4dp"
             android:singleLine="true"
             android:ellipsize="end"

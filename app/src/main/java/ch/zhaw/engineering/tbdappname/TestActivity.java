@@ -8,11 +8,13 @@ import android.widget.Toast;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
-import ch.zhaw.engineering.tbdappname.ui.test.TestFragment;
+import ch.zhaw.engineering.tbdappname.ui.songMeta.SongMetaFragment;
 
-public class TestActivity extends AppCompatActivity implements SongListFragment.SongFragmentInteractionListener {
+public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
 
     private SongViewModel mSongViewModel;
 
@@ -22,10 +24,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         setContentView(R.layout.test_activity);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, SongListFragment.newInstance())
-                    .commitNow();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.top_container, TestFragment.newInstance())
+                    .replace(R.id.container, SongFragment.newInstance())
                     .commitNow();
         }
 
@@ -35,6 +34,24 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onSongSelected(Song song) {
         Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSortTypeChanged(SongRepository.SortType sortType) {
+        Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
+        mSongViewModel.changeSortType(sortType);
+    }
+
+    @Override
+    public void onSearchTextChanged(String text) {
+        Toast.makeText(this, "onSearchTextChanged: " + text, Toast.LENGTH_SHORT).show();
+        mSongViewModel.changeSearchText(text);
+    }
+
+    @Override
+    public void onSortDirectionChanged(boolean ascending) {
+        Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
+        mSongViewModel.changeSortOrder(ascending);
     }
 
     @Override
