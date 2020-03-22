@@ -6,16 +6,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 import ch.zhaw.engineering.tbdappname.ui.test.TestFragment;
 
-public class TestActivity extends AppCompatActivity implements SongFragment.SongFragmentInteractionListener {
+public class TestActivity extends AppCompatActivity implements SongListFragment.SongFragmentInteractionListener {
 
     private SongViewModel mSongViewModel;
 
@@ -25,7 +22,7 @@ public class TestActivity extends AppCompatActivity implements SongFragment.Song
         setContentView(R.layout.test_activity);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, SongFragment.newInstance())
+                    .replace(R.id.bottom_container, SongListFragment.newInstance())
                     .commitNow();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.top_container, TestFragment.newInstance())

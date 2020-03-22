@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +24,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
  * Activities containing this fragment MUST implement the {@link SongFragmentInteractionListener}
  * interface.
  */
-public class SongFragment extends Fragment {
+public class SongListFragment extends Fragment {
 
     private SongFragmentInteractionListener mListener;
     private SongViewModel mSongViewModel;
@@ -35,13 +34,13 @@ public class SongFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public SongFragment() {
+    public SongListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static SongFragment newInstance() {
-        SongFragment fragment = new SongFragment();
+    public static SongListFragment newInstance() {
+        SongListFragment fragment = new SongListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

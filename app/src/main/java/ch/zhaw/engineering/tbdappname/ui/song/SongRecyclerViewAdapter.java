@@ -22,17 +22,17 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
- * specified {@link SongFragment.SongFragmentInteractionListener}.
+ * specified {@link SongListFragment.SongFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
 
     private final List<Song> mValues;
-    private final SongFragment.SongFragmentInteractionListener mListener;
+    private final SongListFragment.SongFragmentInteractionListener mListener;
     private Context mContext;
     private Map<Integer, Playlist> mPlaylists;
 
-    public SongRecyclerViewAdapter(List<Song> items, SongFragment.SongFragmentInteractionListener listener, Context context, List<Playlist> playlists) {
+    public SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongFragmentInteractionListener listener, Context context, List<Playlist> playlists) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -45,7 +45,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_song, parent, false);
+                .inflate(R.layout.fragment_song_item, parent, false);
         return new ViewHolder(view);
     }
 
