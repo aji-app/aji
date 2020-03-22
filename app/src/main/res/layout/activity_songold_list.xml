@@ -64,7 +64,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/fragment_song" />
+        tools:listitem="@layout/fragment_songold" />
 
     <TextView
         android:id="@+id/no_songs"

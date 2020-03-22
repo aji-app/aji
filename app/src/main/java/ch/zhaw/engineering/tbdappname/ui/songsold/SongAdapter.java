@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.songs;
+package ch.zhaw.engineering.tbdappname.ui.songsold;
 
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -144,7 +144,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> im
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_song, parent, false);
+                .inflate(R.layout.fragment_songold, parent, false);
         return new ViewHolder(view);
     }
 

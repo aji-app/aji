@@ -45,6 +45,9 @@ public interface SongDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insertSong(Song songs);
 
+    @Insert()
+    long[] insertSongs(List<Song> songs);
+
     @Update
     void updateSong(Song song);
 
