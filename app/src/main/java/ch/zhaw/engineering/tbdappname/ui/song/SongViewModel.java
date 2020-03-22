@@ -1,6 +1,8 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.app.Application;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,6 +20,7 @@ import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepositor
 import lombok.Value;
 
 public class SongViewModel extends AndroidViewModel {
+    private static final String TAG = "SongViewModel";
     private final SongRepository mSongRepository;
     private final PlaylistRepository mPlaylistRepository;
     private final MediatorLiveData<List<Song>> mSongs;
@@ -49,11 +52,13 @@ public class SongViewModel extends AndroidViewModel {
         mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, ""), mSongs::setValue);
 
         mSongsAndPlaylists.addSource(mSongs, songs -> {
+            Log.i(TAG, "Updating songs in combined list");
             SongsAndPlaylists currentValue = mSongsAndPlaylists.getValue();
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(songs, currentValue == null ? new ArrayList<>() : currentValue.playlists));
         });
 
         mSongsAndPlaylists.addSource(mPlaylistRepository.getAllPlaylists(), playlists -> {
+            Log.i(TAG, "Updating playlists");
             SongsAndPlaylists currentValue = mSongsAndPlaylists.getValue();
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(currentValue == null ? new ArrayList<>() : currentValue.songs, playlists));
         });
@@ -83,6 +88,7 @@ public class SongViewModel extends AndroidViewModel {
 
     private void update() {
         mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText), value -> {
+            Log.i(TAG, "Updating songs in songs list");
             mSongs.setValue(value);
         });
     }

@@ -2,6 +2,7 @@ package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
  * interface.
  */
 public class SongListFragment extends Fragment {
-
+    private static final String TAG = "SongListFragment";
     private SongListFragmentListener mListener;
     private SongViewModel mSongViewModel;
     private RecyclerView mRecyclerView;
@@ -53,7 +54,6 @@ public class SongListFragment extends Fragment {
         if (getArguments() != null) {
         }
 
-        mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
     }
 
     @Override
@@ -80,10 +80,9 @@ public class SongListFragment extends Fragment {
                 ((LinearLayoutManager)mRecyclerView.getLayoutManager()).getOrientation());
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mSongViewModel.getSongsAndPlaylists().observe(getViewLifecycleOwner(), songsAndPlaylists -> {
-            if (getActivity() == null) {
-                return;
-            }
+        mSongViewModel = new ViewModelProvider(getActivity()).get(SongViewModel.class);
+        mSongViewModel.getSongsAndPlaylists().observe(getActivity(), songsAndPlaylists -> {
+            Log.i(TAG, "Updating songs for song fragment");
             getActivity().runOnUiThread(() -> {
                 mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists()));
             });

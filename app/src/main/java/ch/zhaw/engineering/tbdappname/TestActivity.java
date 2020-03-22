@@ -29,6 +29,12 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         }
 
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
+        // Make sure there is an observer so updates are triggered
+        mSongViewModel.getSongs().observe(this, songs -> {});
+        mSongViewModel.getSongsAndPlaylists().observe(this, songs -> {
+            Toast.makeText(this, "SongsAndPlaylists changed", Toast.LENGTH_SHORT).show();
+        });
+        mSongViewModel.getPlaylists().observe(this, songs -> {});
     }
 
     @Override
