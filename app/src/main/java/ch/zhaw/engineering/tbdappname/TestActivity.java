@@ -12,16 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
-public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
+public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener, PlaylistListFragment.PlaylistFragmentListener {
     private static final String TAG = "TestActivity";
     private SongViewModel mSongViewModel;
     private PlaylistRepository mPlaylistRepository;
@@ -52,7 +54,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
                 return true;
             case R.id.playlist_list:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, SongFragment.newInstance())
+                        .replace(R.id.container, PlaylistListFragment.newInstance())
                         .commitNow();
                 return true;
             default:
@@ -131,5 +133,10 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         AsyncTask.execute(() -> {
             mSongRepository.toggleFavorite(song);
         });
+    }
+
+    @Override
+    public void onPlaylistSelected(PlaylistWithSongCount item) {
+        Toast.makeText(this, "onPlaylistSelected: " + item.getName(), Toast.LENGTH_SHORT).show();
     }
 }

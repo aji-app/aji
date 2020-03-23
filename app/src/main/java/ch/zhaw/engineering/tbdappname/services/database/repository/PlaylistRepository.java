@@ -61,8 +61,12 @@ public class PlaylistRepository {
         mPlaylistDao.deleteBySongId(song.getSongId());
     }
 
-    public LiveData<List<PlaylistWithSongCount>> getPlaylistsWithSongCount(boolean ascending) {
-        return mPlaylistDao.getPlaylistWithSongCount(ascending);
+    public LiveData<List<PlaylistWithSongCount>> getPlaylistsWithSongCount(String searchText, boolean ascending) {
+        if (searchText == null) {
+            return mPlaylistDao.getPlaylistWithSongCount(ascending);
+        }
+        String searchQuery = "%" + searchText + "%";
+        return mPlaylistDao.getPlaylistWithSongCount(searchQuery, ascending);
     }
 
 

@@ -2,35 +2,35 @@ package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.ui.playlist.dummy.DummyContent;
-import ch.zhaw.engineering.tbdappname.ui.playlist.dummy.DummyContent.DummyItem;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link PlaylistFragmentListener}
  * interface.
  */
-public class PlaylistListFragment extends Fragment {
+public class PlaylistListFragment extends TbdListFragment {
+    private static final String TAG = "PlaylistListFragment";
+    //    // TODO: Customize parameter argument names
+//    private static final String ARG_COLUMN_COUNT = "column-count";
+//    // TODO: Customize parameters
+//    private int mColumnCount = 1;
+    private PlaylistFragmentListener mListener;
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private PlaylistViewModel mPlaylistViewModel;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,10 +41,9 @@ public class PlaylistListFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static PlaylistListFragment newInstance(int columnCount) {
+    public static PlaylistListFragment newInstance() {
         PlaylistListFragment fragment = new PlaylistListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +53,7 @@ public class PlaylistListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
@@ -66,26 +65,37 @@ public class PlaylistListFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            mRecyclerView = (RecyclerView) view;
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            mRecyclerView.setLayoutManager(layoutManager);
         }
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mPlaylistViewModel = new ViewModelProvider(getActivity()).get(PlaylistViewModel.class);
+            mPlaylistViewModel.getAllPlaylists().observe(getActivity(), playlists -> {
+                Log.i(TAG, "Updating playlists for playlist list fragment");
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        mRecyclerView.setAdapter(new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity()));
+                    });
+                }
+            });
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof PlaylistFragmentListener) {
+            mListener = (PlaylistFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement PlaylistFragmentListener");
         }
     }
 
@@ -105,8 +115,7 @@ public class PlaylistListFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+    public interface PlaylistFragmentListener {
+        void onPlaylistSelected(PlaylistWithSongCount item);
     }
 }

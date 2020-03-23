@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 
 /**
  * A fragment representing a list of Songs.
@@ -25,11 +28,10 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
  * Activities containing this fragment MUST implement the {@link SongListFragmentListener}
  * interface.
  */
-public class SongListFragment extends Fragment {
+public class SongListFragment extends TbdListFragment {
     private static final String TAG = "SongListFragment";
     private SongListFragmentListener mListener;
     private SongViewModel mSongViewModel;
-    private RecyclerView mRecyclerView;
 
     @SuppressWarnings("unused")
     public static SongListFragment newInstance() {
@@ -63,19 +65,17 @@ public class SongListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                ((LinearLayoutManager)mRecyclerView.getLayoutManager()).getOrientation());
-        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
         mSongViewModel = new ViewModelProvider(getActivity()).get(SongViewModel.class);
         mSongViewModel.getSongsAndPlaylists().observe(getViewLifecycleOwner(), songsAndPlaylists -> {
             Log.i(TAG, "Updating songs for song fragment");
-            getActivity().runOnUiThread(() -> {
-                mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists()));
-            });
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists()));
+                });
+            }
         });
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -99,11 +99,17 @@ public class SongListFragment extends Fragment {
         void onSongSelected(Song song);
 
         void onSongPlay(Song song);
+
         void onSongQueue(Song song);
+
         void onSongEdit(Song song);
+
         void onSongAddToPlaylist(Song song, Playlist playlist);
+
         void onSongDelete(Song song);
+
         void onCreatePlaylist();
+
         void onToggleFavorite(Song song);
     }
 }
