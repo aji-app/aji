@@ -1,16 +1,22 @@
 package ch.zhaw.engineering.tbdappname;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +49,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         setContentView(R.layout.test_activity);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, SongFragment.newInstance())
+                    .replace(R.id.container, PlaylistFragment.newInstance())
                     .commitNow();
         }
 
@@ -132,9 +138,10 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
     @Override
     public void onCreatePlaylist() {
-        Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
-        startActivity(intent);
+        showPlaylistNameDialog(null);
+//        Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
+//        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
+//        startActivity(intent);
     }
 
     @Override
@@ -175,5 +182,45 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         AsyncTask.execute(() -> {
             mPlaylistRepository.deletePlaylistById(playlist.getPlaylistId());
         });
+    }
+
+    private void showPlaylistNameDialog(PlaylistWithSongCount playlist) {
+
+
+// ...Irrelevant code for customizing the buttons and title
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View dialogView = inflater.inflate(R.layout.alert_create_playlist, null);
+        EditText editText = dialogView.findViewById(R.id.playlist_name);
+        editText.setOnFocusChangeListener((View v, boolean hasFocus) -> {
+            editText.post(() -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+        });
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setTitle(playlist == null ? R.string.create_playlist : R.string.edit_playlist)
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    AsyncTask.execute(() -> {
+                        Playlist newPlaylist = Playlist.builder()
+                                .name(editText.getText().toString())
+                                .build();
+                        mPlaylistRepository.insert(newPlaylist);
+                    });
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+
+        if (playlist != null) {
+            editText.setText(playlist.getName());
+        }
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+        editText.requestFocus();
     }
 }

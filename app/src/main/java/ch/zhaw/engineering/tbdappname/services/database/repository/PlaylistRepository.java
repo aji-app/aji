@@ -69,6 +69,10 @@ public class PlaylistRepository {
         return mPlaylistDao.getPlaylistWithSongCount(searchQuery, ascending);
     }
 
+    public void insert(Playlist playlist) {
+        mPlaylistDao.insert(playlist);
+    }
+
 
     public void insert(PlaylistWithSongs playlist) {
         long createdPlaylist = playlist.playlist.getPlaylistId();

@@ -23,4 +23,9 @@
     <string name="contentDescription_change_sort_order">Change sort order</string>
     <string name="mennu_dots">⋮</string>
     <string name="add_playlist">Add Playlist</string>
+    <string name="hint_playlist_name">Playlist Name</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>
