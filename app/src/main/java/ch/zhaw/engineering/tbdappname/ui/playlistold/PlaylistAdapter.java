@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.playlist;
+package ch.zhaw.engineering.tbdappname.ui.playlistold;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -29,7 +29,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_playlist, parent, false);
+                .inflate(R.layout.fragment_playlistold, parent, false);
         return new ViewHolder(view);
     }
 

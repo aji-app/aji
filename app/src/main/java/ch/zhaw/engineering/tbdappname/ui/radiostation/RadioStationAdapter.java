@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapter.ViewHolder> {
@@ -30,7 +29,7 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_playlist, parent, false);
+                .inflate(R.layout.fragment_playlistold, parent, false);
         return new ViewHolder(view);
     }
 

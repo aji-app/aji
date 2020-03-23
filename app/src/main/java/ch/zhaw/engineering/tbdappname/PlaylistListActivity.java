@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistAdapter;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistViewModel;
+import ch.zhaw.engineering.tbdappname.ui.playlistold.PlaylistAdapter;
+import ch.zhaw.engineering.tbdappname.ui.playlistold.PlaylistViewModel;
 
 import static ch.zhaw.engineering.tbdappname.AddOrEditPlaylistActivity.EXTRA_PLAYLIST_ID;
 
@@ -25,7 +25,7 @@ public class PlaylistListActivity extends AudioInterfaceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlist_list);
+        setContentView(R.layout.activity_playlistold_list);
 
         RecyclerView recyclerView = findViewById(R.id.playlist_list);
         mPlaylistViewModel = new PlaylistViewModel(this.getApplication());
