@@ -7,6 +7,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.PopupMenu;
@@ -57,6 +58,13 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         holder.mSongAlbum.setText(mValues.get(position).getAlbum());
 
         holder.mOverflowMenu.setBackground(null);
+        holder.mFavoriteButton.setBackground(null);
+        if (holder.mSong.isFavorite()) {
+            holder.mFavoriteButton.setImageResource(R.drawable.ic_favorite);
+        } else {
+            holder.mFavoriteButton.setImageResource(R.drawable.ic_not_favorite);
+        }
+        holder.mFavoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.mSong));
 
         holder.mOverflowMenu.setOnClickListener(v -> {
             //creating a popup menu
@@ -124,6 +132,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         public final TextView mSongArtist;
         public final TextView mSongAlbum;
         public final Button mOverflowMenu;
+        public final ImageButton mFavoriteButton;
         public Song mSong;
 
         public ViewHolder(View view) {
@@ -133,6 +142,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             mSongArtist = view.findViewById(R.id.song_artist);
             mSongAlbum = view.findViewById(R.id.song_album);
             mOverflowMenu = view.findViewById(R.id.song_item_overflow);
+            mFavoriteButton = view.findViewById(R.id.song_item_favorite);
         }
 
         @Override

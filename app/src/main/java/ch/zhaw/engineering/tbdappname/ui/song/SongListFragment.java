@@ -126,5 +126,6 @@ public class SongListFragment extends Fragment {
         void onSongAddToPlaylist(Song song, Playlist playlist);
         void onSongDelete(Song song);
         void onCreatePlaylist();
+        void onToggleFavorite(Song song);
     }
 }

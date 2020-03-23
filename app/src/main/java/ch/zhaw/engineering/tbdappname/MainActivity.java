@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < 10; i++) {
                     fakeSongs.add(Song.builder()
                             .title("Song Nr. " + i)
-                            .artist("Pendulum")
+                            .artist("Fake Band")
                             .album("Make it Fake")
                             .filepath("bubu" + i)
                             .duration((long) (1000 * (i + 1) + Math.random() * 500))

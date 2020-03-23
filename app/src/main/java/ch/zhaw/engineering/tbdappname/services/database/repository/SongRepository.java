@@ -104,6 +104,11 @@ public class SongRepository {
         }
     }
 
+    public void toggleFavorite(Song song) {
+        song.setFavorite(!song.isFavorite());
+        mSongDao.updateSong(song);
+    }
+
     public void deleteSong(Song song) {
         mPlaylistRepo.deleteSongFromPlaylists(song);
         mSongDao.deleteSong(song);

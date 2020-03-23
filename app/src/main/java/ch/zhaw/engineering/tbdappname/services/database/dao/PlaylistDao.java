@@ -29,6 +29,10 @@ public interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<PlaylistSongCrossRef> refs);
 
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(PlaylistSongCrossRef ref);
+
     @Query("DELETE FROM PlaylistSongCrossRef WHERE PlaylistSongCrossRef.songId == :songId")
     void deleteBySongId(long songId);
 

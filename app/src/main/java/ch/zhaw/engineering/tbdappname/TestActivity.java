@@ -3,11 +3,13 @@ package ch.zhaw.engineering.tbdappname;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
@@ -17,6 +19,8 @@ import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
 
     private SongViewModel mSongViewModel;
+    private PlaylistRepository mPlaylistRepository;
+    private SongRepository mSongRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +34,16 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
         // Make sure there is an observer so updates are triggered
-        mSongViewModel.getSongs().observe(this, songs -> {});
+        mSongViewModel.getSongs().observe(this, songs -> {
+        });
         mSongViewModel.getSongsAndPlaylists().observe(this, songs -> {
             Toast.makeText(this, "SongsAndPlaylists changed", Toast.LENGTH_SHORT).show();
         });
-        mSongViewModel.getPlaylists().observe(this, songs -> {});
+        mSongViewModel.getPlaylists().observe(this, songs -> {
+        });
+
+        mPlaylistRepository = PlaylistRepository.getInstance(this);
+        mSongRepository = SongRepository.getInstance(this);
     }
 
     @Override
@@ -78,6 +87,9 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onSongAddToPlaylist(Song song, Playlist playlist) {
         Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            mPlaylistRepository.addSongToPlaylist(song, playlist);
+        });
     }
 
     @Override
@@ -88,5 +100,13 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onCreatePlaylist() {
         Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onToggleFavorite(Song song) {
+        Toast.makeText(this, "onToggleFavorite: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            mSongRepository.toggleFavorite(song);
+        });
     }
 }

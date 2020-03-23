@@ -40,6 +40,12 @@ public class PlaylistRepository {
         return mPlaylistDao.getSortedPlaylists(searchQuery, ascending);
     }
 
+    public void addSongToPlaylist(Song song, Playlist playlist) {
+        PlaylistWithSongs playlistwithSongs = mPlaylistDao.findPlaylistWithSongsById(playlist.getPlaylistId());
+        PlaylistSongCrossRef playlistSongCrossRef = new PlaylistSongCrossRef(playlist.getPlaylistId(), song.getSongId(), playlistwithSongs.songs.size());
+        mPlaylistDao.insert(playlistSongCrossRef);
+    }
+
     public PlaylistWithSongs findPlaylistById(long id) {
         return mPlaylistDao.findPlaylistWithSongsById(id);
     }
