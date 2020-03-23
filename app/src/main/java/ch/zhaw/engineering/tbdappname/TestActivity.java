@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -201,25 +203,54 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             });
         });
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+        editText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    editText.setError(null);
+                }
+            }
+        });
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.Theme_App_AlertDialog)
                 .setView(dialogView)
                 .setTitle(playlist == null ? R.string.create_playlist : R.string.edit_playlist)
-                .setPositiveButton(R.string.save, (dialog, which) -> {
-                    AsyncTask.execute(() -> {
-                        Playlist newPlaylist = Playlist.builder()
-                                .name(editText.getText().toString())
-                                .build();
-                        mPlaylistRepository.insert(newPlaylist);
-                    });
-                })
+                .setPositiveButton(R.string.save, null)
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
-
 
         if (playlist != null) {
             editText.setText(playlist.getName());
         }
 
         AlertDialog alertDialog = dialogBuilder.create();
+
+        alertDialog.setOnShowListener(dialogInterface -> {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (editText.getText().length() == 0) {
+                    editText.setError(getResources().getString(R.string.playlist_name_empty));
+                    return;
+                }
+                AsyncTask.execute(() -> {
+                    Playlist newPlaylist = Playlist.builder()
+                            .name(editText.getText().toString())
+                            .build();
+                    mPlaylistRepository.insert(newPlaylist);
+                });
+                alertDialog.dismiss();
+            });
+        });
+
         alertDialog.show();
         editText.requestFocus();
     }

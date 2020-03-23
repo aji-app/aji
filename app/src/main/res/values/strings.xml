@@ -28,4 +28,5 @@
     <string name="edit_playlist">Edit Playlist</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="playlist_name_empty">Name cannot be empty</string>
 </resources>

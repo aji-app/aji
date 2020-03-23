@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     android:paddingStart="?dialogPreferredPadding"
     android:paddingEnd="?dialogPreferredPadding">
-<!--    <TextView-->
-<!--        android:id="@+id/title"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_weight="1"-->
-<!--        android:text="Enter Playlist Name"-->
-<!--        android:textAppearance="@style/TextAppearance.AppCompat.Large" />-->
     <EditText
         android:id="@+id/playlist_name"
         android:layout_width="match_parent"

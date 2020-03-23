@@ -23,6 +23,17 @@
         </item>
     </style>
 
+    <style name="Theme.App.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_primaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+    </style>
+
     <style name="Theme.App.Widget.ListItemTextView" parent="@android:style/Widget.Material.TextView">
         <item name="android:textColor">?attr/primaryTextColor</item>
         <item name="android:textSize">@dimen/listitem_primary_text_size</item>
