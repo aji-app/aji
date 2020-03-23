@@ -83,4 +83,8 @@ public class PlaylistRepository {
         }
         mPlaylistDao.insertAll(songs);
     }
+
+    public void deletePlaylistById(int playlistId) {
+        mPlaylistDao.deletePlaylistAndSongsByPlaylistId(playlistId);
+    }
 }

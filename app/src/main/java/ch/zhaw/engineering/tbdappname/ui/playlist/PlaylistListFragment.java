@@ -116,6 +116,11 @@ public class PlaylistListFragment extends TbdListFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface PlaylistFragmentListener {
-        void onPlaylistSelected(PlaylistWithSongCount item);
+        void onPlaylistSelected(PlaylistWithSongCount playlist);
+        void onPlaylistEdit(PlaylistWithSongCount playlist);
+        void onPlaylistPlay(PlaylistWithSongCount playlist);
+        void onPlaylistQueue(PlaylistWithSongCount playlist);
+        void onPlaylistDelete(PlaylistWithSongCount playlist);
+
     }
 }

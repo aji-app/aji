@@ -69,6 +69,21 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
             //adding click listener
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
+                    case R.id.playlist_menu_play:
+                        mListener.onPlaylistPlay(holder.mPlaylist);
+                        return true;
+
+                    case R.id.playlist_menu_queue:
+                        mListener.onPlaylistQueue(holder.mPlaylist);
+                        return true;
+
+                    case R.id.playlist_menu_edit:
+                        mListener.onPlaylistEdit(holder.mPlaylist);
+                        return true;
+
+                    case R.id.playlist_menu_delete:
+                        mListener.onPlaylistDelete(holder.mPlaylist);
+                        return true;
                     default:
                         return false;
                 }

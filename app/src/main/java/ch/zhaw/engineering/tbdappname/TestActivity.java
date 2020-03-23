@@ -29,6 +29,8 @@ import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
+import static ch.zhaw.engineering.tbdappname.AddOrEditPlaylistActivity.EXTRA_PLAYLIST_ID;
+
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener, PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener {
     private static final String TAG = "TestActivity";
     private SongViewModel mSongViewModel;
@@ -144,7 +146,34 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onPlaylistSelected(PlaylistWithSongCount item) {
-        Toast.makeText(this, "onPlaylistSelected: " + item.getName(), Toast.LENGTH_SHORT).show();
+    public void onPlaylistSelected(PlaylistWithSongCount playlist) {
+        Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPlaylistEdit(PlaylistWithSongCount playlist) {
+        Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
+        intent.putExtra(EXTRA_PLAYLIST_ID, playlist.getPlaylistId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onPlaylistPlay(PlaylistWithSongCount playlist) {
+        Toast.makeText(this, "onPlaylistPlay: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onPlaylistQueue(PlaylistWithSongCount playlist) {
+        Toast.makeText(this, "onPlaylistQueue: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPlaylistDelete(PlaylistWithSongCount playlist) {
+        Toast.makeText(this, "onPlaylistDelete: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            mPlaylistRepository.deletePlaylistById(playlist.getPlaylistId());
+        });
     }
 }
