@@ -2,6 +2,7 @@ package ch.zhaw.engineering.tbdappname;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +22,7 @@ import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
-
+    private static final String TAG = "TestActivity";
     private SongViewModel mSongViewModel;
     private PlaylistRepository mPlaylistRepository;
     private SongRepository mSongRepository;
