@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_item_margin"
+    android:paddingBottom="@dimen/list_item_margin"
+    android:paddingStart="@dimen/fragment_margin"
+    android:paddingEnd="@dimen/fragment_margin"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            tools:text="Fake Song 1"
+            android:id="@+id/playlist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fragment_margin"
+            android:layout_marginBottom="4dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="?attr/primaryTextColor" />
+
+
+        <TextView
+            android:id="@+id/playlist_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Fake Artist"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/playlist_item_overflow"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:text="&#8942;"
+        android:textColor="?attr/colorPrimary"
+        android:textAppearance="?android:textAppearanceLarge" />
+
+</LinearLayout>

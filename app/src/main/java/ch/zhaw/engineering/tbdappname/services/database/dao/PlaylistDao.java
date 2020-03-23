@@ -9,6 +9,7 @@ import androidx.room.Transaction;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
@@ -49,4 +50,12 @@ public interface PlaylistDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     void deleteSongsFromPlaylist(long playlistId);
+
+//    @Query("SELECT pl.name as name, pl.playlistId as playlistId, (SELECT COUNT(*) FROM PlaylistSongCrossRef ref WHERE ref.playlistId = pl.playlistId) as songCount FROM Playlist pl ")
+    @Query("SELECT pl.name as name, pl.playlistId as playlistId, COUNT(ref.playlistId) as songCount FROM Playlist pl " +
+            "LEFT JOIN PlaylistSongCrossRef ref ON ref.playlistId = pl.playlistId GROUP BY pl.playlistId " +
+            "ORDER BY CASE WHEN :asc = 1 THEN pl.name END ASC, CASE WHEN :asc = 0 THEN pl.name END DESC")
+    LiveData<List<PlaylistWithSongCount>> getPlaylistWithSongCount(boolean asc);
+
+
 }
