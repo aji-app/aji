@@ -2,14 +2,15 @@ package ch.zhaw.engineering.tbdappname;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
-import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
@@ -38,6 +39,33 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
         mPlaylistRepository = PlaylistRepository.getInstance(this);
         mSongRepository = SongRepository.getInstance(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.song_list:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, SongFragment.newInstance())
+                        .commitNow();
+                return true;
+            case R.id.playlist_list:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, SongFragment.newInstance())
+                        .commitNow();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.test_options_menu, menu);
+
+        // return true so that the menu pop up is opened
+        return true;
     }
 
     @Override
