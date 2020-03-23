@@ -1,5 +1,10 @@
 package ch.zhaw.engineering.tbdappname;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,13 +22,14 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
-public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener, PlaylistListFragment.PlaylistFragmentListener {
+public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener, PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener {
     private static final String TAG = "TestActivity";
     private SongViewModel mSongViewModel;
     private PlaylistRepository mPlaylistRepository;
@@ -54,7 +60,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
                 return true;
             case R.id.playlist_list:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, PlaylistListFragment.newInstance())
+                        .replace(R.id.container, PlaylistFragment.newInstance())
                         .commitNow();
                 return true;
             default:
@@ -125,6 +131,8 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onCreatePlaylist() {
         Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
+        startActivity(intent);
     }
 
     @Override
