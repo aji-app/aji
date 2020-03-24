@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
@@ -77,16 +79,11 @@ public class PlaylistListFragment extends TbdListFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mPlaylistViewModel = new ViewModelProvider(getActivity()).get(PlaylistViewModel.class);
-            mPlaylistViewModel.getAllPlaylists().observe(getActivity(), playlists -> {
-                Log.i(TAG, "Updating playlists for playlist list fragment");
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        mRecyclerView.setAdapter(new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity()));
-                    });
-                }
-            });
+            mPlaylistViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -103,6 +100,15 @@ public class PlaylistListFragment extends TbdListFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void onPlaylistsChanged(List<PlaylistWithSongCount> playlists) {
+        Log.i(TAG, "Updating playlists for playlist list fragment");
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                mRecyclerView.setAdapter(new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity()));
+            });
+        }
     }
 
     /**
