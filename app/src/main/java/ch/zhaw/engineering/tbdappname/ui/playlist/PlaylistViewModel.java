@@ -30,7 +30,6 @@ public class PlaylistViewModel extends AndroidViewModel {
         mPlaylists.addSource(mPlaylistRepository.getPlaylistsWithSongCount("", mAscending), mPlaylists::setValue);
     }
 
-
     public void changeSortOrder(boolean ascending) {
         mAscending = ascending;
         update();

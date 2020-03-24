@@ -8,4 +8,5 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ui.song.SongListFragment"
-    tools:listitem="@layout/fragment_song_item" />
+    tools:listitem="@layout/fragment_song_item"
+    tools:viewBindingIgnore="true" />

@@ -18,14 +18,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.databinding.FragmentSongMetaBinding;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 
 public class SongMetaFragment extends Fragment {
 
-
-    private ImageButton mMetaMenu;
     private SongMetaFragmentListener mListener;
+    private FragmentSongMetaBinding mBinding;
 
     public static SongMetaFragment newInstance() {
         return new SongMetaFragment();
@@ -35,15 +35,10 @@ public class SongMetaFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_song_meta, container, false);
+        mBinding = FragmentSongMetaBinding.inflate(inflater);
 
-        mMetaMenu = view.findViewById(R.id.song_meta_menu);
-        mMetaMenu.setBackground(null);
-
-        SearchView searchView = view.findViewById(R.id.song_filter);
-        ImageView icon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
-        DrawableCompat.setTint(icon.getDrawable(), R.attr.colorPrimary);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mBinding.songMetaMenu.setBackground(null);
+        mBinding.songFilter.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -58,13 +53,13 @@ public class SongMetaFragment extends Fragment {
             }
         });
 
-        return view;
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        PopupMenu popup = new PopupMenu(getActivity(), mMetaMenu);
+        PopupMenu popup = new PopupMenu(getActivity(), mBinding.songMetaMenu);
         //inflating menu from xml resource
         popup.inflate(R.menu.song_meta_menu);
         //adding click listener
@@ -92,7 +87,7 @@ public class SongMetaFragment extends Fragment {
             }
         });
 
-        mMetaMenu.setOnClickListener(v -> popup.show());
+        mBinding.songMetaMenu.setOnClickListener(v -> popup.show());
     }
 
 

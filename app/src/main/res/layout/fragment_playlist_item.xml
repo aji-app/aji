@@ -29,7 +29,7 @@
 
 
         <TextView
-            android:id="@+id/playlist_count"
+            android:id="@+id/playlist_song_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Fake Artist"

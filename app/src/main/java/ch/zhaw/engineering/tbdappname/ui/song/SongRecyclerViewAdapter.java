@@ -18,14 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
- * specified {@link SongListFragment.SongListFragmentListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
 
     private final List<Song> mValues;
@@ -33,7 +29,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private Context mContext;
     private Map<Integer, Playlist> mPlaylists;
 
-    public SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, List<Playlist> playlists) {
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, List<Playlist> playlists) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -45,6 +41,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        FragmentSongItemBinding binding = FragmentSongItemBinding.inflate(LayoutInflater.from(parent.getContext()));
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_song_item, parent, false);
         return new ViewHolder(view);
@@ -52,23 +49,27 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mSong = mValues.get(position);
-        holder.mSongTitle.setText(mValues.get(position).getTitle());
-        holder.mSongArtist.setText(mValues.get(position).getArtist());
-        holder.mSongAlbum.setText(mValues.get(position).getAlbum());
+        holder.song = mValues.get(position);
+        holder.binding.songTitle.setText(mValues.get(position).getTitle());
+        holder.binding.songArtist.setText(mValues.get(position).getArtist());
+        holder.binding.songAlbum.setText(mValues.get(position).getAlbum());
 
-        holder.mOverflowMenu.setBackground(null);
-        holder.mFavoriteButton.setBackground(null);
-        if (holder.mSong.isFavorite()) {
-            holder.mFavoriteButton.setImageResource(R.drawable.ic_favorite);
+        Button overFlow = holder.binding.songItemOverflow;
+        ImageButton favoriteButton = holder.binding.songItemFavorite;
+
+        overFlow.setBackground(null);
+        favoriteButton.setBackground(null);
+
+        if (holder.song.isFavorite()) {
+            favoriteButton.setImageResource(R.drawable.ic_favorite);
         } else {
-            holder.mFavoriteButton.setImageResource(R.drawable.ic_not_favorite);
+            favoriteButton.setImageResource(R.drawable.ic_not_favorite);
         }
-        holder.mFavoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.mSong));
+        favoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.song));
 
-        holder.mOverflowMenu.setOnClickListener(v -> {
+        overFlow.setOnClickListener(v -> {
             //creating a popup menu
-            PopupMenu popup = new PopupMenu(mContext, holder.mOverflowMenu);
+            PopupMenu popup = new PopupMenu(mContext, overFlow);
             //inflating menu from xml resource
             popup.inflate(R.menu.song_item_menu);
 
@@ -82,24 +83,24 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 switch (item.getItemId()) {
 
                     case R.id.song_menu_play:
-                        mListener.onSongPlay(holder.mSong);
+                        mListener.onSongPlay(holder.song);
                         return true;
                     case R.id.song_menu_queue:
-                        mListener.onSongQueue(holder.mSong);
+                        mListener.onSongQueue(holder.song);
                         return true;
                     case R.id.song_menu_edit:
-                        mListener.onSongEdit(holder.mSong);
+                        mListener.onSongEdit(holder.song);
                         return true;
                     case R.id.song_create_playlist:
                         mListener.onCreatePlaylist();
                         return true;
                     case R.id.song_menu_delete:
-                        mListener.onSongDelete(holder.mSong);
+                        mListener.onSongDelete(holder.song);
                         return true;
                     default:
                         Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
                         if (selectedPlaylist != null) {
-                            mListener.onSongAddToPlaylist(holder.mSong, selectedPlaylist);
+                            mListener.onSongAddToPlaylist(holder.song, selectedPlaylist);
                             return true;
                         }
                         return false;
@@ -109,14 +110,11 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             popup.show();
         });
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onSongSelected(holder.mSong);
-                }
+        holder.binding.getRoot().setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onSongSelected(holder.song);
             }
         });
     }
@@ -127,27 +125,17 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mSongTitle;
-        public final TextView mSongArtist;
-        public final TextView mSongAlbum;
-        public final Button mOverflowMenu;
-        public final ImageButton mFavoriteButton;
-        public Song mSong;
+        public FragmentSongItemBinding binding;
+        public Song song;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mSongTitle = view.findViewById(R.id.song_title);
-            mSongArtist = view.findViewById(R.id.song_artist);
-            mSongAlbum = view.findViewById(R.id.song_album);
-            mOverflowMenu = view.findViewById(R.id.song_item_overflow);
-            mFavoriteButton = view.findViewById(R.id.song_item_favorite);
+            this.binding = FragmentSongItemBinding.bind(view);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mSong.toString() + "'";
+            return super.toString() + " '" + song.toString() + "'";
         }
     }
 }

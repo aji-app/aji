@@ -1,29 +1,19 @@
 package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
 
-import ch.zhaw.engineering.tbdappname.AddOrEditPlaylistActivity;
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
+import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PlaylistFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PlaylistFragment extends Fragment {
     private PlaylistFragmentListener mListener;
+    private FragmentPlaylistBinding mBinding;
 
     public static PlaylistFragment newInstance() {
         PlaylistFragment fragment = new PlaylistFragment();
@@ -53,8 +43,7 @@ public class PlaylistFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+        mBinding = FragmentPlaylistBinding.inflate(inflater);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
@@ -62,15 +51,13 @@ public class PlaylistFragment extends Fragment {
                     .commitNow();
         }
 
-        FloatingActionButton fab = view.findViewById(R.id.add_playlist);
-
-        fab.setOnClickListener(v -> {
-          if (mListener != null) {
-              mListener.onCreatePlaylist();
-          }
+        mBinding.fabAddPlaylist.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onCreatePlaylist();
+            }
         });
 
-        return view;
+        return mBinding.getRoot();
     }
 
     public interface PlaylistFragmentListener {
