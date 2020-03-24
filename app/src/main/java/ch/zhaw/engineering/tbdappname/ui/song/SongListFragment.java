@@ -81,7 +81,7 @@ public class SongListFragment extends Fragment {
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         mRecyclerView.addItemDecoration(dividerItemDecoration);
         mSongViewModel = new ViewModelProvider(getActivity()).get(SongViewModel.class);
-        mSongViewModel.getSongsAndPlaylists().observe(getActivity(), songsAndPlaylists -> {
+        mSongViewModel.getSongsAndPlaylists().observe(getViewLifecycleOwner(), songsAndPlaylists -> {
             Log.i(TAG, "Updating songs for song fragment");
             getActivity().runOnUiThread(() -> {
                 mRecyclerView.setAdapter(new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists()));

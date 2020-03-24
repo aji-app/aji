@@ -1,11 +1,11 @@
 package ch.zhaw.engineering.tbdappname;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -13,8 +13,8 @@ import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepos
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener {
 

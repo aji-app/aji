@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -39,6 +41,8 @@ public class SongMetaFragment extends Fragment {
         mMetaMenu.setBackground(null);
 
         SearchView searchView = view.findViewById(R.id.song_filter);
+        ImageView icon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+        DrawableCompat.setTint(icon.getDrawable(), R.attr.colorPrimary);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -91,6 +95,8 @@ public class SongMetaFragment extends Fragment {
         mMetaMenu.setOnClickListener(v -> popup.show());
     }
 
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -103,8 +109,6 @@ public class SongMetaFragment extends Fragment {
     }
 
     public interface SongMetaFragmentListener {
-        // TODO: Update argument type and name
-        void onSongSelected(Song song);
 
         void onSortTypeChanged(SongRepository.SortType sortType);
         void onSearchTextChanged(String text);
