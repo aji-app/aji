@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;

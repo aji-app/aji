@@ -30,13 +30,16 @@ public interface SongDao {
             " ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     LiveData<List<Song>> getSongsSortedByArtist(String text, boolean asc);
 
-    @Query("SELECT * FROM Song WHERE song.deleted == 0 ORDER BY CASE WHEN :asc = 1 THEN song.title END ASC, CASE WHEN :asc = 0 THEN song.title END DESC")
+    @Query("SELECT * FROM Song WHERE song.deleted == 0 " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.title END ASC, CASE WHEN :asc = 0 THEN song.title END DESC")
     LiveData<List<Song>> getSongsSortedByTitle(boolean asc);
 
-    @Query("SELECT * FROM Song WHERE song.deleted == 0 ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+    @Query("SELECT * FROM Song WHERE song.deleted == 0 " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     LiveData<List<Song>> getSongsSortedByAlbum(boolean asc);
 
-    @Query("SELECT * FROM Song WHERE song.deleted == 0 ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
+    @Query("SELECT * FROM Song WHERE song.deleted == 0 " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     LiveData<List<Song>> getSongsSortedByArtist(boolean asc);
 
     @Query("SELECT * FROM Song")
