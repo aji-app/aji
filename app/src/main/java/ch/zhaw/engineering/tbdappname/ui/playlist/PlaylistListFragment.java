@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,45 +19,16 @@ import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link PlaylistFragmentListener}
- * interface.
- */
 public class PlaylistListFragment extends TbdListFragment {
     private static final String TAG = "PlaylistListFragment";
-    //    // TODO: Customize parameter argument names
-//    private static final String ARG_COLUMN_COUNT = "column-count";
-//    // TODO: Customize parameters
-//    private int mColumnCount = 1;
     private PlaylistFragmentListener mListener;
 
-    private PlaylistViewModel mPlaylistViewModel;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public PlaylistListFragment() {
-    }
-
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static PlaylistListFragment newInstance() {
         PlaylistListFragment fragment = new PlaylistListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -78,15 +50,13 @@ public class PlaylistListFragment extends TbdListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            mPlaylistViewModel = new ViewModelProvider(getActivity()).get(PlaylistViewModel.class);
-            mPlaylistViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
+            PlaylistViewModel playlistViewModel = new ViewModelProvider(getActivity()).get(PlaylistViewModel.class);
+            playlistViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
         }
     }
 
-
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof PlaylistFragmentListener) {
             mListener = (PlaylistFragmentListener) context;

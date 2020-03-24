@@ -53,20 +53,15 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
                     mListener.onPlaylistSelected(holder.mPlaylist);
                 }
             }
         });
 
         holder.mOverflowMenu.setOnClickListener(v -> {
-            //creating a popup menu
             PopupMenu popup = new PopupMenu(mContext, holder.mOverflowMenu);
-            //inflating menu from xml resource
             popup.inflate(R.menu.playlist_item_menu);
 
-            //adding click listener
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.playlist_menu_play:
@@ -98,13 +93,13 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mPlaylistName;
-        public final TextView mPlaylistSongCount;
-        public final Button mOverflowMenu;
-        public PlaylistWithSongCount mPlaylist;
+        final View mView;
+        final TextView mPlaylistName;
+        final TextView mPlaylistSongCount;
+        final Button mOverflowMenu;
+        PlaylistWithSongCount mPlaylist;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mOverflowMenu = view.findViewById(R.id.playlist_item_overflow);
