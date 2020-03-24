@@ -21,7 +21,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     private final PlaylistListFragment.PlaylistFragmentListener mListener;
     private final Context mContext;
 
-    public PlaylistRecyclerViewAdapter(List<PlaylistWithSongCount> items, PlaylistListFragment.PlaylistFragmentListener listener, Context context) {
+    /* package */ PlaylistRecyclerViewAdapter(List<PlaylistWithSongCount> items, PlaylistListFragment.PlaylistFragmentListener listener, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;

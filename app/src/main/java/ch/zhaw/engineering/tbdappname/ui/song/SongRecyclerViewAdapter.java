@@ -22,11 +22,6 @@ import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
- * specified {@link SongListFragment.SongListFragmentListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
 
     private final List<Song> mValues;
@@ -34,7 +29,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private Context mContext;
     private Map<Integer, Playlist> mPlaylists;
 
-    public SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, List<Playlist> playlists) {
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, List<Playlist> playlists) {
         mValues = items;
         mListener = listener;
         mContext = context;
