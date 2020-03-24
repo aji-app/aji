@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.songs;
+package ch.zhaw.engineering.tbdappname.ui.songsold;
 
 import android.app.Application;
 
@@ -54,6 +54,8 @@ public class SongViewModel extends AndroidViewModel {
     }
 
     private void update() {
-        songs.addSource(songRepository.getSortedSongs(mSortType, mAscending, searchText), value -> songs.setValue(value));
+        songs.addSource(songRepository.getSortedSongs(mSortType, mAscending, searchText), value -> {
+            songs.setValue(value);
+        });
     }
 }

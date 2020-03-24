@@ -36,7 +36,7 @@
         android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ui.music.music.SongFragment"
-        tools:listitem="@layout/fragment_song"
+        tools:listitem="@layout/fragment_songold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/playlist_buttons"/>

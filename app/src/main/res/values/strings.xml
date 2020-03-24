@@ -3,4 +3,23 @@
     <string name="title_activity_song_list">SongListActivity</string>
     <string name="unknown">&lt;unknown&gt;</string>
     <string name="song_count">%1$d Songs</string>
+    <string name="delete">Delete</string>
+    <string name="play">Play</string>
+    <string name="queue">Queue</string>
+    <string name="edit">Edit</string>
+    <string name="add_to_playlist">Add to Playlist</string>
+    <string name="new_playlist">New Playlist</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="order_by_title">Order by title</string>
+    <string name="order_by_album">Order by album</string>
+    <string name="order_by_artist">Order by artist</string>
+    <string name="direction">Direction</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="contentDescription_sort_options">Sort Options</string>
+    <string name="contentDescription_toggle_favorite">toggle favorite</string>
+    <string name="contentDescription_change_sort_order">Change sort order</string>
+    <string name="mennu_dots">⋮</string>
 </resources>

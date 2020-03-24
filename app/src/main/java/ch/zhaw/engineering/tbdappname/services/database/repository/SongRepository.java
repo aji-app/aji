@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
@@ -102,6 +101,11 @@ public class SongRepository {
             mSongDao.insertSong(dbSong);
             return true;
         }
+    }
+
+    public void toggleFavorite(Song song) {
+        song.setFavorite(!song.isFavorite());
+        mSongDao.updateSong(song);
     }
 
     public void deleteSong(Song song) {

@@ -15,7 +15,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs
 
 @Dao
 public interface PlaylistDao {
-    @Query("select * from playlist")
+    @Query("select * from playlist ORDER BY playlist.name ASC")
     LiveData<List<Playlist>> getPlaylists();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -28,6 +28,10 @@ public interface PlaylistDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<PlaylistSongCrossRef> refs);
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(PlaylistSongCrossRef ref);
 
     @Query("DELETE FROM PlaylistSongCrossRef WHERE PlaylistSongCrossRef.songId == :songId")
     void deleteBySongId(long songId);

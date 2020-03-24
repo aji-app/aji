@@ -20,7 +20,8 @@
             android:id="@+id/playlist_sort_direction"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:src="@drawable/ic_up" />
+            android:src="@drawable/ic_up"
+            android:contentDescription="@string/contentDescription_change_sort_order" />
         <androidx.appcompat.widget.SearchView
             android:id="@+id/filter"
             android:layout_width="match_parent"
@@ -37,7 +38,7 @@
         android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ui.music.music.SongFragment"
-        tools:listitem="@layout/fragment_song"
+        tools:listitem="@layout/fragment_songold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/playlist_buttons"/>
@@ -48,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Loading Playlists"
+        android:textColor="?attr/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

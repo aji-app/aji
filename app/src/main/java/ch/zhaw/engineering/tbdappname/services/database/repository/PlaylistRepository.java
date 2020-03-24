@@ -9,6 +9,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistSongCrossRef;
 import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -26,6 +27,10 @@ public class PlaylistRepository {
         return new PlaylistRepository(songDao);
     }
 
+    public LiveData<List<Playlist>> getAllPlaylists() {
+        return mPlaylistDao.getPlaylists();
+    }
+
     public LiveData<List<PlaylistWithSongs>> getSortedPlaylists(boolean ascending, String searchText) {
 
         if (searchText == null) {
@@ -33,6 +38,12 @@ public class PlaylistRepository {
         }
         String searchQuery = "%" + searchText + "%";
         return mPlaylistDao.getSortedPlaylists(searchQuery, ascending);
+    }
+
+    public void addSongToPlaylist(Song song, Playlist playlist) {
+        PlaylistWithSongs playlistwithSongs = mPlaylistDao.findPlaylistWithSongsById(playlist.getPlaylistId());
+        PlaylistSongCrossRef playlistSongCrossRef = new PlaylistSongCrossRef(playlist.getPlaylistId(), song.getSongId(), playlistwithSongs.songs.size());
+        mPlaylistDao.insert(playlistSongCrossRef);
     }
 
     public PlaylistWithSongs findPlaylistById(long id) {

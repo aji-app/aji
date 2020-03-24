@@ -13,8 +13,8 @@ import java.util.Collections;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import ch.zhaw.engineering.tbdappname.ui.songs.SongAdapter;
-import ch.zhaw.engineering.tbdappname.ui.songs.SongViewModel;
+import ch.zhaw.engineering.tbdappname.ui.songsold.SongAdapter;
+import ch.zhaw.engineering.tbdappname.ui.songsold.SongViewModel;
 
 public class SongListActivity extends AudioInterfaceActivity {
     private SongViewModel mSongViewModel;
@@ -25,7 +25,7 @@ public class SongListActivity extends AudioInterfaceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_list);
+        setContentView(R.layout.activity_songold_list);
 
         RecyclerView recyclerView = findViewById(R.id.song_list);
         mSongViewModel = new SongViewModel(this.getApplication());

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="purplelime_colorPrimary">#9C27B0</color>
+    <color name="purplelime_colorPrimaryDark">#7B1FA2</color>
+    <color name="purplelime_colorPrimaryLight">#E1BBE7</color>
+    <color name="purplelime_colorAccent">#CDDC39</color>
+    <color name="purplelime_iconText">#FFFFFF</color>
+    <color name="purplelime_divider">#BDBDBD</color>
+    <color name="purplelime_primaryText">#212121</color>
+    <color name="purplelime_secondaryText">#757575</color>
 </resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/song_meta_order_title"
+        android:title="@string/order_by_title" />
+    <item
+        android:id="@+id/song_meta_order_album"
+        android:title="@string/order_by_album"/>
+    <item
+        android:id="@+id/song_meta_order_artist"
+        android:title="@string/order_by_artist" />
+
+    <item
+        android:id="@+id/song_meta_direction"
+        android:title="@string/direction" >
+        <menu>
+            <item
+                android:id="@+id/song_meta_direction_asc"
+                android:icon="@drawable/ic_up"
+                android:title="@string/ascending" />
+            <item
+                android:id="@+id/song_meta_direction_desc"
+                android:icon="@drawable/ic_down"
+                android:title="@string/descending" />
+        </menu>
+    </item>
+
+</menu>

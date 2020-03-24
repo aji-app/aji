@@ -28,8 +28,8 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.PlaylistWithSongs
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import ch.zhaw.engineering.tbdappname.ui.songs.SimpleItemTouchHelperCallback;
-import ch.zhaw.engineering.tbdappname.ui.songs.SongAdapter;
+import ch.zhaw.engineering.tbdappname.ui.songsold.SimpleItemTouchHelperCallback;
+import ch.zhaw.engineering.tbdappname.ui.songsold.SongAdapter;
 
 public class AddOrEditPlaylistActivity extends AppCompatActivity {
 

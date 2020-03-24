@@ -13,9 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
+import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import ch.zhaw.engineering.tbdappname.services.files.CsvHelper;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
@@ -106,6 +109,33 @@ public class MainActivity extends AppCompatActivity {
         Button button8 = findViewById(R.id.button8);
         button8.setOnClickListener(v -> {
             Intent intent = new Intent(this, RadioStationListActivity.class);
+            startActivity(intent);
+        });
+
+        Button button9 = findViewById(R.id.button9);
+        button9.setOnClickListener(v -> {
+            AsyncTask.execute(() -> {
+                SongDao dao = AppDatabase.getInstance(this).songDao();
+                List<Song> fakeSongs = new ArrayList<>(10);
+                for (int i = 0; i < 10; i++) {
+                    fakeSongs.add(Song.builder()
+                            .title("Song Nr. " + i)
+                            .artist("Fake Band " + i)
+                            .album("Make it Fake " + i)
+                            .filepath("bubu" + i)
+                            .duration((long) (1000 * (i + 1) + Math.random() * 500))
+                            .rating((int) (Math.random() * 10))
+                            .deleted(false)
+                            .build());
+                }
+
+                long[] ids = dao.insertSongs(fakeSongs);
+            });
+        });
+
+        Button button10 = findViewById(R.id.button10);
+        button10.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TestActivity.class);
             startActivity(intent);
         });
     }
