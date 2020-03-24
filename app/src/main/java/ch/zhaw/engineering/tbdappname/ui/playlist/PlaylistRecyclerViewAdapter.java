@@ -2,12 +2,9 @@ package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,14 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaylistWithSongCount} and makes a call to the
- * specified {@link PlaylistListFragment.PlaylistFragmentListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.ViewHolder> {
 
     private final List<PlaylistWithSongCount> mValues;
@@ -44,40 +36,40 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mPlaylist = mValues.get(position);
-        holder.mPlaylistName.setText(mValues.get(position).getName());
-        holder.mPlaylistSongCount.setText(holder.mView.getContext().getResources().getString(R.string.song_count, holder.mPlaylist.getSongCount()));
-        holder.mOverflowMenu.setBackground(null);
+        holder.playlist = mValues.get(position);
+        View root = holder.binding.getRoot();
+        Button overFlowButton = holder.binding.playlistItemOverflow;
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onPlaylistSelected(holder.mPlaylist);
-                }
+        holder.binding.playlistName.setText(mValues.get(position).getName());
+        holder.binding.playlistSongCount.setText(root.getContext().getResources().getString(R.string.song_count, holder.playlist.getSongCount()));
+        overFlowButton.setBackground(null);
+
+        root.setOnClickListener(v -> {
+            if (null != mListener) {
+                mListener.onPlaylistSelected(holder.playlist);
             }
         });
 
-        holder.mOverflowMenu.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(mContext, holder.mOverflowMenu);
+        overFlowButton.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(mContext, overFlowButton);
             popup.inflate(R.menu.playlist_item_menu);
 
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.playlist_menu_play:
-                        mListener.onPlaylistPlay(holder.mPlaylist);
+                        mListener.onPlaylistPlay(holder.playlist);
                         return true;
 
                     case R.id.playlist_menu_queue:
-                        mListener.onPlaylistQueue(holder.mPlaylist);
+                        mListener.onPlaylistQueue(holder.playlist);
                         return true;
 
                     case R.id.playlist_menu_edit:
-                        mListener.onPlaylistEdit(holder.mPlaylist);
+                        mListener.onPlaylistEdit(holder.playlist);
                         return true;
 
                     case R.id.playlist_menu_delete:
-                        mListener.onPlaylistDelete(holder.mPlaylist);
+                        mListener.onPlaylistDelete(holder.playlist);
                         return true;
                     default:
                         return false;
@@ -92,24 +84,18 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        final View mView;
-        final TextView mPlaylistName;
-        final TextView mPlaylistSongCount;
-        final Button mOverflowMenu;
-        PlaylistWithSongCount mPlaylist;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        FragmentPlaylistItemBinding binding;
+        PlaylistWithSongCount playlist;
 
         ViewHolder(View view) {
             super(view);
-            mView = view;
-            mOverflowMenu = view.findViewById(R.id.playlist_item_overflow);
-            mPlaylistSongCount = view.findViewById(R.id.playlist_count);
-            mPlaylistName = view.findViewById(R.id.playlist_name);
+            binding = FragmentPlaylistItemBinding.bind(view);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mPlaylist.getName() + "'";
+            return super.toString() + " '" + playlist.getName() + "'";
         }
     }
 }

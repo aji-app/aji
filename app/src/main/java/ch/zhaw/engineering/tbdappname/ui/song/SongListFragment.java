@@ -95,7 +95,6 @@ public class SongListFragment extends TbdListFragment {
     }
 
     public interface SongListFragmentListener {
-        // TODO: Update argument type and name
         void onSongSelected(Song song);
 
         void onSongPlay(Song song);
