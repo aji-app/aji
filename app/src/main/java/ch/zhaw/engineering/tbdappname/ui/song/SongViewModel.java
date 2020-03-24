@@ -2,13 +2,11 @@ package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.app.Application;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,6 @@ import lombok.Value;
 public class SongViewModel extends AndroidViewModel {
     private static final String TAG = "SongViewModel";
     private final SongRepository mSongRepository;
-    private final PlaylistRepository mPlaylistRepository;
     private final MediatorLiveData<List<Song>> mSongs;
 
     private final MediatorLiveData<SongsAndPlaylists> mSongsAndPlaylists = new MediatorLiveData<>();
@@ -31,13 +28,10 @@ public class SongViewModel extends AndroidViewModel {
     private SongRepository.SortType mSortType = SongRepository.SortType.TITLE;
 
     private String mSearchText = null;
+    private LiveData<List<Song>> mLastSource;
 
     public LiveData<List<Song>> getSongs() {
         return mSongs;
-    }
-
-    public LiveData<List<Playlist>> getPlaylists() {
-        return mPlaylistRepository.getAllPlaylists();
     }
 
     public LiveData<SongsAndPlaylists> getSongsAndPlaylists() {
@@ -47,31 +41,31 @@ public class SongViewModel extends AndroidViewModel {
     public SongViewModel(@NonNull Application application) {
         super(application);
         mSongRepository = SongRepository.getInstance(application);
-        mPlaylistRepository = PlaylistRepository.getInstance(application);
         mSongs = new MediatorLiveData<>();
-        mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, ""), mSongs::setValue);
+        PlaylistRepository playlistRepository = PlaylistRepository.getInstance(application);
 
         mSongsAndPlaylists.addSource(mSongs, songs -> {
-            Log.i(TAG, "Updating songs in combined list");
+            Log.i(TAG, "Updating songs in combined list: " + (songs.size() > 0 ? songs.get(0).getTitle() : " no songs"));
             SongsAndPlaylists currentValue = mSongsAndPlaylists.getValue();
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(songs, currentValue == null ? new ArrayList<>() : currentValue.playlists));
         });
 
-        mSongsAndPlaylists.addSource(mPlaylistRepository.getAllPlaylists(), playlists -> {
+        mSongsAndPlaylists.addSource(playlistRepository.getAllPlaylists(), playlists -> {
             Log.i(TAG, "Updating playlists");
             SongsAndPlaylists currentValue = mSongsAndPlaylists.getValue();
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(currentValue == null ? new ArrayList<>() : currentValue.songs, playlists));
         });
+        updateSource();
     }
 
     public void changeSortType(SongRepository.SortType sortType) {
         mSortType = sortType;
-        update();
+        updateSource();
     }
 
     public void changeSortOrder(boolean ascending) {
         mAscending = ascending;
-        update();
+        updateSource();
     }
 
     public void changeSearchText(String text) {
@@ -82,13 +76,17 @@ public class SongViewModel extends AndroidViewModel {
             mSearchText = text;
         }
         if (prev == null && mSearchText != null || prev != null && !prev.equals(mSearchText)) {
-            update();
+            updateSource();
         }
     }
 
-    private void update() {
-        mSongs.addSource(mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText), value -> {
-            Log.i(TAG, "Updating songs in songs list");
+    private void updateSource() {
+        if (mLastSource != null) {
+            mSongs.removeSource(mLastSource);
+        }
+        mLastSource = mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText);
+        mSongs.addSource(mLastSource, value -> {
+            Log.i(TAG, "Updating songs in songs list: " + (value.size() > 0 ? value.get(0).getTitle() : " no songs"));
             mSongs.setValue(value);
         });
     }

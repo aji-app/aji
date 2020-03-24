@@ -23,5 +23,6 @@
             android:gravity="center"
             android:padding="0dp"
             android:src="@drawable/ic_order"
-            android:tint="?attr/colorPrimary"/>
+            android:tint="?attr/colorPrimary"
+            android:contentDescription="@string/contentDescription_sort_options"/>
 </LinearLayout>

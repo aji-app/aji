@@ -2,11 +2,14 @@ package ch.zhaw.engineering.tbdappname;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
@@ -33,15 +36,6 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
         }
 
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
-        // Make sure there is an observer so updates are triggered
-        mSongViewModel.getSongs().observe(this, songs -> {
-        });
-        mSongViewModel.getSongsAndPlaylists().observe(this, songs -> {
-            Toast.makeText(this, "SongsAndPlaylists changed", Toast.LENGTH_SHORT).show();
-        });
-        mSongViewModel.getPlaylists().observe(this, songs -> {
-        });
-
         mPlaylistRepository = PlaylistRepository.getInstance(this);
         mSongRepository = SongRepository.getInstance(this);
     }

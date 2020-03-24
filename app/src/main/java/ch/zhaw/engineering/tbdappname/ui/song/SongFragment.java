@@ -17,21 +17,7 @@ import ch.zhaw.engineering.tbdappname.R;
  */
 public class SongFragment extends Fragment {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SongFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment SongFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    @SuppressWarnings("unused")
     public static SongFragment newInstance() {
         SongFragment fragment = new SongFragment();
         Bundle args = new Bundle();
@@ -42,8 +28,6 @@ public class SongFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.top_container, SongMetaFragment.newInstance())

@@ -20,7 +20,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of Songs.
  * <p/>
  * Activities containing this fragment MUST implement the {@link SongListFragmentListener}
  * interface.
@@ -31,14 +31,6 @@ public class SongListFragment extends Fragment {
     private SongViewModel mSongViewModel;
     private RecyclerView mRecyclerView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public SongListFragment() {
-    }
-
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SongListFragment newInstance() {
         SongListFragment fragment = new SongListFragment();
@@ -50,10 +42,6 @@ public class SongListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-        }
-
     }
 
     @Override
@@ -106,16 +94,6 @@ public class SongListFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface SongListFragmentListener {
         // TODO: Update argument type and name
         void onSongSelected(Song song);

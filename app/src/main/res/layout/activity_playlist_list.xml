@@ -20,7 +20,8 @@
             android:id="@+id/playlist_sort_direction"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:src="@drawable/ic_up" />
+            android:src="@drawable/ic_up"
+            android:contentDescription="@string/contentDescription_change_sort_order" />
         <androidx.appcompat.widget.SearchView
             android:id="@+id/filter"
             android:layout_width="match_parent"

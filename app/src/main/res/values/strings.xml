@@ -18,4 +18,8 @@
     <string name="direction">Direction</string>
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <string name="contentDescription_sort_options">Sort Options</string>
+    <string name="contentDescription_toggle_favorite">toggle favorite</string>
+    <string name="contentDescription_change_sort_order">Change sort order</string>
+    <string name="mennu_dots">⋮</string>
 </resources>
