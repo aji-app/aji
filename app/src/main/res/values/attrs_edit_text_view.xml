@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="EditTextView">
+        <attr name="editMode" format="boolean" />
+        <attr name="text" format="string" />
+    </declare-styleable>
+</resources>
