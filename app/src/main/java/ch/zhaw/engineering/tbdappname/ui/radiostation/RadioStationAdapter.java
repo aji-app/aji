@@ -29,7 +29,7 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_playlistold, parent, false);
+                .inflate(R.layout.fragment_radiostation, parent, false);
         return new ViewHolder(view);
     }
 
@@ -51,21 +51,18 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mSongName;
+        public final TextView mRadioName;
         public RadioStation mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = view.findViewById(R.id.item_number);
-            mSongName = view.findViewById(R.id.playlist_name);
+            mRadioName = view.findViewById(R.id.radio_name);
         }
 
         public void bind(RadioStation playlist) {
             mItem = playlist;
-            mIdView.setText(mItem.getName());
-//            mSongName.setText(mContext.getString(R.string.song_count, mItem.songs.size()));
+            mRadioName.setText(mItem.getName());
 
             mView.setOnClickListener(v -> {
                 if (null != mPlaylistListInteractionListener) {
@@ -87,7 +84,7 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mSongName.getText() + "'";
+            return super.toString() + " '" + mRadioName.getText() + "'";
         }
     }
 

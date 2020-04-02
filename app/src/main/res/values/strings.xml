@@ -23,8 +23,16 @@
     <string name="add_playlist">Add Playlist</string>
     <string name="hint_playlist_name">Playlist Name</string>
     <string name="create_playlist">Create Playlist</string>
-    <string name="edit_playlist">Edit Playlist</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="playlist_name_empty">Name cannot be empty</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="hint_name">Name</string>
+    <string name="contentDescription_drag_to_reorder_songs_in_playlist">Drag to Reorder songs in playlist</string>
+    <string name="song_removed_playlist">Song removed from Playlist</string>
+    <string name="undo">Undo</string>
+    <string name="contentDescription_play_playlist">Play Playlist</string>
 </resources>

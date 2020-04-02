@@ -15,10 +15,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.UUID;
 
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.SongDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import lombok.Cleanup;
 
 public class StorageHelper {
 
@@ -27,17 +26,17 @@ public class StorageHelper {
     public static void synchronizeMediaStoreSongs(Context context) {
         AsyncTask.execute(() -> {
             Log.i(TAG, "Starting synchronization");
-            SongRepository songRepository = SongRepository.getInstance(context);
+            SongDao songRepository = SongDao.getInstance(context);
             // Add new songs
             forEachSongInMediaStore(context, song -> {
-                if (songRepository.synchronizeSong(song)) {
+                if (synchronizeSongWithDb(context, song)) {
                     Log.i(TAG, "Added song '" + song.getFilepath() + "' to Database");
                 }
             });
             // Remove deleted songs
-            for (Song song : songRepository.getSongList()) {
+            for (Song song : songRepository.getAllSongs()) {
                 if (!new File(song.getFilepath()).exists()) {
-                    songRepository.deleteSong(song);
+                    songRepository.deleteSongById(song.getSongId());
                     Log.i(TAG, "Deleted song '" + song.getFilepath() + "' from Database");
                 }
             }
@@ -68,6 +67,27 @@ public class StorageHelper {
         }
 
         return albumArtPath.getAbsolutePath();
+    }
+
+    public static boolean synchronizeSongWithDb(Context context, SongDto song) {
+        SongDao songDao = SongDao.getInstance(context);
+        if (songDao.exists(song.getFilepath())) {
+            Song storedSong = songDao.getSongByPath(song.getFilepath());
+            if (storedSong.getAlbumArtPath() == null) {
+                String artPath = StorageHelper.saveAlbumArt(context, song);
+                storedSong.setAlbumArtPath(artPath);
+            }
+            if (song.getMediaStoreSongId() != null) {
+                storedSong.setMediaStoreSongId(song.getMediaStoreSongId());
+            }
+            songDao.updateSong(storedSong);
+            return false;
+        } else {
+            String artPath = StorageHelper.saveAlbumArt(context, song);
+            Song dbSong = song.toSong(artPath);
+            songDao.insertSong(dbSong);
+            return true;
+        }
     }
 
     private static void forEachSongInMediaStore(Context context, SongDtoOperationCallback callback) {

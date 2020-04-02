@@ -11,21 +11,21 @@ import androidx.lifecycle.MediatorLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import lombok.Value;
 
 public class SongViewModel extends AndroidViewModel {
     private static final String TAG = "SongViewModel";
-    private final SongRepository mSongRepository;
+    public final SongDao mSongRepository;
     private final MediatorLiveData<List<Song>> mSongs;
 
     private final MediatorLiveData<SongsAndPlaylists> mSongsAndPlaylists = new MediatorLiveData<>();
 
     private boolean mAscending = true;
-    private SongRepository.SortType mSortType = SongRepository.SortType.TITLE;
+    private SongDao.SortType mSortType = SongDao.SortType.TITLE;
 
     private String mSearchText = null;
     private LiveData<List<Song>> mLastSource;
@@ -34,15 +34,19 @@ public class SongViewModel extends AndroidViewModel {
         return mSongs;
     }
 
+    public LiveData<List<Song>> getSongsForPlaylist(Integer id) {
+        return mSongRepository.getSongsForPlaylist(id);
+    }
+
     public LiveData<SongsAndPlaylists> getSongsAndPlaylists() {
         return mSongsAndPlaylists;
     }
 
     public SongViewModel(@NonNull Application application) {
         super(application);
-        mSongRepository = SongRepository.getInstance(application);
+        mSongRepository = SongDao.getInstance(application);
         mSongs = new MediatorLiveData<>();
-        PlaylistRepository playlistRepository = PlaylistRepository.getInstance(application);
+        PlaylistDao playlistDao = PlaylistDao.getInstance(application);
 
         mSongsAndPlaylists.addSource(mSongs, songs -> {
             Log.i(TAG, "Updating songs in combined list: " + (songs.size() > 0 ? songs.get(0).getTitle() : " no songs"));
@@ -50,7 +54,7 @@ public class SongViewModel extends AndroidViewModel {
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(songs, currentValue == null ? new ArrayList<>() : currentValue.playlists));
         });
 
-        mSongsAndPlaylists.addSource(playlistRepository.getAllPlaylists(), playlists -> {
+        mSongsAndPlaylists.addSource(playlistDao.getPlaylists(), playlists -> {
             Log.i(TAG, "Updating playlists");
             SongsAndPlaylists currentValue = mSongsAndPlaylists.getValue();
             mSongsAndPlaylists.setValue(new SongsAndPlaylists(currentValue == null ? new ArrayList<>() : currentValue.songs, playlists));
@@ -58,7 +62,7 @@ public class SongViewModel extends AndroidViewModel {
         updateSource();
     }
 
-    public void changeSortType(SongRepository.SortType sortType) {
+    public void changeSortType(SongDao.SortType sortType) {
         mSortType = sortType;
         updateSource();
     }
@@ -94,6 +98,6 @@ public class SongViewModel extends AndroidViewModel {
     @Value
     public static class SongsAndPlaylists {
         List<Song> songs;
-        List<Playlist> playlists;
+        List<PlaylistWithSongCount> playlists;
     }
 }

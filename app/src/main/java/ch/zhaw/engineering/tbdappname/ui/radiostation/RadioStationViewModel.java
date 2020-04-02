@@ -10,7 +10,6 @@ import androidx.lifecycle.MediatorLiveData;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
-import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 import ch.zhaw.engineering.tbdappname.services.database.repository.RadioStationRepository;
 
 public class RadioStationViewModel extends AndroidViewModel {

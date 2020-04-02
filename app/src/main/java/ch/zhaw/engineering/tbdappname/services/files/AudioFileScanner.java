@@ -11,8 +11,8 @@ import androidx.core.app.JobIntentService;
 
 import java.io.File;
 
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.SongDto;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import ch.zhaw.engineering.tbdappname.util.FileNameParser;
 
 public class AudioFileScanner extends JobIntentService {
@@ -20,7 +20,7 @@ public class AudioFileScanner extends JobIntentService {
     public static final String TAG = "AudioFileScanner";
     public static final String EXTRA_SCRAPE_ROOT_FOLDER = "scrape-root-folder";
 
-    private SongRepository mSongRepository;
+    private SongDao mSongDao;
     private FileNameParser mFileNameParser;
 
     public static void enqueueWork(Context context, Intent intent) {
@@ -34,7 +34,7 @@ public class AudioFileScanner extends JobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mSongRepository = SongRepository.getInstance(this);
+        mSongDao = SongDao.getInstance(this);
         mFileNameParser = new FileNameParser(this);
 
     }
@@ -44,7 +44,9 @@ public class AudioFileScanner extends JobIntentService {
         if (intent.hasExtra(EXTRA_SCRAPE_ROOT_FOLDER)) {
             String rootFolder = intent.getStringExtra(EXTRA_SCRAPE_ROOT_FOLDER);
             if (rootFolder != null) {
-                walk(new File(rootFolder), mSongRepository::synchronizeSong);
+                walk(new File(rootFolder), songDto -> {
+                    StorageHelper.synchronizeSongWithDb(this, songDto);
+                });
             }
         }
     }
@@ -57,7 +59,7 @@ public class AudioFileScanner extends JobIntentService {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
             for (File f : audioFiles) {
                 Uri uri = Uri.fromFile(f);
-                if (mSongRepository.exists(uri.getPath())) {
+                if (mSongDao.exists(uri.getPath())) {
                     continue;
                 }
                 mmr.setDataSource(getApplicationContext(), uri);

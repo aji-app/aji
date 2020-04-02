@@ -50,8 +50,8 @@ public class PlaylistListFragment extends TbdListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            PlaylistViewModel playlistViewModel = new ViewModelProvider(getActivity()).get(PlaylistViewModel.class);
-            playlistViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
+            PlaylistListViewModel viewModel = new ViewModelProvider(getActivity()).get(PlaylistListViewModel.class);
+            viewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
         }
     }
 
@@ -82,11 +82,11 @@ public class PlaylistListFragment extends TbdListFragment {
     }
 
     public interface PlaylistFragmentListener {
-        void onPlaylistSelected(PlaylistWithSongCount playlist);
-        void onPlaylistEdit(PlaylistWithSongCount playlist);
-        void onPlaylistPlay(PlaylistWithSongCount playlist);
-        void onPlaylistQueue(PlaylistWithSongCount playlist);
-        void onPlaylistDelete(PlaylistWithSongCount playlist);
+        void onPlaylistSelected(int playlist);
+        void onPlaylistEdit(int playlist);
+        void onPlaylistPlay(int playlist);
+        void onPlaylistQueue(int playlist);
+        void onPlaylistDelete(int playlist);
 
     }
 }

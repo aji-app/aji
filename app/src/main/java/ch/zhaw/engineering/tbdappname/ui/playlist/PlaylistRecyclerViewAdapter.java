@@ -44,9 +44,16 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         holder.binding.playlistSongCount.setText(root.getContext().getResources().getString(R.string.song_count, holder.playlist.getSongCount()));
         overFlowButton.setBackground(null);
 
+        holder.binding.playlistItemPlay.setBackground(null);
+        holder.binding.playlistItemPlay.setOnClickListener(v -> {
+            if (null != mListener) {
+                mListener.onPlaylistPlay(holder.playlist.getPlaylistId());
+            }
+        });
+
         root.setOnClickListener(v -> {
             if (null != mListener) {
-                mListener.onPlaylistSelected(holder.playlist);
+                mListener.onPlaylistSelected(holder.playlist.getPlaylistId());
             }
         });
 
@@ -57,19 +64,19 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.playlist_menu_play:
-                        mListener.onPlaylistPlay(holder.playlist);
+                        mListener.onPlaylistPlay(holder.playlist.getPlaylistId());
                         return true;
 
                     case R.id.playlist_menu_queue:
-                        mListener.onPlaylistQueue(holder.playlist);
+                        mListener.onPlaylistQueue(holder.playlist.getPlaylistId());
                         return true;
 
                     case R.id.playlist_menu_edit:
-                        mListener.onPlaylistEdit(holder.playlist);
+                        mListener.onPlaylistEdit(holder.playlist.getPlaylistId());
                         return true;
 
                     case R.id.playlist_menu_delete:
-                        mListener.onPlaylistDelete(holder.playlist);
+                        mListener.onPlaylistDelete(holder.playlist.getPlaylistId());
                         return true;
                     default:
                         return false;

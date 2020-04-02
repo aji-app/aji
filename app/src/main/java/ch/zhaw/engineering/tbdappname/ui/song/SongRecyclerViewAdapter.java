@@ -1,47 +1,77 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import lombok.RequiredArgsConstructor;
 
-public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> {
+public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
+    private static final String TAG = "SongRecyclerViewAdapter";
 
     private final List<Song> mValues;
     private final SongListFragment.SongListFragmentListener mListener;
+    private final OnTouchCallbacks mDragStartListener;
     private Context mContext;
+    @Nullable
+    private Integer mPlaylistId;
     private Map<Integer, Playlist> mPlaylists;
+    private Mode mMode;
+    private RecyclerView mRecyclerView;
 
-    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, List<Playlist> playlists) {
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
+        this(items, listener, context, null, playlistId, true, dragListener);
+    }
+
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @Nullable List<PlaylistWithSongCount> playlists) {
+        this(items, listener, context, playlists, null, false, null);
+    }
+
+    private SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @Nullable List<PlaylistWithSongCount> playlists, @Nullable Integer playlistId, boolean enableDrag, OnTouchCallbacks dragListener) {
         mValues = items;
         mListener = listener;
         mContext = context;
-        mPlaylists = new HashMap<>(playlists.size());
-        for (Playlist playlist : playlists) {
-            mPlaylists.put(playlist.getPlaylistId(), playlist);
+        mPlaylistId = playlistId;
+        mDragStartListener = dragListener;
+        mMode = enableDrag && playlistId != null ? Mode.PLAYLIST : Mode.ALL_SONGS;
+        if (playlists != null) {
+            mPlaylists = new HashMap<>(playlists.size());
+            for (Playlist pl : playlists) {
+                mPlaylists.put(pl.getPlaylistId(), pl);
+            }
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FragmentSongItemBinding binding = FragmentSongItemBinding.inflate(LayoutInflater.from(parent.getContext()));
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_song_item, parent, false);
         return new ViewHolder(view);
@@ -56,65 +86,94 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
         Button overFlow = holder.binding.songItemOverflow;
         ImageButton favoriteButton = holder.binding.songItemFavorite;
+        ImageButton dragHandle = holder.binding.songItemDraghandle;
+        if (mMode == Mode.PLAYLIST) {
+            overFlow.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.GONE);
+            dragHandle.setVisibility(View.VISIBLE);
+            dragHandle.setBackground(null);
 
-        overFlow.setBackground(null);
-        favoriteButton.setBackground(null);
-
-        if (holder.song.isFavorite()) {
-            favoriteButton.setImageResource(R.drawable.ic_favorite);
-        } else {
-            favoriteButton.setImageResource(R.drawable.ic_not_favorite);
-        }
-        favoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.song));
-
-        overFlow.setOnClickListener(v -> {
-            //creating a popup menu
-            PopupMenu popup = new PopupMenu(mContext, overFlow);
-            //inflating menu from xml resource
-            popup.inflate(R.menu.song_item_menu);
-
-            SubMenu playlistMenu = popup.getMenu().findItem(R.id.song_menu_add_to_playlist).getSubMenu();
-            for (Playlist playlist : mPlaylists.values()) {
-                playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_playlist);
-            }
-
-            //adding click listener
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-
-                    case R.id.song_menu_play:
-                        mListener.onSongPlay(holder.song);
-                        return true;
-                    case R.id.song_menu_queue:
-                        mListener.onSongQueue(holder.song);
-                        return true;
-                    case R.id.song_menu_edit:
-                        mListener.onSongEdit(holder.song);
-                        return true;
-                    case R.id.song_create_playlist:
-                        mListener.onCreatePlaylist();
-                        return true;
-                    case R.id.song_menu_delete:
-                        mListener.onSongDelete(holder.song);
-                        return true;
-                    default:
-                        Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
-                        if (selectedPlaylist != null) {
-                            mListener.onSongAddToPlaylist(holder.song, selectedPlaylist);
-                            return true;
+            dragHandle.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (mDragStartListener != null) {
+                            mDragStartListener.onStartDrag(holder);
                         }
-                        return false;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.performClick();
+                        break;
+                    default:
+                        break;
                 }
+                return true;
             });
-            //displaying the popup
-            popup.show();
-        });
+        } else if (mMode == Mode.ALL_SONGS) {
+            dragHandle.setVisibility(View.GONE);
+            overFlow.setBackground(null);
+            favoriteButton.setBackground(null);
+
+            if (holder.song.isFavorite()) {
+                favoriteButton.setImageResource(R.drawable.ic_favorite);
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_not_favorite);
+            }
+            favoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.song.getSongId()));
+
+            overFlow.setOnClickListener(v -> {
+                //creating a popup menu
+                PopupMenu popup = new PopupMenu(mContext, overFlow);
+                //inflating menu from xml resource
+                popup.inflate(R.menu.song_item_menu);
+
+                MenuItem addToPlaylist = popup.getMenu().findItem(R.id.song_menu_add_to_playlist);
+                if (mPlaylists == null) {
+                    addToPlaylist.setVisible(false);
+                } else {
+                    SubMenu playlistMenu = addToPlaylist.getSubMenu();
+                    for (Playlist playlist : mPlaylists.values()) {
+                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_playlist);
+                    }
+                }
+
+                //adding click listener
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+
+                        case R.id.song_menu_play:
+                            mListener.onSongPlay(holder.song.getSongId());
+                            return true;
+                        case R.id.song_menu_queue:
+                            mListener.onSongQueue(holder.song.getSongId());
+                            return true;
+                        case R.id.song_menu_edit:
+                            mListener.onSongEdit(holder.song.getSongId());
+                            return true;
+                        case R.id.song_create_playlist:
+                            mListener.onCreatePlaylist();
+                            return true;
+                        case R.id.song_menu_delete:
+                            mListener.onSongDelete(holder.song.getSongId());
+                            return true;
+                        default:
+                            Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
+                            if (selectedPlaylist != null) {
+                                mListener.onSongAddToPlaylist(holder.song.getSongId(), selectedPlaylist.getPlaylistId());
+                                return true;
+                            }
+                            return false;
+                    }
+                });
+                //displaying the popup
+                popup.show();
+            });
+        }
 
         holder.binding.getRoot().setOnClickListener(v -> {
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                mListener.onSongSelected(holder.song);
+                mListener.onSongSelected(holder.song.getSongId());
             }
         });
     }
@@ -124,11 +183,74 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return mValues.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public FragmentSongItemBinding binding;
-        public Song song;
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
 
-        public ViewHolder(View view) {
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (mMode == Mode.PLAYLIST) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(mValues, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(mValues, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
+
+    @Override
+    public void onItemDismiss(int position) {
+        // TODO: After reorder dismissing break somehow
+        if (mMode == Mode.PLAYLIST) {
+            final Song songToBeRemoved = mValues.get(position);
+            Log.i(TAG, "Removing " + position + " - " + songToBeRemoved.getSongId());
+            Snackbar snackbar = Snackbar
+                    .make(mRecyclerView, R.string.song_removed_playlist, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, view -> {
+                        mValues.add(position, songToBeRemoved);
+                        notifyItemInserted(position);
+                        Log.i(TAG, "Restorign " + position + " - " + songToBeRemoved.getSongId());
+                        mRecyclerView.scrollToPosition(position);
+                    })
+                    .addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            if (event != DISMISS_EVENT_ACTION) {
+                                mListener.onSongRemovedFromPlaylist(songToBeRemoved.getSongId(), mPlaylistId);
+                            }
+                        }
+                    });
+            snackbar.show();
+            mValues.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    @Override
+    public void onFinishedMoving() {
+        if (mMode == Mode.PLAYLIST) {
+            List<Long> songIds = new ArrayList<>(mValues.size());
+            for (Song song : mValues) {
+                songIds.add(song.getSongId());
+            }
+            mListener.onSongsReordered(songIds, mPlaylistId);
+        }
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        FragmentSongItemBinding binding;
+        Song song;
+
+        ViewHolder(View view) {
             super(view);
             this.binding = FragmentSongItemBinding.bind(view);
         }
@@ -137,5 +259,70 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         public String toString() {
             return super.toString() + " '" + song.toString() + "'";
         }
+    }
+
+    @RequiredArgsConstructor
+    public static class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
+        private final ItemTouchHelperAdapter mAdapter;
+        private boolean mDidMove = false;
+
+        @Override
+        public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
+            super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+        }
+
+        @Override
+        public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            if (mDidMove) {
+                mAdapter.onFinishedMoving();
+                mDidMove = false;
+            }
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() {
+            return true;
+        }
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            mDidMove = true;
+            mAdapter.onItemMove(viewHolder.getAdapterPosition(),
+                    target.getAdapterPosition());
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            mDidMove = false;
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
+    }
+
+    private static enum Mode {
+        ALL_SONGS, PLAYLIST;
+    }
+
+    public interface OnTouchCallbacks {
+
+        /**
+         * Called when a view is requesting a start of a drag.
+         *
+         * @param viewHolder The holder of the view to drag.
+         */
+        void onStartDrag(RecyclerView.ViewHolder viewHolder);
     }
 }

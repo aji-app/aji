@@ -4,26 +4,19 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
-import ch.zhaw.engineering.tbdappname.services.files.CsvHelper;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
-import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
@@ -58,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
         RadioStationImporter.loadDefaultRadioStations(this);
-
-        SongDao songDao = AppDatabase.getInstance(this).songDao();
         mRadioStationDao = AppDatabase.getInstance(this).radioStationDao();
 
         Button button = findViewById(R.id.button);
@@ -69,29 +60,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(v -> AsyncTask.execute(() -> {
-            LiveData<List<Song>> songs = songDao.getSongs();
-            runOnUiThread(() -> songs.observe(MainActivity.this, list -> Toast.makeText(this, "We've got " + list.size() + " Songs", Toast.LENGTH_SHORT).show()));
-
-        }));
-
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(v -> {
             Intent directorySelect = new Intent(this, DirectorySelectionActivity.class);
             startActivityForResult(directorySelect, REQUEST_CODE_DIRECTOY_SELECT);
-        });
-
-        Button button4 = findViewById(R.id.button4);
-        button4.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SongListActivity.class);
-            startActivity(intent);
-        });
-
-        Button button5 = findViewById(R.id.button5);
-        button5.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PlaylistListActivity.class);
-            startActivity(intent);
         });
 
         Button button6 = findViewById(R.id.button6);

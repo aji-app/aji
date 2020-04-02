@@ -26,10 +26,10 @@ import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.exoplayer.ExoPlayerAudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.filter.NoopFilter;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -68,7 +68,7 @@ public class AudioService extends LifecycleService {
 
     private boolean mShuffleModeEnabled;
     private AudioBackend.RepeatModes mCurrentRepeatMode = AudioBackend.RepeatModes.REPEAT_OFF;
-    private SongRepository mSongRepository;
+    private SongDao mSongRepository;
     private boolean mAutoQueueRandomTrack = false;
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
@@ -85,7 +85,7 @@ public class AudioService extends LifecycleService {
         setupBackgroundThreads();
         setupMediaSession();
 
-        mSongRepository = SongRepository.getInstance(getApplication());
+        mSongRepository = SongDao.getInstance(getApplication());
         mAudioBackend.initialize(
                 this,
                 mMediaSession,
@@ -300,7 +300,7 @@ public class AudioService extends LifecycleService {
         mCurrentPositionTrackingThread.post(() -> {
             mAudioBackend.clear();
 
-            List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylist(playlist);
+            List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylistAsList(playlist.getPlaylistId());
             for (Song song : songsForPlaylist) {
                 playbackControlQueueSong(song);
             }

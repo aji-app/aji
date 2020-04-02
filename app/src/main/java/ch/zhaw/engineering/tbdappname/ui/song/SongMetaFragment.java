@@ -7,20 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongMetaBinding;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 
 public class SongMetaFragment extends Fragment {
 
@@ -68,13 +63,13 @@ public class SongMetaFragment extends Fragment {
             switch (item.getItemId()) {
 
                 case R.id.song_meta_order_album:
-                    mListener.onSortTypeChanged(SongRepository.SortType.ALBUM);
+                    mListener.onSortTypeChanged(SongDao.SortType.ALBUM);
                     return true;
                 case R.id.song_meta_order_artist:
-                    mListener.onSortTypeChanged(SongRepository.SortType.ARTIST);
+                    mListener.onSortTypeChanged(SongDao.SortType.ARTIST);
                     return true;
                 case R.id.song_meta_order_title:
-                    mListener.onSortTypeChanged(SongRepository.SortType.TITLE);
+                    mListener.onSortTypeChanged(SongDao.SortType.TITLE);
                     return true;
                 case R.id.song_meta_direction_asc:
                     mListener.onSortDirectionChanged(true);
@@ -105,7 +100,7 @@ public class SongMetaFragment extends Fragment {
 
     public interface SongMetaFragmentListener {
 
-        void onSortTypeChanged(SongRepository.SortType sortType);
+        void onSortTypeChanged(SongDao.SortType sortType);
         void onSearchTextChanged(String text);
         void onSortDirectionChanged(boolean ascending);
     }

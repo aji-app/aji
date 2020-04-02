@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.tbdappname;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,13 +17,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
+import java.util.List;
+
+import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
-import ch.zhaw.engineering.tbdappname.services.database.repository.SongRepository;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
@@ -32,45 +35,59 @@ import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
-import static ch.zhaw.engineering.tbdappname.AddOrEditPlaylistActivity.EXTRA_PLAYLIST_ID;
-
-public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener, PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener {
+public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener,
+        PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener {
     private static final String TAG = "TestActivity";
     private SongViewModel mSongViewModel;
-    private PlaylistRepository mPlaylistRepository;
-    private SongRepository mSongRepository;
+    private SongDao mSongDao;
+    private PlaylistDao mPlaylistDao;
+
+    private Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_activity);
         if (savedInstanceState == null) {
+            mCurrentFragment = PlaylistFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, PlaylistFragment.newInstance())
+                    .replace(R.id.container, mCurrentFragment)
                     .commitNow();
         }
 
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
-        mPlaylistRepository = PlaylistRepository.getInstance(this);
-        mSongRepository = SongRepository.getInstance(this);
+        mSongDao = SongDao.getInstance(this);
+        mPlaylistDao = PlaylistDao.getInstance(this);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.song_list:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, SongFragment.newInstance())
-                        .commitNow();
+                if (mCurrentFragment instanceof SongFragment) {
+                    return false;
+                }
+                replaceFragment(SongFragment.newInstance());
                 return true;
             case R.id.playlist_list:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, PlaylistFragment.newInstance())
-                        .commitNow();
+                if (mCurrentFragment instanceof PlaylistFragment) {
+                    return false;
+                }
+                replaceFragment(PlaylistFragment.newInstance());
                 return true;
             default:
                 return false;
         }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right )
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit();
+        mCurrentFragment = fragment;
     }
 
     @Override
@@ -83,12 +100,28 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onSongSelected(Song song) {
-        Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onBackPressed() {
+        // Catch back action and pops from backstack
+        // (if you called previously to addToBackStack() in your transaction)
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        }
+        // Default action on back pressed
+        else super.onBackPressed();
     }
 
     @Override
-    public void onSortTypeChanged(SongRepository.SortType sortType) {
+    public void onSongSelected(long songId) {
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onSortTypeChanged(SongDao.SortType sortType) {
         Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
         mSongViewModel.changeSortType(sortType);
     }
@@ -106,82 +139,131 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onSongPlay(Song song) {
-        Toast.makeText(this, "onSongPlay: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onSongPlay(long songId) {
+        Toast.makeText(this, "onSongPlay: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSongQueue(Song song) {
-        Toast.makeText(this, "onSongQueue: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onSongQueue(long songId) {
+        Toast.makeText(this, "onSongQueue: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSongEdit(Song song) {
-        Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onSongEdit(long songId) {
+        Toast.makeText(this, "onSongEdit: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSongAddToPlaylist(Song song, Playlist playlist) {
-        Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName(), Toast.LENGTH_SHORT).show();
+    public void onSongAddToPlaylist(long songId, int playlistId) {
         AsyncTask.execute(() -> {
-            mPlaylistRepository.addSongToPlaylist(song, playlist);
+            mPlaylistDao.addSongToPlaylist(songId, playlistId);
+
+            Song song = mSongDao.getSongById(songId);
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName(), Toast.LENGTH_SHORT).show();
+            });
         });
+
     }
 
     @Override
-    public void onSongDelete(Song song) {
-        Toast.makeText(this, "onSongDelete: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onSongDelete(long songId) {
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongDelete: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+            mSongDao.deleteSongById(songId);
+        });
     }
 
     @Override
     public void onCreatePlaylist() {
         showPlaylistNameDialog(null);
-//        Toast.makeText(this, "onCreatePlaylist", Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
-//        startActivity(intent);
     }
 
     @Override
-    public void onToggleFavorite(Song song) {
-        Toast.makeText(this, "onToggleFavorite: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+    public void onToggleFavorite(long songId) {
         AsyncTask.execute(() -> {
-            mSongRepository.toggleFavorite(song);
+            mSongDao.toggleFavorite(songId);
+
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onToggleFavorite: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
         });
     }
 
     @Override
-    public void onPlaylistSelected(PlaylistWithSongCount playlist) {
-        Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onPlaylistEdit(PlaylistWithSongCount playlist) {
-        Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, AddOrEditPlaylistActivity.class);
-        intent.putExtra(EXTRA_PLAYLIST_ID, playlist.getPlaylistId());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onPlaylistPlay(PlaylistWithSongCount playlist) {
-        Toast.makeText(this, "onPlaylistPlay: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onPlaylistQueue(PlaylistWithSongCount playlist) {
-        Toast.makeText(this, "onPlaylistQueue: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onPlaylistDelete(PlaylistWithSongCount playlist) {
-        Toast.makeText(this, "onPlaylistDelete: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+    public void onSongsReordered(List<Long> songIds, int playlistId) {
         AsyncTask.execute(() -> {
-            mPlaylistRepository.deletePlaylistById(playlist.getPlaylistId());
+            mPlaylistDao.reorderSongsInPlaylist(songIds, playlistId);
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongsReordered: " + playlist.getName() + " ...", Toast.LENGTH_SHORT).show();
+            });
         });
     }
 
-    private void showPlaylistNameDialog(PlaylistWithSongCount playlist) {
+    @Override
+    public void onPlaylistSelected(int playlistId) {
+        AsyncTask.execute(() -> {
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId));
+            });
+        });
+    }
+
+    @Override
+    public void onPlaylistEdit(int playlistId) {
+        AsyncTask.execute(() -> {
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId));
+            });
+        });
+
+    }
+
+    @Override
+    public void onPlaylistPlay(int playlistId) {
+        AsyncTask.execute(() -> {
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistPlay: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+
+    }
+
+    @Override
+    public void onPlaylistQueue(int playlistId) {
+        AsyncTask.execute(() -> {
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistQueue: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onPlaylistDelete(int playlistId) {
+        AsyncTask.execute(() -> {
+            mPlaylistDao.deletePlaylist(playlistId);
+
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistDelete: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    private void showPlaylistNameDialog(Playlist playlist) {
 
 
 // ...Irrelevant code for customizing the buttons and title
@@ -240,7 +322,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
                     Playlist newPlaylist = Playlist.builder()
                             .name(editText.getText().toString())
                             .build();
-                    mPlaylistRepository.insert(newPlaylist);
+                    mPlaylistDao.insert(newPlaylist);
                 });
                 alertDialog.dismiss();
             });
@@ -248,5 +330,28 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
         alertDialog.show();
         editText.requestFocus();
+    }
+
+    @Override
+    public void onPlaylistSave(int playlistId) {
+        AsyncTask.execute(() -> {
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onPlaylistSave: " + playlist.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onSongRemovedFromPlaylist(long songId, int playlistId) {
+        AsyncTask.execute(() -> {
+            mPlaylistDao.deleteSongFromPlaylist(songId, playlistId);
+
+            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongRemovedFromPlaylist: " + playlist.getName() + " - " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 }

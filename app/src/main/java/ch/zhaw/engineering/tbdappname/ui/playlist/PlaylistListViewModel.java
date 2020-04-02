@@ -9,11 +9,11 @@ import androidx.lifecycle.MediatorLiveData;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.tbdappname.services.database.repository.PlaylistRepository;
 
-public class PlaylistViewModel extends AndroidViewModel {
-    private final PlaylistRepository mPlaylistRepository;
+public class PlaylistListViewModel extends AndroidViewModel {
+    private final PlaylistDao mPlaylistDao;
     private final MediatorLiveData<List<PlaylistWithSongCount>> mPlaylists;
     private boolean mAscending = true;
 
@@ -23,11 +23,11 @@ public class PlaylistViewModel extends AndroidViewModel {
         return mPlaylists;
     }
 
-    public PlaylistViewModel(@NonNull Application application) {
+    public PlaylistListViewModel(@NonNull Application application) {
         super(application);
-        mPlaylistRepository = PlaylistRepository.getInstance(application);
+        mPlaylistDao = PlaylistDao.getInstance(application);
         mPlaylists = new MediatorLiveData<>();
-        mPlaylists.addSource(mPlaylistRepository.getPlaylistsWithSongCount("", mAscending), mPlaylists::setValue);
+        mPlaylists.addSource(mPlaylistDao.getPlaylists("", mAscending), mPlaylists::setValue);
     }
 
     public void changeSortOrder(boolean ascending) {
@@ -48,6 +48,6 @@ public class PlaylistViewModel extends AndroidViewModel {
     }
 
     private void update() {
-        mPlaylists.addSource(mPlaylistRepository.getPlaylistsWithSongCount(mSearchText, mAscending), mPlaylists::setValue);
+        mPlaylists.addSource(mPlaylistDao.getPlaylists(mSearchText, mAscending), mPlaylists::setValue);
     }
 }
