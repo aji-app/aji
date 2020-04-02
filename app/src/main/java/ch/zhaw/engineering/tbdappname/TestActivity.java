@@ -163,17 +163,32 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
     @Override
     public void onSongPlay(long songId) {
-        Toast.makeText(this, "onSongPlay: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongPlay: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 
     @Override
     public void onSongQueue(long songId) {
-        Toast.makeText(this, "onSongQueue: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongQueue: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 
     @Override
     public void onSongEdit(long songId) {
-        Toast.makeText(this, "onSongEdit: " + mSongDao.getSongById(songId).getTitle(), Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 
     @Override
