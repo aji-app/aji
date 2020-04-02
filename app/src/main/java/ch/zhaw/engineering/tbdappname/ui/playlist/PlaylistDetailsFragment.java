@@ -60,30 +60,31 @@ public class PlaylistDetailsFragment extends Fragment {
         mBinding.playlistEdit.setBackground(null);
         mBinding.playlistEdit.setOnClickListener(v -> {
             mInEditMode = !mInEditMode;
-            mBinding.playlistName.setVisibility(!mInEditMode ? View.VISIBLE : View.GONE);
-            mBinding.playlistNameEdit.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
+//            mBinding.playlistName.setVisibility(!mInEditMode ? View.VISIBLE : View.GONE);
+//            mBinding.playlistNameEdit.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
+            mBinding.playlistNameEdittext.setEditMode(mInEditMode);
             mSongListFragment.setEditMode(mInEditMode);
             if (!mInEditMode) {
                 notifyListenerNameUpdate();
             }
         });
 
-        mBinding.playlistNameEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mBinding.playlistName.setText(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//        mBinding.playlistNameEdit.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                mBinding.playlistName.setText(s.toString());
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         return mBinding.getRoot();
     }
@@ -97,8 +98,9 @@ public class PlaylistDetailsFragment extends Fragment {
                 mPlaylist = playlistDao.getPlaylistById(mPlaylistId);
 
                 getActivity().runOnUiThread(() -> {
-                    mBinding.playlistName.setText(mPlaylist.getName());
-                    mBinding.playlistNameEdit.setText(mPlaylist.getName());
+//                    mBinding.playlistName.setText(mPlaylist.getName());
+//                    mBinding.playlistNameEdit.setText(mPlaylist.getName());
+                    mBinding.playlistNameEdittext.setText(mPlaylist.getName());
                     mSongListFragment = SongListFragment.newInstance(mPlaylistId);
                     getChildFragmentManager().beginTransaction()
                             .replace(R.id.songlist_container, mSongListFragment)
@@ -127,8 +129,8 @@ public class PlaylistDetailsFragment extends Fragment {
     }
 
     private void notifyListenerNameUpdate() {
-        if (mBinding.playlistName.getText().length() > 0 && mListener != null) {
-            mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistName.getText().toString());
+        if (mBinding.playlistNameEdittext.getText().length() > 0 && mListener != null) {
+            mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistNameEdittext.getText().toString());
         }
     }
 
