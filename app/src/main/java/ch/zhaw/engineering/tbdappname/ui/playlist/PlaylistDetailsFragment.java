@@ -3,6 +3,8 @@ package ch.zhaw.engineering.tbdappname.ui.playlist;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,8 @@ public class PlaylistDetailsFragment extends Fragment {
     private Playlist mPlaylist;
     private PlaylistDetailsFragmentListener mListener;
     private FragmentPlaylistDetailsBinding mBinding;
+    private boolean mInEditMode = false;
+    private SongListFragment mSongListFragment;
 
     /**
      * Use this factory method to create a new instance of
@@ -53,6 +57,34 @@ public class PlaylistDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentPlaylistDetailsBinding.inflate(inflater);
+        mBinding.playlistEdit.setBackground(null);
+        mBinding.playlistEdit.setOnClickListener(v -> {
+            mInEditMode = !mInEditMode;
+            mBinding.playlistName.setVisibility(!mInEditMode ? View.VISIBLE : View.GONE);
+            mBinding.playlistNameEdit.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
+            mSongListFragment.setEditMode(mInEditMode);
+            if (!mInEditMode) {
+                notifyListenerNameUpdate();
+            }
+        });
+
+        mBinding.playlistNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mBinding.playlistName.setText(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         return mBinding.getRoot();
     }
 
@@ -66,8 +98,10 @@ public class PlaylistDetailsFragment extends Fragment {
 
                 getActivity().runOnUiThread(() -> {
                     mBinding.playlistName.setText(mPlaylist.getName());
+                    mBinding.playlistNameEdit.setText(mPlaylist.getName());
+                    mSongListFragment = SongListFragment.newInstance(mPlaylistId);
                     getChildFragmentManager().beginTransaction()
-                            .replace(R.id.songlist_container, SongListFragment.newInstance(mPlaylistId))
+                            .replace(R.id.songlist_container, mSongListFragment)
                             .commitNow();
                 });
             });
@@ -88,10 +122,14 @@ public class PlaylistDetailsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mBinding.playlistName.getText().length() > 0) {
+        notifyListenerNameUpdate();
+        mListener = null;
+    }
+
+    private void notifyListenerNameUpdate() {
+        if (mBinding.playlistName.getText().length() > 0 && mListener != null) {
             mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistName.getText().toString());
         }
-        mListener = null;
     }
 
     public interface PlaylistDetailsFragmentListener {

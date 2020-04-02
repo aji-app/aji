@@ -46,6 +46,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private Map<Integer, Playlist> mPlaylists;
     private final Mode mMode;
     private RecyclerView mRecyclerView;
+    private boolean mEditMode = false;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
         this(items, listener, context, null, playlistId, true, dragListener);
@@ -78,6 +79,15 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return new ViewHolder(view);
     }
 
+    public void setEditMode(boolean editMode) {
+        if (mMode == Mode.PLAYLIST) {
+            if (mEditMode != editMode) {
+                notifyDataSetChanged();
+            }
+            mEditMode = editMode;
+        }
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.song = mValues.get(position);
@@ -88,7 +98,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         Button overFlow = holder.binding.songItemOverflow;
         ImageButton favoriteButton = holder.binding.songItemFavorite;
         ImageButton dragHandle = holder.binding.songItemDraghandle;
-        if (mMode == Mode.PLAYLIST) {
+        if (mEditMode) {
             overFlow.setVisibility(View.GONE);
             favoriteButton.setVisibility(View.GONE);
             dragHandle.setVisibility(View.VISIBLE);
@@ -109,8 +119,10 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 }
                 return true;
             });
-        } else if (mMode == Mode.ALL_SONGS) {
+        } else {
             dragHandle.setVisibility(View.GONE);
+            overFlow.setVisibility(View.VISIBLE);
+            favoriteButton.setVisibility(View.VISIBLE);
             overFlow.setBackground(null);
             favoriteButton.setBackground(null);
 

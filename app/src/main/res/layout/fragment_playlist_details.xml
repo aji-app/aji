@@ -12,18 +12,43 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-        <EditText
+        <TextView
             android:id="@+id/playlist_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="11dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_name"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/playlist_name_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:textSize="20sp"
             android:hint="@string/hint_name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/playlist_edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:contentDescription="@string/contentDescription_edit_playlist"
+            android:gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_edit"
+            android:tint="?attr/colorPrimary" />
     </LinearLayout>
 
     <FrameLayout

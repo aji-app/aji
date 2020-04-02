@@ -19,6 +19,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
+import lombok.Setter;
 
 /**
  * A fragment representing a list of Songs.
@@ -33,6 +34,7 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
     private Integer mPlaylistId;
     private ItemTouchHelper mItemTouchHelper;
     private SongRecyclerViewAdapter mAdapter;
+    private boolean mEditMode;
 
     @SuppressWarnings("unused")
     public static SongListFragment newInstance() {
@@ -55,6 +57,14 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
         }
 
         return fragment;
+    }
+
+    public void setEditMode(boolean editMode) {
+        mEditMode = editMode;
+        mAdapter.setEditMode(mEditMode);
+        if (!mEditMode) {
+            notifyListenerPlaylistUpdated();
+        }
     }
 
     @Override
@@ -134,6 +144,10 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        notifyListenerPlaylistUpdated();
+    }
+
+    private void notifyListenerPlaylistUpdated() {
         if (mListener != null) {
             Pair<Integer, List<Long>> data = mAdapter.getModifiedPlaylist();
             if (data.first != null && data.second != null) {

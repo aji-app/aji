@@ -251,7 +251,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
 
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), "Edit Playlist");
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), getString(R.string.playlist_details_title));
             });
         });
     }
@@ -262,7 +262,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), "Edit Playlist");
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), getString(R.string.playlist_details_title));
             });
         });
 
