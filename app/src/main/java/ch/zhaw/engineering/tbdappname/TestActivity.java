@@ -15,10 +15,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
@@ -44,6 +45,16 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
     private Fragment mCurrentFragment;
 
+    private final FragmentManager.OnBackStackChangedListener backStackListener = () -> {
+        String name = null;
+        int position = getSupportFragmentManager().getBackStackEntryCount();
+        if (position != 0) {
+            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(position - 1);
+            name = backEntry.getName();
+        }
+        setActionBarTitle(name);
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +64,13 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, mCurrentFragment)
                     .commitNow();
+            setActionBarTitle(null);
         }
 
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
     }
 
     @Override
@@ -67,27 +80,37 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
                 if (mCurrentFragment instanceof SongFragment) {
                     return false;
                 }
-                replaceFragment(SongFragment.newInstance());
+                replaceFragment(SongFragment.newInstance(), getString(R.string.song_list_title));
                 return true;
             case R.id.playlist_list:
                 if (mCurrentFragment instanceof PlaylistFragment) {
                     return false;
                 }
-                replaceFragment(PlaylistFragment.newInstance());
+                replaceFragment(PlaylistFragment.newInstance(), getString(R.string.playlist_list_title));
                 return true;
             default:
                 return false;
         }
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, String name) {
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right )
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                 .replace(R.id.container, fragment)
-                .addToBackStack(null)
+                .addToBackStack(name)
                 .commit();
         mCurrentFragment = fragment;
+    }
+
+    private void setActionBarTitle(String title) {
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            if (title == null) {
+                supportActionBar.setTitle(R.string.playlist_list_title);
+            } else {
+                supportActionBar.setTitle(title);
+            }
+        }
     }
 
     @Override
@@ -180,7 +203,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
     @Override
     public void onCreatePlaylist() {
-        showPlaylistNameDialog(null);
+        showCreatePlaylistDialog();
     }
 
     @Override
@@ -196,12 +219,12 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onSongsReordered(List<Long> songIds, int playlistId) {
+    public void onPlaylistModified(int playlistId, List<Long> songIds) {
         AsyncTask.execute(() -> {
-            mPlaylistDao.reorderSongsInPlaylist(songIds, playlistId);
+            mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             runOnUiThread(() -> {
-                Toast.makeText(this, "onSongsReordered: " + playlist.getName() + " ...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "onPlaylistModified: " + playlist.getName() + " ...", Toast.LENGTH_SHORT).show();
             });
         });
     }
@@ -213,7 +236,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
 
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId));
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), "Edit Playlist");
             });
         });
     }
@@ -224,7 +247,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId));
+                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), "Edit Playlist");
             });
         });
 
@@ -254,19 +277,17 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onPlaylistDelete(int playlistId) {
         AsyncTask.execute(() -> {
-            mPlaylistDao.deletePlaylist(playlistId);
-
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistDelete: " + playlist.getName(), Toast.LENGTH_SHORT).show();
             });
+
+            mPlaylistDao.deletePlaylist(playlistId);
         });
     }
 
-    private void showPlaylistNameDialog(Playlist playlist) {
+    private void showCreatePlaylistDialog() {
 
-
-// ...Irrelevant code for customizing the buttons and title
         LayoutInflater inflater = this.getLayoutInflater();
 
         View dialogView = inflater.inflate(R.layout.alert_create_playlist, null);
@@ -302,13 +323,11 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.Theme_App_AlertDialog)
                 .setView(dialogView)
-                .setTitle(playlist == null ? R.string.create_playlist : R.string.edit_playlist)
+                .setTitle(R.string.create_playlist)
                 .setPositiveButton(R.string.save, null)
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
 
-        if (playlist != null) {
-            editText.setText(playlist.getName());
-        }
+        editText.setSingleLine();
 
         AlertDialog alertDialog = dialogBuilder.create();
 
@@ -333,24 +352,13 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onPlaylistSave(int playlistId) {
+    public void onPlaylistNameChanged(int playlistId, String newName) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            playlist.setName(newName);
+            mPlaylistDao.update(playlist);
             runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistSave: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
-        });
-    }
-
-    @Override
-    public void onSongRemovedFromPlaylist(long songId, int playlistId) {
-        AsyncTask.execute(() -> {
-            mPlaylistDao.deleteSongFromPlaylist(songId, playlistId);
-
-            Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongRemovedFromPlaylist: " + playlist.getName() + " - " + song.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "onPlaylistNameChanged: " + playlist.getName(), Toast.LENGTH_SHORT).show();
             });
         });
     }

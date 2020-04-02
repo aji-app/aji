@@ -54,41 +54,42 @@ public class SongMetaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        PopupMenu popup = new PopupMenu(getActivity(), mBinding.songMetaMenu);
-        //inflating menu from xml resource
-        popup.inflate(R.menu.song_meta_menu);
-        //adding click listener
+        if (getActivity() != null) {
+            PopupMenu popup = new PopupMenu(getActivity(), mBinding.songMetaMenu);
+            //inflating menu from xml resource
+            popup.inflate(R.menu.song_meta_menu);
+            //adding click listener
 
-        popup.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
 
-                case R.id.song_meta_order_album:
-                    mListener.onSortTypeChanged(SongDao.SortType.ALBUM);
-                    return true;
-                case R.id.song_meta_order_artist:
-                    mListener.onSortTypeChanged(SongDao.SortType.ARTIST);
-                    return true;
-                case R.id.song_meta_order_title:
-                    mListener.onSortTypeChanged(SongDao.SortType.TITLE);
-                    return true;
-                case R.id.song_meta_direction_asc:
-                    mListener.onSortDirectionChanged(true);
-                    return true;
-                case R.id.song_meta_direction_desc:
-                    mListener.onSortDirectionChanged(false);
-                    return true;
-                default:
-                    return false;
-            }
-        });
+                    case R.id.song_meta_order_album:
+                        mListener.onSortTypeChanged(SongDao.SortType.ALBUM);
+                        return true;
+                    case R.id.song_meta_order_artist:
+                        mListener.onSortTypeChanged(SongDao.SortType.ARTIST);
+                        return true;
+                    case R.id.song_meta_order_title:
+                        mListener.onSortTypeChanged(SongDao.SortType.TITLE);
+                        return true;
+                    case R.id.song_meta_direction_asc:
+                        mListener.onSortDirectionChanged(true);
+                        return true;
+                    case R.id.song_meta_direction_desc:
+                        mListener.onSortDirectionChanged(false);
+                        return true;
+                    default:
+                        return false;
+                }
+            });
 
-        mBinding.songMetaMenu.setOnClickListener(v -> popup.show());
+            mBinding.songMetaMenu.setOnClickListener(v -> popup.show());
+        }
     }
 
 
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SongListFragment.SongListFragmentListener) {
             mListener = (SongMetaFragmentListener) context;
@@ -101,7 +102,9 @@ public class SongMetaFragment extends Fragment {
     public interface SongMetaFragmentListener {
 
         void onSortTypeChanged(SongDao.SortType sortType);
+
         void onSearchTextChanged(String text);
+
         void onSortDirectionChanged(boolean ascending);
     }
 }

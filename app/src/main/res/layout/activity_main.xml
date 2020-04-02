@@ -61,6 +61,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button8" />
 
+
     <Button
         android:id="@+id/button10"
         android:layout_width="wrap_content"
@@ -69,5 +70,15 @@
         android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button9" />
+
+
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add songs to playlist 1"
+        android:theme="?attr/primaryButtonTheme"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button10" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

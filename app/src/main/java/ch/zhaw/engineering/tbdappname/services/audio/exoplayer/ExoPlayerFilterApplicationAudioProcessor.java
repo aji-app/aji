@@ -31,8 +31,8 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
     private AudioProcessor.AudioFormat mInputAudioFormat;
     private boolean mInputEnded;
     private boolean mRunningFilters;
-    private AudioBackend.AudioFilter[] mFilters;
-    private FilterApplication[] mFilterApplications;
+    private final AudioBackend.AudioFilter[] mFilters;
+    private final FilterApplication[] mFilterApplications;
     private boolean mGotFlushed = false;
 
     public ExoPlayerFilterApplicationAudioProcessor(AudioBackend.AudioFilter... filters) {

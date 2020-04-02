@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.services.database.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -31,6 +32,7 @@ public class Song {
     private String albumArtPath;
 
     @Override
+    @NonNull
     public String toString() {
         return title + " by " + artist;
     }

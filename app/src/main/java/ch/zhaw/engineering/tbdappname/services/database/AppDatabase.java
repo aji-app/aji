@@ -36,7 +36,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE `RadioStation` ( `id` INTEGER PRIMARY KEY NOT NULL, `name` TEXT UNIQUE NOT NULL, `url` TEXT UNIQUE NOT NULL)");
@@ -45,7 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
-    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE RadioStation ADD COLUMN genres TEXT NOT NULL DEFAULT ''");

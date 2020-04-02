@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +15,7 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +32,7 @@ import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import lombok.RequiredArgsConstructor;
+import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "SongRecyclerViewAdapter";
@@ -40,11 +40,11 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private final List<Song> mValues;
     private final SongListFragment.SongListFragmentListener mListener;
     private final OnTouchCallbacks mDragStartListener;
-    private Context mContext;
+    private final Context mContext;
     @Nullable
-    private Integer mPlaylistId;
+    private final Integer mPlaylistId;
     private Map<Integer, Playlist> mPlaylists;
-    private Mode mMode;
+    private final Mode mMode;
     private RecyclerView mRecyclerView;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
@@ -71,7 +71,8 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_song_item, parent, false);
         return new ViewHolder(view);
@@ -205,29 +206,19 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
-
     @Override
     public void onItemDismiss(int position) {
         // TODO: After reorder dismissing break somehow
         if (mMode == Mode.PLAYLIST) {
             final Song songToBeRemoved = mValues.get(position);
-            Log.i(TAG, "Removing " + position + " - " + songToBeRemoved.getSongId());
+            Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());
             Snackbar snackbar = Snackbar
-                    .make(mRecyclerView, R.string.song_removed_playlist, Snackbar.LENGTH_LONG)
+                    .make(mRecyclerView, R.string.song_removed_playlist, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.undo, view -> {
                         mValues.add(position, songToBeRemoved);
                         notifyItemInserted(position);
-                        Log.i(TAG, "Restorign " + position + " - " + songToBeRemoved.getSongId());
+                        Log.i(TAG, "Restoring " + position + ": " + songToBeRemoved.getTitle());
                         mRecyclerView.scrollToPosition(position);
-                    })
-                    .addCallback(new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar transientBottomBar, int event) {
-                            super.onDismissed(transientBottomBar, event);
-                            if (event != DISMISS_EVENT_ACTION) {
-                                mListener.onSongRemovedFromPlaylist(songToBeRemoved.getSongId(), mPlaylistId);
-                            }
-                        }
                     });
             snackbar.show();
             mValues.remove(position);
@@ -235,19 +226,16 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
-    @Override
-    public void onFinishedMoving() {
-        if (mMode == Mode.PLAYLIST) {
-            List<Long> songIds = new ArrayList<>(mValues.size());
-            for (Song song : mValues) {
-                songIds.add(song.getSongId());
-            }
-            mListener.onSongsReordered(songIds, mPlaylistId);
+    public Pair<Integer, List<Long>> getModifiedPlaylist() {
+        List<Long> songIds = new ArrayList<>(mValues.size());
+        for (Song song : mValues) {
+            songIds.add(song.getSongId());
         }
+        return new Pair<>(mPlaylistId, songIds);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        FragmentSongItemBinding binding;
+        final FragmentSongItemBinding binding;
         Song song;
 
         ViewHolder(View view) {
@@ -256,15 +244,19 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + song.toString() + "'";
         }
     }
 
-    @RequiredArgsConstructor
-    public static class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
+    /* package */ static class SimpleItemTouchHelperCallback extends SwipeToDeleteCallback {
         private final ItemTouchHelperAdapter mAdapter;
-        private boolean mDidMove = false;
+
+        public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, Context context) {
+            super(context);
+            mAdapter = adapter;
+        }
 
         @Override
         public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
@@ -272,17 +264,8 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
 
         @Override
-        public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-            super.clearView(recyclerView, viewHolder);
-            if (mDidMove) {
-                mAdapter.onFinishedMoving();
-                mDidMove = false;
-            }
-        }
-
-        @Override
         public boolean isLongPressDragEnabled() {
-            return true;
+            return false;
         }
 
         @Override
@@ -293,13 +276,12 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         @Override
         public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
             int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            int swipeFlags = ItemTouchHelper.START;
             return makeMovementFlags(dragFlags, swipeFlags);
         }
 
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            mDidMove = true;
             mAdapter.onItemMove(viewHolder.getAdapterPosition(),
                     target.getAdapterPosition());
             return true;
@@ -307,13 +289,12 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            mDidMove = false;
             mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
         }
     }
 
-    private static enum Mode {
-        ALL_SONGS, PLAYLIST;
+    private enum Mode {
+        ALL_SONGS, PLAYLIST
     }
 
     public interface OnTouchCallbacks {

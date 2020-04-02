@@ -3,14 +3,13 @@ package ch.zhaw.engineering.tbdappname.ui.playlist;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistDetailsBinding;
@@ -51,7 +50,7 @@ public class PlaylistDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentPlaylistDetailsBinding.inflate(inflater);
         return mBinding.getRoot();
@@ -89,14 +88,13 @@ public class PlaylistDetailsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        if (mBinding.playlistName.getText().length() > 0) {
+            mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistName.getText().toString());
+        }
         mListener = null;
     }
 
     public interface PlaylistDetailsFragmentListener {
-        void onPlaylistSave(int playlistId);
-
-        // TODO: How get songlistfragment events without making songlistfragment depending??
-        void onSongRemovedFromPlaylist(long songId, int playlistId);
-
+        void onPlaylistNameChanged(int playlistId, String newName);
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
@@ -85,18 +86,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button button9 = findViewById(R.id.button9);
+        int songCount = 20;
         button9.setOnClickListener(v -> {
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(this).songDao();
-                List<Song> fakeSongs = new ArrayList<>(10);
-                for (int i = 0; i < 10; i++) {
+                List<Song> fakeSongs = new ArrayList<>(songCount);
+                for (int i = 0; i < songCount; i++) {
                     fakeSongs.add(Song.builder()
                             .title("Song Nr. " + i)
                             .artist("Fake Band " + i)
                             .album("Make it Fake " + i)
                             .filepath("bubu" + i)
                             .duration((long) (1000 * (i + 1) + Math.random() * 500))
-                            .rating((int) (Math.random() * 10))
+                            .rating((int) (Math.random() * songCount))
                             .deleted(false)
                             .build());
                 }
@@ -109,6 +111,22 @@ public class MainActivity extends AppCompatActivity {
         button10.setOnClickListener(v -> {
             Intent intent = new Intent(this, TestActivity.class);
             startActivity(intent);
+        });
+
+        Button button11 = findViewById(R.id.button11);
+        button11.setOnClickListener(v -> {
+            PlaylistDao dao = AppDatabase.getInstance(this).playlistDao();
+            dao.getPlaylists().observe(this, playlists -> {
+                if (playlists.size() == 0) {
+                    return;
+                }
+                int id = playlists.get(0).getPlaylistId();
+                AsyncTask.execute(() -> {
+                    for (int i = 0; i < songCount; i++) {
+                        dao.addSongToPlaylist(i+1, id);
+                    }
+                });
+            });
         });
     }
 

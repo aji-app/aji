@@ -13,7 +13,7 @@ public class ExoPlayerBatchingAudioProcessor implements AudioProcessor {
     private int mInputPosition = 0;
     private boolean mInputEnded = false;
     private int mInputBufferSize;
-    private int mBatchSize;
+    private final int mBatchSize;
 
     public ExoPlayerBatchingAudioProcessor() {
         this(0);

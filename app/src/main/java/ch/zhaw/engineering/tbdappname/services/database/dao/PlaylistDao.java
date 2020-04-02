@@ -8,6 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,20 @@ public abstract class PlaylistDao {
         deleteSongsFromPlaylist(playlistId);
         insertAll(songs);
     }
+
+
+    @Transaction
+    public void modifyPlaylist(List<Long> songIds, int playlistId) {
+        this.deleteSongsFromPlaylist(playlistId);
+        List<PlaylistSongCrossRef> songs = new ArrayList<>(songIds.size());
+        for (int i = 0; i < songIds.size(); i++) {
+            songs.add(new PlaylistSongCrossRef(playlistId, songIds.get(i), i));
+        }
+        insertAll(songs);
+    }
+
+    @Update
+    public abstract void update(Playlist playlist);
 
     /*
      * Internal Helper Methods

@@ -19,7 +19,7 @@ import lombok.Value;
 
 public class SongViewModel extends AndroidViewModel {
     private static final String TAG = "SongViewModel";
-    public final SongDao mSongRepository;
+    private final SongDao mSongDao;
     private final MediatorLiveData<List<Song>> mSongs;
 
     private final MediatorLiveData<SongsAndPlaylists> mSongsAndPlaylists = new MediatorLiveData<>();
@@ -35,7 +35,7 @@ public class SongViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Song>> getSongsForPlaylist(Integer id) {
-        return mSongRepository.getSongsForPlaylist(id);
+        return mSongDao.getSongsForPlaylist(id);
     }
 
     public LiveData<SongsAndPlaylists> getSongsAndPlaylists() {
@@ -44,7 +44,7 @@ public class SongViewModel extends AndroidViewModel {
 
     public SongViewModel(@NonNull Application application) {
         super(application);
-        mSongRepository = SongDao.getInstance(application);
+        mSongDao = SongDao.getInstance(application);
         mSongs = new MediatorLiveData<>();
         PlaylistDao playlistDao = PlaylistDao.getInstance(application);
 
@@ -88,7 +88,7 @@ public class SongViewModel extends AndroidViewModel {
         if (mLastSource != null) {
             mSongs.removeSource(mLastSource);
         }
-        mLastSource = mSongRepository.getSortedSongs(mSortType, mAscending, mSearchText);
+        mLastSource = mSongDao.getSortedSongs(mSortType, mAscending, mSearchText);
         mSongs.addSource(mLastSource, value -> {
             Log.i(TAG, "Updating songs in songs list: " + (value.size() > 0 ? value.get(0).getTitle() : " no songs"));
             mSongs.setValue(value);

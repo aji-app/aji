@@ -6,8 +6,8 @@ import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 
 public class NoopFilter extends AudioBackend.AudioFilter {
     private static final String TAG = "NoopFilter";
-    private int mId;
-    private int mBatchSize;
+    private final int mId;
+    private final int mBatchSize;
 
     public NoopFilter(int id, int batchSize, boolean enabled) {
         mId = id;

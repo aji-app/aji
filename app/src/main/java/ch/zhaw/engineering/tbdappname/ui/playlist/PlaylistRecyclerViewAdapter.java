@@ -1,25 +1,32 @@
 package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.ViewHolder> {
 
     private final List<PlaylistWithSongCount> mValues;
     private final PlaylistListFragment.PlaylistFragmentListener mListener;
     private final Context mContext;
+    private RecyclerView mRecyclerView;
 
     /* package */ PlaylistRecyclerViewAdapter(List<PlaylistWithSongCount> items, PlaylistListFragment.PlaylistFragmentListener listener, Context context) {
         mValues = items;
@@ -28,10 +35,39 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     }
 
     @Override
+    @NonNull
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_playlist_item, parent, false);
         return new ViewHolder(view);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    public void onDismiss(int position) {
+        final PlaylistWithSongCount playlistToBeRemoved = mValues.get(position);
+        Snackbar snackbar = Snackbar
+                .make(mRecyclerView, R.string.playlist_deleted, Snackbar.LENGTH_SHORT)
+                .setAction(R.string.undo, view -> {
+                    mValues.add(position, playlistToBeRemoved);
+                    notifyItemInserted(position);
+                    mRecyclerView.scrollToPosition(position);
+                }).addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        if (event != DISMISS_EVENT_ACTION && mListener != null) {
+                            mListener.onPlaylistDelete(playlistToBeRemoved.getPlaylistId());
+                        }
+                    }
+                });
+        snackbar.show();
+        mValues.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -41,7 +77,8 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         Button overFlowButton = holder.binding.playlistItemOverflow;
 
         holder.binding.playlistName.setText(mValues.get(position).getName());
-        holder.binding.playlistSongCount.setText(root.getContext().getResources().getString(R.string.song_count, holder.playlist.getSongCount()));
+        int songCount = holder.playlist.getSongCount();
+        holder.binding.playlistSongCount.setText(root.getContext().getResources().getQuantityString(R.plurals.song_count, songCount, songCount));
         overFlowButton.setBackground(null);
 
         holder.binding.playlistItemPlay.setBackground(null);
@@ -92,7 +129,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        FragmentPlaylistItemBinding binding;
+        final FragmentPlaylistItemBinding binding;
         PlaylistWithSongCount playlist;
 
         ViewHolder(View view) {
@@ -101,6 +138,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + playlist.getName() + "'";
         }

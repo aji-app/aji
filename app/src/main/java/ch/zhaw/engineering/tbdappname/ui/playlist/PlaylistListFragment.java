@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,10 +19,13 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.SongRecyclerViewAdapter;
+import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
 public class PlaylistListFragment extends TbdListFragment {
     private static final String TAG = "PlaylistListFragment";
     private PlaylistFragmentListener mListener;
+    private PlaylistRecyclerViewAdapter mAdapter;
 
     @SuppressWarnings("unused")
     public static PlaylistListFragment newInstance() {
@@ -76,16 +80,30 @@ public class PlaylistListFragment extends TbdListFragment {
         Log.i(TAG, "Updating playlists for playlist list fragment");
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
-                mRecyclerView.setAdapter(new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity()));
+                mAdapter = new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity());
+                ItemTouchHelper.Callback callback =
+                        new SwipeToDeleteCallback(getActivity()) {
+                            @Override
+                            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                                mAdapter.onDismiss(viewHolder.getAdapterPosition());
+                            }
+                        };
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+                itemTouchHelper.attachToRecyclerView(mRecyclerView);
+                mRecyclerView.setAdapter(mAdapter);
             });
         }
     }
 
     public interface PlaylistFragmentListener {
         void onPlaylistSelected(int playlist);
+
         void onPlaylistEdit(int playlist);
+
         void onPlaylistPlay(int playlist);
+
         void onPlaylistQueue(int playlist);
+
         void onPlaylistDelete(int playlist);
 
     }

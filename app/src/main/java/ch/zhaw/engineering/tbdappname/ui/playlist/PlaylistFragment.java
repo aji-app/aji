@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
@@ -13,7 +14,6 @@ import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding;
 
 public class PlaylistFragment extends Fragment {
     private PlaylistFragmentListener mListener;
-    private FragmentPlaylistBinding mBinding;
 
     public static PlaylistFragment newInstance() {
         PlaylistFragment fragment = new PlaylistFragment();
@@ -25,12 +25,10 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof PlaylistFragmentListener) {
             mListener = (PlaylistFragmentListener) context;
@@ -41,9 +39,9 @@ public class PlaylistFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentPlaylistBinding.inflate(inflater);
+        ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
@@ -51,13 +49,13 @@ public class PlaylistFragment extends Fragment {
                     .commitNow();
         }
 
-        mBinding.fabAddPlaylist.setOnClickListener(v -> {
+        binding.fabAddPlaylist.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onCreatePlaylist();
             }
         });
 
-        return mBinding.getRoot();
+        return binding.getRoot();
     }
 
     public interface PlaylistFragmentListener {

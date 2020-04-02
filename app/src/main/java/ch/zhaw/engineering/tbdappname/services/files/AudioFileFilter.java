@@ -52,7 +52,7 @@ public class AudioFileFilter implements FileFilter {
         FLAC("flac"),
         MP3("mp3");
 
-        private String filesuffix;
+        private final String filesuffix;
 
         SupportedFileFormat(String filesuffix) {
             this.filesuffix = filesuffix;
