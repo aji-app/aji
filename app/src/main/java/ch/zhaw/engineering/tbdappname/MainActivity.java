@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.tbdappname;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 
@@ -17,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends FragmentInteractionActivity {
-
+    private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -39,13 +40,15 @@ public class MainActivity extends FragmentInteractionActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_library, R.id.nav_playlists, R.id.nav_radiostations, R.id.nav_filters, R.id.nav_settings)
+                R.id.nav_library, R.id.nav_playlists, R.id.nav_radiostations, R.id.nav_filters)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -6,4 +6,9 @@
         app:defaultValue="false"
         app:title="" />
 
+    <SwitchPreferenceCompat
+        app:key="mediastore_sync"
+        app:defaultValue="true"
+        app:title="@string/settings_media_store_title" />
+
 </PreferenceScreen>
