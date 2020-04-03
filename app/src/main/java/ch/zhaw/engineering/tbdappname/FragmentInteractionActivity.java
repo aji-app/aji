@@ -6,15 +6,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,106 +27,23 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
-public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener,
+public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener {
-    private static final String TAG = "TestActivity";
+
     private SongViewModel mSongViewModel;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
 
-    private Fragment mCurrentFragment;
-
-    private final FragmentManager.OnBackStackChangedListener backStackListener = () -> {
-        String name = null;
-        int position = getSupportFragmentManager().getBackStackEntryCount();
-        if (position != 0) {
-            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(position - 1);
-            name = backEntry.getName();
-        }
-        setActionBarTitle(name);
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_activity);
-        if (savedInstanceState == null) {
-            mCurrentFragment = PlaylistFragment.newInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, mCurrentFragment)
-                    .commitNow();
-            setActionBarTitle(null);
-        }
-
         mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
-        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.song_list:
-                if (mCurrentFragment instanceof SongFragment) {
-                    return false;
-                }
-                replaceFragment(SongFragment.newInstance(), getString(R.string.song_list_title));
-                return true;
-            case R.id.playlist_list:
-                if (mCurrentFragment instanceof PlaylistFragment) {
-                    return false;
-                }
-                replaceFragment(PlaylistFragment.newInstance(), getString(R.string.playlist_list_title));
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private void replaceFragment(Fragment fragment, String name) {
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                .replace(R.id.container, fragment)
-                .addToBackStack(name)
-                .commit();
-        mCurrentFragment = fragment;
-    }
-
-    private void setActionBarTitle(String title) {
-        ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            if (title == null) {
-                supportActionBar.setTitle(R.string.playlist_list_title);
-            } else {
-                supportActionBar.setTitle(title);
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.test_options_menu, menu);
-
-        // return true so that the menu pop up is opened
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Catch back action and pops from backstack
-        // (if you called previously to addToBackStack() in your transaction)
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        }
-        // Default action on back pressed
-        else super.onBackPressed();
     }
 
     @Override
@@ -378,5 +291,24 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
 
         alertDialog.show();
         editText.requestFocus();
+    }
+
+    private void replaceFragment(Fragment fragment, String name) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .replace(R.id.container, fragment)
+                .addToBackStack(name)
+                .commit();
+    }
+
+    private void setActionBarTitle(String title) {
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            if (title == null) {
+                supportActionBar.setTitle(R.string.playlist_list_title);
+            } else {
+                supportActionBar.setTitle(title);
+            }
+        }
     }
 }

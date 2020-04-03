@@ -3,41 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_library">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="ch.zhaw.engineering.tbdappname.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home">
+        android:id="@+id/nav_library"
+        android:name="ch.zhaw.engineering.tbdappname.ui.library.LibraryFragment"
+        android:label="@string/menu_library"
+        tools:layout="@layout/fragment_library" />
 
-        <action
-            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
-            app:destination="@id/nav_home_second" />
-    </fragment>
     <fragment
-        android:id="@+id/nav_home_second"
-        android:name="ch.zhaw.engineering.tbdappname.ui.home.HomeSecondFragment"
-        android:label="@string/home_second"
-        tools:layout="@layout/fragment_home_second">
-        <action
-            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
-            app:destination="@id/nav_home" />
+        android:id="@+id/nav_playlists"
+        android:name="ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment"
+        android:label="@string/menu_playlists"
+        tools:layout="@layout/fragment_playlist" />
 
-        <argument
-            android:name="myArg"
-            app:argType="string" />
+    <fragment
+        android:id="@+id/nav_radiostations"
+        android:name="ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragment"
+        android:label="@string/menu_radiostations"
+        tools:layout="@layout/fragment_radio_station">
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="ch.zhaw.engineering.tbdappname.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="ch.zhaw.engineering.tbdappname.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_filters"
+        android:name="ch.zhaw.engineering.tbdappname.ui.filter.FilterFragment"
+        android:label="@string/menu_filters"
+        tools:layout="@layout/fragment_filter" />
 </navigation>

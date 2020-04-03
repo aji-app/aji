@@ -145,7 +145,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 } else {
                     SubMenu playlistMenu = addToPlaylist.getSubMenu();
                     for (Playlist playlist : mPlaylists.values()) {
-                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_playlist);
+                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_menu_playlist);
                     }
                 }
 
