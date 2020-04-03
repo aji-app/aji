@@ -15,7 +15,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
@@ -164,7 +163,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
 
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), getString(R.string.playlist_details_title));
+                navigateToPlaylist(playlistId);
             });
         });
     }
@@ -175,7 +174,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-                replaceFragment(PlaylistDetailsFragment.newInstance(playlistId), getString(R.string.playlist_details_title));
+                navigateToPlaylist(playlistId);
             });
         });
 
@@ -293,22 +292,5 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         editText.requestFocus();
     }
 
-    private void replaceFragment(Fragment fragment, String name) {
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                .replace(R.id.container, fragment)
-                .addToBackStack(name)
-                .commit();
-    }
-
-    private void setActionBarTitle(String title) {
-        ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            if (title == null) {
-                supportActionBar.setTitle(R.string.playlist_list_title);
-            } else {
-                supportActionBar.setTitle(title);
-            }
-        }
-    }
+    protected abstract void navigateToPlaylist(int playlistId);
 }

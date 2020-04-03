@@ -1,21 +1,23 @@
 package ch.zhaw.engineering.tbdappname;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
+import android.view.View;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragmentArgs;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragmentDirections;
+
 
 public class MainActivity extends FragmentInteractionActivity {
     private static final String TAG = "MainActivity";
@@ -48,7 +50,11 @@ public class MainActivity extends FragmentInteractionActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-
+    @Override
+    protected void navigateToPlaylist(int playlistId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistListFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
