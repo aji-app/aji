@@ -22,13 +22,13 @@
             @style/Theme.App.Widget.ListItemTextViewSecondary
         </item>
 
-<!--        <item name="editTextStyle">-->
-<!--            @style/Theme.App.Widget.EditTextAppearance-->
-<!--        </item>-->
+        <!--        <item name="editTextStyle">-->
+        <!--            @style/Theme.App.Widget.EditTextAppearance-->
+        <!--        </item>-->
     </style>
 
     <style name="Theme.App.Widget.EditTextAppearance" parent="@android:style/TextAppearance.Widget.EditText">
-<!--        <item name="android:textColor">?attr/primaryTextColor</item>-->
+        <!--        <item name="android:textColor">?attr/primaryTextColor</item>-->
     </style>
 
     <style name="Theme.App.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
