@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import lombok.Setter;
 
@@ -95,19 +97,19 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            final SongViewModel songViewModel = new ViewModelProvider(getActivity()).get(SongViewModel.class);
+            final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             if (mPlaylistId == null) {
-                songViewModel.getSongsAndPlaylists().observe(getViewLifecycleOwner(), songsAndPlaylists -> {
+                appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
                     Log.i(TAG, "Updating songs for song fragment");
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
-                            mAdapter = new SongRecyclerViewAdapter(songsAndPlaylists.getSongs(), mListener, getActivity(), songsAndPlaylists.getPlaylists());
+                            mAdapter = new SongRecyclerViewAdapter(songs, mListener, getActivity(), new ArrayList<>());
                             mRecyclerView.setAdapter(mAdapter);
                         });
                     }
                 });
             } else {
-                songViewModel.getSongsForPlaylist(mPlaylistId).observe(getViewLifecycleOwner(), songs -> {
+                appViewModel.getSongsForPlaylist(mPlaylistId).observe(getViewLifecycleOwner(), songs -> {
                     if (getActivity() != null) {
                         Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                         getActivity().runOnUiThread(() -> {
@@ -169,7 +171,7 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
 
         void onSongQueue(long songId);
 
-        void onSongEdit(long songId);
+        void onSongMenu(long songId);
 
         void onSongAddToPlaylist(long songId, int playlistId);
 

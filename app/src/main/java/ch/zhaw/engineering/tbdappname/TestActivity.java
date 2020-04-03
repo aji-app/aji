@@ -20,7 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
@@ -34,12 +33,10 @@ import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
 public class TestActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener {
     private static final String TAG = "TestActivity";
-    private SongViewModel mSongViewModel;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
 
@@ -67,7 +64,6 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
             setActionBarTitle(null);
         }
 
-        mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
         getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
@@ -146,19 +142,16 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     @Override
     public void onSortTypeChanged(SongDao.SortType sortType) {
         Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSortType(sortType);
     }
 
     @Override
     public void onSearchTextChanged(String text) {
         Toast.makeText(this, "onSearchTextChanged: " + text, Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSearchText(text);
     }
 
     @Override
     public void onSortDirectionChanged(boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSortOrder(ascending);
     }
 
     @Override
@@ -182,7 +175,7 @@ public class TestActivity extends AppCompatActivity implements SongListFragment.
     }
 
     @Override
-    public void onSongEdit(long songId) {
+    public void onSongMenu(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {

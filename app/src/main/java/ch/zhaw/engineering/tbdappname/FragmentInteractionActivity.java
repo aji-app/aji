@@ -11,10 +11,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
@@ -23,24 +21,24 @@ import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongMetaFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongViewModel;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongMetaFragment.SongMetaFragmentListener,
+public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener {
 
-    private SongViewModel mSongViewModel;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
+    protected AppViewModel mAppViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSongViewModel = new ViewModelProvider(this).get(SongViewModel.class);
+        mAppViewModel = new ViewModelProvider(this).get(AppViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
     }
@@ -56,21 +54,23 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSortTypeChanged(SongDao.SortType sortType) {
+    public void onSongSortTypeChanged(SongDao.SortType sortType) {
         Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSortType(sortType);
+        mAppViewModel.changeSongSortType(sortType);
     }
 
     @Override
-    public void onSearchTextChanged(String text) {
-        Toast.makeText(this, "onSearchTextChanged: " + text, Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSearchText(text);
+    public void onSongSearchTextChanged(String searchText) {
+        Toast.makeText(this, "onSongSearchTextChanged: " + searchText, Toast.LENGTH_SHORT).show();
+        mAppViewModel.changeSongSearchText(searchText);
     }
 
+
+
     @Override
-    public void onSortDirectionChanged(boolean ascending) {
+    public void onSongSortDirectionChanged(boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        mSongViewModel.changeSortOrder(ascending);
+        mAppViewModel.changeSongSortOrder(ascending);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongEdit(long songId) {
+    public void onSongMenu(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {

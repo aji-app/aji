@@ -3,10 +3,7 @@ package ch.zhaw.engineering.tbdappname.ui.song;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,7 +11,6 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -134,51 +130,54 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             favoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.song.getSongId()));
 
             overFlow.setOnClickListener(v -> {
-                //creating a popup menu
-                PopupMenu popup = new PopupMenu(mContext, overFlow);
-                //inflating menu from xml resource
-                popup.inflate(R.menu.song_item_menu);
-
-                MenuItem addToPlaylist = popup.getMenu().findItem(R.id.song_menu_add_to_playlist);
-                if (mPlaylists == null) {
-                    addToPlaylist.setVisible(false);
-                } else {
-                    SubMenu playlistMenu = addToPlaylist.getSubMenu();
-                    for (Playlist playlist : mPlaylists.values()) {
-                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_menu_playlist);
-                    }
+                if (mListener != null) {
+                    mListener.onSongMenu(holder.song.getSongId());
                 }
-
-                //adding click listener
-                popup.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-
-                        case R.id.song_menu_play:
-                            mListener.onSongPlay(holder.song.getSongId());
-                            return true;
-                        case R.id.song_menu_queue:
-                            mListener.onSongQueue(holder.song.getSongId());
-                            return true;
-                        case R.id.song_menu_edit:
-                            mListener.onSongEdit(holder.song.getSongId());
-                            return true;
-                        case R.id.song_create_playlist:
-                            mListener.onCreatePlaylist();
-                            return true;
-                        case R.id.song_menu_delete:
-                            mListener.onSongDelete(holder.song.getSongId());
-                            return true;
-                        default:
-                            Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
-                            if (selectedPlaylist != null) {
-                                mListener.onSongAddToPlaylist(holder.song.getSongId(), selectedPlaylist.getPlaylistId());
-                                return true;
-                            }
-                            return false;
-                    }
-                });
-                //displaying the popup
-                popup.show();
+//                //creating a popup menu
+//                PopupMenu popup = new PopupMenu(mContext, overFlow);
+//                //inflating menu from xml resource
+//                popup.inflate(R.menu.song_item_menu);
+//
+//                MenuItem addToPlaylist = popup.getMenu().findItem(R.id.song_menu_add_to_playlist);
+//                if (mPlaylists == null) {
+//                    addToPlaylist.setVisible(false);
+//                } else {
+//                    SubMenu playlistMenu = addToPlaylist.getSubMenu();
+//                    for (Playlist playlist : mPlaylists.values()) {
+//                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_menu_playlist);
+//                    }
+//                }
+//
+//                //adding click listener
+//                popup.setOnMenuItemClickListener(item -> {
+//                    switch (item.getItemId()) {
+//
+//                        case R.id.song_menu_play:
+//                            mListener.onSongPlay(holder.song.getSongId());
+//                            return true;
+//                        case R.id.song_menu_queue:
+//                            mListener.onSongQueue(holder.song.getSongId());
+//                            return true;
+//                        case R.id.song_menu_edit:
+//                            mListener.onSongEdit(holder.song.getSongId());
+//                            return true;
+//                        case R.id.song_create_playlist:
+//                            mListener.onCreatePlaylist();
+//                            return true;
+//                        case R.id.song_menu_delete:
+//                            mListener.onSongDelete(holder.song.getSongId());
+//                            return true;
+//                        default:
+//                            Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
+//                            if (selectedPlaylist != null) {
+//                                mListener.onSongAddToPlaylist(holder.song.getSongId(), selectedPlaylist.getPlaylistId());
+//                                return true;
+//                            }
+//                            return false;
+//                    }
+//                });
+//                //displaying the popup
+//                popup.show();
             });
         }
 

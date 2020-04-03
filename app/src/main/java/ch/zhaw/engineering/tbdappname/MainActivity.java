@@ -3,8 +3,8 @@ package ch.zhaw.engineering.tbdappname;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -42,6 +42,9 @@ public class MainActivity extends FragmentInteractionActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+        });
+
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
         mBinding.layoutAppBarMain.persistentControls.extraSpace.setMinimumHeight((Resources.getSystem().getDisplayMetrics().heightPixels) / 2);
@@ -66,17 +69,12 @@ public class MainActivity extends FragmentInteractionActivity {
         });
     }
 
+
+
     @Override
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistListFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
     @Override
