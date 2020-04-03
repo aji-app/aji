@@ -29,8 +29,8 @@ import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 import static ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+public class MainActivityOld extends AppCompatActivity {
+    private static final String TAG = "MainActivityOld";
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private static final int REQUEST_CODE_PLS_SELECT = 2;
 
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_old);
 
         // TODO: Only use this if user did not disable this functionality
         mAudioFileContentObserver.register();

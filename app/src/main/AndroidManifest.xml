@@ -18,7 +18,7 @@
         <activity android:name=".TestActivity" android:exported="true"></activity>
         <activity android:name=".AddOrEditRadioStationActivity" />
         <activity android:name=".CurrentlyPlayingActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivityOld">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

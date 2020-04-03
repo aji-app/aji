@@ -13,7 +13,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.Locale;
 
-import ch.zhaw.engineering.tbdappname.MainActivity;
+import ch.zhaw.engineering.tbdappname.MainActivityOld;
 import ch.zhaw.engineering.tbdappname.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -92,7 +92,7 @@ public class NotificationManager {
     private Notification createCurrentNotification() {
         String channelId = getNotificationChannelId();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
-        Intent notificationIntent = new Intent(mContext, MainActivity.class);
+        Intent notificationIntent = new Intent(mContext, MainActivityOld.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent openAppIntent = PendingIntent.getActivity(mContext, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
