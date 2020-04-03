@@ -1,53 +1,69 @@
 package ch.zhaw.engineering.tbdappname;
 
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragmentArgs;
+import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragmentDirections;
 
 
 public class MainActivity extends FragmentInteractionActivity {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private ActivityMainBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+
+        setContentView(mBinding.getRoot());
+        setSupportActionBar(mBinding.layoutAppBarMain.toolbar);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_library, R.id.nav_playlists, R.id.nav_radiostations, R.id.nav_filters)
-                .setDrawerLayout(drawer)
+                .setDrawerLayout(mBinding.drawerLayout)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupWithNavController(mBinding.navView, navController);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
+
+        mBinding.layoutAppBarMain.persistentControls.extraSpace.setMinimumHeight((Resources.getSystem().getDisplayMetrics().heightPixels) / 2);
+
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
     }
 
     @Override
