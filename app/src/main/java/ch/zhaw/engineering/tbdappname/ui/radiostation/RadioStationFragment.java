@@ -48,7 +48,7 @@ public class RadioStationFragment extends Fragment {
                     .commitNow();
         }
 
-        binding.fabAddPlaylist.setOnClickListener(v -> {
+        binding.fabAddRadiostation.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onCreateRadioStation();
             }

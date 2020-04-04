@@ -41,7 +41,7 @@ public class PlaylistFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater);
+        FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()

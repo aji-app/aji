@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -15,7 +14,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 
 
 public class MainActivity extends FragmentInteractionActivity {
@@ -74,7 +73,7 @@ public class MainActivity extends FragmentInteractionActivity {
     @Override
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistListFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
+        navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
     }
 
     @Override
