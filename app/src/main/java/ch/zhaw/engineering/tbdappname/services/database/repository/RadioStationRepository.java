@@ -45,10 +45,6 @@ public class RadioStationRepository {
     }
 
     public void insertAll(List<RadioStationDto> stations) {
-        List<RadioStation> radios = new ArrayList<>(stations.size());
-        for (RadioStationDto radio : stations) {
-            radios.add(radio.toRadioStation());
-        }
-        mRadioStationDao.insertRadioStations(radios);
+        mRadioStationDao.insertAll(stations);
     }
 }

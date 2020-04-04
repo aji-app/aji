@@ -11,7 +11,9 @@ import androidx.lifecycle.MediatorLiveData;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 public class AppViewModel extends AndroidViewModel {
@@ -26,9 +28,16 @@ public class AppViewModel extends AndroidViewModel {
     private String mSongSearchText;
 
 
+    private final RadioStationDao mRadioStationDao;
+    private final MediatorLiveData<List<RadioStation>> mRadios = new MediatorLiveData<>();
+    private boolean mRadioAscending = true;
+    private String mRadioSearchText;
+
+
     public AppViewModel(@NonNull Application application) {
         super(application);
         mSongDao = AppDatabase.getInstance(application).songDao();
+        mRadioStationDao = AppDatabase.getInstance(application).radioStationDao();
         updateSongsSource();
     }
 
@@ -61,6 +70,31 @@ public class AppViewModel extends AndroidViewModel {
 
     public LiveData<List<Song>> getSongs() {
         return mSongs;
+    }
+
+    public LiveData<List<RadioStation>> getRadios() {
+        return mRadios;
+    }
+
+    public void changeRadioSortOrder(boolean ascending) {
+        mRadioAscending = ascending;
+        updateRadioSource();
+    }
+
+    public void changeRadioSearchText(String text) {
+        String prev = mRadioSearchText;
+        if (text.length() < 3) {
+            mRadioSearchText = null;
+        } else {
+            mRadioSearchText = text;
+        }
+        if (prev == null && mRadioSearchText != null || prev != null && !prev.equals(mRadioSearchText)) {
+            updateRadioSource();
+        }
+    }
+
+    private void updateRadioSource() {
+        mRadios.addSource(mRadioStationDao.getRadioStations(mRadioAscending, mRadioSearchText), mRadios::setValue);
     }
 
     private void updateSongsSource() {

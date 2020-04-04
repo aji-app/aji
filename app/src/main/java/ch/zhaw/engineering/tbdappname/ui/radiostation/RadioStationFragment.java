@@ -1,65 +1,94 @@
 package ch.zhaw.engineering.tbdappname.ui.radiostation;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RadioStationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RadioStationFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public RadioStationFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RadioStationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RadioStationFragment newInstance(String param1, String param2) {
-        RadioStationFragment fragment = new RadioStationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private RadioStationFragmentInteractionListener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof RadioStationFragmentInteractionListener) {
+            mListener = (RadioStationFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement RadioStationFragmentInteractionListener");
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_radio_station, container, false);
+        FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater);
+
+        if (savedInstanceState == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.radiostation_list_container, RadioStationListFragment.newInstance())
+                    .commitNow();
+        }
+
+        binding.fabAddPlaylist.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onCreateRadioStation();
+            }
+        });
+
+        return binding.getRoot();
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.radiostation_menu, menu);
+        SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
+        search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mListener.onRadioStationSearchTextChanged(newText);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.radiostation_direction_asc:
+                mListener.onRadioStationSortDirectionChanged(true);
+                return true;
+            case R.id.radiostation_direction_desc:
+                mListener.onRadioStationSortDirectionChanged(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

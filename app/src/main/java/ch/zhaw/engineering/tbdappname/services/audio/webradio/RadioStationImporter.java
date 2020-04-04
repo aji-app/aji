@@ -9,6 +9,8 @@ import androidx.preference.PreferenceManager;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.repository.RadioStationRepository;
 import ch.zhaw.engineering.tbdappname.services.files.CsvHelper;
@@ -28,9 +30,9 @@ public class RadioStationImporter {
         }
         AsyncTask.execute(() -> {
             List<RadioStationDto> radios = CsvHelper.readRadioStations(context, R.raw.radio_stations);
-            RadioStationRepository repo = RadioStationRepository.getInstance(context);
+            RadioStationDao dao = AppDatabase.getInstance(context).radioStationDao();
 
-            repo.insertAll(radios);
+            dao.insertAll(radios);
 
             preferences.edit().putBoolean(PREF_KEY_RADIOSTATION_IMPORT, true).apply();
         });

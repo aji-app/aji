@@ -59,4 +59,5 @@
     <string name="settings_media_store_title">Automatically sync with MediaStore</string>
     <string name="menu_playlist_details">Playlist Details</string>
     <string name="search">Search</string>
+    <string name="contentDescription_play_radiostation">Play Radio</string>
 </resources>
