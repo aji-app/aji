@@ -31,8 +31,6 @@ public class SongMetaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mBinding = FragmentSongMetaBinding.inflate(inflater);
-
-        mBinding.songMetaMenu.setBackground(null);
         mBinding.songFilter.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override

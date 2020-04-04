@@ -51,7 +51,7 @@
 
     </LinearLayout>
 
-    <ImageButton
+    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
         android:id="@+id/song_item_favorite"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -59,11 +59,10 @@
         android:layout_marginEnd="0dp"
         android:gravity="center"
         android:padding="0dp"
-        android:tint="?attr/colorPrimary"
         android:src="@drawable/ic_favorite"
         android:contentDescription="@string/contentDescription_toggle_favorite"/>
 
-    <ImageButton
+    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
         android:id="@+id/song_item_draghandle"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -71,12 +70,11 @@
         android:layout_marginEnd="0dp"
         android:gravity="center"
         android:padding="0dp"
-        android:tint="?attr/colorPrimary"
         android:src="@drawable/ic_reorder"
         android:visibility="gone"
         android:contentDescription="@string/contentDescription_drag_to_reorder_songs_in_playlist"/>
 
-    <Button
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
         android:id="@+id/song_item_overflow"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -84,8 +82,7 @@
         android:layout_marginEnd="0dp"
         android:gravity="center"
         android:padding="0dp"
-        android:text="@string/mennu_dots"
-        android:textColor="?attr/colorPrimary"
+        android:text="@string/menu_dots"
         android:textAppearance="?android:textAppearanceLarge" />
 
 </LinearLayout>

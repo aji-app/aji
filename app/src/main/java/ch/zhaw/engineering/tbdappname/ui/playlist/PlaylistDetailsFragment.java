@@ -55,7 +55,6 @@ public class PlaylistDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentPlaylistDetailsBinding.inflate(inflater);
-        mBinding.playlistEdit.setBackground(null);
         mBinding.playlistEdit.setOnClickListener(v -> {
             mInEditMode = !mInEditMode;
 //            mBinding.playlistName.setVisibility(!mInEditMode ? View.VISIBLE : View.GONE);

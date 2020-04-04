@@ -79,9 +79,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         holder.binding.playlistName.setText(mValues.get(position).getName());
         int songCount = holder.playlist.getSongCount();
         holder.binding.playlistSongCount.setText(root.getContext().getResources().getQuantityString(R.plurals.song_count, songCount, songCount));
-        overFlowButton.setBackground(null);
 
-        holder.binding.playlistItemPlay.setBackground(null);
         holder.binding.playlistItemPlay.setOnClickListener(v -> {
             if (null != mListener) {
                 mListener.onPlaylistPlay(holder.playlist.getPlaylistId());

@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ch.zhaw.engineering.tbdappname.R;
 
+import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
+
 abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     private final Paint mClearPaint;
@@ -32,25 +34,16 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     public SwipeToDeleteCallback(Context context) {
         mBackground = new ColorDrawable();
-        backgroundColor = getColor(context, R.attr.colorPrimaryDark);
+        backgroundColor = getColorFromAttr(context, R.attr.colorPrimaryDark);
         mClearPaint = new Paint();
         mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         deleteDrawable = ContextCompat.getDrawable(context, R.drawable.ic_delete);
         if (deleteDrawable != null) {
-            deleteDrawable.setTint(getColor(context, R.attr.colorAccent));
+            deleteDrawable.setTint(getColorFromAttr(context, R.attr.colorAccent));
             intrinsicWidth = deleteDrawable.getIntrinsicWidth();
             intrinsicHeight = deleteDrawable.getIntrinsicHeight();
         }
     }
-
-    private @ColorInt
-    int getColor(Context context, @AttrRes int attr) {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(attr, typedValue, true);
-        return typedValue.data;
-    }
-
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {

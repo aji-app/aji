@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             />
 
-        <ImageButton
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
             android:id="@+id/playlist_edit"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -30,8 +30,7 @@
             android:contentDescription="@string/contentDescription_edit_playlist"
             android:gravity="center"
             android:padding="0dp"
-            android:src="@drawable/ic_edit"
-            android:tint="?attr/colorPrimary" />
+            android:src="@drawable/ic_edit" />
     </LinearLayout>
 
 

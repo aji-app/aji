@@ -11,14 +11,16 @@
     app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/persistent_controls_peek_height"
+        android:orientation="horizontal"
         android:padding="10dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -58,7 +60,14 @@
             </LinearLayout>
 
         </LinearLayout>
-    </RelativeLayout>
+
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            android:id="@+id/persistent_playpause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_play"
+            android:gravity="" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottom_content"

@@ -98,7 +98,6 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             overFlow.setVisibility(View.GONE);
             favoriteButton.setVisibility(View.GONE);
             dragHandle.setVisibility(View.VISIBLE);
-            dragHandle.setBackground(null);
 
             dragHandle.setOnTouchListener((v, event) -> {
                 switch (event.getAction()) {
@@ -119,8 +118,6 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             dragHandle.setVisibility(View.GONE);
             overFlow.setVisibility(View.VISIBLE);
             favoriteButton.setVisibility(View.VISIBLE);
-            overFlow.setBackground(null);
-            favoriteButton.setBackground(null);
 
             if (holder.song.isFavorite()) {
                 favoriteButton.setImageResource(R.drawable.ic_favorite);

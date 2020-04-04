@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EditTextView">
+        <attr name="editMode" format="boolean" />
+        <attr name="text" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="TbdImageButton">
+        <attr name="android:tint" />
+    </declare-styleable>
+
+    <declare-styleable name="TbdButton">
+        <attr name="android:textColor" />
+    </declare-styleable>
+</resources>
