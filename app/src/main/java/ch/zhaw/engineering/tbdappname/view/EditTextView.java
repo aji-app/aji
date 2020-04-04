@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 
 import ch.zhaw.engineering.tbdappname.R;
@@ -42,10 +43,16 @@ public class EditTextView extends LinearLayout {
         mEditMode = attributes.getBoolean(
                 R.styleable.EditTextView_editMode, false);
         String text = attributes.getString(R.styleable.EditTextView_text);
+        String hint = attributes.getString(R.styleable.EditTextView_android_hint);
+        int inputType = attributes.getInt(R.styleable.EditTextView_android_inputType, EditorInfo.TYPE_NULL);
+
         attributes.recycle();
 
         mBinding.editText.setText(text);
-        mBinding.textView.setText(text);
+        mBinding.editText.setHint(hint);
+        if (inputType != EditorInfo.TYPE_NULL) {
+            mBinding.editText.setInputType(inputType);
+        }
 
         mBinding.editText.addTextChangedListener(new TextWatcher() {
             @Override

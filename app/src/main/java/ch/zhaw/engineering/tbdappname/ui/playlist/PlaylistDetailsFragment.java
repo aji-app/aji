@@ -57,31 +57,12 @@ public class PlaylistDetailsFragment extends Fragment {
         mBinding = FragmentPlaylistDetailsBinding.inflate(inflater);
         mBinding.playlistEdit.setOnClickListener(v -> {
             mInEditMode = !mInEditMode;
-//            mBinding.playlistName.setVisibility(!mInEditMode ? View.VISIBLE : View.GONE);
-//            mBinding.playlistNameEdit.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
             mBinding.playlistNameEdittext.setEditMode(mInEditMode);
             mSongListFragment.setEditMode(mInEditMode);
             if (!mInEditMode) {
                 notifyListenerNameUpdate();
             }
         });
-
-//        mBinding.playlistNameEdit.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                mBinding.playlistName.setText(s.toString());
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
 
         return mBinding.getRoot();
     }

@@ -3,10 +3,7 @@ package ch.zhaw.engineering.tbdappname.services.database.repository;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
@@ -28,7 +25,7 @@ public class RadioStationRepository {
     }
 
     public RadioStation findById(long id) {
-        return mRadioStationDao.getRadioStationById(id);
+        return mRadioStationDao.getRadioStation(id);
     }
 
     public LiveData<List<RadioStationDto>> getRadioStations(boolean ascending, String searchText) {

@@ -53,8 +53,8 @@
 
     <fragment
         android:id="@+id/radioStationDetails"
-        android:name="ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetails"
-        android:label="fragment_radio_station_details"
+        android:name="ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment"
+        android:label="@string/menu_radiostation_details"
         tools:layout="@layout/fragment_radio_station_details">
         <argument
             android:name="radiostation-id"

@@ -41,6 +41,7 @@
     <string name="playlist_list_title">Playlists</string>
     <string name="playlist_deleted">Playlist Deleted</string>
     <string name="contentDescription_edit_playlist">edit playlist</string>
+    <string name="contentDescription_edit_radiostation">edit radio</string>
     <string name="playlist_details_title">Playlist Details</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -60,4 +61,6 @@
     <string name="menu_playlist_details">Playlist Details</string>
     <string name="search">Search</string>
     <string name="contentDescription_play_radiostation">Play Radio</string>
+    <string name="hint_url">Url</string>
+    <string name="menu_radiostation_details">Radiostation Details</string>
 </resources>

@@ -47,6 +47,14 @@ public abstract class RadioStationDao {
         });
     }
 
+    public RadioStationDto getRadioStationById(long radioStationId) {
+        return RadioStationDto.fromRadioStation(getRadioStation(radioStationId));
+    }
+
+    public void updateRadioStation(RadioStationDto updatedRadioStation) {
+        update(updatedRadioStation.toRadioStation());
+    }
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertRadioStation(RadioStation station);
 
@@ -54,7 +62,7 @@ public abstract class RadioStationDao {
     public abstract void deleteRadioStationById(long id);
 
     @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
-    public abstract RadioStation getRadioStationById(long id);
+    public abstract RadioStation getRadioStation(long id);
 
     @Query("SELECT * FROM RadioStation  WHERE name like :text OR genres like :text ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
     protected abstract LiveData<List<RadioStation>> getRadioStations(String text, boolean asc);
@@ -68,4 +76,5 @@ public abstract class RadioStationDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract long[] insertRadioStations(List<RadioStation> station);
+
 }

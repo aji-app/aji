@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
 
 
 public class MainActivity extends FragmentInteractionActivity {
@@ -68,7 +69,11 @@ public class MainActivity extends FragmentInteractionActivity {
         });
     }
 
-
+    @Override
+    protected void navigateToRadioStation(long radioStationId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_radiostations_to_radioStationDetails, RadioStationFragmentDirections.actionNavRadiostationsToRadioStationDetails(radioStationId).getArguments());
+    }
 
     @Override
     protected void navigateToPlaylist(int playlistId) {

@@ -3,6 +3,8 @@
     <declare-styleable name="EditTextView">
         <attr name="editMode" format="boolean" />
         <attr name="text" format="string" />
+        <attr name="android:inputType" />
+        <attr name="android:hint" />
     </declare-styleable>
 
     <declare-styleable name="TbdImageButton">
