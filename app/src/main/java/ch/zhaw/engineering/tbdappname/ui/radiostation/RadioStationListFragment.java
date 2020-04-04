@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
@@ -76,7 +77,7 @@ public class RadioStationListFragment extends TbdListFragment {
         mListener = null;
     }
 
-    private void onRadiosChanged(List<RadioStation> radios) {
+    private void onRadiosChanged(List<RadioStationDto> radios) {
         Log.i(TAG, "Updating radios for playlist list fragment");
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {

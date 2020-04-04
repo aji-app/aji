@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapter.ViewHolder> {
 
-    private final List<RadioStation> mValues;
+    private final List<RadioStationDto> mValues;
     private final PlaylistListInteractionListener mPlaylistListInteractionListener;
     private final Context mContext;
 
-    public RadioStationAdapter(List<RadioStation> items, PlaylistListInteractionListener playlistListInteractionListener, Context context) {
+    public RadioStationAdapter(List<RadioStationDto> items, PlaylistListInteractionListener playlistListInteractionListener, Context context) {
         mValues = items;
         mPlaylistListInteractionListener = playlistListInteractionListener;
         mContext = context;
@@ -29,7 +30,7 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_radiostation, parent, false);
+                .inflate(R.layout.fragment_radiostation_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -40,7 +41,7 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        RadioStation radioStation = mValues.get(position);
+        RadioStationDto radioStation = mValues.get(position);
         holder.bind(radioStation);
     }
 
@@ -52,15 +53,15 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mRadioName;
-        public RadioStation mItem;
+        public RadioStationDto mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mRadioName = view.findViewById(R.id.radio_name);
+            mRadioName = view.findViewById(R.id.radiostation_name);
         }
 
-        public void bind(RadioStation playlist) {
+        public void bind(RadioStationDto playlist) {
             mItem = playlist;
             mRadioName.setText(mItem.getName());
 
@@ -68,14 +69,14 @@ public class RadioStationAdapter extends RecyclerView.Adapter<RadioStationAdapte
                 if (null != mPlaylistListInteractionListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mPlaylistListInteractionListener.onRadioStationClick(mItem);
+//                    mPlaylistListInteractionListener.onRadioStationClick(mItem);
                 }
             });
             mView.setOnLongClickListener(v -> {
                 if (null != mPlaylistListInteractionListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mPlaylistListInteractionListener.onRadioStationLongClick(mItem);
+//                    mPlaylistListInteractionListener.onRadioStationLongClick(mItem);
                     return true;
                 }
                 return false;

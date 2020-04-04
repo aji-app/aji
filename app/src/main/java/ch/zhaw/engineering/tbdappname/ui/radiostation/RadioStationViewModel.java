@@ -9,17 +9,18 @@ import androidx.lifecycle.MediatorLiveData;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.repository.RadioStationRepository;
 
 public class RadioStationViewModel extends AndroidViewModel {
     private final RadioStationRepository mRadioStationRepository;
-    private final MediatorLiveData<List<RadioStation>> radioStations;
+    private final MediatorLiveData<List<RadioStationDto>> radioStations;
     private boolean mAscending = true;
 
     private String searchText = null;
 
-    public LiveData<List<RadioStation>> getAllRadioStations() {
+    public LiveData<List<RadioStationDto>> getAllRadioStations() {
         return radioStations;
     }
 

@@ -18,22 +18,27 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
+import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
+import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 
 public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
-        PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener {
+        PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
+        RadioStationFragmentInteractionListener {
 
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
     protected AppViewModel mAppViewModel;
+    private RadioStationDao mRadioStationDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         mAppViewModel = new ViewModelProvider(this).get(AppViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
+        mRadioStationDao = RadioStationDao.getInstance(this);
     }
 
     @Override
@@ -225,6 +231,66 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 Toast.makeText(this, "onPlaylistNameChanged: " + playlist.getName(), Toast.LENGTH_SHORT).show();
             });
         });
+    }
+
+    @Override
+    public void onRadioStationSelected(long radioStationId) {
+        AsyncTask.execute(() -> {
+            RadioStation radio = mRadioStationDao.getRadioStationById(radioStationId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onRadioStationSelected: " + radio.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onRadioStationPlay(long radioStationId) {
+        AsyncTask.execute(() -> {
+            RadioStation radio = mRadioStationDao.getRadioStationById(radioStationId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onRadioStationPlay: " + radio.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onRadioStationEdit(long radioStationId) {
+        AsyncTask.execute(() -> {
+            RadioStation radio = mRadioStationDao.getRadioStationById(radioStationId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onRadioStationEdit: " + radio.getName(), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onRadioStationDelete(long radioStationId) {
+        AsyncTask.execute(() -> {
+            RadioStation radio = mRadioStationDao.getRadioStationById(radioStationId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onRadioStationDelete: " + radio.getName(), Toast.LENGTH_SHORT).show();
+            });
+            mRadioStationDao.deleteRadioStationById(radioStationId);
+        });
+    }
+
+    @Override
+    public void onCreateRadioStation() {
+        AsyncTask.execute(() -> {
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onCreateRadioStation", Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    @Override
+    public void onRadioStationSearchTextChanged(String searchText) {
+        mAppViewModel.changeRadioSearchText(searchText);
+    }
+
+    @Override
+    public void onRadioStationSortDirectionChanged(boolean ascending) {
+        mAppViewModel.changeRadioSortOrder(ascending);
     }
 
     private void showCreatePlaylistDialog() {

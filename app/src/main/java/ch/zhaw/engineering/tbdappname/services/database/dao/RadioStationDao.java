@@ -1,6 +1,9 @@
 package ch.zhaw.engineering.tbdappname.services.database.dao;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -10,11 +13,16 @@ import androidx.room.Update;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 @Dao
 public abstract class RadioStationDao {
+    public static RadioStationDao getInstance(Context context) {
+        return AppDatabase.getInstance(context).radioStationDao();
+    }
+
     public void insertAll(List<RadioStationDto> stations) {
         List<RadioStation> radios = new ArrayList<>(stations.size());
         for (RadioStationDto radio : stations) {
@@ -23,27 +31,39 @@ public abstract class RadioStationDao {
         insertRadioStations(radios);
     }
 
-    public LiveData<List<RadioStation>> getRadioStations(boolean ascending, String searchText) {
+    public LiveData<List<RadioStationDto>> getRadioStations(boolean ascending, String searchText) {
+        LiveData<List<RadioStation>> stations;
         if (searchText != null && searchText.length() >= 3) {
-            return getRadioStations("%" + searchText + "%", ascending);
+            stations = getRadioStations("%" + searchText + "%", ascending);
+        } else {
+            stations = getRadioStations(ascending);
         }
-        return getRadioStations(ascending);
+        return Transformations.map(stations, radios -> {
+            List<RadioStationDto> result = new ArrayList<>();
+            for (RadioStation radio : radios) {
+                result.add(RadioStationDto.fromRadioStation(radio));
+            }
+            return result;
+        });
     }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public abstract long insertRadioStation(RadioStation station);
+
+    @Query("DELETE FROM RadioStation WHERE id = :id")
+    public abstract void deleteRadioStationById(long id);
+
+    @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
+    public abstract RadioStation getRadioStationById(long id);
 
     @Query("SELECT * FROM RadioStation  WHERE name like :text OR genres like :text ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
     protected abstract LiveData<List<RadioStation>> getRadioStations(String text, boolean asc);
 
     @Query("SELECT * FROM RadioStation ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
-    protected abstract  LiveData<List<RadioStation>> getRadioStations(boolean asc);
-
-    @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
-    public abstract RadioStation findById(long id);
+    protected abstract LiveData<List<RadioStation>> getRadioStations(boolean asc);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     protected abstract void update(RadioStation station);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract long insertRadioStation(RadioStation station);
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

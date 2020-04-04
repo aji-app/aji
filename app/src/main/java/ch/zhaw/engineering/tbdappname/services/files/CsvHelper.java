@@ -35,15 +35,15 @@ public final class CsvHelper {
             CsvContainer container = reader.read(new InputStreamReader(fileStream, StandardCharsets.UTF_8));
             List<RadioStationDto> radioStations = new ArrayList<>(container.getRowCount());
             for (CsvRow row : container.getRows()) {
-                RadioStationDto radioStationDto = new RadioStationDto();
-                radioStationDto.setName(row.getField(0));
+                RadioStationDto.RadioStationDtoBuilder builder = RadioStationDto.builder();
+                builder.name(row.getField(0));
 
                 String[] csvGenres = row.getField(1).split(";");
-                radioStationDto.setGenres(Arrays.asList(csvGenres));
+                builder.genres(Arrays.asList(csvGenres));
 
-                radioStationDto.setUrl(row.getField(2));
+                builder.url(row.getField(2));
 
-                radioStations.add(radioStationDto);
+                radioStations.add(builder.build());
             }
             return radioStations;
         } catch (IOException e) {

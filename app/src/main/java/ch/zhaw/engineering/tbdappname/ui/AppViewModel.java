@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
@@ -29,7 +31,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
     private final RadioStationDao mRadioStationDao;
-    private final MediatorLiveData<List<RadioStation>> mRadios = new MediatorLiveData<>();
+    private final MediatorLiveData<List<RadioStationDto>> mRadios = new MediatorLiveData<>();
     private boolean mRadioAscending = true;
     private String mRadioSearchText;
 
@@ -39,6 +41,7 @@ public class AppViewModel extends AndroidViewModel {
         mSongDao = AppDatabase.getInstance(application).songDao();
         mRadioStationDao = AppDatabase.getInstance(application).radioStationDao();
         updateSongsSource();
+        updateRadioSource();
     }
 
     public void changeSongSearchText(String text) {
@@ -72,7 +75,7 @@ public class AppViewModel extends AndroidViewModel {
         return mSongs;
     }
 
-    public LiveData<List<RadioStation>> getRadios() {
+    public LiveData<List<RadioStationDto>> getRadios() {
         return mRadios;
     }
 

@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.tbdappname.ui.radiostation;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +16,17 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationItemBinding;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioStationRecyclerViewAdapter.ViewHolder> {
 
-    private final List<RadioStation> mValues;
+    private final List<RadioStationDto> mValues;
     private final RadioStationFragmentInteractionListener mListener;
     private final Context mContext;
     private RecyclerView mRecyclerView;
 
-    /* package */ RadioStationRecyclerViewAdapter(List<RadioStation> items, RadioStationFragmentInteractionListener listener, Context context) {
+    /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -45,7 +47,7 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
     }
 
     public void onDismiss(int position) {
-        final RadioStation radioToBeRemoved = mValues.get(position);
+        final RadioStationDto radioToBeRemoved = mValues.get(position);
         Snackbar snackbar = Snackbar
                 .make(mRecyclerView, R.string.playlist_deleted, Snackbar.LENGTH_SHORT)
                 .setAction(R.string.undo, view -> {
@@ -73,7 +75,7 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
         Button overFlowButton = holder.binding.radiostationItemOverflow;
 
         holder.binding.radiostationName.setText(mValues.get(position).getName());
-        holder.binding.radiostationGenres.setText(mValues.get(position).getGenres());
+        holder.binding.radiostationGenres.setText(TextUtils.join(" ", mValues.get(position).getGenres()));
 
         holder.binding.radiostationItemPlay.setOnClickListener(v -> {
             if (null != mListener) {
@@ -105,7 +107,7 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final FragmentRadiostationItemBinding binding;
-        RadioStation radio;
+        RadioStationDto radio;
 
         ViewHolder(View view) {
             super(view);
