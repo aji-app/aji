@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
@@ -45,11 +46,16 @@ public class EditTextView extends LinearLayout {
         String text = attributes.getString(R.styleable.EditTextView_text);
         String hint = attributes.getString(R.styleable.EditTextView_android_hint);
         int inputType = attributes.getInt(R.styleable.EditTextView_android_inputType, EditorInfo.TYPE_NULL);
+        float textSize = attributes.getDimensionPixelSize(R.styleable.EditTextView_android_textSize, 0);
 
         attributes.recycle();
 
         mBinding.editText.setText(text);
         mBinding.editText.setHint(hint);
+        if (textSize != 0) {
+            mBinding.editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+            mBinding.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+        }
         if (inputType != EditorInfo.TYPE_NULL) {
             mBinding.editText.setInputType(inputType);
         }

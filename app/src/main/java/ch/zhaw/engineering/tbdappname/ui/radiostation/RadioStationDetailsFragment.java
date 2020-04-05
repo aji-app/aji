@@ -9,11 +9,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadioStationDetailsBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
@@ -26,6 +30,7 @@ public class RadioStationDetailsFragment extends Fragment {
     private RadioStationDto mRadioStation;
     private boolean mInEditMode = false;
     private RadioStationDetailsFragmentListener mListener;
+    private GenreRecyclerViewAdapter mAdapter;
 
     public static RadioStationDetailsFragment newInstance(long radioStationId) {
         RadioStationDetailsFragment fragment = new RadioStationDetailsFragment();
@@ -41,6 +46,25 @@ public class RadioStationDetailsFragment extends Fragment {
         if (getArguments() != null) {
             mRadioStationId = getArguments().getLong(ARG_RADIOSTATION_ID);
         }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.radiostation_edit_menu, menu);
+        setMenuVisibility(mInEditMode);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.radiostation_import:
+                // TODO
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -51,10 +75,20 @@ public class RadioStationDetailsFragment extends Fragment {
             mInEditMode = !mInEditMode;
             mBinding.radiostationName.setEditMode(mInEditMode);
             mBinding.radiostationUrl.setEditMode(mInEditMode);
+            mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
+            mAdapter.setEditMode(mInEditMode);
             if (!mInEditMode) {
                 notifyListenerEdited();
             }
+            setMenuVisibility(mInEditMode);
         });
+
+        mBinding.genreAddButton.setOnClickListener(v -> {
+            if (mInEditMode) {
+                mAdapter.addEmptyGenre();
+            }
+        });
+
         return mBinding.getRoot();
     }
 
@@ -67,9 +101,12 @@ public class RadioStationDetailsFragment extends Fragment {
                     RadioStationDao playlistDao = RadioStationDao.getInstance(getActivity());
                     mRadioStation = playlistDao.getRadioStationById(mRadioStationId);
 
+                    mAdapter = new GenreRecyclerViewAdapter(mRadioStation.getGenres(), getActivity());
+
                     getActivity().runOnUiThread(() -> {
                         mBinding.radiostationName.setText(mRadioStation.getName());
                         mBinding.radiostationUrl.setText(mRadioStation.getUrl());
+                        mBinding.genreList.setAdapter(mAdapter);
                     });
                 });
             }
@@ -104,7 +141,7 @@ public class RadioStationDetailsFragment extends Fragment {
             mRadioStation.setUrl(mBinding.radiostationUrl.getText().toString());
         }
 
-        // TODO: Genres
+        mRadioStation.setGenres(mAdapter.getGenres());
 
         if (mListener != null) {
             mListener.onRadioStationEdit(mRadioStation);

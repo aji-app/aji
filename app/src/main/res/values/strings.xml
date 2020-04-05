@@ -63,4 +63,9 @@
     <string name="contentDescription_play_radiostation">Play Radio</string>
     <string name="hint_url">Url</string>
     <string name="menu_radiostation_details">Radiostation Details</string>
+    <string name="radiostation_import_info">You can also import a PLS file</string>
+    <string name="genres">Genres</string>
+    <string name="select_pls_file">Select PLS File</string>
+    <string name="genre_hint">Genre</string>
+    <string name="import_from_pls_file">Import from PLS File</string>
 </resources>
