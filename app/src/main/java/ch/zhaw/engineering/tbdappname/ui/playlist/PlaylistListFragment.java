@@ -80,7 +80,11 @@ public class PlaylistListFragment extends TbdListFragment {
         Log.i(TAG, "Updating playlists for playlist list fragment");
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
-                mAdapter = new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity());
+                if (mAdapter == null) {
+                    mAdapter = new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity());
+                } else {
+                    mAdapter.updateItems(playlists);
+                }
                 ItemTouchHelper.Callback callback =
                         new SwipeToDeleteCallback(getActivity()) {
                             @Override

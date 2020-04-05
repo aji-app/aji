@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationItemBinding;
@@ -21,10 +24,11 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioStationRecyclerViewAdapter.ViewHolder> {
 
-    private final List<RadioStationDto> mValues;
+    private List<RadioStationDto> mValues;
     private final RadioStationFragmentInteractionListener mListener;
     private final Context mContext;
     private RecyclerView mRecyclerView;
+    private Map<Long, RadioStationDto> mDeletedRadioStations = new HashMap<>();
 
     /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationFragmentInteractionListener listener, Context context) {
         mValues = items;
@@ -46,8 +50,20 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
         mRecyclerView = recyclerView;
     }
 
+    public void updateItems(List<RadioStationDto> newItems) {
+        List<RadioStationDto> items = new ArrayList<>(newItems.size());
+        for (RadioStationDto item : newItems) {
+            if (!mDeletedRadioStations.containsKey(item.getId())) {
+                items.add(item);
+            }
+        }
+        mValues = items;
+        notifyDataSetChanged();
+    }
+
     public void onDismiss(int position) {
         final RadioStationDto radioToBeRemoved = mValues.get(position);
+        mDeletedRadioStations.put(radioToBeRemoved.getId(), radioToBeRemoved);
         Snackbar snackbar = Snackbar
                 .make(mRecyclerView, R.string.playlist_deleted, Snackbar.LENGTH_SHORT)
                 .setAction(R.string.undo, view -> {
@@ -60,6 +76,7 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
                         super.onDismissed(transientBottomBar, event);
                         if (event != DISMISS_EVENT_ACTION && mListener != null) {
                             mListener.onRadioStationDelete(radioToBeRemoved.getId());
+                            mDeletedRadioStations.remove(radioToBeRemoved.getId());
                         }
                     }
                 });

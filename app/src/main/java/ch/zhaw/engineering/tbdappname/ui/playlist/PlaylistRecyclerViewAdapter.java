@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistItemBinding;
@@ -23,10 +26,11 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaylistWithSongCount> mValues;
+    private List<PlaylistWithSongCount> mValues;
     private final PlaylistListFragment.PlaylistFragmentListener mListener;
     private final Context mContext;
     private RecyclerView mRecyclerView;
+    private Map<Integer, PlaylistWithSongCount> mDeletedPlaylists = new HashMap<>();
 
     /* package */ PlaylistRecyclerViewAdapter(List<PlaylistWithSongCount> items, PlaylistListFragment.PlaylistFragmentListener listener, Context context) {
         mValues = items;
@@ -50,6 +54,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
     public void onDismiss(int position) {
         final PlaylistWithSongCount playlistToBeRemoved = mValues.get(position);
+        mDeletedPlaylists.put(playlistToBeRemoved.getPlaylistId(), playlistToBeRemoved);
         Snackbar snackbar = Snackbar
                 .make(mRecyclerView, R.string.playlist_deleted, Snackbar.LENGTH_SHORT)
                 .setAction(R.string.undo, view -> {
@@ -62,6 +67,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
                         super.onDismissed(transientBottomBar, event);
                         if (event != DISMISS_EVENT_ACTION && mListener != null) {
                             mListener.onPlaylistDelete(playlistToBeRemoved.getPlaylistId());
+                            mDeletedPlaylists.remove(playlistToBeRemoved.getPlaylistId());
                         }
                     }
                 });
@@ -124,6 +130,17 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    public void updateItems(List<PlaylistWithSongCount> newItems) {
+        List<PlaylistWithSongCount> items = new ArrayList<>(newItems.size());
+        for (PlaylistWithSongCount item : newItems) {
+            if (!mDeletedPlaylists.containsKey(item.getPlaylistId())) {
+                items.add(item);
+            }
+        }
+        mValues = items;
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

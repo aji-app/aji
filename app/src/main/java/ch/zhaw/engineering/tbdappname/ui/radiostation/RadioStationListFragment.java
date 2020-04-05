@@ -81,7 +81,11 @@ public class RadioStationListFragment extends TbdListFragment {
         Log.i(TAG, "Updating radios for playlist list fragment");
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
-                mAdapter = new RadioStationRecyclerViewAdapter(radios, mListener, getActivity());
+                if (mAdapter == null) {
+                    mAdapter = new RadioStationRecyclerViewAdapter(radios, mListener, getActivity());
+                } else {
+                    mAdapter.updateItems(radios);
+                }
                 ItemTouchHelper.Callback callback =
                         new SwipeToDeleteCallback(getActivity()) {
                             @Override
