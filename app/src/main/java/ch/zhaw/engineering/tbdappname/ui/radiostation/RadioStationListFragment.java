@@ -24,7 +24,7 @@ import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
 public class RadioStationListFragment extends TbdListFragment {
-    private static final String TAG = "PlaylistListFragment";
+    private static final String TAG = "RadioListFragment";
     private RadioStationFragmentInteractionListener mListener;
     private RadioStationRecyclerViewAdapter mAdapter;
 

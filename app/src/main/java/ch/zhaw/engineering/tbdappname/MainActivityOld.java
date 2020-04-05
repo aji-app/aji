@@ -33,11 +33,9 @@ import static ch.zhaw.engineering.tbdappname.services.files.AudioFileScanner.EXT
 public class MainActivityOld extends AppCompatActivity {
     private static final String TAG = "MainActivityOld";
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
-    private static final int REQUEST_CODE_PLS_SELECT = 2;
 
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
     private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
-    private RadioStationDao mRadioStationDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class MainActivityOld extends AppCompatActivity {
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
         RadioStationImporter.loadDefaultRadioStations(this);
-        mRadioStationDao = AppDatabase.getInstance(this).radioStationDao();
 
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
@@ -71,18 +68,6 @@ public class MainActivityOld extends AppCompatActivity {
         Button button6 = findViewById(R.id.button6);
         button6.setOnClickListener(v -> {
             Intent intent = new Intent(this, CurrentlyPlayingActivity.class);
-            startActivity(intent);
-        });
-
-        Button button7 = findViewById(R.id.button7);
-        button7.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PlsFileSelectionActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_PLS_SELECT);
-        });
-
-        Button button8 = findViewById(R.id.button8);
-        button8.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RadioStationListActivity.class);
             startActivity(intent);
         });
 
@@ -108,12 +93,6 @@ public class MainActivityOld extends AppCompatActivity {
             });
         });
 
-        Button button10 = findViewById(R.id.button10);
-        button10.setOnClickListener(v -> {
-            Intent intent = new Intent(this, TestActivity.class);
-            startActivity(intent);
-        });
-
         Button button11 = findViewById(R.id.button11);
         button11.setOnClickListener(v -> {
             PlaylistDao dao = AppDatabase.getInstance(this).playlistDao();
@@ -124,7 +103,7 @@ public class MainActivityOld extends AppCompatActivity {
                 int id = playlists.get(0).getPlaylistId();
                 AsyncTask.execute(() -> {
                     for (int i = 0; i < songCount; i++) {
-                        dao.addSongToPlaylist(i+1, id);
+                        dao.addSongToPlaylist(i + 1, id);
                     }
                 });
             });
@@ -146,17 +125,6 @@ public class MainActivityOld extends AppCompatActivity {
                 Intent scrapeFiles = new Intent();
                 scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
                 AudioFileScanner.enqueueWork(this, scrapeFiles);
-            }
-        }
-        if (requestCode == REQUEST_CODE_PLS_SELECT) {
-            if (data != null && data.hasExtra(EXTRA_FILE)) {
-                String path = data.getStringExtra(EXTRA_FILE);
-                AsyncTask.execute(() -> {
-                    RadioStationDto station = WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path);
-                    if (station.getName() != null && station.getUrl() != null) {
-                        mRadioStationDao.insertRadioStation(station.toRadioStation());
-                    }
-                });
             }
         }
     }

@@ -25,10 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".TestActivity"
-            android:exported="true" />
-        <activity android:name=".AddOrEditRadioStationActivity" />
         <activity android:name=".CurrentlyPlayingActivity" />
         <activity android:name=".MainActivityOld">
             <intent-filter>
@@ -39,7 +35,6 @@
         </activity>
         <activity android:name=".DirectorySelectionActivity" />
         <activity android:name=".PlsFileSelectionActivity" />
-        <activity android:name=".RadioStationListActivity" />
 
         <service
             android:name=".services.files.AudioFileScanner"

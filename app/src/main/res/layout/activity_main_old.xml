@@ -34,42 +34,13 @@
         app:layout_constraintTop_toBottomOf="@id/button3" />
 
     <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Pls File"
-        android:theme="?attr/primaryButtonTheme"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button6" />
-
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show RadioStations"
-        android:theme="?attr/primaryButtonTheme"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button7" />
-
-
-    <Button
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add fake songs"
         android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button8" />
-
-
-    <Button
-        android:id="@+id/button10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test Fragment Activity"
-        android:theme="?attr/primaryButtonTheme"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button9" />
+        app:layout_constraintTop_toBottomOf="@id/button6" />
 
 
     <Button
@@ -79,6 +50,6 @@
         android:text="Add songs to playlist 1"
         android:theme="?attr/primaryButtonTheme"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button10" />
+        app:layout_constraintTop_toBottomOf="@id/button9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
