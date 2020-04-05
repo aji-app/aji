@@ -18,6 +18,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
@@ -53,7 +54,7 @@ public class PlaylistListFragment extends TbdListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            PlaylistListViewModel viewModel = new ViewModelProvider(getActivity()).get(PlaylistListViewModel.class);
+            AppViewModel viewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             viewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
         }
     }

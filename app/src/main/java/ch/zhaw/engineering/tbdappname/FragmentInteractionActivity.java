@@ -240,6 +240,16 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
+    public void onPlaylistSearchTextChanged(String text) {
+        mAppViewModel.changePlaylistSearchText(text);
+    }
+
+    @Override
+    public void onPlaylistSortDirectionChanged(boolean ascending) {
+        mAppViewModel.changePlaylistSortOrder(ascending);
+    }
+
+    @Override
     public void onRadioStationSelected(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);

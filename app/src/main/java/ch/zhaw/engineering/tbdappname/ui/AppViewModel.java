@@ -11,8 +11,10 @@ import androidx.lifecycle.MediatorLiveData;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
@@ -21,8 +23,7 @@ public class AppViewModel extends AndroidViewModel {
 
     private final SongDao mSongDao;
     private final MediatorLiveData<List<Song>> mSongs = new MediatorLiveData<>();
-    private LiveData<List<Song>> mLastSource;
-
+    private LiveData<List<Song>> mLastSongSource;
     private boolean mSongsAscending = true;
     private SongDao.SortType mSortTypeSongs = SongDao.SortType.TITLE;
     private String mSongSearchText;
@@ -33,13 +34,19 @@ public class AppViewModel extends AndroidViewModel {
     private boolean mRadioAscending = true;
     private String mRadioSearchText;
 
+    private final PlaylistDao mPlaylistDao;
+    private final MediatorLiveData<List<PlaylistWithSongCount>> mPlaylists = new MediatorLiveData<>();
+    private boolean mPlaylistAscending = true;
+    private String mPlaylistSearchText;
 
     public AppViewModel(@NonNull Application application) {
         super(application);
         mSongDao = AppDatabase.getInstance(application).songDao();
         mRadioStationDao = AppDatabase.getInstance(application).radioStationDao();
+        mPlaylistDao = AppDatabase.getInstance(application).playlistDao();
         updateSongsSource();
         updateRadioSource();
+        updatePlaylistSource();
     }
 
     public void changeSongSearchText(String text) {
@@ -77,6 +84,11 @@ public class AppViewModel extends AndroidViewModel {
         return mRadios;
     }
 
+
+    public LiveData<List<PlaylistWithSongCount>> getAllPlaylists() {
+        return mPlaylists;
+    }
+
     public void changeRadioSortOrder(boolean ascending) {
         mRadioAscending = ascending;
         updateRadioSource();
@@ -94,18 +106,40 @@ public class AppViewModel extends AndroidViewModel {
         }
     }
 
+    public void changePlaylistSortOrder(boolean ascending) {
+        mPlaylistAscending = ascending;
+        updatePlaylistSource();
+    }
+
+    public void changePlaylistSearchText(String text) {
+        String prev = mPlaylistSearchText;
+        if (text.length() < 3) {
+            mPlaylistSearchText = null;
+        } else {
+            mPlaylistSearchText = text;
+        }
+        if (prev == null && mPlaylistSearchText != null || prev != null && !prev.equals(mPlaylistSearchText)) {
+            updatePlaylistSource();
+        }
+    }
+
+    private void updatePlaylistSource() {
+        mPlaylists.addSource(mPlaylistDao.getPlaylists(mPlaylistSearchText, mPlaylistAscending), mPlaylists::setValue);
+    }
+
     private void updateRadioSource() {
         mRadios.addSource(mRadioStationDao.getRadioStations(mRadioAscending, mRadioSearchText), mRadios::setValue);
     }
 
     private void updateSongsSource() {
-        if (mLastSource != null) {
-            mSongs.removeSource(mLastSource);
+        if (mLastSongSource != null) {
+            mSongs.removeSource(mLastSongSource);
         }
-        mLastSource = mSongDao.getSortedSongs(mSortTypeSongs, mSongsAscending, mSongSearchText);
-        mSongs.addSource(mLastSource, value -> {
+        mLastSongSource = mSongDao.getSortedSongs(mSortTypeSongs, mSongsAscending, mSongSearchText);
+        mSongs.addSource(mLastSongSource, value -> {
             Log.i(TAG, "Updating songs in songs list: " + (value.size() > 0 ? value.get(0).getTitle() : " no songs"));
             mSongs.setValue(value);
         });
     }
+
 }
