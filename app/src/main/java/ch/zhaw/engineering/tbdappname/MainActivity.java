@@ -2,20 +2,30 @@ package ch.zhaw.engineering.tbdappname;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
+import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
+import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
+import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
 
 
 public class MainActivity extends FragmentInteractionActivity {
@@ -23,11 +33,21 @@ public class MainActivity extends FragmentInteractionActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
+    private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
+    private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+
+        PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
+        // TODO: Only use this if user did not disable this functionality
+        mAudioFileContentObserver.register();
+
+        // TODO: Only sync on startup if user did not disable this functionality
+//        mAudioFileContentObserver.onChange(false);
+        RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());
         setSupportActionBar(mBinding.layoutAppBarMain.toolbar);
@@ -74,6 +94,17 @@ public class MainActivity extends FragmentInteractionActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadioStationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radioStationDetails, args);
+    }
+
+    protected void radioStationImported(RadioStationDto imported) {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null && navHostFragment.getChildFragmentManager().getFragments().size() > 0) {
+
+            Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+            if (currentFragment instanceof RadioStationDetailsFragment) {
+                ((RadioStationDetailsFragment)currentFragment).useImportedRadioStation(imported);
+            }
+        }
     }
 
     @Override

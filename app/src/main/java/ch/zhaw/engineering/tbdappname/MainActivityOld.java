@@ -18,6 +18,7 @@ import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
@@ -151,9 +152,9 @@ public class MainActivityOld extends AppCompatActivity {
             if (data != null && data.hasExtra(EXTRA_FILE)) {
                 String path = data.getStringExtra(EXTRA_FILE);
                 AsyncTask.execute(() -> {
-                    RadioStation station = WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path);
+                    RadioStationDto station = WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path);
                     if (station.getName() != null && station.getUrl() != null) {
-                        mRadioStationDao.insertRadioStation(station);
+                        mRadioStationDao.insertRadioStation(station.toRadioStation());
                     }
                 });
             }

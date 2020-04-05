@@ -62,7 +62,7 @@ public class RadioStationDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.radiostation_import:
-                // TODO
+                mListener.onRadioStationImport();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -127,6 +127,10 @@ public class RadioStationDetailsFragment extends Fragment {
 
     private void setupAdapter(@NonNull Activity activity) {
         mAdapter = new GenreRecyclerViewAdapter(mRadioStation.getGenres(), getActivity());
+        syncDisplay(activity);
+    }
+
+    private void syncDisplay(@NonNull Activity activity) {
         activity.runOnUiThread(() -> {
             mBinding.radiostationName.setText(mRadioStation.getName());
             mBinding.radiostationUrl.setText(mRadioStation.getUrl());
@@ -172,8 +176,19 @@ public class RadioStationDetailsFragment extends Fragment {
         mRadioStation.setGenres(mAdapter.getGenres());
     }
 
+    public void useImportedRadioStation(RadioStationDto imported) {
+        mRadioStation.setName(imported.getName());
+        mRadioStation.setUrl(imported.getUrl());
+        if (getActivity() != null) {
+            syncDisplay(getActivity());
+        }
+    }
+
     public interface RadioStationDetailsFragmentListener {
         void onRadioStationEdit(RadioStationDto updatedRadioStation);
+
         void onRadioStationSaved(RadioStationDto updatedRadioStation);
+
+        void onRadioStationImport();
     }
 }

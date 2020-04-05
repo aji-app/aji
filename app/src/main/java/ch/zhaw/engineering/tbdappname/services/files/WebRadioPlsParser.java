@@ -8,17 +8,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class WebRadioPlsParser {
     private static final String TAG = "WebRadioPlsParser";
 
-    public static RadioStation parseSingleRadioStationFromPlsFile(String path) {
+    public static RadioStationDto parseSingleRadioStationFromPlsFile(String path) {
         File file = new File(path);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
-            RadioStation station = new RadioStation();
+            RadioStationDto station = new RadioStationDto();
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("File")) {
                     String[] parts = line.split("=");

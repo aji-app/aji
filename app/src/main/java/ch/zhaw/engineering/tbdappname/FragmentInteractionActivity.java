@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.tbdappname;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +26,7 @@ import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
@@ -33,10 +36,13 @@ import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentIntera
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 
+import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
+
 public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener {
 
+    private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
     protected AppViewModel mAppViewModel;
@@ -268,9 +274,11 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onRadioStationDelete(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationDelete: " + radio.getName(), Toast.LENGTH_SHORT).show();
-            });
+            if (radio != null) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "onRadioStationDelete: " + radio.getName(), Toast.LENGTH_SHORT).show();
+                });
+            }
             mRadioStationDao.deleteRadioStationById(radioStationId);
         });
     }
@@ -320,6 +328,12 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 onSupportNavigateUp();
             });
         });
+    }
+
+    @Override
+    public void onRadioStationImport() {
+        Intent intent = new Intent(this, PlsFileSelectionActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_PLS_SELECT);
     }
 
 
@@ -388,7 +402,22 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         editText.requestFocus();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PLS_SELECT) {
+            if (data != null && data.hasExtra(EXTRA_FILE)) {
+                String path = data.getStringExtra(EXTRA_FILE);
+                AsyncTask.execute(() -> {
+                    radioStationImported(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path));
+                });
+            }
+        }
+    }
+
     protected abstract void navigateToPlaylist(int playlistId);
 
     protected abstract void navigateToRadioStation(Long radioStationId);
+
+    protected abstract void radioStationImported(RadioStationDto imported);
 }

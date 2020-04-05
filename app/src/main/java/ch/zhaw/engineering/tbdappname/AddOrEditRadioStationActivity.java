@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.database.repository.RadioStationRepository;
@@ -28,7 +29,7 @@ public class AddOrEditRadioStationActivity extends AppCompatActivity {
 
     private RadioStationRepository mRadioStationRepository;
     private boolean isEdit = false;
-    private RadioStation mRadioStation = new RadioStation();
+    private RadioStationDto mRadioStation = new RadioStationDto();
     private Handler mHandler;
     private EditText mRadioStationName;
     private EditText mRadioStationUrl;
@@ -59,9 +60,9 @@ public class AddOrEditRadioStationActivity extends AppCompatActivity {
                 mRadioStation.setName(mRadioStationName.getText().toString());
                 mRadioStation.setUrl(mRadioStationUrl.getText().toString());
                 if (isEdit) {
-                    mRadioStationRepository.update(mRadioStation);
+//                    mRadioStationRepository.update(mRadioStation);
                 } else {
-                    mRadioStationRepository.insert(mRadioStation);
+//                    mRadioStationRepository.insert(mRadioStation);
                 }
             });
             finish();
@@ -72,11 +73,11 @@ public class AddOrEditRadioStationActivity extends AppCompatActivity {
             if (id != 0) {
                 isEdit = true;
                 mHandler.post(() -> {
-                    mRadioStation = mRadioStationRepository.findById(id);
-                    runOnUiThread(() -> {
-                        mRadioStationName.setText(mRadioStation.getName());
-                        mRadioStationUrl.setText(mRadioStation.getUrl());
-                    });
+//                    mRadioStation = mRadioStationRepository.findById(id);
+//                    runOnUiThread(() -> {
+//                        mRadioStationName.setText(mRadioStation.getName());
+//                        mRadioStationUrl.setText(mRadioStation.getUrl());
+//                    });
                 });
             }
         }
