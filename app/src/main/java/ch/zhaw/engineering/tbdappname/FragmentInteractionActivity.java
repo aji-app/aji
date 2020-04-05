@@ -74,7 +74,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
 
-
     @Override
     public void onSongSortDirectionChanged(boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
@@ -222,7 +221,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
 
-
     @Override
     public void onPlaylistNameChanged(int playlistId, String newName) {
         AsyncTask.execute(() -> {
@@ -282,6 +280,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         AsyncTask.execute(() -> {
             runOnUiThread(() -> {
                 Toast.makeText(this, "onCreateRadioStation", Toast.LENGTH_SHORT).show();
+                navigateToRadioStation(null);
             });
         });
     }
@@ -299,12 +298,30 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onRadioStationEdit(RadioStationDto updatedRadioStation) {
         AsyncTask.execute(() -> {
-            mRadioStationDao.updateRadioStation(updatedRadioStation);
+            if (updatedRadioStation.getId() != null) {
+                mRadioStationDao.updateRadioStation(updatedRadioStation);
+            }
             runOnUiThread(() -> {
                 Toast.makeText(this, "onRadioStationEdit: " + updatedRadioStation.getName(), Toast.LENGTH_SHORT).show();
             });
         });
     }
+
+    @Override
+    public void onRadioStationSaved(RadioStationDto updatedRadioStation) {
+        AsyncTask.execute(() -> {
+            if (updatedRadioStation.getId() != null) {
+                mRadioStationDao.updateRadioStation(updatedRadioStation);
+            } else {
+                mRadioStationDao.createRadioStation(updatedRadioStation);
+            }
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onRadioStationSaved: " + updatedRadioStation.getName(), Toast.LENGTH_SHORT).show();
+                onSupportNavigateUp();
+            });
+        });
+    }
+
 
     private void showCreatePlaylistDialog() {
 
@@ -372,5 +389,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     protected abstract void navigateToPlaylist(int playlistId);
-    protected abstract void navigateToRadioStation(long radioStationId);
+
+    protected abstract void navigateToRadioStation(Long radioStationId);
 }

@@ -78,6 +78,10 @@ public class EditTextView extends LinearLayout {
         });
     }
 
+    public void addTextChangedListener(TextWatcher watcher) {
+        mBinding.editText.addTextChangedListener(watcher);
+    }
+
     public void setEditMode(boolean editMode) {
         mEditMode = editMode;
 

@@ -1,6 +1,8 @@
 package ch.zhaw.engineering.tbdappname.ui.radiostation;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,23 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
     public void onBindViewHolder(final GenreRecyclerViewAdapter.ViewHolder holder, int position) {
         String genre = mValues.get(position);
         holder.bind(genre);
+        holder.mBinding.genreName.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mValues.set(position, s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -90,12 +109,5 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         public String toString() {
             return super.toString() + " '" + mBinding.genreName.getText() + "'";
         }
-    }
-
-    public interface PlaylistListInteractionListener {
-        // TODO: Update argument type and name
-        void onRadioStationClick(RadioStation playlist);
-
-        void onRadioStationLongClick(RadioStation playlist);
     }
 }

@@ -55,6 +55,10 @@ public abstract class RadioStationDao {
         update(updatedRadioStation.toRadioStation());
     }
 
+    public void createRadioStation(RadioStationDto radioStation) {
+        insertRadioStation(radioStation.toRadioStation());
+    }
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertRadioStation(RadioStation station);
 
@@ -64,10 +68,10 @@ public abstract class RadioStationDao {
     @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
     public abstract RadioStation getRadioStation(long id);
 
-    @Query("SELECT * FROM RadioStation  WHERE name like :text OR genres like :text ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
+    @Query("SELECT * FROM RadioStation WHERE LOWER(name) like LOWER(:text) OR LOWER(genres) like LOWER(:text) ORDER BY CASE WHEN :asc = 1 THEN LOWER(name) END ASC, CASE WHEN :asc = 0 THEN LOWER(name) END DESC")
     protected abstract LiveData<List<RadioStation>> getRadioStations(String text, boolean asc);
 
-    @Query("SELECT * FROM RadioStation ORDER BY CASE WHEN :asc = 1 THEN name END ASC, CASE WHEN :asc = 0 THEN name END DESC")
+    @Query("SELECT * FROM RadioStation ORDER BY CASE WHEN :asc = 1 THEN LOWER(name) END ASC, CASE WHEN :asc = 0 THEN LOWER(name) END DESC")
     protected abstract LiveData<List<RadioStation>> getRadioStations(boolean asc);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

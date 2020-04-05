@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.radiostation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,7 +45,8 @@ public class RadioStationDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mRadioStationId = getArguments().getLong(ARG_RADIOSTATION_ID);
+            long id = getArguments().getLong(ARG_RADIOSTATION_ID);
+            mRadioStationId = id == 0 ? null : id;
         }
         setHasOptionsMenu(true);
     }
@@ -72,20 +74,19 @@ public class RadioStationDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater);
         mBinding.radiostationEdit.setOnClickListener(v -> {
-            mInEditMode = !mInEditMode;
-            mBinding.radiostationName.setEditMode(mInEditMode);
-            mBinding.radiostationUrl.setEditMode(mInEditMode);
-            mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
-            mAdapter.setEditMode(mInEditMode);
-            if (!mInEditMode) {
-                notifyListenerEdited();
-            }
-            setMenuVisibility(mInEditMode);
+            setEditMode(!mInEditMode);
         });
 
         mBinding.genreAddButton.setOnClickListener(v -> {
             if (mInEditMode) {
                 mAdapter.addEmptyGenre();
+            }
+        });
+
+        mBinding.fabSaveRadiostation.setOnClickListener(v -> {
+            updateRadioStationData();
+            if (mListener != null) {
+                mListener.onRadioStationSaved(mRadioStation);
             }
         });
 
@@ -96,21 +97,41 @@ public class RadioStationDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
+            Activity activity = getActivity();
             if (mRadioStationId != null) {
                 AsyncTask.execute(() -> {
                     RadioStationDao playlistDao = RadioStationDao.getInstance(getActivity());
                     mRadioStation = playlistDao.getRadioStationById(mRadioStationId);
-
-                    mAdapter = new GenreRecyclerViewAdapter(mRadioStation.getGenres(), getActivity());
-
-                    getActivity().runOnUiThread(() -> {
-                        mBinding.radiostationName.setText(mRadioStation.getName());
-                        mBinding.radiostationUrl.setText(mRadioStation.getUrl());
-                        mBinding.genreList.setAdapter(mAdapter);
-                    });
+                    setupAdapter(activity);
                 });
+            } else {
+                mBinding.radiostationEdit.setVisibility(View.GONE);
+                mRadioStation = new RadioStationDto();
+                setupAdapter(activity);
+                setEditMode(true);
             }
         }
+    }
+
+    private void setEditMode(boolean editMode) {
+        mInEditMode = editMode;
+        mBinding.radiostationName.setEditMode(mInEditMode);
+        mBinding.radiostationUrl.setEditMode(mInEditMode);
+        mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
+        mAdapter.setEditMode(mInEditMode);
+        if (!mInEditMode) {
+            notifyListenerEdited();
+        }
+        setMenuVisibility(mInEditMode);
+    }
+
+    private void setupAdapter(@NonNull Activity activity) {
+        mAdapter = new GenreRecyclerViewAdapter(mRadioStation.getGenres(), getActivity());
+        activity.runOnUiThread(() -> {
+            mBinding.radiostationName.setText(mRadioStation.getName());
+            mBinding.radiostationUrl.setText(mRadioStation.getUrl());
+            mBinding.genreList.setAdapter(mAdapter);
+        });
     }
 
     @Override
@@ -133,6 +154,13 @@ public class RadioStationDetailsFragment extends Fragment {
     }
 
     private void notifyListenerEdited() {
+        updateRadioStationData();
+        if (mListener != null) {
+            mListener.onRadioStationEdit(mRadioStation);
+        }
+    }
+
+    private void updateRadioStationData() {
         if (mBinding.radiostationName.getText().length() > 0) {
             mRadioStation.setName(mBinding.radiostationName.getText().toString());
         }
@@ -142,13 +170,10 @@ public class RadioStationDetailsFragment extends Fragment {
         }
 
         mRadioStation.setGenres(mAdapter.getGenres());
-
-        if (mListener != null) {
-            mListener.onRadioStationEdit(mRadioStation);
-        }
     }
 
     public interface RadioStationDetailsFragmentListener {
         void onRadioStationEdit(RadioStationDto updatedRadioStation);
+        void onRadioStationSaved(RadioStationDto updatedRadioStation);
     }
 }

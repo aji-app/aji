@@ -70,9 +70,10 @@ public class MainActivity extends FragmentInteractionActivity {
     }
 
     @Override
-    protected void navigateToRadioStation(long radioStationId) {
+    protected void navigateToRadioStation(Long radioStationId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_radiostations_to_radioStationDetails, RadioStationFragmentDirections.actionNavRadiostationsToRadioStationDetails(radioStationId).getArguments());
+        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadioStationDetails(radioStationId).getArguments() : null;
+        navController.navigate(R.id.action_nav_radiostations_to_radioStationDetails, args);
     }
 
     @Override
