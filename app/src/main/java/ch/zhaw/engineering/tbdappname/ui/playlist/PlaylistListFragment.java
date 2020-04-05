@@ -19,7 +19,6 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongRecyclerViewAdapter;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
 public class PlaylistListFragment extends TbdListFragment {

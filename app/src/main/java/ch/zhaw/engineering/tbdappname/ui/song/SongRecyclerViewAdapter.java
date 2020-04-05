@@ -19,14 +19,10 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
-import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
@@ -36,35 +32,26 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private final List<Song> mValues;
     private final SongListFragment.SongListFragmentListener mListener;
     private final OnTouchCallbacks mDragStartListener;
-    private final Context mContext;
     @Nullable
     private final Integer mPlaylistId;
-    private Map<Integer, Playlist> mPlaylists;
     private final Mode mMode;
     private RecyclerView mRecyclerView;
     private boolean mEditMode = false;
 
-    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
-        this(items, listener, context, null, playlistId, true, dragListener);
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
+        this(items, listener, playlistId, true, dragListener);
     }
 
-    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @Nullable List<PlaylistWithSongCount> playlists) {
-        this(items, listener, context, playlists, null, false, null);
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener) {
+        this(items, listener, null, false, null);
     }
 
-    private SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, Context context, @Nullable List<PlaylistWithSongCount> playlists, @Nullable Integer playlistId, boolean enableDrag, OnTouchCallbacks dragListener) {
+    private SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @Nullable Integer playlistId, boolean enableDrag, OnTouchCallbacks dragListener) {
         mValues = items;
         mListener = listener;
-        mContext = context;
         mPlaylistId = playlistId;
         mDragStartListener = dragListener;
         mMode = enableDrag && playlistId != null ? Mode.PLAYLIST : Mode.ALL_SONGS;
-        if (playlists != null) {
-            mPlaylists = new HashMap<>(playlists.size());
-            for (Playlist pl : playlists) {
-                mPlaylists.put(pl.getPlaylistId(), pl);
-            }
-        }
     }
 
     @Override

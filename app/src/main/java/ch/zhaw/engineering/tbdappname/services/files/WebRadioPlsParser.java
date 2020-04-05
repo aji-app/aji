@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class WebRadioPlsParser {
     private static final String TAG = "WebRadioPlsParser";

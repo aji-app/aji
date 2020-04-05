@@ -1,8 +1,6 @@
 package ch.zhaw.engineering.tbdappname.services.files;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
 
 import androidx.annotation.RawRes;
 

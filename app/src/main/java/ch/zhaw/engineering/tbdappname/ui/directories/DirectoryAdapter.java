@@ -6,9 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
@@ -32,6 +32,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
 
     @Override
+    @NonNull
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_directory, parent, false);
@@ -86,6 +87,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + mNameView.getText() + "'";
         }

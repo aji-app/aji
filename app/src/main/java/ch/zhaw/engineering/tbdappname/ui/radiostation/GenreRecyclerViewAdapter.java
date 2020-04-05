@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentGenreListitemBinding;
-import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecyclerViewAdapter.ViewHolder> {
     private List<String> mValues;
@@ -28,6 +28,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
     }
 
     @Override
+    @NonNull
     public GenreRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_genre_listitem, parent, false);
@@ -106,6 +107,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + mBinding.genreName.getText() + "'";
         }

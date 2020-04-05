@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.google.android.exoplayer2.Player;
-
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 

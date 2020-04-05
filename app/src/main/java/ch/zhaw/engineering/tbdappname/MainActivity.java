@@ -20,7 +20,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
@@ -78,7 +77,8 @@ public class MainActivity extends FragmentInteractionActivity {
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         break;
-
+                    default:
+                        break;
                 }
             }
 
@@ -102,7 +102,7 @@ public class MainActivity extends FragmentInteractionActivity {
 
             Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
             if (currentFragment instanceof RadioStationDetailsFragment) {
-                ((RadioStationDetailsFragment)currentFragment).useImportedRadioStation(imported);
+                ((RadioStationDetailsFragment) currentFragment).useImportedRadioStation(imported);
             }
         }
     }

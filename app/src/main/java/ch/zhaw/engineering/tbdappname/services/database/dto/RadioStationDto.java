@@ -18,8 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RadioStationDto {
     private Long id;
+    @Builder.Default
     private String name = "";
+    @Builder.Default
     private String url = "";
+    @Builder.Default
     private List<String> genres = new ArrayList<>();
 
     public RadioStation toRadioStation() {

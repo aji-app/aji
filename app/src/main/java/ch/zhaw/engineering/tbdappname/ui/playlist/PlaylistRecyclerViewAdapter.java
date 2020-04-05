@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +20,6 @@ import java.util.Map;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
-import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.ViewHolder> {
 

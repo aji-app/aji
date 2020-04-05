@@ -1,15 +1,12 @@
 package ch.zhaw.engineering.tbdappname.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageButton;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.util.Color;
 
 import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
 

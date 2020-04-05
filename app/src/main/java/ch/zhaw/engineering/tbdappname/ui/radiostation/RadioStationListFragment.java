@@ -18,7 +18,6 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;

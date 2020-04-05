@@ -20,20 +20,17 @@ import java.util.Map;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 
 public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioStationRecyclerViewAdapter.ViewHolder> {
 
     private List<RadioStationDto> mValues;
     private final RadioStationFragmentInteractionListener mListener;
-    private final Context mContext;
     private RecyclerView mRecyclerView;
     private Map<Long, RadioStationDto> mDeletedRadioStations = new HashMap<>();
 
     /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
-        mContext = context;
     }
 
     @Override

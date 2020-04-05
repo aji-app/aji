@@ -15,13 +15,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
-import lombok.Setter;
 
 /**
  * A fragment representing a list of Songs.
@@ -103,7 +102,7 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
                     Log.i(TAG, "Updating songs for song fragment");
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
-                            mAdapter = new SongRecyclerViewAdapter(songs, mListener, getActivity(), new ArrayList<>());
+                            mAdapter = new SongRecyclerViewAdapter(songs, mListener);
                             mRecyclerView.setAdapter(mAdapter);
                         });
                     }
@@ -113,7 +112,7 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
                     if (getActivity() != null) {
                         Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                         getActivity().runOnUiThread(() -> {
-                            mAdapter = new SongRecyclerViewAdapter(songs, mListener, getActivity(), mPlaylistId, this);
+                            mAdapter = new SongRecyclerViewAdapter(songs, mListener, mPlaylistId, this);
                             ItemTouchHelper.Callback callback =
                                     new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(mAdapter, getActivity());
                             mItemTouchHelper = new ItemTouchHelper(callback);
