@@ -24,7 +24,7 @@
         layout="@layout/persistent_controls_buttons" />
 
     <include
-        android:id="@+id/persistent_controls_playbacmkodes"
+        android:id="@+id/persistent_controls_playbackmodes"
         layout="@layout/persistent_controls_playbackmodes" />
 
 

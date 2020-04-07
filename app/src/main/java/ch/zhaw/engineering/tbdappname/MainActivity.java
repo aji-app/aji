@@ -69,6 +69,8 @@ public class MainActivity extends FragmentInteractionActivity {
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
         });
 
+        mBinding.layoutAppBarMain.persistentControls.persistentPlaypause.setOnClickListener(v -> onPlayPause());
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
                 .commit();
