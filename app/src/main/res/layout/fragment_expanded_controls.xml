@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    android:padding="@dimen/fragment_margin">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_placeholder_image" />
+
+    <include
+        android:id="@+id/persistent_controls_songinfo"
+        layout="@layout/persistent_controls_songinfo" />
+
+    <include
+        android:id="@+id/persistent_controls_seebar"
+        layout="@layout/persistent_controls_seekbar_time" />
+
+    <include
+        android:id="@+id/persistent_controls_buttons"
+        layout="@layout/persistent_controls_buttons" />
+
+    <include
+        android:id="@+id/persistent_controls_playbackmodes"
+        layout="@layout/persistent_controls_playbackmodes" />
+
+
+</LinearLayout>

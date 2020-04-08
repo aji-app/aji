@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.widget.ImageViewCompat;
 
@@ -36,5 +37,9 @@ public class TbdImageButton extends AppCompatImageButton {
         ColorStateList tint = attributes.getColorStateList(R.styleable.TbdImageButton_android_tint);
         attributes.recycle();
         ImageViewCompat.setImageTintList(this, tint == null ? ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.colorPrimary)) : tint);
+    }
+
+    public void setColor(@ColorInt int color) {
+        ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color));
     }
 }

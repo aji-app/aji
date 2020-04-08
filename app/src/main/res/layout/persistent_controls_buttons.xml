@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginStart="40dp"
+    android:layout_marginEnd="40dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            android:id="@+id/btn_previous"
+            android:layout_width="@dimen/expanded_controls_button_size"
+            android:layout_height="@dimen/expanded_controls_button_size"
+            android:src="@drawable/ic_prev"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            android:id="@+id/btn_playpause"
+            android:layout_width="@dimen/expanded_controls_button_size"
+            android:layout_height="@dimen/expanded_controls_button_size"
+            android:src="@drawable/ic_play"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp" />
+
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            android:id="@+id/btn_next"
+            android:layout_width="@dimen/expanded_controls_button_size"
+            android:layout_height="@dimen/expanded_controls_button_size"
+            android:src="@drawable/ic_next"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

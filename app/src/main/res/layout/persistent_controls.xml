@@ -5,7 +5,7 @@
     android:id="@+id/persistent_controls"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
@@ -31,9 +31,9 @@
                 android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:singleLine="true"
+                android:text="Now Playing Song"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="?attr/primaryTextColor"
-                android:text="Now Playing Song"
                 tools:text="Fake Song 1" />
 
             <LinearLayout
@@ -45,8 +45,8 @@
                     android:id="@+id/song_artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
                     android:text="Now Playing Artist"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
                     tools:text="Fake Artist" />
 
                 <TextView
@@ -54,8 +54,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:textAppearance="?attr/textAppearanceListItemSecondary"
                     android:text="Now Playing Album"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
                     tools:text="Fake Album" />
             </LinearLayout>
 
@@ -65,17 +65,18 @@
             android:id="@+id/persistent_playpause"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_play"
-            android:gravity="" />
+            android:gravity=""
+            android:src="@drawable/ic_play" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/bottom_content"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/expanded_persistent_controls_container"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="300dp" />
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_expanded_controls" />
+
     <View
-        android:id="@+id/extraSpace"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

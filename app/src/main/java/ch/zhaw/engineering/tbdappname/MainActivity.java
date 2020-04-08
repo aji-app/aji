@@ -1,6 +1,5 @@
 package ch.zhaw.engineering.tbdappname;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
@@ -66,7 +66,14 @@ public class MainActivity extends FragmentInteractionActivity {
 
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
-        mBinding.layoutAppBarMain.persistentControls.extraSpace.setMinimumHeight((Resources.getSystem().getDisplayMetrics().heightPixels) / 2);
+        mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
+        });
+
+        mBinding.layoutAppBarMain.persistentControls.persistentPlaypause.setOnClickListener(v -> onPlayPause());
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
+                .commit();
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
