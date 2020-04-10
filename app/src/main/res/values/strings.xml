@@ -60,11 +60,15 @@
     <string name="genre_hint">Genre</string>
     <string name="import_from_pls_file">Import from PLS File</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="contentDescription_playbackmode_repeat">Change Repeat Mode</string>
     <string name="contentDescription_playbackmode_shuffle">Toggle shuffle</string>
     <string name="contentDescription_playbackmode_autoqueue">Automatically play next song</string>
     <string name="menu_song_details">Song Details</string>
     <string name="delete_song">Remove from Library</string>
+    <string name="tab_artists">Artists</string>
+    <string name="tab_albums">Albums</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_songs">Songs</string>
+    <string name="menu_album_details">Album Details</string>
+    <string name="menu_artist_details">Artist Details</string>
 </resources>

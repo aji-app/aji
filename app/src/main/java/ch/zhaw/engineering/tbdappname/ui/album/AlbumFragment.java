@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.playlist;
+package ch.zhaw.engineering.tbdappname.ui.album;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -16,33 +16,45 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding;
 import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
-public class PlaylistFragment extends Fragment {
-    private PlaylistFragmentListener mListener;
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link AlbumFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class AlbumFragment extends Fragment {
+    private SortingListener mListener;
 
-    public static PlaylistFragment newInstance() {
-        PlaylistFragment fragment = new PlaylistFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+    public static AlbumFragment newInstance() {
+        return new AlbumFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.album_list_container, AlbumArtistListFragment.newAlbumInstance())
+                .commitNow();
         setHasOptionsMenu(true);
     }
 
     @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_album, container, false);
+    }
+
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof PlaylistFragmentListener) {
-            mListener = (PlaylistFragmentListener) context;
+        if (context instanceof SortingListener) {
+            mListener = (SortingListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement PlaylistFragmentListener");
+                    + " must implement SortingListener");
         }
     }
 
@@ -51,26 +63,6 @@ public class PlaylistFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater, container, false);
-
-        if (savedInstanceState == null) {
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.playlist_container, PlaylistListFragment.newInstance())
-                    .commitNow();
-        }
-
-        binding.fabAddPlaylist.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onCreatePlaylist();
-            }
-        });
-
-        return binding.getRoot();
-    }
-
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -86,7 +78,7 @@ public class PlaylistFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mListener.onSearchTextChanged(SortingListener.SortResource.PLAYLISTS, newText);
+                mListener.onSearchTextChanged(SortingListener.SortResource.ALBUMS, newText);
                 return true;
             }
         });
@@ -96,17 +88,13 @@ public class PlaylistFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.direction_asc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.ALBUMS, true);
                 return true;
             case R.id.direction_desc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.ALBUMS, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public interface PlaylistFragmentListener extends SortingListener {
-        void onCreatePlaylist();
     }
 }

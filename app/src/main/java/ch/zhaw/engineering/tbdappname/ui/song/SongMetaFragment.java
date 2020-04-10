@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongMetaBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 public class SongMetaFragment extends Fragment {
 
@@ -28,9 +29,8 @@ public class SongMetaFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentSongMetaBinding.inflate(inflater);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mBinding = FragmentSongMetaBinding.inflate(inflater, container, false);
         mBinding.songFilter.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -55,7 +55,7 @@ public class SongMetaFragment extends Fragment {
         if (getActivity() != null) {
             PopupMenu popup = new PopupMenu(getActivity(), mBinding.songMetaMenu);
             //inflating menu from xml resource
-            popup.inflate(R.menu.song_meta_menu);
+            popup.inflate(R.menu.filter_list_menu_song);
             //adding click listener
 
             popup.setOnMenuItemClickListener(item -> {

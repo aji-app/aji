@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationBinding;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 
 public class RadioStationFragment extends Fragment {
     private RadioStationFragmentInteractionListener mListener;
@@ -38,9 +40,8 @@ public class RadioStationFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater, container, false);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
@@ -72,7 +73,7 @@ public class RadioStationFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mListener.onRadioStationSearchTextChanged(newText);
+                mListener.onSearchTextChanged(SortingListener.SortResource.RADIOS, newText);
                 return true;
             }
         });
@@ -82,10 +83,10 @@ public class RadioStationFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.radiostation_direction_asc:
-                mListener.onRadioStationSortDirectionChanged(true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.RADIOS, true);
                 return true;
             case R.id.radiostation_direction_desc:
-                mListener.onRadioStationSortDirectionChanged(false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.RADIOS, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

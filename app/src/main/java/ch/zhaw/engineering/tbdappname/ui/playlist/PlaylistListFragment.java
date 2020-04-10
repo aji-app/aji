@@ -18,7 +18,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
@@ -36,8 +36,7 @@ public class PlaylistListFragment extends TbdListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
 
         // Set the adapter

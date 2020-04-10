@@ -27,23 +27,24 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
-import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
+public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SortingListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
-        SongDetailsFragment.SongDetailsFragmentListener {
+        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener {
 
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
@@ -61,33 +62,50 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongSelected(long songId) {
+    public void onSongSelected(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSong(songId);
+        switch (origin) {
+
+            case ALBUM:
+                navigateToSongFromAlbum(songId);
+                break;
+            case SONG:
+                navigateToSongFromLibrary(songId);
+                break;
+            case ARTIST:
+                navigateToSongFromArtist(songId);
+                break;
+            case PLAYLIST:
+                navigateToSongFromPlaylist(songId);
+                break;
+            case EXPANDED_CONTROLS:
+                // TODO
+                break;
+        }
     }
 
     @Override
     public void onSongSortTypeChanged(SongDao.SortType sortType) {
         Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSortType(sortType);
+        mAppViewModel.changeSortType(sortType);
     }
 
     @Override
-    public void onSongSearchTextChanged(String searchText) {
+    public void onSearchTextChanged(SortResource sortResource, String searchText) {
         Toast.makeText(this, "onSongSearchTextChanged: " + searchText, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSearchText(searchText);
+        mAppViewModel.changeSearchText(sortResource, searchText);
     }
 
 
     @Override
-    public void onSongSortDirectionChanged(boolean ascending) {
+    public void onSortDirectionChanged(SortResource sortResource, boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSortOrder(ascending);
+        mAppViewModel.changeSortDirection(sortResource, ascending);
     }
 
     @Override
@@ -111,14 +129,14 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongMenu(long songId) {
+    public void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSong(songId);
+        navigateToSongFromLibrary(songId);
     }
 
     @Override
@@ -245,16 +263,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onPlaylistSearchTextChanged(String text) {
-        mAppViewModel.changePlaylistSearchText(text);
-    }
-
-    @Override
-    public void onPlaylistSortDirectionChanged(boolean ascending) {
-        mAppViewModel.changePlaylistSortOrder(ascending);
-    }
-
-    @Override
     public void onRadioStationSelected(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
@@ -306,16 +314,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 navigateToRadioStation(null);
             });
         });
-    }
-
-    @Override
-    public void onRadioStationSearchTextChanged(String searchText) {
-        mAppViewModel.changeRadioSearchText(searchText);
-    }
-
-    @Override
-    public void onRadioStationSortDirectionChanged(boolean ascending) {
-        mAppViewModel.changeRadioSortOrder(ascending);
     }
 
     @Override
@@ -393,7 +391,51 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         });
     }
 
+    @Override
+    public void onAlbumPlay(String album) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumPlay: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
 
+    @Override
+    public void onAlbumMenu(String album) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumMenu: " + album, Toast.LENGTH_SHORT).show();
+            navigateToAlbum(album);
+        });
+    }
+
+    @Override
+    public void onAlbumSelected(String album) {
+        runOnUiThread(() -> {
+            navigateToAlbum(album);
+            Toast.makeText(this, "onAlbumSelected: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistPlay(String artist) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onArtistPlay: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistMenu(String artist) {
+        runOnUiThread(() -> {
+            navigateToArtist(artist);
+            Toast.makeText(this, "onArtistMenu: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistSelected(String artist) {
+        runOnUiThread(() -> {
+            navigateToArtist(artist);
+            Toast.makeText(this, "onArtistSelected: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
 
     private void showCreatePlaylistDialog() {
 
@@ -479,5 +521,15 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
 
     protected abstract void radioStationImported(RadioStationDto imported);
 
-    protected abstract void navigateToSong(long songId);
+    protected abstract void navigateToAlbum(String album);
+
+    protected abstract void navigateToArtist(String artist);
+
+    protected abstract void navigateToSongFromLibrary(long songId);
+
+    protected abstract void navigateToSongFromAlbum(long songId);
+
+    protected abstract void navigateToSongFromArtist(long songId);
+
+    protected abstract void navigateToSongFromPlaylist(long songId);
 }

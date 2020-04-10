@@ -3,10 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="ch.zhaw.engineering.tbdappname.ui.song.SongFragment"
+    android:name="ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".ui.song.list.SongListFragment"
-    tools:listitem="@layout/fragment_song_item"
-    tools:viewBindingIgnore="true" />
+    tools:context=".ui.playlist.PlaylistListFragment"
+    tools:listitem="@layout/fragment_playlist_item"
+    tools:viewBindingIgnore="true"/>

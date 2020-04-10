@@ -20,8 +20,11 @@ import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.tbdappname.ui.album.AlbumDetailsFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.library.LibraryFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
@@ -100,8 +103,8 @@ public class MainActivity extends FragmentInteractionActivity {
     @Override
     protected void navigateToRadioStation(Long radioStationId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadioStationDetails(radioStationId).getArguments() : null;
-        navController.navigate(R.id.action_nav_radiostations_to_radioStationDetails, args);
+        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
+        navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
     }
 
     protected void radioStationImported(RadioStationDto imported) {
@@ -118,13 +121,43 @@ public class MainActivity extends FragmentInteractionActivity {
     @Override
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
+        navController.navigate(R.id.action_nav_playlists_to_playlist_details, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetails(playlistId).getArguments());
     }
 
     @Override
-    protected void navigateToSong(long songId) {
+    protected void navigateToSongFromLibrary(long songId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_songDetailsFragment, LibraryFragmentDirections.actionNavLibraryToSongDetailsFragment(songId).getArguments());
+        navController.navigate(R.id.action_nav_library_to_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
+    }
+
+    @Override
+    protected void navigateToSongFromAlbum(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
+    }
+
+    @Override
+    protected void navigateToSongFromArtist(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_artist_details_to_song_details, ArtistDetailsFragmentDirections.actionArtistDetailsToSongDetails(songId).getArguments());
+    }
+
+    @Override
+    protected void navigateToSongFromPlaylist(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());
+    }
+
+    @Override
+    protected void navigateToArtist(String artist) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).getArguments());
+    }
+
+    @Override
+    protected void navigateToAlbum(String album) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_library_to_album_details, LibraryFragmentDirections.actionNavLibraryToAlbumDetails(album).getArguments());
     }
 
     @Override

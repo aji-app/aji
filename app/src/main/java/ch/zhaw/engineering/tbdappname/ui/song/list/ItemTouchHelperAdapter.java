@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.song;
+package ch.zhaw.engineering.tbdappname.ui.song.list;
 
 /* package */ interface ItemTouchHelperAdapter {
 

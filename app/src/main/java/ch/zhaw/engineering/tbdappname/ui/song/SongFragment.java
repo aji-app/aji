@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import android.widget.SearchView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +28,7 @@ import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
  */
 public class SongFragment extends Fragment {
 
-    private SongFragmentListener mListener;
+    private SortingListener mListener;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -40,7 +43,7 @@ public class SongFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, SongListFragment.newInstance())
+                    .replace(R.id.bottom_container, AllSongsListFragment.newInstance())
                     .commitNow();
         }
         setHasOptionsMenu(true);
@@ -48,16 +51,14 @@ public class SongFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_song, container, false);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.song_meta_menu, menu);
+        inflater.inflate(R.menu.filter_list_menu_song, menu);
         SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -68,7 +69,7 @@ public class SongFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mListener.onSongSearchTextChanged(newText);
+                mListener.onSearchTextChanged(SortingListener.SortResource.SONGS, newText);
                 return true;
             }
         });
@@ -88,10 +89,10 @@ public class SongFragment extends Fragment {
                 mListener.onSongSortTypeChanged(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_direction_asc:
-                mListener.onSongSortDirectionChanged(true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, true);
                 return true;
             case R.id.song_meta_direction_desc:
-                mListener.onSongSortDirectionChanged(false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -101,20 +102,11 @@ public class SongFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof SongFragmentListener) {
-            mListener = (SongFragmentListener) context;
+        if (context instanceof SortingListener) {
+            mListener = (SortingListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
         }
-    }
-
-    public interface SongFragmentListener {
-
-        void onSongSortTypeChanged(SongDao.SortType sortType);
-
-        void onSongSearchTextChanged(String text);
-
-        void onSongSortDirectionChanged(boolean ascending);
     }
 }
