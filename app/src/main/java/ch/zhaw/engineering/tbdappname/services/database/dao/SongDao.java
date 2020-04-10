@@ -102,6 +102,9 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song s WHERE s.deleted = 0 AND s.songId = :id LIMIT 1")
     public abstract LiveData<Song> getSong(long id);
 
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.favorite = 1")
+    public abstract LiveData<List<Song>> getFavorites();
+
     /*
      * Protected Helper Methods
      *
@@ -132,6 +135,7 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

@@ -44,7 +44,7 @@ public class SongDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mBinding = FragmentSongDetailsBinding.inflate(inflater);
+        mBinding = FragmentSongDetailsBinding.inflate(inflater, container, false);
 
         mBinding.deleteSong.setOnClickListener(v -> {
             mListener.onSongDelete(mSongId);

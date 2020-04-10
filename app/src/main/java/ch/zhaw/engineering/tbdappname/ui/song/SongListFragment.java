@@ -31,11 +31,14 @@ import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 public class SongListFragment extends TbdListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
     private static final String TAG = "SongListFragment";
     private static final String ARG_PLAYLIST_ID = "playlist-id";
+    private static final String ARG_SHOW_FAVORITES = "show-favorites";
+
     private SongListFragmentListener mListener;
     private Integer mPlaylistId;
     private ItemTouchHelper mItemTouchHelper;
     private SongRecyclerViewAdapter mAdapter;
     private boolean mEditMode;
+    private boolean mShowFavorites;
 
     @SuppressWarnings("unused")
     public static SongListFragment newInstance() {
@@ -60,6 +63,15 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
         return fragment;
     }
 
+    public static SongListFragment newFavoritesInstance() {
+        SongListFragment fragment = new SongListFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_SHOW_FAVORITES, true);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     public void setEditMode(boolean editMode) {
         mEditMode = editMode;
         mAdapter.setEditMode(mEditMode);
@@ -73,6 +85,10 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(ARG_PLAYLIST_ID)) {
             mPlaylistId = getArguments().getInt(ARG_PLAYLIST_ID);
+        }
+
+        if (getArguments() != null && getArguments().containsKey(ARG_SHOW_FAVORITES)) {
+            mShowFavorites = getArguments().getBoolean(ARG_SHOW_FAVORITES);
         }
     }
 
@@ -97,7 +113,17 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            if (mPlaylistId == null) {
+            if (mShowFavorites) {
+                appViewModel.getFavorites().observe(getViewLifecycleOwner(), songs -> {
+                    Log.i(TAG, "Updating songs for song fragment");
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            mAdapter = new SongRecyclerViewAdapter(songs, mListener);
+                            mRecyclerView.setAdapter(mAdapter);
+                        });
+                    }
+                });
+            } else if (mPlaylistId == null) {
                 appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
                     Log.i(TAG, "Updating songs for song fragment");
                     if (getActivity() != null) {

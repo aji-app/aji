@@ -47,7 +47,7 @@ public class PlaylistFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater);
+        FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater, container, false);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()

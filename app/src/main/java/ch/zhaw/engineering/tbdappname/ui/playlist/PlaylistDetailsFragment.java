@@ -54,7 +54,7 @@ public class PlaylistDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentPlaylistDetailsBinding.inflate(inflater);
+        mBinding = FragmentPlaylistDetailsBinding.inflate(inflater, container, false);
         mBinding.playlistEdit.setOnClickListener(v -> {
             mInEditMode = !mInEditMode;
             mBinding.playlistNameEdittext.setEditMode(mInEditMode);

@@ -69,7 +69,7 @@ public class RadioStationDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentRadioStationDetailsBinding.inflate(inflater);
+        mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
         mBinding.radiostationEdit.setOnClickListener(v -> setEditMode(!mInEditMode));
 
         mBinding.genreAddButton.setOnClickListener(v -> {

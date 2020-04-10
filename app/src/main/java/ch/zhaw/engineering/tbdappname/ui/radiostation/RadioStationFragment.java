@@ -40,7 +40,7 @@ public class RadioStationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater);
+        FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater, container, false);
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()

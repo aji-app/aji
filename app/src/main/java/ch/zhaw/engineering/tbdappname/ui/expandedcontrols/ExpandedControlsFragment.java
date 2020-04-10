@@ -30,7 +30,7 @@ public class ExpandedControlsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentExpandedControlsBinding.inflate(inflater);
+        mBinding = FragmentExpandedControlsBinding.inflate(inflater, container, false);
 
         mBinding.persistentControlsButtons.btnNext.setOnClickListener(v -> mListener.onNext());
         mBinding.persistentControlsButtons.btnPlaypause.setOnClickListener(v -> mListener.onPlayPause());
