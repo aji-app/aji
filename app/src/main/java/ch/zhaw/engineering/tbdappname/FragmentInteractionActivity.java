@@ -34,6 +34,7 @@ import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
+import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 
@@ -41,7 +42,8 @@ import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FI
 
 public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
-        RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener {
+        RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
+        SongDetailsFragment.SongDetailsFragmentListener {
 
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
@@ -66,6 +68,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
+        navigateToSong(songId);
     }
 
     @Override
@@ -115,6 +118,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
+        navigateToSong(songId);
     }
 
     @Override
@@ -389,6 +393,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         });
     }
 
+
+
     private void showCreatePlaylistDialog() {
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -472,4 +478,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     protected abstract void navigateToRadioStation(Long radioStationId);
 
     protected abstract void radioStationImported(RadioStationDto imported);
+
+    protected abstract void navigateToSong(long songId);
 }

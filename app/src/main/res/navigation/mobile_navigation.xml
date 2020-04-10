@@ -9,7 +9,11 @@
         android:id="@+id/nav_library"
         android:name="ch.zhaw.engineering.tbdappname.ui.library.LibraryFragment"
         android:label="@string/menu_library"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_nav_library_to_songDetailsFragment"
+            app:destination="@id/songDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_playlists"
@@ -58,6 +62,15 @@
         tools:layout="@layout/fragment_radio_station_details">
         <argument
             android:name="radiostation-id"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/songDetailsFragment"
+        android:name="ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment"
+        android:label="@string/menu_song_details"
+        tools:layout="@layout/fragment_song_details" >
+        <argument
+            android:name="song-id"
             app:argType="long" />
     </fragment>
 </navigation>

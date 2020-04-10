@@ -65,4 +65,5 @@
     <string name="contentDescription_playbackmode_repeat">Change Repeat Mode</string>
     <string name="contentDescription_playbackmode_shuffle">Toggle shuffle</string>
     <string name="contentDescription_playbackmode_autoqueue">Automatically play next song</string>
+    <string name="menu_song_details">Song Details</string>
 </resources>

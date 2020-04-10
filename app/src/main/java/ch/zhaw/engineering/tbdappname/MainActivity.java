@@ -21,6 +21,7 @@ import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImport
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.tbdappname.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
@@ -118,6 +119,12 @@ public class MainActivity extends FragmentInteractionActivity {
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_playlists_to_playlistDetailsFragment, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetailsFragment(playlistId).getArguments());
+    }
+
+    @Override
+    protected void navigateToSong(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_library_to_songDetailsFragment, LibraryFragmentDirections.actionNavLibraryToSongDetailsFragment(songId).getArguments());
     }
 
     @Override

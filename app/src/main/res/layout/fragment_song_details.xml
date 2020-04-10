@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/details_margin"
+    android:paddingEnd="@dimen/details_margin"
+    android:orientation="vertical"
+    tools:context=".ui.song.SongDetailsFragment">
+
+    <ImageView
+
+        android:id="@+id/song_details_album_cover"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_placeholder_image" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fragment_margin"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Now Playing Song"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="?attr/primaryTextColor"
+                tools:text="Fake Song 1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/song_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Now Playing Artist"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    tools:text="Fake Artist" />
+
+                <TextView
+                    android:id="@+id/song_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Now Playing Album"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    tools:text="Fake Album" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            android:id="@+id/song_item_favorite"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:contentDescription="@string/contentDescription_toggle_favorite"
+            android:gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_favorite" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_playlist_add"
+        android:drawableTint="?attr/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:text="@string/add_to_playlist" />
+
+</LinearLayout>
