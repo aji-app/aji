@@ -92,50 +92,20 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onSongSortTypeChanged(SongDao.SortType sortType) {
         Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSortType(sortType);
+        mAppViewModel.changeSortType(sortType);
     }
 
     @Override
     public void onSearchTextChanged(SortResource sortResource, String searchText) {
         Toast.makeText(this, "onSongSearchTextChanged: " + searchText, Toast.LENGTH_SHORT).show();
-        switch (sortResource) {
-
-            case ARTISTS:
-                break;
-            case SONGS:
-                mAppViewModel.changeSongSearchText(searchText);
-                break;
-            case ALBUMS:
-                break;
-            case PLAYLISTS:
-                mAppViewModel.changePlaylistSearchText(searchText);
-                break;
-            case RADIOS:
-                mAppViewModel.changeRadioSearchText(searchText);
-                break;
-        }
+        mAppViewModel.changeSearchText(sortResource, searchText);
     }
 
 
     @Override
     public void onSortDirectionChanged(SortResource sortResource, boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        switch (sortResource) {
-
-            case ARTISTS:
-                break;
-            case SONGS:
-                mAppViewModel.changeSongSortOrder(ascending);
-                break;
-            case ALBUMS:
-                break;
-            case PLAYLISTS:
-                mAppViewModel.changePlaylistSortOrder(ascending);
-                break;
-            case RADIOS:
-                mAppViewModel.changeRadioSortOrder(ascending);
-                break;
-        }
+        mAppViewModel.changeSortDirection(sortResource, ascending);
     }
 
     @Override
