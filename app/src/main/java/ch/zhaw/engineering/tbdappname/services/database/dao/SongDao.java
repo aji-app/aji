@@ -99,6 +99,9 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song s WHERE s.deleted = 0 AND s.songId = :id LIMIT 1")
     public abstract Song getSongById(long id);
 
+    @Query("SELECT * FROM Song s WHERE s.deleted = 0 AND s.songId = :id LIMIT 1")
+    public abstract LiveData<Song> getSong(long id);
+
     /*
      * Protected Helper Methods
      *

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/persistent_controls"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/persistent_controls_background"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/details_margin"
+    android:paddingEnd="@dimen/details_margin"
     android:orientation="vertical"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
-    app:layout_behavior="@string/bottom_sheet_behavior"
-    >
+    tools:context=".ui.song.SongDetailsFragment">
+
+    <ImageView
+
+        android:id="@+id/song_details_album_cover"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_placeholder_image" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/persistent_controls_peek_height"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -59,25 +61,38 @@
                     android:textAppearance="?attr/textAppearanceListItemSecondary"
                     tools:text="Fake Album" />
             </LinearLayout>
-
         </LinearLayout>
 
         <ch.zhaw.engineering.tbdappname.view.TbdImageButton
-            android:id="@+id/persistent_playpause"
+            android:id="@+id/song_item_favorite"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:gravity=""
-            android:src="@drawable/ic_play" />
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:contentDescription="@string/contentDescription_toggle_favorite"
+            android:gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_favorite" />
     </LinearLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/expanded_persistent_controls_container"
-        android:layout_width="match_parent"
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
+        android:id="@+id/add_to_playlist"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_expanded_controls" />
+        android:drawableStart="@drawable/ic_playlist_add"
+        android:drawableTint="?attr/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        android:text="@string/add_to_playlist" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
+        android:id="@+id/delete_song"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_delete"
+        android:drawableTint="?attr/colorPrimary"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        android:layout_marginTop="10dp"
+        android:text="@string/delete_song" />
+
 </LinearLayout>
