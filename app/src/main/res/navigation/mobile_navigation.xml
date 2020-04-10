@@ -11,14 +11,14 @@
         android:label="@string/menu_library"
         tools:layout="@layout/fragment_library" >
         <action
-            android:id="@+id/action_nav_library_to_songDetailsFragment"
-            app:destination="@id/songDetailsFragment" />
+            android:id="@+id/action_nav_library_to_song_details"
+            app:destination="@id/song_details" />
         <action
-            android:id="@+id/action_nav_library_to_albumDetailsFragment"
-            app:destination="@id/albumDetailsFragment" />
+            android:id="@+id/action_nav_library_to_album_details"
+            app:destination="@id/album_details" />
         <action
-            android:id="@+id/action_nav_library_to_artistDetailsFragment"
-            app:destination="@id/artistDetailsFragment" />
+            android:id="@+id/action_nav_library_to_artist_details"
+            app:destination="@id/artist_details" />
     </fragment>
 
     <fragment
@@ -27,8 +27,8 @@
         android:label="@string/menu_playlists"
         tools:layout="@layout/fragment_playlist">
         <action
-            android:id="@+id/action_nav_playlists_to_playlistDetailsFragment"
-            app:destination="@id/playlistDetailsFragment" />
+            android:id="@+id/action_nav_playlists_to_playlist_details"
+            app:destination="@id/playlist_details" />
     </fragment>
 
     <fragment
@@ -37,8 +37,8 @@
         android:label="@string/menu_radiostations"
         tools:layout="@layout/fragment_radiostation">
         <action
-            android:id="@+id/action_nav_radiostations_to_radioStationDetails"
-            app:destination="@id/radioStationDetails" />
+            android:id="@+id/action_nav_radiostations_to_radiostation_details"
+            app:destination="@id/radiostation_details" />
     </fragment>
 
     <fragment
@@ -52,7 +52,7 @@
         android:name="ch.zhaw.engineering.tbdappname.ui.preferences.PreferenceFragment"
         android:label="@string/menu_settings" />
     <fragment
-        android:id="@+id/playlistDetailsFragment"
+        android:id="@+id/playlist_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment"
         android:label="@string/menu_playlist_details"
         tools:layout="@layout/fragment_playlist_details">
@@ -60,12 +60,12 @@
             android:name="playlist-id"
             app:argType="integer" />
         <action
-            android:id="@+id/action_playlistDetailsFragment_to_songDetailsFragment"
-            app:destination="@id/songDetailsFragment" />
+            android:id="@+id/action_playlist_details_to_song_details"
+            app:destination="@id/song_details" />
     </fragment>
 
     <fragment
-        android:id="@+id/radioStationDetails"
+        android:id="@+id/radiostation_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment"
         android:label="@string/menu_radiostation_details"
         tools:layout="@layout/fragment_radio_station_details">
@@ -74,7 +74,7 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/songDetailsFragment"
+        android:id="@+id/song_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment"
         android:label="@string/menu_song_details"
         tools:layout="@layout/fragment_song_details" >
@@ -83,25 +83,25 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/albumDetailsFragment"
+        android:id="@+id/album_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.album.AlbumDetailsFragment"
         android:label="@string/menu_album_details"
         tools:layout="@layout/fragment_album_details" >
         <action
-            android:id="@+id/action_albumDetailsFragment_to_songDetailsFragment"
-            app:destination="@id/songDetailsFragment" />
+            android:id="@+id/action_album_details_to_song_details"
+            app:destination="@id/song_details" />
         <argument
             android:name="album"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/artistDetailsFragment"
+        android:id="@+id/artist_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.artist.ArtistDetailsFragment"
         android:label="@string/menu_artist_details"
         tools:layout="@layout/fragment_artist_details" >
         <action
-            android:id="@+id/action_artistDetailsFragment_to_songDetailsFragment"
-            app:destination="@id/songDetailsFragment" />
+            android:id="@+id/action_artist_details_to_song_details"
+            app:destination="@id/song_details" />
         <argument
             android:name="artist"
             app:argType="string" />
