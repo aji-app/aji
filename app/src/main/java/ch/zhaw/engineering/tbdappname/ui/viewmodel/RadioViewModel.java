@@ -13,12 +13,12 @@ public class RadioViewModel extends FilteringViewModel<RadioStationDao, List<Rad
         super(radioStationDao);
     }
 
-    public LiveData<List<RadioStationDto>> getRadios() {
+    public LiveData<List<RadioStationDto>> getFilteredRadios() {
         return mList;
     }
 
     @Override
-    protected void update() {
-        mList.addSource(mDao.getRadioStations(mAscending, mSearchText), mList::setValue);
+    protected LiveData<List<RadioStationDto>> getUpdatedFilteredSource() {
+        return mDao.getRadioStations(mAscending, mSearchText);
     }
 }

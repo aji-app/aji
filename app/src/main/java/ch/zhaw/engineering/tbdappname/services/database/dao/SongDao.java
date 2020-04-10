@@ -16,6 +16,7 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
+import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 @Dao
@@ -110,8 +111,24 @@ public abstract class SongDao {
     @Query("SELECT DISTINCT song.album as name, song.albumArtPath as coverPath FROM Song WHERE song.deleted = 0 ORDER BY song.album ASC")
     public abstract LiveData<List<AlbumDto>> getAlbums();
 
+    public LiveData<List<AlbumDto>> getAlbums(String filter, boolean ascending) {
+        if (filter == null) {
+            return getFilteredAlbums(ascending);
+        }
+        String searchQuery = "%" + filter + "%";
+        return getFilteredAlbums(searchQuery, ascending);
+    }
+
     @Query("SELECT DISTINCT song.artist as name FROM Song WHERE song.deleted = 0 ORDER BY song.artist ASC")
     public abstract LiveData<List<ArtistDto>> getArtists();
+
+    public LiveData<List<ArtistDto>> getArtists(String filter, boolean ascending) {
+        if (filter == null) {
+            return getFilteredArtists(ascending);
+        }
+        String searchQuery = "%" + filter + "%";
+        return getFilteredArtists(searchQuery, ascending);
+    }
 
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.artist ASC")
     public abstract LiveData<List<Song>> getSongsForAlbum(String album);
@@ -124,6 +141,29 @@ public abstract class SongDao {
      * Protected Helper Methods
      *
      */
+    @Query("SELECT DISTINCT song.artist as name FROM Song song " +
+            "WHERE song.artist LIKE :text " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
+    protected abstract LiveData<List<ArtistDto>> getFilteredArtists(String text, boolean asc);
+
+    @Query("SELECT DISTINCT song.artist as name FROM Song song " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
+    protected abstract LiveData<List<ArtistDto>> getFilteredArtists(boolean asc);
+
+    @Query("SELECT DISTINCT song.album as name FROM Song song " +
+            "WHERE LOWER(song.album) LIKE LOWER(:text) " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+    protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(String text, boolean asc);
+
+    @Query("SELECT DISTINCT song.album as name FROM Song song " +
+            "WHERE LOWER(song.album) LIKE LOWER(:text) " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+    public abstract List<AlbumDto> getFilteredAlbumsAsList(String text, boolean asc);
+
+    @Query("SELECT DISTINCT song.album as name FROM Song song " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+    protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(boolean asc);
+
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND (song.title like :text OR song.album like :text OR song.artist like :text) " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.title END ASC, CASE WHEN :asc = 0 THEN song.title END DESC")
     protected abstract LiveData<List<Song>> getSongsSortedByTitle(String text, boolean asc);
@@ -150,7 +190,6 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
-
 
 
     public enum SortType {

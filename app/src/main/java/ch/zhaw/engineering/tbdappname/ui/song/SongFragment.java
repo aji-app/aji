@@ -19,7 +19,6 @@ import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +59,7 @@ public class SongFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.song_meta_menu, menu);
+        inflater.inflate(R.menu.filter_list_menu_song, menu);
         SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

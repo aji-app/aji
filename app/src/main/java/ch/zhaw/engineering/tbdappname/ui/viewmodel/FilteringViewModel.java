@@ -1,10 +1,14 @@
 package ch.zhaw.engineering.tbdappname.ui.viewmodel;
 
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 public abstract class FilteringViewModel<T, TListType> {
     protected final T mDao;
     protected final MediatorLiveData<TListType> mList;
+    protected LiveData<TListType> mLastSource;
     protected boolean mAscending = true;
     protected String mSearchText;
 
@@ -31,5 +35,13 @@ public abstract class FilteringViewModel<T, TListType> {
         }
     }
 
-    protected abstract void update();
+    protected final void update() {
+        if (mLastSource != null) {
+            mList.removeSource(mLastSource);
+        }
+        mLastSource = getUpdatedFilteredSource();
+        mList.addSource(mLastSource, mList::setValue);
+    }
+
+    protected abstract LiveData<TListType> getUpdatedFilteredSource();
 }

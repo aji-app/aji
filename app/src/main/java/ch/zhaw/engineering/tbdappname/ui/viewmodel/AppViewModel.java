@@ -25,6 +25,8 @@ public class AppViewModel extends AndroidViewModel {
     private final SongViewModel mSongViewModel;
     private final RadioViewModel mRadioViewModel;
     private final PlaylistViewModel mPlaylistViewModel;
+    private final ArtistViewModel mArtistViewModel;
+    private final AlbumViewModel mAlbumViewModel;
 
 
     public AppViewModel(@NonNull Application application) {
@@ -32,22 +34,25 @@ public class AppViewModel extends AndroidViewModel {
         mSongDao = AppDatabase.getInstance(application).songDao();
         RadioStationDao radioStationDao = AppDatabase.getInstance(application).radioStationDao();
         PlaylistDao playlistDao = AppDatabase.getInstance(application).playlistDao();
+
         mSongViewModel = new SongViewModel(mSongDao);
+        mArtistViewModel = new ArtistViewModel(mSongDao);
+        mAlbumViewModel = new AlbumViewModel(mSongDao);
         mRadioViewModel = new RadioViewModel(radioStationDao);
         mPlaylistViewModel = new PlaylistViewModel(playlistDao);
     }
 
 
     public LiveData<List<Song>> getSongs() {
-        return mSongViewModel.getSongs();
+        return mSongViewModel.getFileteredSongs();
     }
 
     public LiveData<List<RadioStationDto>> getRadios() {
-        return mRadioViewModel.getRadios();
+        return mRadioViewModel.getFilteredRadios();
     }
 
     public LiveData<List<PlaylistWithSongCount>> getAllPlaylists() {
-        return mPlaylistViewModel.getAllPlaylists();
+        return mPlaylistViewModel.getFilteredPlaylists();
     }
 
     public void changeSortType(SongDao.SortType sortType) {
@@ -79,11 +84,11 @@ public class AppViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<AlbumDto>> getAlbums() {
-        return mSongDao.getAlbums();
+        return mAlbumViewModel.getFilteredAlbums();
     }
 
     public LiveData<List<ArtistDto>> getArtists() {
-        return mSongDao.getArtists();
+        return mArtistViewModel.getFilteredArtists();
     }
 
     public LiveData<List<Song>> getSongsForAlbum(String album) {
@@ -98,11 +103,11 @@ public class AppViewModel extends AndroidViewModel {
     private FilteringViewModel getCurrentViewModel(SortingListener.SortResource sortResource) {
         switch (sortResource) {
             case ARTISTS:
-                return null;
+                return mArtistViewModel;
             case SONGS:
                 return mSongViewModel;
             case ALBUMS:
-                return null;
+                return mAlbumViewModel;
             case PLAYLISTS:
                 return mPlaylistViewModel;
             case RADIOS:

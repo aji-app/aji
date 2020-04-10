@@ -14,15 +14,12 @@ public class PlaylistViewModel extends FilteringViewModel<PlaylistDao, List<Play
         update();
     }
 
-    public LiveData<List<PlaylistWithSongCount>> getAllPlaylists() {
+    public LiveData<List<PlaylistWithSongCount>> getFilteredPlaylists() {
         return mList;
     }
 
-
     @Override
-    protected void update() {
-        mList.addSource(mDao.getPlaylists(mSearchText, mAscending), mList::setValue);
+    protected LiveData<List<PlaylistWithSongCount>> getUpdatedFilteredSource() {
+        return mDao.getPlaylists(mSearchText, mAscending);
     }
-
-
 }

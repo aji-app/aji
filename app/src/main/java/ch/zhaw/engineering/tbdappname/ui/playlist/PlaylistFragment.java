@@ -46,6 +46,12 @@ public class PlaylistFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentPlaylistBinding binding = FragmentPlaylistBinding.inflate(inflater, container, false);
@@ -69,7 +75,7 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.playlist_list_menu, menu);
+        inflater.inflate(R.menu.filter_list_menu, menu);
         SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -89,10 +95,10 @@ public class PlaylistFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.playlist_direction_asc:
+            case R.id.direction_asc:
                 mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, true);
                 return true;
-            case R.id.playlist_direction_desc:
+            case R.id.direction_desc:
                 mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, false);
                 return true;
             default:

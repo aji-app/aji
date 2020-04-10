@@ -12,7 +12,6 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 public class SongViewModel extends FilteringViewModel<SongDao, List<Song>> {
     private static final String TAG = "SongViewModel";
 
-    private LiveData<List<Song>> mLastSongSource;
     private SongDao.SortType mSortType;
 
     public SongViewModel(SongDao songDao) {
@@ -24,22 +23,16 @@ public class SongViewModel extends FilteringViewModel<SongDao, List<Song>> {
         update();
     }
 
-    public LiveData<List<Song>> getSongs() {
+    public LiveData<List<Song>> getFileteredSongs() {
         return mList;
     }
 
+
     @Override
-    protected void update() {
-        if (mLastSongSource != null) {
-            mList.removeSource(mLastSongSource);
-        }
+    protected LiveData<List<Song>> getUpdatedFilteredSource() {
         if (mSortType == null) {
             mSortType = SongDao.SortType.TITLE;
         }
-        mLastSongSource = mDao.getSortedSongs(mSortType, mAscending, mSearchText);
-        mList.addSource(mLastSongSource, value -> {
-            Log.i(TAG, "Updating songs in songs list: " + (value.size() > 0 ? value.get(0).getTitle() : " no songs"));
-            mList.setValue(value);
-        });
+        return mDao.getSortedSongs(mSortType, mAscending, mSearchText);
     }
 }

@@ -56,7 +56,7 @@ public class SongMetaFragment extends Fragment {
         if (getActivity() != null) {
             PopupMenu popup = new PopupMenu(getActivity(), mBinding.songMetaMenu);
             //inflating menu from xml resource
-            popup.inflate(R.menu.song_meta_menu);
+            popup.inflate(R.menu.filter_list_menu_song);
             //adding click listener
 
             popup.setOnMenuItemClickListener(item -> {
