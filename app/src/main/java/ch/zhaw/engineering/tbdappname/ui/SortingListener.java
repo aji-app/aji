@@ -10,7 +10,7 @@ public interface SortingListener {
 
     void onSortDirectionChanged(SortResource sortResource, boolean ascending);
 
-    public enum SortResource {
+    enum SortResource {
         ARTISTS, SONGS, ALBUMS, PLAYLISTS, RADIOS
     }
 }

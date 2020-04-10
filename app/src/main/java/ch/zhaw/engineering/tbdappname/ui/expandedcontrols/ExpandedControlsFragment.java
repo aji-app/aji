@@ -2,35 +2,24 @@ package ch.zhaw.engineering.tbdappname.ui.expandedcontrols;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import ch.zhaw.engineering.tbdappname.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import ch.zhaw.engineering.tbdappname.databinding.FragmentExpandedControlsBinding;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ExpandedControlsFragment extends Fragment {
 
     private FragmentExpandedControlsBinding mBinding;
     private ExpandedControlsFragmentListener mListener;
 
-    public ExpandedControlsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentExpandedControlsBinding.inflate(inflater, container, false);
 
         mBinding.persistentControlsButtons.btnNext.setOnClickListener(v -> mListener.onNext());

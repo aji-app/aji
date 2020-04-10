@@ -1,18 +1,16 @@
 package ch.zhaw.engineering.tbdappname.ui.viewmodel;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
-public abstract class FilteringViewModel<T, TListType> {
-    protected final T mDao;
-    protected final MediatorLiveData<TListType> mList;
-    protected LiveData<TListType> mLastSource;
-    protected boolean mAscending = true;
-    protected String mSearchText;
+/* package */ abstract class FilteringViewModel<T, TListType> {
+    final T mDao;
+    final MediatorLiveData<TListType> mList;
+    private LiveData<TListType> mLastSource;
+    boolean mAscending = true;
+    String mSearchText;
 
-    protected FilteringViewModel(T dao) {
+    FilteringViewModel(T dao) {
         mDao = dao;
         mList = new MediatorLiveData<>();
         update();

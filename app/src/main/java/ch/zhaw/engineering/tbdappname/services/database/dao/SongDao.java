@@ -16,7 +16,6 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
-import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 @Dao
@@ -87,9 +86,6 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.filepath = :filepath")
     public abstract Song getSongByPath(String filepath);
 
-    @Query("UPDATE song SET deleted = 1 WHERE songId = :songId")
-    protected abstract void deleteSongBySongId(long songId);
-
     @Query("SELECT * FROM Song WHERE song.deleted = 0 ORDER BY random() LIMIT 1")
     public abstract Song getRandomSong();
 
@@ -133,7 +129,6 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.artist ASC")
     public abstract LiveData<List<Song>> getSongsForAlbum(String album);
 
-
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.artist ASC")
     public abstract LiveData<List<Song>> getSongsForArtist(String artist);
 
@@ -141,6 +136,9 @@ public abstract class SongDao {
      * Protected Helper Methods
      *
      */
+    @Query("UPDATE song SET deleted = 1 WHERE songId = :songId")
+    protected abstract void deleteSongBySongId(long songId);
+
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
             "WHERE song.artist LIKE :text " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")

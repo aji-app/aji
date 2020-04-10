@@ -7,13 +7,13 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 
-public class RadioViewModel extends FilteringViewModel<RadioStationDao, List<RadioStationDto>> {
+/* package */ class RadioViewModel extends FilteringViewModel<RadioStationDao, List<RadioStationDto>> {
 
-    public RadioViewModel(RadioStationDao radioStationDao) {
+    RadioViewModel(RadioStationDao radioStationDao) {
         super(radioStationDao);
     }
 
-    public LiveData<List<RadioStationDto>> getFilteredRadios() {
+    LiveData<List<RadioStationDto>> getFilteredRadios() {
         return mList;
     }
 

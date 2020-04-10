@@ -6,15 +6,14 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
-import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
 
-public class AlbumViewModel extends FilteringViewModel<SongDao, List<AlbumDto>> {
-    public AlbumViewModel(SongDao playlistDao) {
+/* package */  class AlbumViewModel extends FilteringViewModel<SongDao, List<AlbumDto>> {
+    AlbumViewModel(SongDao playlistDao) {
         super(playlistDao);
         update();
     }
 
-    public LiveData<List<AlbumDto>> getFilteredAlbums() {
+    LiveData<List<AlbumDto>> getFilteredAlbums() {
         return mList;
     }
 

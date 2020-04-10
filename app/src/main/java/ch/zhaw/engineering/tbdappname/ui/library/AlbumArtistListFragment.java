@@ -54,8 +54,7 @@ public class AlbumArtistListFragment extends TbdListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album_artist_list, container, false);
 
         if (view instanceof RecyclerView) {
@@ -120,6 +119,6 @@ public class AlbumArtistListFragment extends TbdListFragment {
     }
 
     private enum Mode {
-        ARTIST, ALBUM;
+        ARTIST, ALBUM
     }
 }

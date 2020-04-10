@@ -7,13 +7,13 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
 
-public class ArtistViewModel extends FilteringViewModel<SongDao, List<ArtistDto>> {
-    public ArtistViewModel(SongDao playlistDao) {
+/* package */  class ArtistViewModel extends FilteringViewModel<SongDao, List<ArtistDto>> {
+    ArtistViewModel(SongDao playlistDao) {
         super(playlistDao);
         update();
     }
 
-    public LiveData<List<ArtistDto>> getFilteredArtists() {
+    LiveData<List<ArtistDto>> getFilteredArtists() {
         return mList;
     }
 

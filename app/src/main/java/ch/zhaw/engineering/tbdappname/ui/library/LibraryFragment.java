@@ -25,8 +25,7 @@ public class LibraryFragment extends Fragment {
     private LibraryFragmentStateAdapter mAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentLibraryBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
@@ -57,7 +56,7 @@ public class LibraryFragment extends Fragment {
         ).attach();
     }
 
-    private class LibraryFragmentStateAdapter extends FragmentStateAdapter {
+    private static class LibraryFragmentStateAdapter extends FragmentStateAdapter {
 
         LibraryFragmentStateAdapter(@NonNull Fragment fragment) {
             super(fragment);

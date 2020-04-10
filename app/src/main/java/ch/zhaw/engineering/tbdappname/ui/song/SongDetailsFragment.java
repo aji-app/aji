@@ -41,9 +41,7 @@ public class SongDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentSongDetailsBinding.inflate(inflater, container, false);
 
         mBinding.deleteSong.setOnClickListener(v -> {

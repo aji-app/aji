@@ -3,10 +3,6 @@ package ch.zhaw.engineering.tbdappname.ui.artist;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,10 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,8 +28,7 @@ public class ArtistFragment extends Fragment {
     private SortingListener mListener;
 
     public static ArtistFragment newInstance() {
-        ArtistFragment fragment = new ArtistFragment();
-        return fragment;
+        return new ArtistFragment();
     }
 
     @Override
@@ -43,8 +41,7 @@ public class ArtistFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_artist, container, false);
     }

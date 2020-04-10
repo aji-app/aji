@@ -57,18 +57,15 @@ public class RadioStationDetailsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.radiostation_import:
-                mListener.onRadioStationImport();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.radiostation_import) {
+            mListener.onRadioStationImport();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
         mBinding.radiostationEdit.setOnClickListener(v -> setEditMode(!mInEditMode));
 

@@ -1,16 +1,16 @@
 package ch.zhaw.engineering.tbdappname.ui.artist;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentArtistDetailsBinding;
-import ch.zhaw.engineering.tbdappname.ui.song.list.AlbumSongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.ArtistSongListFragment;
 
 public class ArtistDetailsFragment extends Fragment {
@@ -28,8 +28,7 @@ public class ArtistDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentArtistDetailsBinding.inflate(inflater, container, false);
 
         mBinding.artistName.setText(mArtist);

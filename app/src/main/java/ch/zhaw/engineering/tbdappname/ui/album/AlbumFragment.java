@@ -2,14 +2,7 @@ package ch.zhaw.engineering.tbdappname.ui.album;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,12 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
-import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
-import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
@@ -36,8 +28,7 @@ public class AlbumFragment extends Fragment {
     private SortingListener mListener;
 
     public static AlbumFragment newInstance() {
-        AlbumFragment fragment = new AlbumFragment();
-        return fragment;
+        return new AlbumFragment();
     }
 
     @Override
@@ -50,8 +41,7 @@ public class AlbumFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_album, container, false);
     }

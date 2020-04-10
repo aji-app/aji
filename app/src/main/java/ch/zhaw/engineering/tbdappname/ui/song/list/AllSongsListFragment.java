@@ -9,8 +9,7 @@ public class AllSongsListFragment extends SongListFragment {
     private static final String TAG = "AllSongsList";
 
     public static SongListFragment newInstance() {
-        SongListFragment fragment = new AllSongsListFragment();
-        return fragment;
+        return new AllSongsListFragment();
     }
 
     @Override

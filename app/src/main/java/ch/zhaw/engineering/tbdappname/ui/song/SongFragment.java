@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -50,9 +51,7 @@ public class SongFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_song, container, false);
     }
 
@@ -90,10 +89,10 @@ public class SongFragment extends Fragment {
                 mListener.onSongSortTypeChanged(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_direction_asc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS,true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, true);
                 return true;
             case R.id.song_meta_direction_desc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS,false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
