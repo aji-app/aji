@@ -415,6 +415,27 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         });
     }
 
+    @Override
+    public void onArtistPlay(String artist) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onArtistPlay: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistMenu(String artist) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onArtistMenu: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistSelected(String artist) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onArtistSelected: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
     private void showCreatePlaylistDialog() {
 
         LayoutInflater inflater = this.getLayoutInflater();

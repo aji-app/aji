@@ -107,10 +107,10 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.favorite = 1")
     public abstract LiveData<List<Song>> getFavorites();
 
-    @Query("SELECT DISTINCT song.album as name, song.albumArtPath as coverPath FROM Song WHERE song.deleted = 0 ORDER BY song.album DESC")
+    @Query("SELECT DISTINCT song.album as name, song.albumArtPath as coverPath FROM Song WHERE song.deleted = 0 ORDER BY song.album ASC")
     public abstract LiveData<List<AlbumDto>> getAlbums();
 
-    @Query("SELECT DISTINCT song.artist as name FROM Song WHERE song.deleted = 0 ORDER BY song.artist DESC")
+    @Query("SELECT DISTINCT song.artist as name FROM Song WHERE song.deleted = 0 ORDER BY song.artist ASC")
     public abstract LiveData<List<ArtistDto>> getArtists();
 
     /*

@@ -83,7 +83,10 @@ public class AlbumArtistListFragment extends TbdListFragment {
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
                 });
             } else if (mMode == Mode.ARTIST) {
-                appViewModel.getArtists();
+                appViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener);
+                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                });
             }
         }
 
@@ -112,6 +115,12 @@ public class AlbumArtistListFragment extends TbdListFragment {
         void onAlbumMenu(String album);
 
         void onAlbumSelected(String album);
+
+        void onArtistPlay(String artist);
+
+        void onArtistMenu(String artist);
+
+        void onArtistSelected(String artist);
     }
 
     private enum Mode {

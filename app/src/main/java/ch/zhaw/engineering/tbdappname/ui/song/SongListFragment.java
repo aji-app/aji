@@ -175,7 +175,7 @@ public class SongListFragment extends TbdListFragment implements SongRecyclerVie
     }
 
     private void notifyListenerPlaylistUpdated() {
-        if (mListener != null) {
+        if (mListener != null && mAdapter != null) {
             Pair<Integer, List<Long>> data = mAdapter.getModifiedPlaylist();
             if (data.first != null && data.second != null) {
                 Log.i(TAG, "save playlist with songs: " + data.second.size());

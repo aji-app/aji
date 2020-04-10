@@ -24,6 +24,9 @@ public class ArtistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.artist_list_container, AlbumArtistListFragment.newArtistsInstance())
+                .commitNow();
     }
 
     @Override
