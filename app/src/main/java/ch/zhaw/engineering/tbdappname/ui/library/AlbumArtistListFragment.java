@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
 import ch.zhaw.engineering.tbdappname.ui.album.AlbumRecyclerViewAdapter;
 import ch.zhaw.engineering.tbdappname.ui.artist.ArtistRecyclerViewAdapter;

@@ -27,7 +27,8 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
-import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
@@ -36,12 +37,11 @@ import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
+public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SortingListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener {
@@ -96,16 +96,46 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongSearchTextChanged(String searchText) {
+    public void onSearchTextChanged(SortResource sortResource, String searchText) {
         Toast.makeText(this, "onSongSearchTextChanged: " + searchText, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSearchText(searchText);
+        switch (sortResource) {
+
+            case ARTISTS:
+                break;
+            case SONGS:
+                mAppViewModel.changeSongSearchText(searchText);
+                break;
+            case ALBUMS:
+                break;
+            case PLAYLISTS:
+                mAppViewModel.changePlaylistSearchText(searchText);
+                break;
+            case RADIOS:
+                mAppViewModel.changeRadioSearchText(searchText);
+                break;
+        }
     }
 
 
     @Override
-    public void onSongSortDirectionChanged(boolean ascending) {
+    public void onSortDirectionChanged(SortResource sortResource, boolean ascending) {
         Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSongSortOrder(ascending);
+        switch (sortResource) {
+
+            case ARTISTS:
+                break;
+            case SONGS:
+                mAppViewModel.changeSongSortOrder(ascending);
+                break;
+            case ALBUMS:
+                break;
+            case PLAYLISTS:
+                mAppViewModel.changePlaylistSortOrder(ascending);
+                break;
+            case RADIOS:
+                mAppViewModel.changeRadioSortOrder(ascending);
+                break;
+        }
     }
 
     @Override
@@ -263,16 +293,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onPlaylistSearchTextChanged(String text) {
-        mAppViewModel.changePlaylistSearchText(text);
-    }
-
-    @Override
-    public void onPlaylistSortDirectionChanged(boolean ascending) {
-        mAppViewModel.changePlaylistSortOrder(ascending);
-    }
-
-    @Override
     public void onRadioStationSelected(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
@@ -324,16 +344,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 navigateToRadioStation(null);
             });
         });
-    }
-
-    @Override
-    public void onRadioStationSearchTextChanged(String searchText) {
-        mAppViewModel.changeRadioSearchText(searchText);
-    }
-
-    @Override
-    public void onRadioStationSortDirectionChanged(boolean ascending) {
-        mAppViewModel.changeRadioSortOrder(ascending);
     }
 
     @Override

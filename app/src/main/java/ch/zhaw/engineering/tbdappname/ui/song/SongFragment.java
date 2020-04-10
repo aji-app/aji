@@ -17,6 +17,7 @@ import android.widget.SearchView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
@@ -27,7 +28,7 @@ import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
  */
 public class SongFragment extends Fragment {
 
-    private SongFragmentListener mListener;
+    private SortingListener mListener;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -70,7 +71,7 @@ public class SongFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mListener.onSongSearchTextChanged(newText);
+                mListener.onSearchTextChanged(SortingListener.SortResource.SONGS, newText);
                 return true;
             }
         });
@@ -90,10 +91,10 @@ public class SongFragment extends Fragment {
                 mListener.onSongSortTypeChanged(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_direction_asc:
-                mListener.onSongSortDirectionChanged(true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS,true);
                 return true;
             case R.id.song_meta_direction_desc:
-                mListener.onSongSortDirectionChanged(false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS,false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -103,20 +104,11 @@ public class SongFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof SongFragmentListener) {
-            mListener = (SongFragmentListener) context;
+        if (context instanceof SortingListener) {
+            mListener = (SortingListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
         }
-    }
-
-    public interface SongFragmentListener {
-
-        void onSongSortTypeChanged(SongDao.SortType sortType);
-
-        void onSongSearchTextChanged(String text);
-
-        void onSongSortDirectionChanged(boolean ascending);
     }
 }

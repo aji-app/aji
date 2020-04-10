@@ -2,7 +2,7 @@ package ch.zhaw.engineering.tbdappname.ui.song.list;
 
 import android.util.Log;
 
-import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 public class FavoritesSongListFragment extends SongListFragment {
     private static final String TAG = "FavoritesListFragment";

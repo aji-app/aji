@@ -28,6 +28,7 @@ public class AlbumFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.album_list_container, AlbumArtistListFragment.newAlbumInstance())
                 .commitNow();
+        setHasOptionsMenu(true);
     }
 
     @Override

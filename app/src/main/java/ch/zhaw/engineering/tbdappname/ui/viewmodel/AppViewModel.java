@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui;
+package ch.zhaw.engineering.tbdappname.ui.viewmodel;
 
 import android.app.Application;
 import android.util.Log;

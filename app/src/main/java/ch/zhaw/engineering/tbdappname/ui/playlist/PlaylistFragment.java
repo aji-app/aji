@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistBinding;
+import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 
 public class PlaylistFragment extends Fragment {
     private PlaylistFragmentListener mListener;
@@ -79,7 +80,7 @@ public class PlaylistFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mListener.onPlaylistSearchTextChanged(newText);
+                mListener.onSearchTextChanged(SortingListener.SortResource.PLAYLISTS, newText);
                 return true;
             }
         });
@@ -89,22 +90,17 @@ public class PlaylistFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.playlist_direction_asc:
-                mListener.onPlaylistSortDirectionChanged(true);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, true);
                 return true;
             case R.id.playlist_direction_desc:
-                mListener.onPlaylistSortDirectionChanged(false);
+                mListener.onSortDirectionChanged(SortingListener.SortResource.PLAYLISTS, false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-
-    public interface PlaylistFragmentListener {
+    public interface PlaylistFragmentListener extends SortingListener {
         void onCreatePlaylist();
-
-        void onPlaylistSearchTextChanged(String text);
-
-        void onPlaylistSortDirectionChanged(boolean ascending);
     }
 }
