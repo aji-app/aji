@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +25,9 @@ public class AlbumFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.album_list_container, AlbumArtistListFragment.newAlbumInstance())
+                .commitNow();
     }
 
     @Override

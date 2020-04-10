@@ -117,51 +117,6 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 if (mListener != null) {
                     mListener.onSongMenu(holder.song.getSongId());
                 }
-//                //creating a popup menu
-//                PopupMenu popup = new PopupMenu(mContext, overFlow);
-//                //inflating menu from xml resource
-//                popup.inflate(R.menu.song_item_menu);
-//
-//                MenuItem addToPlaylist = popup.getMenu().findItem(R.id.song_menu_add_to_playlist);
-//                if (mPlaylists == null) {
-//                    addToPlaylist.setVisible(false);
-//                } else {
-//                    SubMenu playlistMenu = addToPlaylist.getSubMenu();
-//                    for (Playlist playlist : mPlaylists.values()) {
-//                        playlistMenu.add(0, playlist.getPlaylistId(), Menu.NONE, playlist.getName()).setIcon(R.drawable.ic_menu_playlist);
-//                    }
-//                }
-//
-//                //adding click listener
-//                popup.setOnMenuItemClickListener(item -> {
-//                    switch (item.getItemId()) {
-//
-//                        case R.id.song_menu_play:
-//                            mListener.onSongPlay(holder.song.getSongId());
-//                            return true;
-//                        case R.id.song_menu_queue:
-//                            mListener.onSongQueue(holder.song.getSongId());
-//                            return true;
-//                        case R.id.song_menu_edit:
-//                            mListener.onSongEdit(holder.song.getSongId());
-//                            return true;
-//                        case R.id.song_create_playlist:
-//                            mListener.onCreatePlaylist();
-//                            return true;
-//                        case R.id.song_menu_delete:
-//                            mListener.onSongDelete(holder.song.getSongId());
-//                            return true;
-//                        default:
-//                            Playlist selectedPlaylist = mPlaylists.get(item.getItemId());
-//                            if (selectedPlaylist != null) {
-//                                mListener.onSongAddToPlaylist(holder.song.getSongId(), selectedPlaylist.getPlaylistId());
-//                                return true;
-//                            }
-//                            return false;
-//                    }
-//                });
-//                //displaying the popup
-//                popup.show();
             });
         }
 

@@ -69,4 +69,7 @@
     <string name="tab_albums">Albums</string>
     <string name="tab_favorites">Favorites</string>
     <string name="tab_songs">Songs</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -29,6 +29,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
@@ -43,7 +44,7 @@ import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FI
 public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SongFragment.SongFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
-        SongDetailsFragment.SongDetailsFragmentListener {
+        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener {
 
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
@@ -393,7 +394,26 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         });
     }
 
+    @Override
+    public void onAlbumPlay(String album) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumPlay: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
 
+    @Override
+    public void onAlbumMenu(String album) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumMenu: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onAlbumSelected(String album) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumSelected: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
 
     private void showCreatePlaylistDialog() {
 

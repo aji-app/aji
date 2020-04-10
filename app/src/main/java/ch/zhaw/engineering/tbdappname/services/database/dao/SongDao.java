@@ -14,6 +14,8 @@ import androidx.room.Update;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
+import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 @Dao
@@ -105,6 +107,12 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.favorite = 1")
     public abstract LiveData<List<Song>> getFavorites();
 
+    @Query("SELECT DISTINCT song.album as name, song.albumArtPath as coverPath FROM Song WHERE song.deleted = 0 ORDER BY song.album DESC")
+    public abstract LiveData<List<AlbumDto>> getAlbums();
+
+    @Query("SELECT DISTINCT song.artist as name FROM Song WHERE song.deleted = 0 ORDER BY song.artist DESC")
+    public abstract LiveData<List<ArtistDto>> getArtists();
+
     /*
      * Protected Helper Methods
      *
@@ -135,6 +143,7 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
 
 
     public enum SortType {
