@@ -15,7 +15,8 @@ import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentPlaylistDetailsBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.PlaylistSongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 
 public class PlaylistDetailsFragment extends Fragment {
@@ -79,7 +80,7 @@ public class PlaylistDetailsFragment extends Fragment {
 //                    mBinding.playlistName.setText(mPlaylist.getName());
 //                    mBinding.playlistNameEdit.setText(mPlaylist.getName());
                     mBinding.playlistNameEdittext.setText(mPlaylist.getName());
-                    mSongListFragment = SongListFragment.newInstance(mPlaylistId);
+                    mSongListFragment = PlaylistSongListFragment.newInstance(mPlaylistId);
                     getChildFragmentManager().beginTransaction()
                             .replace(R.id.songlist_container, mSongListFragment)
                             .commitNow();

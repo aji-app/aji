@@ -37,7 +37,7 @@ import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragmen
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
@@ -62,14 +62,31 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongSelected(long songId) {
+    public void onSongSelected(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSong(songId);
+        switch (origin) {
+
+            case ALBUM:
+                navigateToSongFromAlbum(songId);
+                break;
+            case SONG:
+                navigateToSongFromLibrary(songId);
+                break;
+            case ARTIST:
+                navigateToSongFromArtist(songId);
+                break;
+            case PLAYLIST:
+                navigateToSongFromPlaylist(songId);
+                break;
+            case EXPANDED_CONTROLS:
+                // TODO
+                break;
+        }
     }
 
     @Override
@@ -112,14 +129,14 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
-    public void onSongMenu(long songId) {
+    public void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSong(songId);
+        navigateToSongFromLibrary(songId);
     }
 
     @Override
@@ -528,5 +545,11 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
 
     protected abstract void navigateToArtist(String artist);
 
-    protected abstract void navigateToSong(long songId);
+    protected abstract void navigateToSongFromLibrary(long songId);
+
+    protected abstract void navigateToSongFromAlbum(long songId);
+
+    protected abstract void navigateToSongFromArtist(long songId);
+
+    protected abstract void navigateToSongFromPlaylist(long songId);
 }

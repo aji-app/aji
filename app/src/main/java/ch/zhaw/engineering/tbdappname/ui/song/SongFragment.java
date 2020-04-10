@@ -17,6 +17,8 @@ import android.widget.SearchView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +42,7 @@ public class SongFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, SongListFragment.newInstance())
+                    .replace(R.id.bottom_container, AllSongsListFragment.newInstance())
                     .commitNow();
         }
         setHasOptionsMenu(true);

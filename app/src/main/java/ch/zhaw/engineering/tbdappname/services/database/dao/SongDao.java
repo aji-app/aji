@@ -113,6 +113,9 @@ public abstract class SongDao {
     @Query("SELECT DISTINCT song.artist as name FROM Song WHERE song.deleted = 0 ORDER BY song.artist ASC")
     public abstract LiveData<List<ArtistDto>> getArtists();
 
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.artist ASC")
+    public abstract LiveData<List<Song>> getSongsForAlbum(String album);
+
     /*
      * Protected Helper Methods
      *

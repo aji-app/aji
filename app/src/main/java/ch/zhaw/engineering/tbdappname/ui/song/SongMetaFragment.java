@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongMetaBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 public class SongMetaFragment extends Fragment {
 

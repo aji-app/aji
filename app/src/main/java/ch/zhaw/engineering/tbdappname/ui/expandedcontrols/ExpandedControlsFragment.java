@@ -14,6 +14,7 @@ import android.widget.TextView;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +42,7 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
         mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(1 /* TODO: Current Song ID */));
-        mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(1 /* TODO: Current Song ID */));
+        mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(1 /* TODO: Current Song ID */, SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS));
 
         return mBinding.getRoot();
     }
@@ -60,7 +61,7 @@ public class ExpandedControlsFragment extends Fragment {
     public interface ExpandedControlsFragmentListener {
         void onToggleFavorite(long songId);
 
-        void onSongMenu(long songId);
+        void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin);
 
         void onPlayPause();
 

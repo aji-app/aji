@@ -157,4 +157,8 @@ public class AppViewModel extends AndroidViewModel {
     public LiveData<List<ArtistDto>> getArtists() {
         return mSongDao.getArtists();
     }
+
+    public LiveData<List<Song>> getSongsForAlbum(String album) {
+        return mSongDao.getSongsForAlbum(album);
+    }
 }

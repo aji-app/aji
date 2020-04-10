@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentFavoriteBinding;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.FavoritesSongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 public class FavoriteFragment extends Fragment {
 
@@ -31,7 +32,7 @@ public class FavoriteFragment extends Fragment {
         FragmentFavoriteBinding binding = FragmentFavoriteBinding.inflate(inflater, container, false);
 
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.favorite_container, SongListFragment.newFavoritesInstance())
+                .replace(R.id.favorite_container, FavoritesSongListFragment.newInstance())
                 .commit();
 
         return binding.getRoot();

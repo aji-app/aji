@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.song;
+package ch.zhaw.engineering.tbdappname.ui.song.list;
 
 import android.content.Context;
 import android.util.Log;
@@ -115,7 +115,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
             overFlow.setOnClickListener(v -> {
                 if (mListener != null) {
-                    mListener.onSongMenu(holder.song.getSongId());
+                    mListener.onSongMenu(holder.song.getSongId(), SongListFragment.SongSelectionOrigin.SONG);
                 }
             });
         }
@@ -124,7 +124,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                mListener.onSongSelected(holder.song.getSongId());
+                mListener.onSongSelected(holder.song.getSongId(), SongListFragment.SongSelectionOrigin.SONG);
             }
         });
     }
