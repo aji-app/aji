@@ -405,12 +405,14 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onAlbumMenu(String album) {
         runOnUiThread(() -> {
             Toast.makeText(this, "onAlbumMenu: " + album, Toast.LENGTH_SHORT).show();
+            navigateToAlbum(album);
         });
     }
 
     @Override
     public void onAlbumSelected(String album) {
         runOnUiThread(() -> {
+            navigateToAlbum(album);
             Toast.makeText(this, "onAlbumSelected: " + album, Toast.LENGTH_SHORT).show();
         });
     }
@@ -425,6 +427,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onArtistMenu(String artist) {
         runOnUiThread(() -> {
+            navigateToArtist(artist);
             Toast.makeText(this, "onArtistMenu: " + artist, Toast.LENGTH_SHORT).show();
         });
     }
@@ -432,6 +435,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onArtistSelected(String artist) {
         runOnUiThread(() -> {
+            navigateToArtist(artist);
             Toast.makeText(this, "onArtistSelected: " + artist, Toast.LENGTH_SHORT).show();
         });
     }
@@ -519,6 +523,10 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     protected abstract void navigateToRadioStation(Long radioStationId);
 
     protected abstract void radioStationImported(RadioStationDto imported);
+
+    protected abstract void navigateToAlbum(String album);
+
+    protected abstract void navigateToArtist(String artist);
 
     protected abstract void navigateToSong(long songId);
 }

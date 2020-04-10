@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.library;
+package ch.zhaw.engineering.tbdappname.ui.artist;
 
 import android.os.Bundle;
 
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_nav_library_to_songDetailsFragment"
             app:destination="@id/songDetailsFragment" />
+        <action
+            android:id="@+id/action_nav_library_to_albumDetailsFragment"
+            app:destination="@id/albumDetailsFragment" />
+        <action
+            android:id="@+id/action_nav_library_to_artistDetailsFragment"
+            app:destination="@id/artistDetailsFragment" />
     </fragment>
 
     <fragment
@@ -72,5 +78,29 @@
         <argument
             android:name="song-id"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/albumDetailsFragment"
+        android:name="ch.zhaw.engineering.tbdappname.ui.album.AlbumDetailsFragment"
+        android:label="@string/menu_album_details"
+        tools:layout="@layout/fragment_album_details" >
+        <action
+            android:id="@+id/action_albumDetailsFragment_to_songDetailsFragment"
+            app:destination="@id/songDetailsFragment" />
+        <argument
+            android:name="album"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/artistDetailsFragment"
+        android:name="ch.zhaw.engineering.tbdappname.ui.artist.ArtistDetailsFragment"
+        android:label="@string/menu_artist_details"
+        tools:layout="@layout/fragment_artist_details" >
+        <action
+            android:id="@+id/action_artistDetailsFragment_to_songDetailsFragment"
+            app:destination="@id/songDetailsFragment" />
+        <argument
+            android:name="artist"
+            app:argType="string" />
     </fragment>
 </navigation>

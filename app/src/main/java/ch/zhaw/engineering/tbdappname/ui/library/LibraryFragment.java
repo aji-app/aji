@@ -1,6 +1,5 @@
 package ch.zhaw.engineering.tbdappname.ui.library;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentLibraryBinding;
+import ch.zhaw.engineering.tbdappname.ui.album.AlbumFragment;
+import ch.zhaw.engineering.tbdappname.ui.artist.ArtistFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.SongFragment;
 
 public class LibraryFragment extends Fragment {

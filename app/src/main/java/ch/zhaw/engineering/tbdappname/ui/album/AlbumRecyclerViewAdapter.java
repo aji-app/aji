@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.tbdappname.ui.library;
+package ch.zhaw.engineering.tbdappname.ui.album;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -10,6 +10,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.databinding.FragmentAlbumItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
+import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,14 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
-import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
 import ch.zhaw.engineering.tbdappname.ui.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
-import ch.zhaw.engineering.tbdappname.ui.song.SongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.album.AlbumRecyclerViewAdapter;
+import ch.zhaw.engineering.tbdappname.ui.artist.ArtistRecyclerViewAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
