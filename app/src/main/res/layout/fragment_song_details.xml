@@ -75,13 +75,24 @@
             android:src="@drawable/ic_favorite" />
     </LinearLayout>
 
-    <TextView
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
         android:id="@+id/add_to_playlist"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/ic_playlist_add"
         android:drawableTint="?attr/colorPrimary"
         android:layout_marginTop="10dp"
+        android:drawablePadding="@dimen/button_with_image_padding"
         android:text="@string/add_to_playlist" />
+
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
+        android:id="@+id/delete_song"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_delete"
+        android:drawableTint="?attr/colorPrimary"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        android:layout_marginTop="10dp"
+        android:text="@string/delete_song" />
 
 </LinearLayout>

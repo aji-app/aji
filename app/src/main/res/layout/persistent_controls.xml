@@ -5,11 +5,12 @@
     android:id="@+id/persistent_controls"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/colorBackground"
+    android:background="@drawable/persistent_controls_background"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
