@@ -52,7 +52,6 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-
     public void changeSongSearchText(String text) {
         String prev = mSongSearchText;
         if (text.length() < 3) {
@@ -160,5 +159,9 @@ public class AppViewModel extends AndroidViewModel {
 
     public LiveData<List<Song>> getSongsForAlbum(String album) {
         return mSongDao.getSongsForAlbum(album);
+    }
+
+    public LiveData<List<Song>> getSongsForArtist(String artist) {
+        return mSongDao.getSongsForArtist(artist);
     }
 }

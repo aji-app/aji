@@ -3,16 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="@dimen/fragment_margin"
-    android:paddingEnd="@dimen/fragment_margin"
+    android:padding="@dimen/fragment_margin"
     tools:context=".ui.album.AlbumDetailsFragment"
     android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/album_cover"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_placeholder_image" />
 
     <TextView
         android:id="@+id/album_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="25sp"
         tools:text="Make it Fake 1" />
 
 

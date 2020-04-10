@@ -31,6 +31,7 @@ public class AlbumDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentAlbumDetailsBinding.inflate(inflater, container, false);
         mBinding.albumName.setText(mAlbum);
+        // TODO: Display album art
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.album_songlist_container, AlbumSongListFragment.newInstance(mAlbum))

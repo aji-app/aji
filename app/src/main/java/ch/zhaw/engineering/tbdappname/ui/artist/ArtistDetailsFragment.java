@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentArtistDetailsBinding;
+import ch.zhaw.engineering.tbdappname.ui.song.list.AlbumSongListFragment;
+import ch.zhaw.engineering.tbdappname.ui.song.list.ArtistSongListFragment;
 
 public class ArtistDetailsFragment extends Fragment {
     private static final String ARG_ARTIST = "artist";
@@ -29,6 +31,12 @@ public class ArtistDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentArtistDetailsBinding.inflate(inflater, container, false);
+
+        mBinding.artistName.setText(mArtist);
+
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.artist_songlist_container, ArtistSongListFragment.newInstance(mArtist))
+                .commit();
         return mBinding.getRoot();
     }
 }
