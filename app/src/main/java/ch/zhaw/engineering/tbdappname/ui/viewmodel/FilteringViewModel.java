@@ -42,4 +42,12 @@ import androidx.lifecycle.MediatorLiveData;
     }
 
     protected abstract LiveData<TListType> getUpdatedFilteredSource();
+
+    public boolean getSortDirection() {
+        return mAscending;
+    }
+
+    public String getSearchString() {
+        return mSearchText;
+    }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,8 +19,10 @@ import android.widget.SearchView;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.SortResource;
+import ch.zhaw.engineering.tbdappname.ui.menu.MenuHelper;
 import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,7 +31,7 @@ import ch.zhaw.engineering.tbdappname.ui.song.list.AllSongsListFragment;
  */
 public class SongFragment extends Fragment {
 
-    private SortingListener mListener;
+    private AppViewModel mAppViewModel;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -59,54 +62,35 @@ public class SongFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.filter_list_menu_song, menu);
-        SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
-        search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mListener.onSearchTextChanged(SortingListener.SortResource.SONGS, newText);
-                return true;
-            }
-        });
+        MenuHelper.setupSearchView(SortResource.SONGS, mAppViewModel, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
+        if (!MenuHelper.onOptionsItemSelected(SortResource.SONGS, mAppViewModel, item)) {
+            switch (item.getItemId()) {
 
-            case R.id.song_meta_order_album:
-                mListener.onSongSortTypeChanged(SongDao.SortType.ALBUM);
-                return true;
-            case R.id.song_meta_order_artist:
-                mListener.onSongSortTypeChanged(SongDao.SortType.ARTIST);
-                return true;
-            case R.id.song_meta_order_title:
-                mListener.onSongSortTypeChanged(SongDao.SortType.TITLE);
-                return true;
-            case R.id.song_meta_direction_asc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, true);
-                return true;
-            case R.id.song_meta_direction_desc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.SONGS, false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                case R.id.song_meta_order_album:
+                    mAppViewModel.changeSortType(SongDao.SortType.ALBUM);
+                    return true;
+                case R.id.song_meta_order_artist:
+                    mAppViewModel.changeSortType(SongDao.SortType.ARTIST);
+                    return true;
+                case R.id.song_meta_order_title:
+                    mAppViewModel.changeSortType(SongDao.SortType.TITLE);
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
         }
+        return true;
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof SortingListener) {
-            mListener = (SortingListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement SongFragmentListener");
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
         }
     }
 }

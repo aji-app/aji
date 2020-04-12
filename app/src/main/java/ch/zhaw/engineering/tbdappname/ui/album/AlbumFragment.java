@@ -14,10 +14,13 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.tbdappname.R;
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.SortResource;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
+import ch.zhaw.engineering.tbdappname.ui.menu.MenuHelper;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +28,7 @@ import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
  * create an instance of this fragment.
  */
 public class AlbumFragment extends Fragment {
-    private SortingListener mListener;
+    private AppViewModel mAppViewModel;
 
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
@@ -46,55 +49,26 @@ public class AlbumFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_album, container, false);
     }
 
-
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof SortingListener) {
-            mListener = (SortingListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement SortingListener");
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.filter_list_menu, menu);
-        SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
-        search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mListener.onSearchTextChanged(SortingListener.SortResource.ALBUMS, newText);
-                return true;
-            }
-        });
+        MenuHelper.setupSearchView(SortResource.ALBUMS, mAppViewModel, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.direction_asc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.ALBUMS, true);
-                return true;
-            case R.id.direction_desc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.ALBUMS, false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (!MenuHelper.onOptionsItemSelected(SortResource.ALBUMS, mAppViewModel, item)) {
+            return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 }

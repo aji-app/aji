@@ -1,8 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.radiostation;
 
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
-
-public interface RadioStationFragmentInteractionListener extends SortingListener {
+public interface RadioStationFragmentInteractionListener {
     void onRadioStationSelected(long radioStationId);
     void onRadioStationPlay(long radioStationId);
     void onRadioStationEdit(long radioStationId);
