@@ -52,6 +52,10 @@ public class SongDetailsFragment extends Fragment {
             mListener.onToggleFavorite(mSongId);
         });
 
+        mBinding.addToPlaylist.setOnClickListener(v -> {
+            mListener.onSongAddToPlaylist(mSongId);
+        });
+
         return mBinding.getRoot();
     }
 
@@ -64,6 +68,12 @@ public class SongDetailsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement SongDetailsFragmentListener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -85,15 +95,9 @@ public class SongDetailsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     public interface SongDetailsFragmentListener {
 
-        void onSongAddToPlaylist(long songId, int playlistId);
+        void onSongAddToPlaylist(long songId);
 
         void onSongQueue(long songId);
 
