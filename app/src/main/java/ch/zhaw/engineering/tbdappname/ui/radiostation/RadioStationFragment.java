@@ -14,13 +14,17 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentRadiostationBinding;
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.SortResource;
+import ch.zhaw.engineering.tbdappname.ui.menu.MenuHelper;
+import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 public class RadioStationFragment extends Fragment {
     private RadioStationFragmentInteractionListener mListener;
+    private AppViewModel mAppViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,38 +62,26 @@ public class RadioStationFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.radiostation_menu, menu);
-        SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
-        search.setMaxWidth((Resources.getSystem().getDisplayMetrics().widthPixels / 2));
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mListener.onSearchTextChanged(SortingListener.SortResource.RADIOS, newText);
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.filter_list_menu, menu);
+        MenuHelper.setupSearchView(SortResource.RADIOS, mAppViewModel, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.radiostation_direction_asc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.RADIOS, true);
-                return true;
-            case R.id.radiostation_direction_desc:
-                mListener.onSortDirectionChanged(SortingListener.SortResource.RADIOS, false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (!MenuHelper.onOptionsItemSelected(SortResource.RADIOS, mAppViewModel, item)) {
+            return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 }

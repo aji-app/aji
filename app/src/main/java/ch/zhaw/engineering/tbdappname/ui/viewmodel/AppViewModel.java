@@ -17,7 +17,7 @@ import ch.zhaw.engineering.tbdappname.services.database.dto.ArtistDto;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
+import ch.zhaw.engineering.tbdappname.ui.SortResource;
 
 public class AppViewModel extends AndroidViewModel {
     private final SongDao mSongDao;
@@ -59,18 +59,34 @@ public class AppViewModel extends AndroidViewModel {
         mSongViewModel.changeSortType(sortType);
     }
 
-    public void changeSearchText(SortingListener.SortResource sortResource, String searchText) {
+    public void changeSearchText(SortResource sortResource, String searchText) {
         FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
         if (currentViewModel != null) {
             currentViewModel.changeSearchText(searchText);
         }
     }
 
-    public void changeSortDirection(SortingListener.SortResource sortResource, boolean ascending) {
+    public void changeSortDirection(SortResource sortResource, boolean ascending) {
         FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
         if (currentViewModel != null) {
             currentViewModel.changeSortOrder(ascending);
         }
+    }
+
+    public boolean getSortDirection(SortResource sortResource) {
+        FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
+        if (currentViewModel != null) {
+            return currentViewModel.getSortDirection();
+        }
+        return true;
+    }
+
+    public String getSearchString(SortResource sortResource) {
+        FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
+        if (currentViewModel != null) {
+            return currentViewModel.getSearchString();
+        }
+        return "";
     }
 
 
@@ -100,7 +116,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    private FilteringViewModel getCurrentViewModel(SortingListener.SortResource sortResource) {
+    private FilteringViewModel getCurrentViewModel(SortResource sortResource) {
         switch (sortResource) {
             case ARTISTS:
                 return mArtistViewModel;

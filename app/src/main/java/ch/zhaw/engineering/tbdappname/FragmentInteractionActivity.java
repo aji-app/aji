@@ -27,9 +27,9 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
+import ch.zhaw.engineering.tbdappname.ui.SortResource;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
-import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
@@ -42,7 +42,7 @@ import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SortingListener,
+public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
@@ -89,25 +89,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 // TODO
                 break;
         }
-    }
-
-    @Override
-    public void onSongSortTypeChanged(SongDao.SortType sortType) {
-        Toast.makeText(this, "onSortTypeChanged: " + sortType, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSortType(sortType);
-    }
-
-    @Override
-    public void onSearchTextChanged(SortResource sortResource, String searchText) {
-        Toast.makeText(this, "onSongSearchTextChanged: " + searchText, Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSearchText(sortResource, searchText);
-    }
-
-
-    @Override
-    public void onSortDirectionChanged(SortResource sortResource, boolean ascending) {
-        Toast.makeText(this, "onSortDirectionChanged: " + (ascending ? "ascending" : "descending"), Toast.LENGTH_SHORT).show();
-        mAppViewModel.changeSortDirection(sortResource, ascending);
     }
 
     @Override
