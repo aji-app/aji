@@ -92,6 +92,17 @@ public abstract class PlaylistDao {
         insert(playlistSongCrossRef);
     }
 
+    @Query("SELECT pl.* FROM Playlist pl " +
+            "LEFT JOIN PlaylistSongCrossRef ref ON ref.playlistId = pl.playlistId " +
+            "WHERE pl.playlistId NOT IN " +
+            "(SELECT ref2.playlistId FROM PlaylistSongCrossRef ref2 WHERE ref2.songId == :songId) " +
+            "GROUP BY pl.playlistId " +
+            "ORDER BY  pl.name DESC")
+    public abstract LiveData<List<Playlist>> getPlaylistsWhereSongCanBeAdded(long songId);
+
+    @Query("SELECT ref2.playlistId FROM PlaylistSongCrossRef ref2 WHERE ref2.songId == :songId")
+    public abstract List<Integer> getBubu(long songId);
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract void insertAll(List<PlaylistSongCrossRef> refs);
@@ -128,4 +139,5 @@ public abstract class PlaylistDao {
 
     @Query("DELETE FROM Playlist WHERE playlistId = :playlistId")
     protected abstract void deletePlaylistByPlaylistId(int playlistId);
+
 }

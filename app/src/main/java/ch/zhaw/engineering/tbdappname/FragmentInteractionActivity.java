@@ -27,6 +27,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.SortingListener;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
@@ -44,13 +45,14 @@ import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FI
 public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener, SortingListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
-        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener {
+        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
 
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
     protected AppViewModel mAppViewModel;
     private RadioStationDao mRadioStationDao;
+    private PlaylistSelectionFragment mAddToPlaylistSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,20 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     }
 
     @Override
+    public void onSongAddToPlaylist(long songId) {
+        AsyncTask.execute(() -> {
+            Song song = mSongDao.getSongById(songId);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+        });
+        runOnUiThread(() -> {
+            mAddToPlaylistSheet = PlaylistSelectionFragment.newInstance(songId);
+            mAddToPlaylistSheet.show(getSupportFragmentManager(), PlaylistSelectionFragment.TAG);
+        });
+    }
+
+    @Override
     public void onSongQueue(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
@@ -143,6 +159,10 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongAddToPlaylist(long songId, int playlistId) {
         AsyncTask.execute(() -> {
             mPlaylistDao.addSongToPlaylist(songId, playlistId);
+
+            if (mAddToPlaylistSheet != null) {
+                mAddToPlaylistSheet.dismiss();
+            }
 
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
