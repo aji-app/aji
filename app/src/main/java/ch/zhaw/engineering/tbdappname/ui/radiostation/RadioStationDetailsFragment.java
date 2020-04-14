@@ -152,7 +152,7 @@ public class RadioStationDetailsFragment extends Fragment {
     private void notifyListenerEdited() {
         updateRadioStationData();
         if (mListener != null) {
-            mListener.onRadioStationEdit(mRadioStation);
+            mListener.onRadioStationEdited(mRadioStation);
         }
     }
 
@@ -177,7 +177,7 @@ public class RadioStationDetailsFragment extends Fragment {
     }
 
     public interface RadioStationDetailsFragmentListener {
-        void onRadioStationEdit(RadioStationDto updatedRadioStation);
+        void onRadioStationEdited(RadioStationDto updatedRadioStation);
 
         void onRadioStationSaved(RadioStationDto updatedRadioStation);
 

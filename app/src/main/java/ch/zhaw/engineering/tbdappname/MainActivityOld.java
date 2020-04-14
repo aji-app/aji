@@ -61,12 +61,6 @@ public class MainActivityOld extends AppCompatActivity {
             startActivityForResult(directorySelect, REQUEST_CODE_DIRECTOY_SELECT);
         });
 
-        Button button6 = findViewById(R.id.button6);
-        button6.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CurrentlyPlayingActivity.class);
-            startActivity(intent);
-        });
-
         Button button9 = findViewById(R.id.button9);
         int songCount = 20;
         button9.setOnClickListener(v -> {

@@ -172,6 +172,24 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         });
     }
 
+    protected void next() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().next();
+        }
+    }
+
+    protected void previous() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().previous();
+        }
+    }
+
+    protected void playPause() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().playOrPause();
+        }
+    }
+
     protected void startService() {
         if (!mServiceStarted) {
             Log.i(TAG, "Start service");
