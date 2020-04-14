@@ -103,7 +103,9 @@ public class SongDetailsFragment extends Fragment {
                         mBinding.songArtist.setText(song.getArtist());
                         mBinding.songAlbum.setText(song.getAlbum());
                         mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
-                        Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                        if (song.getAlbumArtPath() != null) {
+                            Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                        }
                     });
                 });
             });

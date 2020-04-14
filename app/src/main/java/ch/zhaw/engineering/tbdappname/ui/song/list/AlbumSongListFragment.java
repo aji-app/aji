@@ -36,6 +36,9 @@ public class AlbumSongListFragment extends SongListFragment {
                 getActivity().runOnUiThread(() -> {
                     if (mAdapter != null) {
                         mAdapter.setSongs(songs);
+                        if (mRecyclerView.getAdapter() == null) {
+                            mRecyclerView.setAdapter(mAdapter);
+                        }
                     } else {
                         mAdapter = new SongRecyclerViewAdapter(songs, new CustomListener(mListener));
                         mRecyclerView.setAdapter(mAdapter);
