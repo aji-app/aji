@@ -312,13 +312,22 @@ public class AudioService extends LifecycleService {
             mAudioBackend.clear();
 
             List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylistAsList(playlist.getPlaylistId());
-            for (Song song : songsForPlaylist) {
-                playbackControlQueueSong(song);
-            }
+            playbackControlQueueSongs(songsForPlaylist);
             playbackControlPlay();
             mCurrentPlaylistName = playlist.getName();
         });
         registerReceiver(mNoisyAudioStreamReceiver, mNoisyAudioIntentFilter);
+    }
+
+    private void playbackControlPlaySongs(List<Song> songs) {
+        playbackControlQueueSongs(songs);
+        playbackControlPlay();
+    }
+
+    private void playbackControlQueueSongs(List<Song> songs) {
+        for (Song song : songs) {
+            playbackControlQueueSong(song);
+        }
     }
 
     private void playbackControlPlaySong(Song song) {
@@ -409,6 +418,14 @@ public class AudioService extends LifecycleService {
 
         public void play(Song song) {
             playbackControlPlaySong(song);
+        }
+
+        public void play(List<Song> songs) {
+            playbackControlPlaySongs(songs);
+        }
+
+        public void queue(List<Song> songs) {
+            playbackControlQueueSongs(songs);
         }
 
         public void next() {

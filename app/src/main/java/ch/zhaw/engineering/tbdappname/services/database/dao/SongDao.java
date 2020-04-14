@@ -129,8 +129,14 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.artist ASC")
     public abstract LiveData<List<Song>> getSongsForAlbum(String album);
 
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.artist ASC")
+    public abstract List<Song> getSongsForAlbumAsList(String album);
+
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.artist ASC")
     public abstract LiveData<List<Song>> getSongsForArtist(String artist);
+
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.artist ASC")
+    public abstract List<Song> getSongsForArtistAsList(String artist);
 
     /*
      * Protected Helper Methods

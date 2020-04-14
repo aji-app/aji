@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -16,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
@@ -94,6 +97,8 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
                     }
                 } else if (startAction.getRadio() != null) {
                     audioService.play(startAction.getRadio());
+                } else if (startAction.getSongs() != null) {
+                    audioService.play(startAction.getSongs());
                 }
                 startAction = null;
             }
@@ -174,6 +179,21 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         Log.i(TAG, "Playing radioStation: " + radioStation.toString());
     }
 
+    public void playMusic(List<Song> songs, boolean queue) {
+        startService();
+        if (mAudioService.getValue() != null) {
+            if (queue) {
+                mAudioService.getValue().queue(songs);
+            } else {
+                mAudioService.getValue().play(songs);
+
+            }
+        } else {
+            startAction = StartPlayingAction.builder().songs(songs).build();
+        }
+        Log.i(TAG, "Playing songs: " + songs.size());
+    }
+
     protected void next() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().next();
@@ -218,5 +238,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         RadioStation radio = null;
         @Builder.Default
         boolean queue = false;
+        @Builder.Default
+        List<Song> songs = null;
     }
 }

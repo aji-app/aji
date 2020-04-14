@@ -405,9 +405,23 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onAlbumPlay(String album) {
-        // TODO play album
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
+            playMusic(songs, false);
+        });
         runOnUiThread(() -> {
             Toast.makeText(this, "onAlbumPlay: " + album, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onAlbumQueue(String album) {
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
+            playMusic(songs, true);
+        });
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onAlbumQueue: " + album, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -430,9 +444,23 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onArtistPlay(String artist) {
-        // TODO play songs from artist
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
+            playMusic(songs, false);
+        });
         runOnUiThread(() -> {
             Toast.makeText(this, "onArtistPlay: " + artist, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onArtistQueue(String artist) {
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
+            playMusic(songs, true);
+        });
+        runOnUiThread(() -> {
+            Toast.makeText(this, "onArtistQueue: " + artist, Toast.LENGTH_SHORT).show();
         });
     }
 

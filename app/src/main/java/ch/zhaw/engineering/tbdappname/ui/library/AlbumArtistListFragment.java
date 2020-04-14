@@ -107,11 +107,16 @@ public class AlbumArtistListFragment extends TbdListFragment {
     public interface AlbumArtistListFragmentListener {
         void onAlbumPlay(String album);
 
+        void onAlbumQueue(String album);
+
         void onAlbumMenu(String album);
 
         void onAlbumSelected(String album);
 
         void onArtistPlay(String artist);
+
+
+        void onArtistQueue(String artist);
 
         void onArtistMenu(String artist);
 
