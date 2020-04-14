@@ -1,5 +1,7 @@
 package ch.zhaw.engineering.tbdappname.services.audio;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.Player;
 
@@ -11,7 +13,7 @@ public class TbdControlDispatcher implements ControlDispatcher {
     private final AudioService.AudioServiceBinder mBinder;
 
     @Override
-    public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+    public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
         if (!playWhenReady) {
             mBinder.pause();
             return true;
@@ -22,22 +24,22 @@ public class TbdControlDispatcher implements ControlDispatcher {
     }
 
     @Override
-    public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+    public boolean dispatchSeekTo(@NonNull Player player, int windowIndex, long positionMs) {
         return false;
     }
 
     @Override
-    public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+    public boolean dispatchSetRepeatMode(@NonNull Player player, int repeatMode) {
         return false;
     }
 
     @Override
-    public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+    public boolean dispatchSetShuffleModeEnabled(@NonNull Player player, boolean shuffleModeEnabled) {
         return false;
     }
 
     @Override
-    public boolean dispatchStop(Player player, boolean reset) {
+    public boolean dispatchStop(@NonNull Player player, boolean reset) {
         mBinder.stop();
 
         return false;

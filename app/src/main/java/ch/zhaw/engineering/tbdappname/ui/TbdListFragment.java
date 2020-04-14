@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -18,10 +19,14 @@ public class TbdListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                ((LinearLayoutManager) mRecyclerView.getLayoutManager()).getOrientation());
-        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
+        if (getActivity() != null && mRecyclerView.getLayoutManager() != null) {
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                    ((LinearLayoutManager) mRecyclerView.getLayoutManager()).getOrientation());
+            Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.divider);
+            if (drawable != null) {
+                dividerItemDecoration.setDrawable(drawable);
+                mRecyclerView.addItemDecoration(dividerItemDecoration);
+            }
+        }
     }
 }

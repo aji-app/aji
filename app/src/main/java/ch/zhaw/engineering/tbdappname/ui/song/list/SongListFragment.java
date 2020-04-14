@@ -31,8 +31,8 @@ public abstract class SongListFragment extends TbdListFragment implements SongRe
     private static final String TAG = "SongListFragment";
     private static final String ARG_SHOW_FAVORITES = "show-favorites";
 
-    protected SongListFragmentListener mListener;
-    protected SongRecyclerViewAdapter mAdapter;
+    SongListFragmentListener mListener;
+    SongRecyclerViewAdapter mAdapter;
     private boolean mEditMode;
 
 

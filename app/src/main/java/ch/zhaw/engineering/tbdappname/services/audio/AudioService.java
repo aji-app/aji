@@ -15,6 +15,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.net.MalformedURLException;
@@ -22,9 +23,9 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.exoplayer.ExoPlayerAudioBackend;
-import ch.zhaw.engineering.tbdappname.services.audio.filter.NoopFilter;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
@@ -72,7 +73,7 @@ public class AudioService extends LifecycleService {
     private boolean mAutoQueueRandomTrack = false;
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
-    RadioStationMetadataRunnable mUpdateSongInfoRunnable;
+    private RadioStationMetadataRunnable mUpdateSongInfoRunnable;
 
     public AudioService() {
     }
@@ -114,8 +115,7 @@ public class AudioService extends LifecycleService {
                     public void onPositionDiscontinuity() {
                         updateCurrentSong();
                     }
-                },
-                new NoopFilter(1, 20000, true), new NoopFilter(2, 12222, false));
+                });
 
         mNotificationManager.start();
     }
@@ -151,22 +151,30 @@ public class AudioService extends LifecycleService {
     }
 
     private void updateCurrentSong() {
-        if (PlayState.STOPPED != mCurrentState.getValue()) {
+        if (PlayState.STOPPED != mCurrentState.getValue() && PlayState.PAUSED != mCurrentState.getValue()) {
             mAudioBackend.getCurrentTag(tag -> {
                 if (tag != null) {
                     Song song = mCurrentSongs.get(tag);
                     if (song != null) {
                         mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName));
-                        mCurrentPosition.postValue(0L);
                     } else {
                         RadioStation station = mCurrentRadioStations.get(tag);
                         if (station != null) {
-                            mCurrentSong.postValue(SongInformation.fromRadioStation(station));
-                            mCurrentPosition.postValue(0L);
+                            SongInformation baseInfo = SongInformation.fromRadioStation(station);
+                            mCurrentSong.postValue(baseInfo);
                             try {
                                 mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
-                                    if (mCurrentSong.getValue() != null) {
-                                        mCurrentSong.postValue(mCurrentSong.getValue().toBuilder().artist(artist).title(title).build());
+                                    if (title.equals("")) {
+                                        title = getApplicationContext().getResources().getString(R.string.unknown);
+                                    }
+                                    if (artist.equals("")) {
+                                        artist = getApplicationContext().getResources().getString(R.string.unknown);
+                                    }
+                                    if (mCurrentSong.getValue() != null && PlayState.PAUSED != mCurrentState.getValue()) {
+                                        SongInformation nextInfo = baseInfo.toBuilder().artist(artist).title(title).build();
+                                        if (!mCurrentSong.getValue().equals(nextInfo)) {
+                                            mCurrentSong.postValue(nextInfo);
+                                        }
                                     }
                                 }, station.getUrl());
 
@@ -301,13 +309,23 @@ public class AudioService extends LifecycleService {
             mAudioBackend.clear();
 
             List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylistAsList(playlist.getPlaylistId());
-            for (Song song : songsForPlaylist) {
-                playbackControlQueueSong(song);
-            }
+            playbackControlQueueSongs(songsForPlaylist);
             playbackControlPlay();
             mCurrentPlaylistName = playlist.getName();
         });
         registerReceiver(mNoisyAudioStreamReceiver, mNoisyAudioIntentFilter);
+    }
+
+    private void playbackControlPlaySongs(List<Song> songs) {
+        mAudioBackend.clear();
+        playbackControlQueueSongs(songs);
+        playbackControlPlay();
+    }
+
+    private void playbackControlQueueSongs(List<Song> songs) {
+        for (Song song : songs) {
+            playbackControlQueueSong(song);
+        }
     }
 
     private void playbackControlPlaySong(Song song) {
@@ -362,6 +380,10 @@ public class AudioService extends LifecycleService {
         return mAutoQueueRandomTrack;
     }
 
+    private void playbackControlSeekTo(long position) {
+        mAudioBackend.seekTo(position);
+    }
+
     public class AudioServiceBinder extends Binder {
         public void pause() {
             playbackControlPause();
@@ -391,8 +413,21 @@ public class AudioService extends LifecycleService {
             playbackControlQueueSong(song);
         }
 
+        public void queue(Playlist playlist) {
+            // TODO: Queue playlist, how to handle name?
+            playbackControlPlayPlaylist(playlist);
+        }
+
         public void play(Song song) {
             playbackControlPlaySong(song);
+        }
+
+        public void play(List<Song> songs) {
+            playbackControlPlaySongs(songs);
+        }
+
+        public void queue(List<Song> songs) {
+            playbackControlQueueSongs(songs);
         }
 
         public void next() {
@@ -426,9 +461,25 @@ public class AudioService extends LifecycleService {
         public boolean toggleAutoQueue() {
             return playbackControlToggleAutoQueue();
         }
+
+        public LiveData<PlayState> getPlayState() {
+            return mCurrentState;
+        }
+
+        public LiveData<SongInformation> getCurrentSong() {
+            return mCurrentSong;
+        }
+
+        public LiveData<Long> getCurrentPosition() {
+            return mCurrentPosition;
+        }
+
+        public void seekTo(long position) {
+            playbackControlSeekTo(position);
+        }
     }
 
-    enum PlayState {
+    public enum PlayState {
         STOPPED, PLAYING, PAUSED, INITIAL
     }
 
@@ -481,7 +532,7 @@ public class AudioService extends LifecycleService {
     @Value
     @Builder(toBuilder = true)
     @AllArgsConstructor
-    static class SongInformation {
+    public static class SongInformation {
         long id;
         String title;
         String artist;

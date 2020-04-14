@@ -9,35 +9,51 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.List;
+
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.tbdappname.services.audio.NotificationManager.SHUTDOWN_INTENT;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
-    protected final MutableLiveData<AudioService.AudioServiceBinder> mAudioService = new MutableLiveData<>(null);
+    final MutableLiveData<AudioService.AudioServiceBinder> mAudioService = new MutableLiveData<>(null);
     private boolean mBound;
+
+    private final MutableLiveData<AudioService.PlayState> mCurrentState = new MutableLiveData<>(AudioService.PlayState.INITIAL);
+    private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
+    private final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
+    private final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
+
 
     private final ServiceConnection mAudioServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            mAudioService.postValue((AudioService.AudioServiceBinder) service);
+            AudioService.AudioServiceBinder serviceBinder = (AudioService.AudioServiceBinder) service;
+            mAudioService.postValue(serviceBinder);
+            serviceBinder.getCurrentSong().observe(AudioInterfaceActivity.this, mCurrentSong::setValue);
+            serviceBinder.getPlayState().observe(AudioInterfaceActivity.this, mCurrentState::setValue);
+            serviceBinder.getCurrentPosition().observe(AudioInterfaceActivity.this, mCurrentPosition::setValue);
             mBound = true;
         }
 
@@ -69,19 +85,24 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
             }
         }
 
-
         mAudioService.observe(this, audioService -> {
             if (audioService != null && startAction != null) {
-                if (startAction.song != null) {
+                if (startAction.getSong() != null) {
                     if (startAction.queue) {
-                        audioService.queue(startAction.song);
+                        audioService.queue(startAction.getSong());
                     } else {
-                        audioService.play(startAction.song);
+                        audioService.play(startAction.getSong());
                     }
-                } else if (startAction.playlist != null) {
-                    audioService.play(startAction.playlist);
-                } else if (startAction.station != null) {
-                    audioService.play(startAction.station);
+                } else if (startAction.getPlaylist() != null) {
+                    if (startAction.queue) {
+                        audioService.queue(startAction.getPlaylist());
+                    } else {
+                        audioService.play(startAction.getPlaylist());
+                    }
+                } else if (startAction.getRadio() != null) {
+                    audioService.play(startAction.getRadio());
+                } else if (startAction.getSongs() != null) {
+                    audioService.play(startAction.getSongs());
                 }
                 startAction = null;
             }
@@ -97,6 +118,9 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(SHUTDOWN_INTENT);
         registerReceiver(mShutdownBroadcastReceiver, filter);
+        if (!mServiceStarted) {
+            startService();
+        }
     }
 
     @Override
@@ -128,7 +152,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         }
     }
 
-    public void playMusic(Song song, boolean queue) {
+    final void playMusic(Song song, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             if (queue) {
@@ -137,32 +161,125 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
                 mAudioService.getValue().play(song);
             }
         } else {
-            startAction = new StartPlayingAction(song, null, null, queue);
+            startAction = StartPlayingAction.builder().song(song).queue(queue).build();
         }
-        Toast.makeText(this, (queue ? "Queued" : "Playing") + " song: " + song.toString(), Toast.LENGTH_SHORT).show();
+        Log.i(TAG, (queue ? "Queued" : "Playing") + " song: " + song.toString());
     }
 
-    public void playMusic(Playlist playlist) {
+    final void playMusic(Playlist playlist, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(playlist);
         } else {
-            startAction = new StartPlayingAction(null, playlist, null, false);
+            startAction = StartPlayingAction.builder().playlist(playlist).queue(queue).build();
         }
-        Toast.makeText(this, "Playling playlist: " + playlist.toString(), Toast.LENGTH_SHORT).show();
+        Log.i(TAG, (queue ? "Queued" : "Playing") + " playlist: " + playlist.toString());
     }
 
-    public void playMusic(RadioStation radioStation) {
+    final void playMusic(RadioStation radioStation) {
         startService();
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(radioStation);
         } else {
-            startAction = new StartPlayingAction(null, null, radioStation, false);
+            startAction = StartPlayingAction.builder().radio(radioStation).build();
         }
-        Toast.makeText(this, "Playling radioStation: " + radioStation.toString(), Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Playing radioStation: " + radioStation.toString());
     }
 
-    protected void startService() {
+    final void playMusic(List<Song> songs, boolean queue) {
+        startService();
+        if (mAudioService.getValue() != null) {
+            if (queue) {
+                mAudioService.getValue().queue(songs);
+            } else {
+                mAudioService.getValue().play(songs);
+
+            }
+        } else {
+            startAction = StartPlayingAction.builder().songs(songs).build();
+        }
+        Log.i(TAG, "Playing songs: " + songs.size());
+    }
+
+    @Override
+    public LiveData<AudioService.PlayState> getPlayState() {
+        return mCurrentState;
+    }
+
+    @Override
+    public LiveData<AudioService.SongInformation> getCurrentSong() {
+        return mCurrentSong;
+    }
+
+    @Override
+    public LiveData<Long> getCurrentPosition() {
+        return mCurrentPosition;
+    }
+
+    @Override
+    public LiveData<Boolean> getAutoQueueEnabled() {
+        return mAutoQueueEnabled;
+    }
+
+    @Override
+    public LiveData<Boolean> getShuffleEnabled() {
+        return mShuffleEnabled;
+    }
+
+    @Override
+    public LiveData<AudioBackend.RepeatModes> getRepeatMode() {
+        return mRepeatMode;
+    }
+
+
+    final void toggleShuffle() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().toggleShuffle();
+            mShuffleEnabled.postValue(mAudioService.getValue().isShuffleModeEnabled());
+        }
+        Log.i(TAG, "onToggleShuffle: " + mShuffleEnabled.getValue());
+    }
+
+    final void toggleAutoQueue() {
+        if (mAudioService.getValue() != null) {
+            mAutoQueueEnabled.postValue(mAudioService.getValue().toggleAutoQueue());
+        }
+        Log.i(TAG, "onToggleAutoQueue: " + mAutoQueueEnabled.getValue());
+    }
+
+    final void seekTo(long position) {
+        if (mAudioService.getValue() != null) {
+           mAudioService.getValue().seekTo(position);
+        }
+    }
+
+    final void toggleRepeatMode() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().toggleRepeatMode();
+            mRepeatMode.postValue(mAudioService.getValue().getRepeatMode());
+        }
+        Log.i(TAG, "onChangeRepeatMode: " + mRepeatMode.getValue());
+    }
+
+    final void next() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().next();
+        }
+    }
+
+    final void previous() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().previous();
+        }
+    }
+
+    final void playPause() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().playOrPause();
+        }
+    }
+
+    private void startService() {
         if (!mServiceStarted) {
             Log.i(TAG, "Start service");
             Intent serviceIntent = new Intent(this, AudioService.class);
@@ -178,10 +295,17 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     }
 
     @Value
+    @Builder
     private static class StartPlayingAction {
-        Song song;
-        Playlist playlist;
-        RadioStation station;
-        boolean queue;
+        @Builder.Default
+        Song song = null;
+        @Builder.Default
+        Playlist playlist = null;
+        @Builder.Default
+        RadioStation radio = null;
+        @Builder.Default
+        boolean queue = false;
+        @Builder.Default
+        List<Song> songs = null;
     }
 }

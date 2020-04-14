@@ -8,8 +8,6 @@ import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
 /* package */ class SongViewModel extends FilteringViewModel<SongDao, List<Song>> {
-    private static final String TAG = "SongViewModel";
-
     private SongDao.SortType mSortType;
 
     SongViewModel(SongDao songDao) {

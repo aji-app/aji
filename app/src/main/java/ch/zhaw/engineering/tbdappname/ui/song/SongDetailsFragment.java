@@ -13,6 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongDetailsBinding;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
@@ -47,6 +51,16 @@ public class SongDetailsFragment extends Fragment {
         mBinding.deleteSong.setOnClickListener(v -> {
             mListener.onSongDelete(mSongId);
         });
+
+        mBinding.play.setOnClickListener(v -> {
+            mListener.onSongPlay(mSongId);
+        });
+
+        mBinding.queue.setOnClickListener(v -> {
+            mListener.onSongQueue(mSongId);
+        });
+
+
 
         mBinding.songItemFavorite.setOnClickListener(v -> {
             mListener.onToggleFavorite(mSongId);
@@ -89,6 +103,9 @@ public class SongDetailsFragment extends Fragment {
                         mBinding.songArtist.setText(song.getArtist());
                         mBinding.songAlbum.setText(song.getAlbum());
                         mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+                        if (song.getAlbumArtPath() != null) {
+                            Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                        }
                     });
                 });
             });
@@ -100,6 +117,8 @@ public class SongDetailsFragment extends Fragment {
         void onSongAddToPlaylist(long songId);
 
         void onSongQueue(long songId);
+
+        void onSongPlay(long songId);
 
         void onSongDelete(long songId);
 

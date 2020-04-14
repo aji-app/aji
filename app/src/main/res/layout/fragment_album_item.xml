@@ -14,19 +14,24 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal">
-
+        <ImageView
+            android:id="@+id/album_cover"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_placeholder_image"
+            android:layout_marginEnd="@dimen/button_with_image_padding"
+            android:contentDescription="@string/contentDescription_album_art" />
         <TextView
             android:id="@+id/album_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/fragment_margin"
             android:layout_marginBottom="4dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="?attr/primaryTextColor"
-            android:drawableStart="@drawable/ic_placeholder_image"
-            android:drawablePadding="@dimen/button_with_image_padding"
+            android:gravity="center_vertical"
             tools:text="Pop Rock Radio" />
 
     </LinearLayout>

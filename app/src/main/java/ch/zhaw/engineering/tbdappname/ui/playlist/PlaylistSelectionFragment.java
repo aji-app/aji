@@ -1,20 +1,17 @@
 package ch.zhaw.engineering.tbdappname.ui.playlist;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.List;
 
@@ -25,13 +22,6 @@ import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 
-/**
- * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
- * <p>You can show this modal bottom sheet from your activity like this:</p>
- * <pre>
- *     PlaylistListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
- * </pre>
- */
 public class PlaylistSelectionFragment extends BottomSheetDialogFragment {
     public final static String TAG = "PlaylistSelectionFragment";
 
@@ -103,7 +93,7 @@ public class PlaylistSelectionFragment extends BottomSheetDialogFragment {
     private static abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
         final T binding;
 
-        public BaseViewHolder(@NonNull View itemView, T binding) {
+        BaseViewHolder(@NonNull View itemView, T binding) {
             super(itemView);
             this.binding = binding;
         }

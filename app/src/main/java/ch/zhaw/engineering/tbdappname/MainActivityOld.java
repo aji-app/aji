@@ -61,12 +61,6 @@ public class MainActivityOld extends AppCompatActivity {
             startActivityForResult(directorySelect, REQUEST_CODE_DIRECTOY_SELECT);
         });
 
-        Button button6 = findViewById(R.id.button6);
-        button6.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CurrentlyPlayingActivity.class);
-            startActivity(intent);
-        });
-
         Button button9 = findViewById(R.id.button9);
         int songCount = 20;
         button9.setOnClickListener(v -> {
@@ -77,7 +71,7 @@ public class MainActivityOld extends AppCompatActivity {
                     fakeSongs.add(Song.builder()
                             .title("Song Nr. " + i)
                             .artist("Fake Band " + (int)i / 2)
-                            .album("Make it Fake " + (int)i / 2)
+                            .album("Make it Fake ")
                             .filepath("bubu" + i)
                             .duration((long) (1000 * (i + 1) + Math.random() * 500))
                             .rating((int) (Math.random() * songCount))

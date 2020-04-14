@@ -18,8 +18,15 @@ public class AllSongsListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    mAdapter = new SongRecyclerViewAdapter(songs, mListener);
-                    mRecyclerView.setAdapter(mAdapter);
+                    if (mAdapter != null) {
+                        mAdapter.setSongs(songs);
+                        if (mRecyclerView.getAdapter() == null) {
+                            mRecyclerView.setAdapter(mAdapter);
+                        }
+                    } else {
+                        mAdapter = new SongRecyclerViewAdapter(songs, mListener);
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
                 });
             }
         });

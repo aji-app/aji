@@ -27,7 +27,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     private final PlaylistListFragment.PlaylistFragmentListener mListener;
     private final Context mContext;
     private RecyclerView mRecyclerView;
-    private Map<Integer, PlaylistWithSongCount> mDeletedPlaylists = new HashMap<>();
+    private final Map<Integer, PlaylistWithSongCount> mDeletedPlaylists = new HashMap<>();
 
     /* package */ PlaylistRecyclerViewAdapter(List<PlaylistWithSongCount> items, PlaylistListFragment.PlaylistFragmentListener listener, Context context) {
         mValues = items;

@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -122,7 +121,6 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                     if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK) {
                         mListener.onPositionDiscontinuity();
                     }
-                    Log.i("BUBU", mPlayer.getCurrentTag().toString());
                 }
             });
         });
@@ -234,6 +232,15 @@ public class ExoPlayerAudioBackend implements AudioBackend {
             mAudioHandler.post(() -> callback.receiveValue(mPlayer.getCurrentTag()));
         } else {
             callback.receiveValue(null);
+        }
+    }
+
+    @Override
+    public void seekTo(long position) {
+        if (mPlayer != null) {
+            mAudioHandler.post(() -> {
+                mPlayer.seekTo(position);
+            });
         }
     }
 

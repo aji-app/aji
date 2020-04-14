@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,8 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
@@ -27,14 +26,12 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
-import ch.zhaw.engineering.tbdappname.ui.SortResource;
-import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistSelectionFragment;
-import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistListFragment;
+import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
@@ -42,22 +39,21 @@ import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener,
+public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
 
+    private static final String TAG = "FragmentInteractions";
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
-    protected AppViewModel mAppViewModel;
     private RadioStationDao mRadioStationDao;
     private PlaylistSelectionFragment mAddToPlaylistSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAppViewModel = new ViewModelProvider(this).get(AppViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
         mRadioStationDao = RadioStationDao.getInstance(this);
@@ -67,9 +63,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongSelected(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongSelected: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onSongSelected: " + song.getTitle());
         });
         switch (origin) {
 
@@ -86,7 +80,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
                 navigateToSongFromPlaylist(songId);
                 break;
             case EXPANDED_CONTROLS:
-                // TODO
+                navigateToSongFromPersistentBottomSheet(songId);
                 break;
         }
     }
@@ -95,9 +89,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongPlay(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongPlay: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            playMusic(song, false);
+            Log.i(TAG, "onSongPlay: " + song.getTitle());
         });
     }
 
@@ -105,9 +98,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongAddToPlaylist(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle());
         });
         runOnUiThread(() -> {
             mAddToPlaylistSheet = PlaylistSelectionFragment.newInstance(songId);
@@ -119,21 +110,34 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongQueue(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongQueue: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            playMusic(song, true);
+            Log.i(TAG, "onSongQueue: " + song.getTitle());
         });
     }
 
     @Override
     public void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
+            // TODO: Open menu bottom sheet for song
             Song song = mSongDao.getSongById(songId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSongFromLibrary(songId);
+        switch (origin) {
+            case ALBUM:
+            case SONG:
+            case ARTIST:
+                navigateToSongFromLibrary(songId);
+                break;
+            case PLAYLIST:
+                navigateToSongFromPlaylist(songId);
+                break;
+            case EXPANDED_CONTROLS:
+                navigateToSongFromPersistentBottomSheet(songId);
+                break;
+        }
+
     }
 
     @Override
@@ -147,9 +151,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
 
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName());
         });
 
     }
@@ -158,9 +160,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongDelete(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onSongDelete: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onSongDelete: " + song.getTitle());
             mSongDao.deleteSongById(songId);
         });
     }
@@ -168,6 +168,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onCreatePlaylist() {
         showCreatePlaylistDialog();
+        Log.i(TAG, "onCreatePlaylist: ");
     }
 
     @Override
@@ -176,9 +177,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
             mSongDao.toggleFavorite(songId);
 
             Song song = mSongDao.getSongById(songId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onToggleFavorite: " + song.getTitle(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onToggleFavorite: " + song.getTitle());
         });
     }
 
@@ -187,9 +186,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         AsyncTask.execute(() -> {
             mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistModified: " + playlist.getName() + " ...", Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onPlaylistModified: " + playlist.getName());
         });
     }
 
@@ -197,9 +194,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistSelected(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            Log.i(TAG, "onPlaylistSelected: " + playlist.getName());
             runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistSelected: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-
                 navigateToPlaylist(playlistId);
             });
         });
@@ -208,9 +204,10 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     @Override
     public void onPlaylistEdit(int playlistId) {
         AsyncTask.execute(() -> {
+            // TODO: Open menu bottom sheet for playlist
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            Log.i(TAG, "onPlaylistEdit: " + playlist.getName());
             runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistEdit: " + playlist.getName(), Toast.LENGTH_SHORT).show();
                 navigateToPlaylist(playlistId);
             });
         });
@@ -221,9 +218,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistPlay(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistPlay: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
+            playMusic(playlist, false);
+            Log.i(TAG, "onPlaylistPlay: " + playlist.getName());
         });
 
     }
@@ -232,9 +228,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistQueue(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistQueue: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
+            playMusic(playlist, true);
+            Log.i(TAG, "onPlaylistQueue: " + playlist.getName());
         });
     }
 
@@ -242,10 +237,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistDelete(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistDelete: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
-
+            Log.i(TAG, "onPlaylistDelete: " + playlist.getName());
             mPlaylistDao.deletePlaylist(playlistId);
         });
     }
@@ -257,9 +249,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             playlist.setName(newName);
             mPlaylistDao.update(playlist);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onPlaylistNameChanged: " + playlist.getName(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onPlaylistNameChanged: " + playlist.getName());
         });
     }
 
@@ -267,8 +257,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onRadioStationSelected(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
+            Log.i(TAG, "onRadioStationSelected: " + radio.getName());
             runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationSelected: " + radio.getName(), Toast.LENGTH_SHORT).show();
                 navigateToRadioStation(radioStationId);
             });
         });
@@ -278,15 +268,15 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onRadioStationPlay(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationPlay: " + radio.getName(), Toast.LENGTH_SHORT).show();
-            });
+            playMusic(radio);
+            Log.i(TAG, "onRadioStationPlay: " + radio.getName());
         });
     }
 
     @Override
     public void onRadioStationEdit(long radioStationId) {
         AsyncTask.execute(() -> {
+            // TODO: Open menu bottom sheet for radio
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onRadioStationEdit: " + radio.getName(), Toast.LENGTH_SHORT).show();
@@ -299,9 +289,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
             if (radio != null) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "onRadioStationDelete: " + radio.getName(), Toast.LENGTH_SHORT).show();
-                });
+                Log.i(TAG, "onRadioStationDelete: " + radio.getName());
             }
             mRadioStationDao.deleteRadioStationById(radioStationId);
         });
@@ -311,21 +299,19 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onCreateRadioStation() {
         AsyncTask.execute(() -> {
             runOnUiThread(() -> {
-                Toast.makeText(this, "onCreateRadioStation", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "onCreateRadioStation");
                 navigateToRadioStation(null);
             });
         });
     }
 
     @Override
-    public void onRadioStationEdit(RadioStationDto updatedRadioStation) {
+    public void onRadioStationEdited(RadioStationDto updatedRadioStation) {
         AsyncTask.execute(() -> {
             if (updatedRadioStation.getId() != null) {
                 mRadioStationDao.updateRadioStation(updatedRadioStation);
             }
-            runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationEdit: " + updatedRadioStation.getName(), Toast.LENGTH_SHORT).show();
-            });
+            Log.i(TAG, "onRadioStationEdit: " + updatedRadioStation.getName());
         });
     }
 
@@ -337,8 +323,8 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
             } else {
                 mRadioStationDao.createRadioStation(updatedRadioStation);
             }
+            Log.i(TAG, "onRadioStationSaved: " + updatedRadioStation.getName());
             runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationSaved: " + updatedRadioStation.getName(), Toast.LENGTH_SHORT).show();
                 onSupportNavigateUp();
             });
         });
@@ -352,97 +338,115 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
 
     @Override
     public void onPlayPause() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onPlayPause", Toast.LENGTH_SHORT).show();
-        });
+        playPause();
+        Log.i(TAG, "onPlayPause");
     }
 
     @Override
     public void onNext() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onNext", Toast.LENGTH_SHORT).show();
-        });
+        next();
+        Log.i(TAG, "onNext");
     }
 
     @Override
     public void onPrevious() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onPrevious", Toast.LENGTH_SHORT).show();
-        });
+        previous();
+        Log.i(TAG, "onPrevious");
     }
 
     @Override
     public void onToggleShuffle() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onToggleShuffle", Toast.LENGTH_SHORT).show();
-        });
+        toggleShuffle();
     }
 
     @Override
     public void onChangeRepeatMode() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onChangeRepeatMode", Toast.LENGTH_SHORT).show();
-        });
+        toggleRepeatMode();
     }
 
     @Override
     public void onToggleAutoQueue() {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onToggleAutoQueue", Toast.LENGTH_SHORT).show();
-        });
+        toggleAutoQueue();
+    }
+
+    @Override
+    public void seek(long position) {
+        seekTo(position);
+        Log.i(TAG, "seek to : " + position);
     }
 
     @Override
     public void onAlbumPlay(String album) {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onAlbumPlay: " + album, Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
+            playMusic(songs, false);
         });
+        Log.i(TAG, "onAlbumPlay: " + album);
+    }
+
+    @Override
+    public void onAlbumQueue(String album) {
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
+            playMusic(songs, true);
+        });
+        Log.i(TAG, "onAlbumQueue: " + album);
     }
 
     @Override
     public void onAlbumMenu(String album) {
+        Log.i(TAG, "onAlbumMenu: " + album);
+        // TODO Open menu bottom sheet for album
         runOnUiThread(() -> {
-            Toast.makeText(this, "onAlbumMenu: " + album, Toast.LENGTH_SHORT).show();
             navigateToAlbum(album);
         });
     }
 
     @Override
     public void onAlbumSelected(String album) {
+        Log.i(TAG, "onAlbumSelected: " + album);
         runOnUiThread(() -> {
             navigateToAlbum(album);
-            Toast.makeText(this, "onAlbumSelected: " + album, Toast.LENGTH_SHORT).show();
         });
     }
 
     @Override
     public void onArtistPlay(String artist) {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onArtistPlay: " + artist, Toast.LENGTH_SHORT).show();
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
+            playMusic(songs, false);
         });
+        Log.i(TAG, "onArtistPlay: " + artist);
+    }
+
+    @Override
+    public void onArtistQueue(String artist) {
+        AsyncTask.execute(() -> {
+            List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
+            playMusic(songs, true);
+        });
+        Log.i(TAG, "onArtistQueue: " + artist);
     }
 
     @Override
     public void onArtistMenu(String artist) {
+        Log.i(TAG, "onArtistMenu: " + artist);
         runOnUiThread(() -> {
+            // TODO: Open Menu Sheet for artist
             navigateToArtist(artist);
-            Toast.makeText(this, "onArtistMenu: " + artist, Toast.LENGTH_SHORT).show();
         });
     }
 
     @Override
     public void onArtistSelected(String artist) {
+        Log.i(TAG, "onArtistSelected: " + artist);
         runOnUiThread(() -> {
             navigateToArtist(artist);
-            Toast.makeText(this, "onArtistSelected: " + artist, Toast.LENGTH_SHORT).show();
         });
     }
 
     private void showCreatePlaylistDialog() {
-
-        LayoutInflater inflater = this.getLayoutInflater();
-
-        View dialogView = inflater.inflate(R.layout.alert_create_playlist, null);
+        View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
         editText.setOnFocusChangeListener((View v, boolean hasFocus) -> {
             editText.post(() -> {
@@ -533,4 +537,6 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     protected abstract void navigateToSongFromArtist(long songId);
 
     protected abstract void navigateToSongFromPlaylist(long songId);
+
+    protected abstract void navigateToSongFromPersistentBottomSheet(long songId);
 }

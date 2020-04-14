@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -17,17 +20,20 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
+import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
 import ch.zhaw.engineering.tbdappname.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.tbdappname.ui.filter.FilterFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
+import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
 
 
@@ -65,15 +71,46 @@ public class MainActivity extends FragmentInteractionActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
+        setupPersistentBottomSheet();
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
         });
 
+    }
+
+    private void setupPersistentBottomSheet() {
+        ImageButton persistentPlayPause = mBinding.layoutAppBarMain.persistentControls.persistentPlaypause;
+        mAudioService.observe(this, service -> {
+            if (service != null) {
+                service.getPlayState().observe(this, state -> {
+                    if (state == AudioService.PlayState.PLAYING) {
+                        persistentPlayPause.setImageResource(R.drawable.ic_pause);
+                    } else {
+                        persistentPlayPause.setImageResource(R.drawable.ic_play);
+                    }
+                });
+
+                TextView songName = mBinding.layoutAppBarMain.persistentControls.songTitle;
+                TextView albumName = mBinding.layoutAppBarMain.persistentControls.songAlbum;
+                TextView artistName = mBinding.layoutAppBarMain.persistentControls.songArtist;
+
+                service.getCurrentSong().observe(this, info -> {
+                    if (info != null) {
+                        songName.setText(info.getTitle());
+                        albumName.setText(info.getAlbum());
+                        artistName.setText(info.getArtist());
+                    }
+                });
+            }
+        });
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
         });
 
-        mBinding.layoutAppBarMain.persistentControls.persistentPlaypause.setOnClickListener(v -> onPlayPause());
+        persistentPlayPause.setOnClickListener(v -> onPlayPause());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
@@ -89,6 +126,14 @@ public class MainActivity extends FragmentInteractionActivity {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         break;
                     default:
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
                         break;
                 }
             }
@@ -146,6 +191,46 @@ public class MainActivity extends FragmentInteractionActivity {
     protected void navigateToSongFromPlaylist(long songId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());
+    }
+
+    protected void navigateToSongFromFilters(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_filters_to_song_details, FilterFragmentDirections.actionNavFiltersToSongDetails(songId).getArguments());
+    }
+
+    protected void navigateToSongFromRadiostation(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_radiostations_to_song_details, RadioStationFragmentDirections.actionNavRadiostationsToSongDetails(songId).getArguments());
+    }
+
+    protected void navigateToSongFromSongDetails(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments());
+    }
+
+    @Override
+    protected void navigateToSongFromPersistentBottomSheet(long songId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        if (navController.getCurrentDestination() != null) {
+            int id = navController.getCurrentDestination().getId();
+            switch (id) {
+                case R.id.nav_library:
+                    navigateToSongFromLibrary(songId);
+                    break;
+                case R.id.nav_playlists:
+                    navigateToSongFromPlaylist(songId);
+                    break;
+                case R.id.nav_radiostations:
+                    navigateToSongFromRadiostation(songId);
+                    break;
+                case R.id.nav_filters:
+                    navigateToSongFromFilters(songId);
+                    break;
+                case R.id.nav_song_details:
+                    navigateToSongFromSongDetails(songId);
+                    break;
+            }
+        }
     }
 
     @Override

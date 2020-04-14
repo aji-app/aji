@@ -10,7 +10,8 @@
         android:id="@+id/persistent_controls_albumcover"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:src="@drawable/ic_placeholder_image" />
+        android:src="@drawable/ic_placeholder_image"
+        android:contentDescription="@string/contentDescription_album_art"/>
 
     <include
         android:id="@+id/persistent_controls_songinfo"
