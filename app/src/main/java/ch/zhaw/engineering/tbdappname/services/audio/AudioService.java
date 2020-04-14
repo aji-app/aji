@@ -320,6 +320,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlPlaySongs(List<Song> songs) {
+        mAudioBackend.clear();
         playbackControlQueueSongs(songs);
         playbackControlPlay();
     }
