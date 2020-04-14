@@ -101,7 +101,7 @@ public class PlaylistListFragment extends TbdListFragment {
     public interface PlaylistFragmentListener {
         void onPlaylistSelected(int playlist);
 
-        void onPlaylistEdit(int playlist);
+        void onPlaylistMenu(int playlist);
 
         void onPlaylistPlay(int playlist);
 
