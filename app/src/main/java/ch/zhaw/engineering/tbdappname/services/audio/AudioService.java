@@ -158,13 +158,11 @@ public class AudioService extends LifecycleService {
                     Song song = mCurrentSongs.get(tag);
                     if (song != null) {
                         mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName));
-                        mCurrentPosition.postValue(0L);
                     } else {
                         RadioStation station = mCurrentRadioStations.get(tag);
                         if (station != null) {
                             SongInformation baseInfo = SongInformation.fromRadioStation(station);
                             mCurrentSong.postValue(baseInfo);
-                            mCurrentPosition.postValue(0L);
                             try {
                                 mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
                                     if (title.equals("")) {
@@ -383,6 +381,10 @@ public class AudioService extends LifecycleService {
         return mAutoQueueRandomTrack;
     }
 
+    private void playbackControlSeekTo(long position) {
+        mAudioBackend.seekTo(position);
+    }
+
     public class AudioServiceBinder extends Binder {
         public void pause() {
             playbackControlPause();
@@ -471,6 +473,10 @@ public class AudioService extends LifecycleService {
 
         public LiveData<Long> getCurrentPosition() {
             return mCurrentPosition;
+        }
+
+        public void seekTo(long position) {
+            playbackControlSeekTo(position);
         }
     }
 

@@ -3,11 +3,13 @@ package ch.zhaw.engineering.tbdappname.ui.expandedcontrols;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,8 +27,11 @@ import static ch.zhaw.engineering.tbdappname.util.Duration.getMillisAsTime;
 
 public class ExpandedControlsFragment extends Fragment {
 
+    private static final String TAG = "ExpandedControls";
     private FragmentExpandedControlsBinding mBinding;
     private ExpandedControlsFragmentListener mListener;
+    private boolean mSeeking = false;
+    private AudioService.SongInformation mCurrentSong;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,8 +45,6 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
         mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
-        mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(1 /* TODO: Current Song ID */));
-        mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(1 /* TODO: Current Song ID */, SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS));
 
         return mBinding.getRoot();
     }
@@ -68,7 +71,35 @@ public class ExpandedControlsFragment extends Fragment {
                     mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                 }
             });
+
+            mBinding.persistentControlsSeebar.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (fromUser) {
+                        setSeekbarProgress(progress);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    mSeeking = true;
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    if (mCurrentSong != null) {
+                        mListener.seek(seekBar.getProgress());
+                    }
+                    mSeeking = false;
+                }
+            });
+
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
+
+                mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
+                mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId(), SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS));
+                mCurrentSong = info;
                 if (info != null) {
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
                     mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(info.getAlbum());
@@ -87,8 +118,10 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(false);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(255);
+                        mBinding.persistentControlsSeebar.seekbar.setMax((int) info.getDuration());
                         enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         enableImageView(mBinding.persistentControlsButtons.btnNext);
+
                     }
                 }
             });
@@ -128,10 +161,19 @@ public class ExpandedControlsFragment extends Fragment {
             });
 
             mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
-                mBinding.persistentControlsSeebar.timerElapsed.setText(getMillisAsTime(position));
-                mBinding.persistentControlsSeebar.seekbar.setProgress((int) (position / 100000));
+                Log.i(TAG, "Position: " +  position);
+                if (!mSeeking) {
+                    if (mCurrentSong != null) {
+                        setSeekbarProgress(position.intValue());
+                    }
+                }
             });
         }
+    }
+
+    private void setSeekbarProgress(int progress) {
+        mBinding.persistentControlsSeebar.seekbar.setProgress(progress);
+        mBinding.persistentControlsSeebar.timerElapsed.setText(getMillisAsTime(progress));
     }
 
     private void disableImageView(ImageView imageView) {
@@ -168,5 +210,7 @@ public class ExpandedControlsFragment extends Fragment {
         void onChangeRepeatMode();
 
         void onToggleAutoQueue();
+
+        void seek(long position);
     }
 }

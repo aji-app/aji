@@ -109,6 +109,12 @@ public interface AudioBackend {
      */
     void getCurrentTag(@NonNull Callback<Object> callback);
 
+    /**
+     * Seeks to the given position in the current song (or end of song if too far)
+     * @param position the position in millis to seek to
+     */
+    void seekTo(long position);
+
     interface Media {
         @Nullable
         Object getTag();

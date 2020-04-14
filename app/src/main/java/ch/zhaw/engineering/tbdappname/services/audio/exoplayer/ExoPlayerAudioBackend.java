@@ -237,6 +237,15 @@ public class ExoPlayerAudioBackend implements AudioBackend {
         }
     }
 
+    @Override
+    public void seekTo(long position) {
+        if (mPlayer != null) {
+            mAudioHandler.post(() -> {
+                mPlayer.seekTo(position);
+            });
+        }
+    }
+
     private void queueMedia(Media media) {
         mConcatenatingMediaSource.addMediaSource(GetMediaSource(media));
     }

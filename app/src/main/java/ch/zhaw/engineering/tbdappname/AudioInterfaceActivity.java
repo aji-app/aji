@@ -120,6 +120,9 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         IntentFilter filter = new IntentFilter();
         filter.addAction(SHUTDOWN_INTENT);
         registerReceiver(mShutdownBroadcastReceiver, filter);
+        if (!mServiceStarted) {
+            startService();
+        }
     }
 
     @Override
@@ -241,6 +244,12 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     protected void toggleAutoQueue() {
         if (mAudioService.getValue() != null) {
             mAutoQueueEnabled.postValue(mAudioService.getValue().toggleAutoQueue());
+        }
+    }
+
+    protected void seekTo(long position) {
+        if (mAudioService.getValue() != null) {
+           mAudioService.getValue().seekTo(position);
         }
     }
 

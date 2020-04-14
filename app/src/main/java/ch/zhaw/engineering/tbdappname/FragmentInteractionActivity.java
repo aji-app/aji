@@ -87,7 +87,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 navigateToSongFromPlaylist(songId);
                 break;
             case EXPANDED_CONTROLS:
-                // TODO Navigate to song from persistent controls
+                navigateToSongFromPersistentBottomSheet(songId);
                 break;
         }
     }
@@ -131,9 +131,20 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        if (origin != SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS) {
-            navigateToSongFromLibrary(songId);
+        switch (origin) {
+            case ALBUM:
+            case SONG:
+            case ARTIST:
+                navigateToSongFromLibrary(songId);
+                break;
+            case PLAYLIST:
+                navigateToSongFromPlaylist(songId);
+                break;
+            case EXPANDED_CONTROLS:
+                navigateToSongFromPersistentBottomSheet(songId);
+                break;
         }
+
     }
 
     @Override
@@ -369,14 +380,18 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
+    public void seek(long position) {
+        seekTo(position);
+        Log.i(TAG, "seek to : " + position);
+    }
+
+    @Override
     public void onAlbumPlay(String album) {
         AsyncTask.execute(() -> {
             List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
             playMusic(songs, false);
         });
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onAlbumPlay: " + album, Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, "onAlbumPlay: " + album);
     }
 
     @Override
@@ -385,9 +400,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             List<Song> songs = mSongDao.getSongsForAlbumAsList(album);
             playMusic(songs, true);
         });
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onAlbumQueue: " + album, Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, "onAlbumQueue: " + album);
     }
 
     @Override
@@ -413,9 +426,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
             playMusic(songs, false);
         });
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onArtistPlay: " + artist, Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, "onArtistPlay: " + artist);
     }
 
     @Override
@@ -424,9 +435,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             List<Song> songs = mSongDao.getSongsForArtistAsList(artist);
             playMusic(songs, true);
         });
-        runOnUiThread(() -> {
-            Toast.makeText(this, "onArtistQueue: " + artist, Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, "onArtistQueue: " + artist);
     }
 
     @Override
@@ -541,4 +550,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     protected abstract void navigateToSongFromArtist(long songId);
 
     protected abstract void navigateToSongFromPlaylist(long songId);
+
+    protected abstract void navigateToSongFromPersistentBottomSheet(long songId);
 }
