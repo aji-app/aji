@@ -13,6 +13,7 @@
         <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
+        <item name="disabledColor">@color/purplelime_secondaryText</item>
 
         <item name="textAppearanceListItem">@style/Theme.App.Widget.ListItemTextView</item>
 

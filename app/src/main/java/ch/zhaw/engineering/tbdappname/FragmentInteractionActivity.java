@@ -15,14 +15,13 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
@@ -31,7 +30,6 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
-import ch.zhaw.engineering.tbdappname.ui.SortResource;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
@@ -354,53 +352,20 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onToggleShuffle() {
-        AudioService.AudioServiceBinder service = mAudioService.getValue();
-        if (service == null) {
-            return;
-        }
-        service.toggleShuffle();
-        // TODO UPdate shuffle button
-//        if (service.isShuffleModeEnabled()) {
-//            shuffle.setImageResource(R.drawable.ic_shuffle_on);
-//        } else {
-//            shuffle.setImageResource(R.drawable.ic_shuffle_off);
-//        }
-        Log.i(TAG, "onToggleShuffle" + service.isShuffleModeEnabled());
+        toggleShuffle();
+        Log.i(TAG, "onToggleShuffle: " + mShuffleEnabled.getValue());
     }
 
     @Override
     public void onChangeRepeatMode() {
-        AudioService.AudioServiceBinder service = mAudioService.getValue();
-        if (service == null) {
-            return;
-        }
-        service.toggleRepeatMode();
-        Log.i(TAG, "onChangeRepeatMode");
+        toggleRepeatMode();
+        Log.i(TAG, "onChangeRepeatMode: " + mRepeatMode.getValue());
     }
 
     @Override
     public void onToggleAutoQueue() {
-        AudioService.AudioServiceBinder service = mAudioService.getValue();
-        if (service == null) {
-            return;
-        }
-        service.toggleAutoQueue();
-        Log.i(TAG, "onToggleAutoQueue");
-    }
-
-    @Override
-    public LiveData<AudioService.PlayState> getPlayState() {
-        return mCurrentState;
-    }
-
-    @Override
-    public LiveData<AudioService.SongInformation> getCurrentSong() {
-        return mCurrentSong;
-    }
-
-    @Override
-    public LiveData<Long> getCurrentPosition() {
-        return mCurrentPosition;
+        toggleAutoQueue();
+        Log.i(TAG, "onToggleAutoQueue: " + mAutoQueueEnabled.getValue());
     }
 
     @Override

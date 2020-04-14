@@ -1,23 +1,27 @@
 package ch.zhaw.engineering.tbdappname.ui.expandedcontrols;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 
+import ch.zhaw.engineering.tbdappname.AudioControlListener;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
+import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
 import static ch.zhaw.engineering.tbdappname.util.Duration.getMillisAsTime;
-import static ch.zhaw.engineering.tbdappname.util.Duration.getPositionDurationString;
 
 public class ExpandedControlsFragment extends Fragment {
 
@@ -74,12 +78,50 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(true);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(0);
+                        disableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                        disableImageView(mBinding.persistentControlsButtons.btnNext);
                     } else {
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
                         mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(false);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(255);
+                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                        enableImageView(mBinding.persistentControlsButtons.btnNext);
                     }
+                }
+            });
+
+            mListener.getRepeatMode().observe(getViewLifecycleOwner(), mode -> {
+                ImageButton repeatMode = mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat;
+                switch (mode) {
+                    case REPEAT_OFF:
+                        disableImageView(repeatMode);
+                        repeatMode.setImageResource(R.drawable.ic_repeat);
+                        break;
+                    case REPEAT_ALL:
+                        enableImageView(repeatMode);
+                        repeatMode.setImageResource(R.drawable.ic_repeat);
+                        break;
+                    case REPEAT_ONE:
+                        enableImageView(repeatMode);
+                        repeatMode.setImageResource(R.drawable.ic_repeat_one);
+                        break;
+                }
+            });
+
+            mListener.getAutoQueueEnabled().observe(getViewLifecycleOwner(), enabled -> {
+                if (enabled) {
+                    enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
+                } else {
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
+                }
+            });
+
+            mListener.getShuffleEnabled().observe(getViewLifecycleOwner(), enabled -> {
+                if (enabled) {
+                    enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
+                } else {
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
                 }
             });
 
@@ -90,7 +132,25 @@ public class ExpandedControlsFragment extends Fragment {
         }
     }
 
-    public interface ExpandedControlsFragmentListener {
+    private void disableImageView(ImageView imageView) {
+        if (getContext() != null) {
+            ImageViewCompat.setImageTintList(
+                    imageView,
+                    ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.disabledColor)));
+            imageView.setEnabled(false);
+        }
+    }
+
+    private void enableImageView(ImageView imageView) {
+        if (getContext() != null) {
+            ImageViewCompat.setImageTintList(
+                    imageView,
+                    ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.colorPrimary)));
+            imageView.setEnabled(true);
+        }
+    }
+
+    public interface ExpandedControlsFragmentListener extends AudioControlListener {
         void onToggleFavorite(long songId);
 
         void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin);
@@ -106,11 +166,5 @@ public class ExpandedControlsFragment extends Fragment {
         void onChangeRepeatMode();
 
         void onToggleAutoQueue();
-
-        LiveData<AudioService.PlayState> getPlayState();
-
-        LiveData<AudioService.SongInformation> getCurrentSong();
-
-        LiveData<Long> getCurrentPosition();
     }
 }

@@ -21,7 +21,7 @@
             android:layout_marginBottom="4dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="Now Playing Song"
+            android:text="@string/not_playing"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="?attr/primaryTextColor"
             tools:text="Fake Song 1" />
@@ -35,7 +35,6 @@
                 android:id="@+id/song_artist_expanded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Now Playing Artist"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
                 tools:text="Fake Artist" />
 
@@ -44,7 +43,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Now Playing Album"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
                 tools:text="Fake Album" />
         </LinearLayout>

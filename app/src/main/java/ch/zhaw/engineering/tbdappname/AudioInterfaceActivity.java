@@ -16,11 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
@@ -29,7 +31,7 @@ import lombok.Value;
 
 import static ch.zhaw.engineering.tbdappname.services.audio.NotificationManager.SHUTDOWN_INTENT;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
@@ -39,6 +41,10 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     protected final MutableLiveData<AudioService.PlayState> mCurrentState = new MutableLiveData<>(AudioService.PlayState.INITIAL);
     protected final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
     protected final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
+    protected final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
+    protected final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
+    protected final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
+
 
     private final ServiceConnection mAudioServiceConnection = new ServiceConnection() {
         @Override
@@ -192,6 +198,57 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
             startAction = StartPlayingAction.builder().songs(songs).build();
         }
         Log.i(TAG, "Playing songs: " + songs.size());
+    }
+
+    @Override
+    public LiveData<AudioService.PlayState> getPlayState() {
+        return mCurrentState;
+    }
+
+    @Override
+    public LiveData<AudioService.SongInformation> getCurrentSong() {
+        return mCurrentSong;
+    }
+
+    @Override
+    public LiveData<Long> getCurrentPosition() {
+        return mCurrentPosition;
+    }
+
+    @Override
+    public LiveData<Boolean> getAutoQueueEnabled() {
+        return mAutoQueueEnabled;
+    }
+
+    @Override
+    public LiveData<Boolean> getShuffleEnabled() {
+        return mShuffleEnabled;
+    }
+
+    @Override
+    public LiveData<AudioBackend.RepeatModes> getRepeatMode() {
+        return mRepeatMode;
+    }
+
+
+    protected void toggleShuffle() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().toggleShuffle();
+            mShuffleEnabled.postValue(mAudioService.getValue().isShuffleModeEnabled());
+        }
+    }
+
+    protected void toggleAutoQueue() {
+        if (mAudioService.getValue() != null) {
+            mAutoQueueEnabled.postValue(mAudioService.getValue().toggleAutoQueue());
+        }
+    }
+
+    protected void toggleRepeatMode() {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().toggleRepeatMode();
+            mRepeatMode.postValue(mAudioService.getValue().getRepeatMode());
+        }
     }
 
     protected void next() {
