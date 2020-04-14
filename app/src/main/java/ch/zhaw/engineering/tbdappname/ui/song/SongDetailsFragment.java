@@ -13,6 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongDetailsBinding;
 import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
@@ -56,6 +60,8 @@ public class SongDetailsFragment extends Fragment {
             mListener.onSongQueue(mSongId);
         });
 
+
+
         mBinding.songItemFavorite.setOnClickListener(v -> {
             mListener.onToggleFavorite(mSongId);
         });
@@ -97,6 +103,7 @@ public class SongDetailsFragment extends Fragment {
                         mBinding.songArtist.setText(song.getArtist());
                         mBinding.songAlbum.setText(song.getAlbum());
                         mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+                        Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
                     });
                 });
             });

@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.tbdappname.ui.album;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,8 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentAlbumDetailsBinding;
+import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
+import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
+import ch.zhaw.engineering.tbdappname.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.tbdappname.ui.song.list.AlbumSongListFragment;
 
 public class AlbumDetailsFragment extends Fragment {
@@ -31,12 +39,26 @@ public class AlbumDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentAlbumDetailsBinding.inflate(inflater, container, false);
         mBinding.albumName.setText(mAlbum);
-        // TODO: Display album art
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.album_songlist_container, AlbumSongListFragment.newInstance(mAlbum))
                 .commit();
 
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AsyncTask.execute(() -> {
+            SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
+            AlbumDto album = dao.getAlbum(mAlbum);
+            if (album.getCoverPath() != null && getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    Picasso.get().load(new File(album.getCoverPath())).into(mBinding.albumCover);
+                });
+            }
+        });
+
     }
 }

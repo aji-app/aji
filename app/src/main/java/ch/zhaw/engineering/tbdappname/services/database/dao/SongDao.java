@@ -138,6 +138,11 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.artist ASC")
     public abstract List<Song> getSongsForArtistAsList(String artist);
 
+    @Query("SELECT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
+            "WHERE song.album = :album " +
+            "GROUP BY song.album ")
+    public abstract AlbumDto getAlbum(String album);
+
     /*
      * Protected Helper Methods
      *
@@ -154,17 +159,20 @@ public abstract class SongDao {
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(boolean asc);
 
-    @Query("SELECT DISTINCT song.album as name FROM Song song " +
+    @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
             "WHERE LOWER(song.album) LIKE LOWER(:text) " +
+            "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(String text, boolean asc);
 
     @Query("SELECT DISTINCT song.album as name FROM Song song " +
             "WHERE LOWER(song.album) LIKE LOWER(:text) " +
-            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+            "GROUP BY song.album " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC ")
     public abstract List<AlbumDto> getFilteredAlbumsAsList(String text, boolean asc);
 
-    @Query("SELECT DISTINCT song.album as name FROM Song song " +
+    @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
+            "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(boolean asc);
 

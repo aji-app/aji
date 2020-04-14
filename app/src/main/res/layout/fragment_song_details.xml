@@ -9,8 +9,7 @@
     tools:context=".ui.song.SongDetailsFragment">
 
     <ImageView
-
-        android:id="@+id/song_details_album_cover"
+        android:id="@+id/album_cover"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:src="@drawable/ic_placeholder_image" />

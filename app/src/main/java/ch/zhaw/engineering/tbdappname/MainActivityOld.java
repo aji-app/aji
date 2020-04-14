@@ -71,7 +71,7 @@ public class MainActivityOld extends AppCompatActivity {
                     fakeSongs.add(Song.builder()
                             .title("Song Nr. " + i)
                             .artist("Fake Band " + (int)i / 2)
-                            .album("Make it Fake " + (int)i / 2)
+                            .album("Make it Fake ")
                             .filepath("bubu" + i)
                             .duration((long) (1000 * (i + 1) + Math.random() * 500))
                             .rating((int) (Math.random() * songCount))

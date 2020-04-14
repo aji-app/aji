@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +31,7 @@ import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "SongRecyclerViewAdapter";
 
-    private final List<Song> mValues;
+    private List<Song> mValues;
     private final SongListFragment.SongListFragmentListener mListener;
     private final OnTouchCallbacks mDragStartListener;
     @Nullable
@@ -81,6 +83,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         Button overFlow = holder.binding.songItemOverflow;
         ImageButton favoriteButton = holder.binding.songItemFavorite;
         ImageButton dragHandle = holder.binding.songItemDraghandle;
+
         if (mEditMode) {
             overFlow.setVisibility(View.GONE);
             favoriteButton.setVisibility(View.GONE);
@@ -158,7 +161,6 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     @Override
     public void onItemDismiss(int position) {
-        // TODO: After reorder dismissing break somehow
         if (mMode == Mode.PLAYLIST) {
             final Song songToBeRemoved = mValues.get(position);
             Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());
@@ -182,6 +184,13 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             songIds.add(song.getSongId());
         }
         return new Pair<>(mPlaylistId, songIds);
+    }
+
+    public void setSongs(List<Song> songs) {
+        int position = mRecyclerView.getVerticalScrollbarPosition();
+        mValues = songs;
+        notifyDataSetChanged();
+        mRecyclerView.setVerticalScrollbarPosition(position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
