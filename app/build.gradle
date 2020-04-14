@@ -21,6 +21,9 @@ android {
     viewBinding {
         enabled = true
     }
+    lintOptions {
+        checkGeneratedSources = true
+    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
