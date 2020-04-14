@@ -26,7 +26,7 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
     private List<RadioStationDto> mValues;
     private final RadioStationFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
-    private Map<Long, RadioStationDto> mDeletedRadioStations = new HashMap<>();
+    private final Map<Long, RadioStationDto> mDeletedRadioStations = new HashMap<>();
 
     /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationFragmentInteractionListener listener, Context context) {
         mValues = items;

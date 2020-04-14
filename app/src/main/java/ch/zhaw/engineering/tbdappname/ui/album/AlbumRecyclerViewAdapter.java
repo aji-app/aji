@@ -18,14 +18,12 @@ import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
-    private List<AlbumDto> mAlbums;
-    private AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
-    private Context mContext;
+    private final List<AlbumDto> mAlbums;
+    private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
 
-    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, Context context) {
+    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener) {
         mAlbums = albums;
         mListener = listener;
-        mContext = context;
     }
 
     @NonNull

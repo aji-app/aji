@@ -14,8 +14,8 @@ import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 
 
 public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecyclerViewAdapter.ViewHolder> {
-    private List<ArtistDto> mAlbums;
-    private AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
+    private final List<ArtistDto> mAlbums;
+    private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
 
     public ArtistRecyclerViewAdapter(List<ArtistDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener) {
         mAlbums = albums;

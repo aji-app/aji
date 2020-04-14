@@ -74,7 +74,7 @@ public class AlbumArtistListFragment extends TbdListFragment {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             if (mMode == Mode.ALBUM) {
                 appViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
-                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, getActivity());
+                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener);
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
                 });
             } else if (mMode == Mode.ARTIST) {

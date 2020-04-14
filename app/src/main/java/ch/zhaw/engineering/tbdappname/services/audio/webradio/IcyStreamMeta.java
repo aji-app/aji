@@ -92,7 +92,10 @@ import java.util.regex.Pattern;
 
         if (headers.containsKey("icy-metaint")) {
             // Headers are sent via HTTP
-            metaDataOffset = Integer.parseInt(headers.get("icy-metaint").get(0));
+            List<String> metaHeaders = headers.get("icy-metaint");
+            if (metaHeaders != null && metaHeaders.size() > 0) {
+                metaDataOffset = Integer.parseInt(metaHeaders.get(0));
+            }
         } else {
             // Headers are sent within a stream
             StringBuilder strHeaders = new StringBuilder();
@@ -137,7 +140,7 @@ import java.util.regex.Pattern;
                 metaDataLength = b * 16;
             }
 
-			inData = count > metaDataOffset + 1 && count < (metaDataOffset + metaDataLength);
+            inData = count > metaDataOffset + 1 && count < (metaDataOffset + metaDataLength);
             if (inData) {
                 if (b != 0) {
                     metaData.append((char) b);
