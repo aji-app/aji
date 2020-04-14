@@ -76,12 +76,14 @@ public class ExpandedControlsFragment extends Fragment {
                     if (info.isRadio()) {
                         mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
+                        mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(true);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(0);
                         disableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         disableImageView(mBinding.persistentControlsButtons.btnNext);
                     } else {
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
+                        mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.VISIBLE);
                         mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(false);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(255);

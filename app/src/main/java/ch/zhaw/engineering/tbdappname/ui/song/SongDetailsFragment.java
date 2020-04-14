@@ -48,6 +48,14 @@ public class SongDetailsFragment extends Fragment {
             mListener.onSongDelete(mSongId);
         });
 
+        mBinding.play.setOnClickListener(v -> {
+            mListener.onSongPlay(mSongId);
+        });
+
+        mBinding.queue.setOnClickListener(v -> {
+            mListener.onSongQueue(mSongId);
+        });
+
         mBinding.songItemFavorite.setOnClickListener(v -> {
             mListener.onToggleFavorite(mSongId);
         });
@@ -100,6 +108,8 @@ public class SongDetailsFragment extends Fragment {
         void onSongAddToPlaylist(long songId);
 
         void onSongQueue(long songId);
+
+        void onSongPlay(long songId);
 
         void onSongDelete(long songId);
 

@@ -76,6 +76,27 @@
     </LinearLayout>
 
     <ch.zhaw.engineering.tbdappname.view.TbdButton
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_play"
+        android:drawableTint="?attr/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        android:text="@string/play" />
+
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
+        android:id="@+id/queue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_queue"
+        android:drawableTint="?attr/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        android:text="@string/queue" />
+
+
+    <ch.zhaw.engineering.tbdappname.view.TbdButton
         android:id="@+id/add_to_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

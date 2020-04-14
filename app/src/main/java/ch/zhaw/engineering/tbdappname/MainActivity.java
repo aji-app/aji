@@ -69,21 +69,24 @@ public class MainActivity extends FragmentInteractionActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
+        setupPersistentBottomSheet();
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
         });
 
-        setupPersistentBottomSheet();
     }
 
     private void setupPersistentBottomSheet() {
-        ImageButton persistentPlaypause = mBinding.layoutAppBarMain.persistentControls.persistentPlaypause;
+        ImageButton persistentPlayPause = mBinding.layoutAppBarMain.persistentControls.persistentPlaypause;
         mAudioService.observe(this, service -> {
             if (service != null) {
                 service.getPlayState().observe(this, state -> {
                     if (state == AudioService.PlayState.PLAYING) {
-                        persistentPlaypause.setImageResource(R.drawable.ic_pause);
+                        persistentPlayPause.setImageResource(R.drawable.ic_pause);
                     } else {
-                        persistentPlaypause.setImageResource(R.drawable.ic_play);
+                        persistentPlayPause.setImageResource(R.drawable.ic_play);
                     }
                 });
 
@@ -105,7 +108,7 @@ public class MainActivity extends FragmentInteractionActivity {
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
         });
 
-        persistentPlaypause.setOnClickListener(v -> onPlayPause());
+        persistentPlayPause.setOnClickListener(v -> onPlayPause());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
