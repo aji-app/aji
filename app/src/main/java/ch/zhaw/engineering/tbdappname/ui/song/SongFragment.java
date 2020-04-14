@@ -1,21 +1,17 @@
 package ch.zhaw.engineering.tbdappname.ui.song;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;

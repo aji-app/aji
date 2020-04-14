@@ -34,7 +34,6 @@ import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragmen
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
-import ch.zhaw.engineering.tbdappname.view.TbdImageButton;
 
 
 public class MainActivity extends FragmentInteractionActivity {
@@ -203,25 +202,25 @@ public class MainActivity extends FragmentInteractionActivity {
     @Override
     protected void navigateToSongFromPersistentBottomSheet(long songId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        int id = navController.getCurrentDestination().getId();
-        switch (id) {
-            case R.id.nav_library:
-                navigateToSongFromLibrary(songId);
-                break;
-            case R.id.nav_playlists:
-                navigateToSongFromPlaylist(songId);
-                break;
-            case R.id.nav_radiostations:
-                navigateToSongFromRadiostation(songId);
-                break;
-            case R.id.nav_filters:
-                navigateToSongFromFilters(songId);
-                break;
-            case R.id.nav_song_details:
-                navigateToSongFromSongDetails(songId);
-                break;
-
-
+        if (navController.getCurrentDestination() != null) {
+            int id = navController.getCurrentDestination().getId();
+            switch (id) {
+                case R.id.nav_library:
+                    navigateToSongFromLibrary(songId);
+                    break;
+                case R.id.nav_playlists:
+                    navigateToSongFromPlaylist(songId);
+                    break;
+                case R.id.nav_radiostations:
+                    navigateToSongFromRadiostation(songId);
+                    break;
+                case R.id.nav_filters:
+                    navigateToSongFromFilters(songId);
+                    break;
+                case R.id.nav_song_details:
+                    navigateToSongFromSongDetails(songId);
+                    break;
+            }
         }
     }
 

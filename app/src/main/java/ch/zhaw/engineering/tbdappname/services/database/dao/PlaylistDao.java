@@ -100,9 +100,6 @@ public abstract class PlaylistDao {
             "ORDER BY  pl.name DESC")
     public abstract LiveData<List<Playlist>> getPlaylistsWhereSongCanBeAdded(long songId);
 
-    @Query("SELECT ref2.playlistId FROM PlaylistSongCrossRef ref2 WHERE ref2.songId == :songId")
-    public abstract List<Integer> getBubu(long songId);
-
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract void insertAll(List<PlaylistSongCrossRef> refs);

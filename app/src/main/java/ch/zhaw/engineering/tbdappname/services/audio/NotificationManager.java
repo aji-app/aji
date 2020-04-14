@@ -11,8 +11,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.LiveData;
 
-import java.util.Locale;
-
 import ch.zhaw.engineering.tbdappname.MainActivityOld;
 import ch.zhaw.engineering.tbdappname.R;
 

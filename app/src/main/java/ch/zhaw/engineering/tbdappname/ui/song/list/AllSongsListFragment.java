@@ -13,11 +13,6 @@ public class AllSongsListFragment extends SongListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
             Log.i(TAG, "Updating songs for song fragment");

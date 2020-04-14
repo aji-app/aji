@@ -122,7 +122,6 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                     if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK) {
                         mListener.onPositionDiscontinuity();
                     }
-                    Log.i("BUBU", mPlayer.getCurrentTag().toString());
                 }
             });
         });

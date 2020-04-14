@@ -26,7 +26,6 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.exoplayer.ExoPlayerAudioBackend;
-import ch.zhaw.engineering.tbdappname.services.audio.filter.NoopFilter;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
