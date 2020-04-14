@@ -74,10 +74,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mNameView;
-        public final ImageView mImageView;
-        public DirectoryItem mItem;
+        final View mView;
+        final TextView mNameView;
+        final ImageView mImageView;
+        DirectoryItem mItem;
 
         public ViewHolder(View view) {
             super(view);

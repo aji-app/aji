@@ -93,7 +93,7 @@ public class PlaylistSelectionFragment extends BottomSheetDialogFragment {
     private static abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
         final T binding;
 
-        public BaseViewHolder(@NonNull View itemView, T binding) {
+        BaseViewHolder(@NonNull View itemView, T binding) {
             super(itemView);
             this.binding = binding;
         }

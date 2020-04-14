@@ -33,7 +33,7 @@ import androidx.lifecycle.MediatorLiveData;
         }
     }
 
-    protected final void update() {
+    void update() {
         if (mLastSource != null) {
             mList.removeSource(mLastSource);
         }

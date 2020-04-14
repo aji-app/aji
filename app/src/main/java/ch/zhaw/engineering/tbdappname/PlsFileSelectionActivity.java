@@ -10,7 +10,7 @@ import java.io.File;
 import ch.zhaw.engineering.tbdappname.ui.directories.DirectoryFragment;
 
 public class PlsFileSelectionActivity extends AppCompatActivity implements DirectoryFragment.OnDirectoryFragmentListener {
-    public static final String EXTRA_FILE = "EXTRA_FILE";
+    private static final String EXTRA_FILE = "EXTRA_FILE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

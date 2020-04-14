@@ -73,7 +73,7 @@ public class AudioService extends LifecycleService {
     private boolean mAutoQueueRandomTrack = false;
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
-    RadioStationMetadataRunnable mUpdateSongInfoRunnable;
+    private RadioStationMetadataRunnable mUpdateSongInfoRunnable;
 
     public AudioService() {
     }

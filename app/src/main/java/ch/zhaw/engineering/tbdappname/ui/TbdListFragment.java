@@ -1,6 +1,5 @@
 package ch.zhaw.engineering.tbdappname.ui;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 

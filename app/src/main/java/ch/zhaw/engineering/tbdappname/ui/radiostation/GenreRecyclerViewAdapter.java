@@ -81,7 +81,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         notifyItemInserted(mValues.size());
     }
 
-    public List<String> getGenres() {
+    List<String> getGenres() {
         List<String> genres = new ArrayList<>(mValues.size());
         for (String genre : mValues) {
             if (genre.length() > 0) {
@@ -95,12 +95,12 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         private final FragmentGenreListitemBinding mBinding;
         public String mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mBinding = FragmentGenreListitemBinding.bind(view);
         }
 
-        public void bind(String genre) {
+        void bind(String genre) {
             mItem = genre;
             mBinding.genreName.setText(genre);
             mBinding.genreName.setEditMode(mEditMode);

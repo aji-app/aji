@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
@@ -37,7 +36,6 @@ import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragmen
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
-import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
@@ -50,14 +48,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     private static final int REQUEST_CODE_PLS_SELECT = 2;
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
-    protected AppViewModel mAppViewModel;
     private RadioStationDao mRadioStationDao;
     private PlaylistSelectionFragment mAddToPlaylistSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAppViewModel = new ViewModelProvider(this).get(AppViewModel.class);
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
         mRadioStationDao = RadioStationDao.getInstance(this);
@@ -361,19 +357,16 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onToggleShuffle() {
         toggleShuffle();
-        Log.i(TAG, "onToggleShuffle: " + mShuffleEnabled.getValue());
     }
 
     @Override
     public void onChangeRepeatMode() {
         toggleRepeatMode();
-        Log.i(TAG, "onChangeRepeatMode: " + mRepeatMode.getValue());
     }
 
     @Override
     public void onToggleAutoQueue() {
         toggleAutoQueue();
-        Log.i(TAG, "onToggleAutoQueue: " + mAutoQueueEnabled.getValue());
     }
 
     @Override
@@ -453,10 +446,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     private void showCreatePlaylistDialog() {
-
-        LayoutInflater inflater = this.getLayoutInflater();
-
-        View dialogView = inflater.inflate(R.layout.alert_create_playlist, null);
+        View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
         editText.setOnFocusChangeListener((View v, boolean hasFocus) -> {
             editText.post(() -> {

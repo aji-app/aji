@@ -63,15 +63,12 @@ public class NotificationManager {
         mContext.startForeground(NOTIFICATION_ID, createCurrentNotification());
     }
 
-    public void stop() {
+    private void stop() {
         Log.i(TAG, "Stop foreground");
         mContext.stopForeground(false);
     }
 
-    public void update() {
-//        if (mCurrentState.getValue() == AudioService.PlayState.PAUSED || mCurrentState.getValue() == AudioService.PlayState.STOPPED) {
-//            return;
-//        }
+    private void update() {
         mNotificationManager.notify(NOTIFICATION_ID, createCurrentNotification());
     }
 

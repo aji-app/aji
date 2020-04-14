@@ -45,7 +45,7 @@ public class StorageHelper {
         });
     }
 
-    public static String saveAlbumArt(Context context, SongDto song) {
+    private static String saveAlbumArt(Context context, SongDto song) {
         if (song.getAlbumArt() == null) {
             return null;
         }

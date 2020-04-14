@@ -33,15 +33,15 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
-    protected final MutableLiveData<AudioService.AudioServiceBinder> mAudioService = new MutableLiveData<>(null);
+    final MutableLiveData<AudioService.AudioServiceBinder> mAudioService = new MutableLiveData<>(null);
     private boolean mBound;
 
-    protected final MutableLiveData<AudioService.PlayState> mCurrentState = new MutableLiveData<>(AudioService.PlayState.INITIAL);
-    protected final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
-    protected final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
-    protected final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
-    protected final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
-    protected final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
+    private final MutableLiveData<AudioService.PlayState> mCurrentState = new MutableLiveData<>(AudioService.PlayState.INITIAL);
+    private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
+    private final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
+    private final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
 
 
     private final ServiceConnection mAudioServiceConnection = new ServiceConnection() {
@@ -152,7 +152,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         }
     }
 
-    public void playMusic(Song song, boolean queue) {
+    final void playMusic(Song song, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             if (queue) {
@@ -166,7 +166,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         Log.i(TAG, (queue ? "Queued" : "Playing") + " song: " + song.toString());
     }
 
-    public void playMusic(Playlist playlist, boolean queue) {
+    final void playMusic(Playlist playlist, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(playlist);
@@ -176,7 +176,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         Log.i(TAG, (queue ? "Queued" : "Playing") + " playlist: " + playlist.toString());
     }
 
-    public void playMusic(RadioStation radioStation) {
+    final void playMusic(RadioStation radioStation) {
         startService();
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(radioStation);
@@ -186,7 +186,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         Log.i(TAG, "Playing radioStation: " + radioStation.toString());
     }
 
-    public void playMusic(List<Song> songs, boolean queue) {
+    final void playMusic(List<Song> songs, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             if (queue) {
@@ -232,51 +232,54 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     }
 
 
-    protected void toggleShuffle() {
+    final void toggleShuffle() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().toggleShuffle();
             mShuffleEnabled.postValue(mAudioService.getValue().isShuffleModeEnabled());
         }
+        Log.i(TAG, "onToggleShuffle: " + mShuffleEnabled.getValue());
     }
 
-    protected void toggleAutoQueue() {
+    final void toggleAutoQueue() {
         if (mAudioService.getValue() != null) {
             mAutoQueueEnabled.postValue(mAudioService.getValue().toggleAutoQueue());
         }
+        Log.i(TAG, "onToggleAutoQueue: " + mAutoQueueEnabled.getValue());
     }
 
-    protected void seekTo(long position) {
+    final void seekTo(long position) {
         if (mAudioService.getValue() != null) {
            mAudioService.getValue().seekTo(position);
         }
     }
 
-    protected void toggleRepeatMode() {
+    final void toggleRepeatMode() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().toggleRepeatMode();
             mRepeatMode.postValue(mAudioService.getValue().getRepeatMode());
         }
+        Log.i(TAG, "onChangeRepeatMode: " + mRepeatMode.getValue());
     }
 
-    protected void next() {
+    final void next() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().next();
         }
     }
 
-    protected void previous() {
+    final void previous() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().previous();
         }
     }
 
-    protected void playPause() {
+    final void playPause() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().playOrPause();
         }
     }
 
-    protected void startService() {
+    private void startService() {
         if (!mServiceStarted) {
             Log.i(TAG, "Start service");
             Intent serviceIntent = new Intent(this, AudioService.class);

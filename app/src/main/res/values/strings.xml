@@ -73,4 +73,5 @@
     <string name="menu_artist_details">Artist Details</string>
     <string name="unknown_duration">---</string>
     <string name="not_playing">Not Playing</string>
+    <string name="contentDescription_album_art">Album Art</string>
 </resources>
