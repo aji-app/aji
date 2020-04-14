@@ -7,15 +7,17 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.zhaw.engineering.tbdappname.services.database.dao.PlaylistDao;
@@ -26,6 +28,7 @@ import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.services.files.WebRadioPlsParser;
+import ch.zhaw.engineering.tbdappname.ui.contextmenu.ContextMenuFragment;
 import ch.zhaw.engineering.tbdappname.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.tbdappname.ui.library.AlbumArtistListFragment;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment;
@@ -49,7 +52,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     private SongDao mSongDao;
     private PlaylistDao mPlaylistDao;
     private RadioStationDao mRadioStationDao;
-    private PlaylistSelectionFragment mAddToPlaylistSheet;
+    private ContextMenuFragment mContextMenuFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +102,32 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle());
+            LiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries =
+                    Transformations.map(mPlaylistDao.getPlaylistsWhereSongCanBeAdded(songId), playlists -> {
+                        List<ContextMenuFragment.ItemConfig> configs = new ArrayList<>();
+                        configs.add(ContextMenuFragment.ItemConfig.builder()
+                                .imageId(R.drawable.ic_playlist_add)
+                                .textId(R.string.create_playlist)
+                                .callback($ -> onCreatePlaylist()).build());
+                        for (Playlist playlist : playlists) {
+                            ContextMenuFragment.ItemConfig<Playlist> entry = ContextMenuFragment.ItemConfig.<Playlist>builder()
+                                    .value(playlist)
+                                    .imageId(R.drawable.ic_menu_playlist)
+                                    .text(playlist.getName())
+                                    .callback(pl -> {
+                                        onSongAddToPlaylist(songId, pl.getPlaylistId());
+                                        hideContextMenu();
+                                    }).build();
+                            configs.add(entry);
+                        }
+                        return configs;
+                    });
+            mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
+            runOnUiThread(() -> {
+                mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+            });
         });
-        runOnUiThread(() -> {
-            mAddToPlaylistSheet = PlaylistSelectionFragment.newInstance(songId);
-            mAddToPlaylistSheet.show(getSupportFragmentManager(), PlaylistSelectionFragment.TAG);
-        });
+
     }
 
     @Override
@@ -118,42 +142,59 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin) {
         AsyncTask.execute(() -> {
-            // TODO: Open menu bottom sheet for song
             Song song = mSongDao.getSongById(songId);
+            Log.i(TAG, "onSongEdit: " + song.getTitle());
+            MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
+            List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_play)
+                    .textId(R.string.play)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onSongPlay(songId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_queue)
+                    .textId(R.string.queue)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onSongQueue(songId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_edit)
+                    .textId(R.string.edit)
+                    .callback($ -> {
+                        hideContextMenu();
+                        switch (origin) {
+                            case ALBUM:
+                            case SONG:
+                            case ARTIST:
+                                navigateToSongFromLibrary(songId);
+                                break;
+                            case PLAYLIST:
+                                navigateToSongFromPlaylist(songId);
+                                break;
+                            case EXPANDED_CONTROLS:
+                                navigateToSongFromPersistentBottomSheet(songId);
+                                break;
+                        }
+                    }).build());
+            mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
-                Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
+                mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+                contextMenuEntries.setValue(entries);
             });
         });
-        switch (origin) {
-            case ALBUM:
-            case SONG:
-            case ARTIST:
-                navigateToSongFromLibrary(songId);
-                break;
-            case PLAYLIST:
-                navigateToSongFromPlaylist(songId);
-                break;
-            case EXPANDED_CONTROLS:
-                navigateToSongFromPersistentBottomSheet(songId);
-                break;
-        }
-
     }
 
     @Override
     public void onSongAddToPlaylist(long songId, int playlistId) {
         AsyncTask.execute(() -> {
             mPlaylistDao.addSongToPlaylist(songId, playlistId);
-
-            if (mAddToPlaylistSheet != null) {
-                mAddToPlaylistSheet.dismiss();
-            }
-
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName());
         });
-
     }
 
     @Override
@@ -202,13 +243,44 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onPlaylistEdit(int playlistId) {
+    public void onPlaylistMenu(int playlistId) {
         AsyncTask.execute(() -> {
-            // TODO: Open menu bottom sheet for playlist
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             Log.i(TAG, "onPlaylistEdit: " + playlist.getName());
+            MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
+            List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_play)
+                    .textId(R.string.play)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onPlaylistPlay(playlistId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_queue)
+                    .textId(R.string.queue)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onPlaylistQueue(playlistId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_edit)
+                    .textId(R.string.edit)
+                    .callback($ -> {
+                        hideContextMenu();
+                        navigateToPlaylist(playlistId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_delete)
+                    .textId(R.string.delete)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onPlaylistDelete(playlistId);
+                    }).build());
+            mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
-                navigateToPlaylist(playlistId);
+                mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+                contextMenuEntries.setValue(entries);
             });
         });
 
@@ -274,12 +346,30 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onRadioStationEdit(long radioStationId) {
+    public void onRadioStationMenu(long radioStationId) {
         AsyncTask.execute(() -> {
-            // TODO: Open menu bottom sheet for radio
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
+            Log.i(TAG, "onRadioStationEdit: " + radio.getName());
+            MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
+            List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_play)
+                    .textId(R.string.play)
+                    .callback($ -> {
+                        onRadioStationPlay(radioStationId);
+                        hideContextMenu();
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_edit)
+                    .textId(R.string.edit)
+                    .callback($ -> {
+                        hideContextMenu();
+                        navigateToRadioStation(radioStationId);
+                    }).build());
+            mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
-                Toast.makeText(this, "onRadioStationEdit: " + radio.getName(), Toast.LENGTH_SHORT).show();
+                mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+                contextMenuEntries.setValue(entries);
             });
         });
     }
@@ -396,9 +486,33 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onAlbumMenu(String album) {
         Log.i(TAG, "onAlbumMenu: " + album);
-        // TODO Open menu bottom sheet for album
+        MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
+        List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_play)
+                .textId(R.string.play)
+                .callback($ -> {
+                    onAlbumPlay(album);
+                    hideContextMenu();
+                }).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_queue)
+                .textId(R.string.queue)
+                .callback($ -> {
+                    hideContextMenu();
+                    onAlbumQueue(album);
+                }).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_edit)
+                .textId(R.string.edit)
+                .callback($ -> {
+                    hideContextMenu();
+                    navigateToAlbum(album);
+                }).build());
+        mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
-            navigateToAlbum(album);
+            mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+            contextMenuEntries.setValue(entries);
         });
     }
 
@@ -431,9 +545,27 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onArtistMenu(String artist) {
         Log.i(TAG, "onArtistMenu: " + artist);
+        MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
+        List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_play)
+                .textId(R.string.play)
+                .callback($ -> onArtistPlay(artist)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_queue)
+                .textId(R.string.queue)
+                .callback($ -> onArtistQueue(artist)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_edit)
+                .textId(R.string.edit)
+                .callback($ -> {
+                    hideContextMenu();
+                    navigateToArtist(artist);
+                }).build());
+        mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
-            // TODO: Open Menu Sheet for artist
-            navigateToArtist(artist);
+            mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
+            contextMenuEntries.setValue(entries);
         });
     }
 
@@ -443,6 +575,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         runOnUiThread(() -> {
             navigateToArtist(artist);
         });
+    }
+
+    private void hideContextMenu() {
+        if (mContextMenuFragment != null) {
+            mContextMenuFragment.dismiss();
+        }
     }
 
     private void showCreatePlaylistDialog() {

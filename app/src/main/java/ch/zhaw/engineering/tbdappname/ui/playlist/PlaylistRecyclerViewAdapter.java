@@ -96,31 +96,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         });
 
         overFlowButton.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(mContext, overFlowButton);
-            popup.inflate(R.menu.playlist_item_menu);
-
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.playlist_menu_play:
-                        mListener.onPlaylistPlay(holder.playlist.getPlaylistId());
-                        return true;
-
-                    case R.id.playlist_menu_queue:
-                        mListener.onPlaylistQueue(holder.playlist.getPlaylistId());
-                        return true;
-
-                    case R.id.playlist_menu_edit:
-                        mListener.onPlaylistEdit(holder.playlist.getPlaylistId());
-                        return true;
-
-                    case R.id.playlist_menu_delete:
-                        mListener.onPlaylistDelete(holder.playlist.getPlaylistId());
-                        return true;
-                    default:
-                        return false;
-                }
-            });
-            popup.show();
+            mListener.onPlaylistMenu(holder.playlist.getPlaylistId());
         });
     }
 

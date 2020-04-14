@@ -86,32 +86,15 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.radio = mValues.get(position);
         View root = holder.binding.getRoot();
-        Button overFlowButton = holder.binding.radiostationItemOverflow;
 
         holder.binding.radiostationName.setText(mValues.get(position).getName());
         holder.binding.radiostationGenres.setText(TextUtils.join(" ", mValues.get(position).getGenres()));
 
-        holder.binding.radiostationItemPlay.setOnClickListener(v -> {
-            if (null != mListener) {
-                mListener.onRadioStationPlay(holder.radio.getId());
-            }
-        });
+        holder.binding.radiostationItemPlay.setOnClickListener(v -> mListener.onRadioStationPlay(holder.radio.getId()));
 
-        holder.binding.radiostationItemOverflow.setOnClickListener(v -> {
-            if (null != mListener) {
-                mListener.onRadioStationEdit(holder.radio.getId());
-            }
-        });
+        holder.binding.radiostationItemOverflow.setOnClickListener(v -> mListener.onRadioStationMenu(holder.radio.getId()));
 
-        root.setOnClickListener(v -> {
-            if (null != mListener) {
-                mListener.onRadioStationSelected(holder.radio.getId());
-            }
-        });
-
-        overFlowButton.setOnClickListener(v -> {
-
-        });
+        root.setOnClickListener(v -> mListener.onRadioStationSelected(holder.radio.getId()));
     }
 
     @Override
