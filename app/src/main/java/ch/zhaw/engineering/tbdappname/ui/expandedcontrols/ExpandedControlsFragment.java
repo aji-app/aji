@@ -9,9 +9,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 
+import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentExpandedControlsBinding;
+import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
+
+import static ch.zhaw.engineering.tbdappname.util.Duration.getMillisAsTime;
+import static ch.zhaw.engineering.tbdappname.util.Duration.getPositionDurationString;
 
 public class ExpandedControlsFragment extends Fragment {
 
@@ -47,6 +53,39 @@ public class ExpandedControlsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mListener.getPlayState().observe(getViewLifecycleOwner(), state -> {
+                if (AudioService.PlayState.PLAYING == state) {
+                    mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
+                } else {
+                    mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
+                }
+            });
+            mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
+                if (info != null) {
+                    mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
+                    mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(info.getAlbum());
+                    mBinding.persistentControlsSonginfo.songArtistExpanded.setText(info.getArtist());
+                    if (info.isRadio()) {
+                        mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
+                        mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
+                    } else {
+                        mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
+                        mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
+                    }
+                }
+            });
+
+            mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
+                mBinding.persistentControlsSeebar.timerElapsed.setText(getMillisAsTime(position));
+                mBinding.persistentControlsSeebar.seekbar.setProgress((int) (position / 100000));
+            });
+        }
+    }
+
     public interface ExpandedControlsFragmentListener {
         void onToggleFavorite(long songId);
 
@@ -63,5 +102,11 @@ public class ExpandedControlsFragment extends Fragment {
         void onChangeRepeatMode();
 
         void onToggleAutoQueue();
+
+        LiveData<AudioService.PlayState> getPlayState();
+
+        LiveData<AudioService.SongInformation> getCurrentSong();
+
+        LiveData<Long> getCurrentPosition();
     }
 }

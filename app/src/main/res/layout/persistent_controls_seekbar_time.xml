@@ -19,7 +19,7 @@
         android:id="@+id/seekbar"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:max="232"
+        android:max="100000"
         android:progress="17"
         android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -33,12 +33,20 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     protected final MutableLiveData<AudioService.AudioServiceBinder> mAudioService = new MutableLiveData<>(null);
     private boolean mBound;
 
+    protected final MutableLiveData<AudioService.PlayState> mCurrentState = new MutableLiveData<>(AudioService.PlayState.INITIAL);
+    protected final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
+    protected final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
+
     private final ServiceConnection mAudioServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            mAudioService.postValue((AudioService.AudioServiceBinder) service);
+            AudioService.AudioServiceBinder serviceBinder = (AudioService.AudioServiceBinder) service;
+            mAudioService.postValue(serviceBinder);
+            serviceBinder.getCurrentSong().observe(AudioInterfaceActivity.this, mCurrentSong::setValue);
+            serviceBinder.getPlayState().observe(AudioInterfaceActivity.this, mCurrentState::setValue);
+            serviceBinder.getCurrentPosition().observe(AudioInterfaceActivity.this, mCurrentPosition::setValue);
             mBound = true;
         }
 
@@ -143,9 +151,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         } else {
             startAction = StartPlayingAction.builder().song(song).queue(queue).build();
         }
-        runOnUiThread(() -> {
-            Toast.makeText(this, (queue ? "Queued" : "Playing") + " song: " + song.toString(), Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, (queue ? "Queued" : "Playing") + " song: " + song.toString());
     }
 
     public void playMusic(Playlist playlist, boolean queue) {
@@ -155,9 +161,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         } else {
             startAction = StartPlayingAction.builder().playlist(playlist).queue(queue).build();
         }
-        runOnUiThread(() -> {
-            Toast.makeText(this, (queue ? "Queued" : "Playing") + " playlist: " + playlist.toString(), Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, (queue ? "Queued" : "Playing") + " playlist: " + playlist.toString());
     }
 
     public void playMusic(RadioStation radioStation) {
@@ -167,9 +171,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         } else {
             startAction = StartPlayingAction.builder().radio(radioStation).build();
         }
-        runOnUiThread(() -> {
-            Toast.makeText(this, "Playing radioStation: " + radioStation.toString(), Toast.LENGTH_SHORT).show();
-        });
+        Log.i(TAG, "Playing radioStation: " + radioStation.toString());
     }
 
     protected void next() {

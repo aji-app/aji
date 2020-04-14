@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.tbdappname.databinding.ActivityMainBinding;
+import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.services.files.AudioFileContentObserver;
@@ -29,6 +32,7 @@ import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
+import ch.zhaw.engineering.tbdappname.view.TbdImageButton;
 
 
 public class MainActivity extends FragmentInteractionActivity {
@@ -68,12 +72,40 @@ public class MainActivity extends FragmentInteractionActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
         });
 
+        setupPersistentBottomSheet();
+    }
+
+    private void setupPersistentBottomSheet() {
+        ImageButton persistentPlaypause = mBinding.layoutAppBarMain.persistentControls.persistentPlaypause;
+        mAudioService.observe(this, service -> {
+            if (service != null) {
+                service.getPlayState().observe(this, state -> {
+                    if (state == AudioService.PlayState.PLAYING) {
+                        persistentPlaypause.setImageResource(R.drawable.ic_pause);
+                    } else {
+                        persistentPlaypause.setImageResource(R.drawable.ic_play);
+                    }
+                });
+
+                TextView songName = mBinding.layoutAppBarMain.persistentControls.songTitle;
+                TextView albumName = mBinding.layoutAppBarMain.persistentControls.songAlbum;
+                TextView artistName = mBinding.layoutAppBarMain.persistentControls.songArtist;
+
+                service.getCurrentSong().observe(this, info -> {
+                    if (info != null) {
+                        songName.setText(info.getTitle());
+                        albumName.setText(info.getAlbum());
+                        artistName.setText(info.getArtist());
+                    }
+                });
+            }
+        });
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
         });
 
-        mBinding.layoutAppBarMain.persistentControls.persistentPlaypause.setOnClickListener(v -> onPlayPause());
+        persistentPlaypause.setOnClickListener(v -> onPlayPause());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())

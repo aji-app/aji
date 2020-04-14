@@ -15,6 +15,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.net.MalformedURLException;
@@ -22,6 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.exoplayer.ExoPlayerAudioBackend;
 import ch.zhaw.engineering.tbdappname.services.audio.filter.NoopFilter;
@@ -150,7 +152,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void updateCurrentSong() {
-        if (PlayState.STOPPED != mCurrentState.getValue()) {
+        if (PlayState.STOPPED != mCurrentState.getValue() && PlayState.PAUSED != mCurrentState.getValue()) {
             mAudioBackend.getCurrentTag(tag -> {
                 if (tag != null) {
                     Song song = mCurrentSongs.get(tag);
@@ -160,12 +162,22 @@ public class AudioService extends LifecycleService {
                     } else {
                         RadioStation station = mCurrentRadioStations.get(tag);
                         if (station != null) {
-                            mCurrentSong.postValue(SongInformation.fromRadioStation(station));
+                            SongInformation baseInfo = SongInformation.fromRadioStation(station);
+                            mCurrentSong.postValue(baseInfo);
                             mCurrentPosition.postValue(0L);
                             try {
                                 mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
-                                    if (mCurrentSong.getValue() != null) {
-                                        mCurrentSong.postValue(mCurrentSong.getValue().toBuilder().artist(artist).title(title).build());
+                                    if (title.equals("")) {
+                                        title = getApplicationContext().getResources().getString(R.string.unknown);
+                                    }
+                                    if (artist.equals("")) {
+                                        artist = getApplicationContext().getResources().getString(R.string.unknown);
+                                    }
+                                    if (mCurrentSong.getValue() != null && PlayState.PAUSED != mCurrentState.getValue()) {
+                                        SongInformation nextInfo = baseInfo.toBuilder().artist(artist).title(title).build();
+                                        if (!mCurrentSong.getValue().equals(nextInfo)) {
+                                            mCurrentSong.postValue(nextInfo);
+                                        }
                                     }
                                 }, station.getUrl());
 
@@ -430,9 +442,21 @@ public class AudioService extends LifecycleService {
         public boolean toggleAutoQueue() {
             return playbackControlToggleAutoQueue();
         }
+
+        public LiveData<PlayState> getPlayState() {
+            return mCurrentState;
+        }
+
+        public LiveData<SongInformation> getCurrentSong() {
+            return mCurrentSong;
+        }
+
+        public LiveData<Long> getCurrentPosition() {
+            return mCurrentPosition;
+        }
     }
 
-    enum PlayState {
+    public enum PlayState {
         STOPPED, PLAYING, PAUSED, INITIAL
     }
 
@@ -485,7 +509,7 @@ public class AudioService extends LifecycleService {
     @Value
     @Builder(toBuilder = true)
     @AllArgsConstructor
-    static class SongInformation {
+    public static class SongInformation {
         long id;
         String title;
         String artist;

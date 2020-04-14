@@ -19,6 +19,7 @@ import ch.zhaw.engineering.tbdappname.R;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.media.app.NotificationCompat.MediaStyle;
 import static ch.zhaw.engineering.tbdappname.services.audio.AudioService.EXTRAS_COMMAND;
+import static ch.zhaw.engineering.tbdappname.util.Duration.getPositionDurationString;
 
 public class NotificationManager {
     private static final String TAG = "NotificationManager";
@@ -133,16 +134,6 @@ public class NotificationManager {
 
     }
 
-    private String getPositionDurationString(AudioService.SongInformation songInfo, long currentPosition) {
-        if (songInfo != null) {
-            if (songInfo.getDuration() > 0) {
-                return String.format(Locale.ENGLISH, "%s / %s", getMillisAsTime(currentPosition), getMillisAsTime(songInfo.getDuration()));
-            } else {
-                return getMillisAsTime(currentPosition);
-            }
-        }
-        return "";
-    }
 
     private PendingIntent getControlIntent(AudioService.AudioServiceCommand command) {
         Intent pauseIntent = new Intent(mContext, AudioService.class);
@@ -156,9 +147,5 @@ public class NotificationManager {
         return PendingIntent.getBroadcast(mContext, 6, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private String getMillisAsTime(long time) {
-        long minutes = time / (60 * 1000);
-        long seconds = (time / 1000) % 60;
-        return String.format(Locale.ENGLISH, "%d:%02d", minutes, seconds);
-    }
+
 }

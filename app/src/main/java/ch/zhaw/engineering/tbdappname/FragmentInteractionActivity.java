@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
@@ -131,7 +133,9 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 Toast.makeText(this, "onSongEdit: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
         });
-        navigateToSongFromLibrary(songId);
+        if (origin != SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS) {
+            navigateToSongFromLibrary(songId);
+        }
     }
 
     @Override
@@ -382,6 +386,21 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         }
         service.toggleAutoQueue();
         Log.i(TAG, "onToggleAutoQueue");
+    }
+
+    @Override
+    public LiveData<AudioService.PlayState> getPlayState() {
+        return mCurrentState;
+    }
+
+    @Override
+    public LiveData<AudioService.SongInformation> getCurrentSong() {
+        return mCurrentSong;
+    }
+
+    @Override
+    public LiveData<Long> getCurrentPosition() {
+        return mCurrentPosition;
     }
 
     @Override
