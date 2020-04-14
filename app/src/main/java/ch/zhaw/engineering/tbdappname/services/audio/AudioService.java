@@ -114,8 +114,7 @@ public class AudioService extends LifecycleService {
                     public void onPositionDiscontinuity() {
                         updateCurrentSong();
                     }
-                },
-                new NoopFilter(1, 20000, true), new NoopFilter(2, 12222, false));
+                });
 
         mNotificationManager.start();
     }
@@ -389,6 +388,11 @@ public class AudioService extends LifecycleService {
 
         public void queue(Song song) {
             playbackControlQueueSong(song);
+        }
+
+        public void queue(Playlist playlist) {
+            // TODO: Queue playlist, how to handle name?
+            playbackControlPlayPlaylist(playlist);
         }
 
         public void play(Song song) {

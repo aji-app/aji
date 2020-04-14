@@ -42,7 +42,7 @@ import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.DirectorySelectionActivity.EXTRA_FILE;
 
-public abstract class FragmentInteractionActivity extends AppCompatActivity implements SongListFragment.SongListFragmentListener,
+public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
@@ -95,6 +95,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongPlay(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
+            playMusic(song, false);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongPlay: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
@@ -119,6 +120,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onSongQueue(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
+            playMusic(song, true);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onSongQueue: " + song.getTitle(), Toast.LENGTH_SHORT).show();
             });
@@ -221,6 +223,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistPlay(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            playMusic(playlist, false);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistPlay: " + playlist.getName(), Toast.LENGTH_SHORT).show();
             });
@@ -232,6 +235,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onPlaylistQueue(int playlistId) {
         AsyncTask.execute(() -> {
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            playMusic(playlist, true);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onPlaylistQueue: " + playlist.getName(), Toast.LENGTH_SHORT).show();
             });
@@ -278,6 +282,7 @@ public abstract class FragmentInteractionActivity extends AppCompatActivity impl
     public void onRadioStationPlay(long radioStationId) {
         AsyncTask.execute(() -> {
             RadioStation radio = mRadioStationDao.getRadioStation(radioStationId);
+            playMusic(radio);
             runOnUiThread(() -> {
                 Toast.makeText(this, "onRadioStationPlay: " + radio.getName(), Toast.LENGTH_SHORT).show();
             });

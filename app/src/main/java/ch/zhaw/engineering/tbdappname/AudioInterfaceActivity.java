@@ -21,6 +21,7 @@ import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.tbdappname.services.audio.NotificationManager.SHUTDOWN_INTENT;
@@ -69,19 +70,22 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
             }
         }
 
-
         mAudioService.observe(this, audioService -> {
             if (audioService != null && startAction != null) {
-                if (startAction.song != null) {
+                if (startAction.getSong() != null) {
                     if (startAction.queue) {
-                        audioService.queue(startAction.song);
+                        audioService.queue(startAction.getSong());
                     } else {
-                        audioService.play(startAction.song);
+                        audioService.play(startAction.getSong());
                     }
-                } else if (startAction.playlist != null) {
-                    audioService.play(startAction.playlist);
-                } else if (startAction.station != null) {
-                    audioService.play(startAction.station);
+                } else if (startAction.getPlaylist() != null) {
+                    if (startAction.queue) {
+                        audioService.queue(startAction.getPlaylist());
+                    } else {
+                        audioService.play(startAction.getPlaylist());
+                    }
+                } else if (startAction.getRadio() != null) {
+                    audioService.play(startAction.getRadio());
                 }
                 startAction = null;
             }
@@ -137,19 +141,23 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
                 mAudioService.getValue().play(song);
             }
         } else {
-            startAction = new StartPlayingAction(song, null, null, queue);
+            startAction = StartPlayingAction.builder().song(song).queue(queue).build();
         }
-        Toast.makeText(this, (queue ? "Queued" : "Playing") + " song: " + song.toString(), Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> {
+            Toast.makeText(this, (queue ? "Queued" : "Playing") + " song: " + song.toString(), Toast.LENGTH_SHORT).show();
+        });
     }
 
-    public void playMusic(Playlist playlist) {
+    public void playMusic(Playlist playlist, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(playlist);
         } else {
-            startAction = new StartPlayingAction(null, playlist, null, false);
+            startAction = StartPlayingAction.builder().playlist(playlist).queue(queue).build();
         }
-        Toast.makeText(this, "Playling playlist: " + playlist.toString(), Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> {
+            Toast.makeText(this, (queue ? "Queued" : "Playing") + " playlist: " + playlist.toString(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     public void playMusic(RadioStation radioStation) {
@@ -157,9 +165,11 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(radioStation);
         } else {
-            startAction = new StartPlayingAction(null, null, radioStation, false);
+            startAction = StartPlayingAction.builder().radio(radioStation).build();
         }
-        Toast.makeText(this, "Playling radioStation: " + radioStation.toString(), Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Playing radioStation: " + radioStation.toString(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     protected void startService() {
@@ -178,10 +188,15 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity {
     }
 
     @Value
+    @Builder
     private static class StartPlayingAction {
-        Song song;
-        Playlist playlist;
-        RadioStation station;
-        boolean queue;
+        @Builder.Default
+        Song song = null;
+        @Builder.Default
+        Playlist playlist = null;
+        @Builder.Default
+        RadioStation radio = null;
+        @Builder.Default
+        boolean queue = false;
     }
 }
