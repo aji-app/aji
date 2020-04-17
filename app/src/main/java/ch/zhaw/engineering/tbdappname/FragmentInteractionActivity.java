@@ -63,29 +63,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onSongSelected(long songId, SongListFragment.SongSelectionOrigin origin) {
+    public void onSongSelected(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongSelected: " + song.getTitle());
         });
-        switch (origin) {
-
-            case ALBUM:
-                navigateToSongFromAlbum(songId);
-                break;
-            case SONG:
-                navigateToSongFromLibrary(songId);
-                break;
-            case ARTIST:
-                navigateToSongFromArtist(songId);
-                break;
-            case PLAYLIST:
-                navigateToSongFromPlaylist(songId);
-                break;
-            case EXPANDED_CONTROLS:
-                navigateToSongFromPersistentBottomSheet(songId);
-                break;
-        }
+        navigateToSongDetails(songId);
     }
 
     @Override
@@ -140,7 +123,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin) {
+    public void onSongMenu(long songId) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongEdit: " + song.getTitle());
@@ -165,19 +148,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.edit)
                     .callback($ -> {
                         hideContextMenu();
-                        switch (origin) {
-                            case ALBUM:
-                            case SONG:
-                            case ARTIST:
-                                navigateToSongFromLibrary(songId);
-                                break;
-                            case PLAYLIST:
-                                navigateToSongFromPlaylist(songId);
-                                break;
-                            case EXPANDED_CONTROLS:
-                                navigateToSongFromPersistentBottomSheet(songId);
-                                break;
-                        }
+                        navigateToSongDetails(songId);
                     }).build());
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
@@ -668,13 +639,5 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     protected abstract void navigateToArtist(String artist);
 
-    protected abstract void navigateToSongFromLibrary(long songId);
-
-    protected abstract void navigateToSongFromAlbum(long songId);
-
-    protected abstract void navigateToSongFromArtist(long songId);
-
-    protected abstract void navigateToSongFromPlaylist(long songId);
-
-    protected abstract void navigateToSongFromPersistentBottomSheet(long songId);
+    protected abstract void navigateToSongDetails(long songId);
 }

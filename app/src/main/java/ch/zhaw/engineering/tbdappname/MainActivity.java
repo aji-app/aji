@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ import ch.zhaw.engineering.tbdappname.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragment;
+import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.tbdappname.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.tbdappname.util.PermissionChecker;
@@ -170,64 +172,42 @@ public class MainActivity extends FragmentInteractionActivity {
     }
 
     @Override
-    protected void navigateToSongFromLibrary(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
-    }
-
-    @Override
-    protected void navigateToSongFromAlbum(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
-    }
-
-    @Override
-    protected void navigateToSongFromArtist(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_artist_details_to_song_details, ArtistDetailsFragmentDirections.actionArtistDetailsToSongDetails(songId).getArguments());
-    }
-
-    @Override
-    protected void navigateToSongFromPlaylist(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());
-    }
-
-    protected void navigateToSongFromFilters(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_filters_to_song_details, FilterFragmentDirections.actionNavFiltersToSongDetails(songId).getArguments());
-    }
-
-    protected void navigateToSongFromRadiostation(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_radiostations_to_song_details, RadioStationFragmentDirections.actionNavRadiostationsToSongDetails(songId).getArguments());
-    }
-
-    protected void navigateToSongFromSongDetails(long songId) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments());
-    }
-
-    @Override
-    protected void navigateToSongFromPersistentBottomSheet(long songId) {
+    protected void navigateToSongDetails(long songId) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "hello navigate from bottom sheet", Toast.LENGTH_SHORT).show();
+        });
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
             switch (id) {
                 case R.id.nav_library:
-                    navigateToSongFromLibrary(songId);
+                    navController.navigate(R.id.action_nav_library_to_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_playlists:
-                    navigateToSongFromPlaylist(songId);
+                    navController.navigate(R.id.action_nav_playlists_to_song_details, PlaylistFragmentDirections.actionNavPlaylistsToSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_radiostations:
-                    navigateToSongFromRadiostation(songId);
+                    navController.navigate(R.id.action_nav_radiostations_to_song_details, RadioStationFragmentDirections.actionNavRadiostationsToSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_filters:
-                    navigateToSongFromFilters(songId);
+                    navController.navigate(R.id.action_nav_filters_to_song_details, FilterFragmentDirections.actionNavFiltersToSongDetails(songId).getArguments());
+                    break;
+                case R.id.nav_settings:
+                    break;
+                case R.id.nav_playlist_details:
+                    navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());
+                    break;
+                case R.id.nav_radiostation_details:
+                    navController.navigate(R.id.action_nav_radiostation_details_to_nav_song_details, RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_song_details:
-                    navigateToSongFromSongDetails(songId);
+                    navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments());
+                    break;
+                case R.id.nav_album_details:
+                    navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
+                    break;
+                case R.id.nav_artist_details:
+                    navController.navigate(R.id.action_artist_details_to_song_details, ArtistDetailsFragmentDirections.actionArtistDetailsToSongDetails(songId).getArguments());
                     break;
             }
         }

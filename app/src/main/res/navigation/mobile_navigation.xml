@@ -28,7 +28,10 @@
         tools:layout="@layout/fragment_playlist">
         <action
             android:id="@+id/action_nav_playlists_to_playlist_details"
-            app:destination="@id/playlist_details" />
+            app:destination="@id/nav_playlist_details" />
+        <action
+            android:id="@+id/action_nav_playlists_to_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
 
     <fragment
@@ -59,7 +62,7 @@
         android:name="ch.zhaw.engineering.tbdappname.ui.preferences.PreferenceFragment"
         android:label="@string/menu_settings" />
     <fragment
-        android:id="@+id/playlist_details"
+        android:id="@+id/nav_playlist_details"
         android:name="ch.zhaw.engineering.tbdappname.ui.playlist.PlaylistDetailsFragment"
         android:label="@string/menu_playlist_details"
         tools:layout="@layout/fragment_playlist_details">
@@ -79,6 +82,9 @@
         <argument
             android:name="radiostation-id"
             app:argType="long" />
+        <action
+            android:id="@+id/action_nav_radiostation_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_song_details"

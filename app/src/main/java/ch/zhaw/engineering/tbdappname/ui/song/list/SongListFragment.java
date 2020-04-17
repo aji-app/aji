@@ -108,13 +108,13 @@ public abstract class SongListFragment extends TbdListFragment implements SongRe
     }
 
     public interface SongListFragmentListener {
-        void onSongSelected(long songId, SongSelectionOrigin origin);
+        void onSongSelected(long songId);
 
         void onSongPlay(long songId);
 
         void onSongQueue(long songId);
 
-        void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin);
+        void onSongMenu(long songId);
 
         void onSongAddToPlaylist(long songId, int playlistId);
 
@@ -125,9 +125,5 @@ public abstract class SongListFragment extends TbdListFragment implements SongRe
         void onToggleFavorite(long songId);
 
         void onPlaylistModified(int playlistId, List<Long> songIds);
-    }
-
-    public enum SongSelectionOrigin {
-        ALBUM, SONG, ARTIST, PLAYLIST, EXPANDED_CONTROLS
     }
 }

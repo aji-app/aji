@@ -2,6 +2,7 @@ package ch.zhaw.engineering.tbdappname.ui.expandedcontrols;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class ExpandedControlsFragment extends Fragment {
     private ExpandedControlsFragmentListener mListener;
     private boolean mSeeking = false;
     private AudioService.SongInformation mCurrentSong;
+    private Drawable mSeekbarBackground;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
         mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
+        mSeekbarBackground =  mBinding.persistentControlsSeebar.seekbar.getBackground();
 
         return mBinding.getRoot();
     }
@@ -65,8 +68,22 @@ public class ExpandedControlsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mListener.getPlayState().observe(getViewLifecycleOwner(), state -> {
+                switch (state) {
+                    case PAUSED:
+                    case STOPPED:
+                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
+                        break;
+                    case PLAYING:
+                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
+                        mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
+                        break;
+                    case INITIAL:
+                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        mBinding.persistentControlsSeebar.seekbar.setEnabled(false);
+                        break;
+                }
                 if (AudioService.PlayState.PLAYING == state) {
-                    mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
                 } else {
                     mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                 }
@@ -88,7 +105,7 @@ public class ExpandedControlsFragment extends Fragment {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    if (mCurrentSong != null) {
+                    if (mCurrentSong != null && !mCurrentSong.isRadio()) {
                         mListener.seek(seekBar.getProgress());
                     }
                     mSeeking = false;
@@ -98,7 +115,7 @@ public class ExpandedControlsFragment extends Fragment {
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
 
                 mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
-                mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId(), SongListFragment.SongSelectionOrigin.EXPANDED_CONTROLS));
+                mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
                 mCurrentSong = info;
                 if (info != null) {
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
@@ -110,6 +127,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(true);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(0);
+                        mBinding.persistentControlsSeebar.seekbar.setBackground(null);
                         disableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         disableImageView(mBinding.persistentControlsButtons.btnNext);
                     } else {
@@ -118,6 +136,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(false);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(255);
+                        mBinding.persistentControlsSeebar.seekbar.setBackground(mSeekbarBackground);
                         mBinding.persistentControlsSeebar.seekbar.setMax((int) info.getDuration());
                         enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         enableImageView(mBinding.persistentControlsButtons.btnNext);
@@ -181,7 +200,6 @@ public class ExpandedControlsFragment extends Fragment {
             ImageViewCompat.setImageTintList(
                     imageView,
                     ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.disabledColor)));
-            imageView.setEnabled(false);
         }
     }
 
@@ -190,14 +208,13 @@ public class ExpandedControlsFragment extends Fragment {
             ImageViewCompat.setImageTintList(
                     imageView,
                     ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.colorPrimary)));
-            imageView.setEnabled(true);
         }
     }
 
     public interface ExpandedControlsFragmentListener extends AudioControlListener {
         void onToggleFavorite(long songId);
 
-        void onSongMenu(long songId, SongListFragment.SongSelectionOrigin origin);
+        void onSongMenu(long songId);
 
         void onPlayPause();
 

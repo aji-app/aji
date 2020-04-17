@@ -23,9 +23,6 @@ import ch.zhaw.engineering.tbdappname.services.database.AppDatabase;
 import ch.zhaw.engineering.tbdappname.services.database.dao.SongDao;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class SongDetailsFragment extends Fragment {
 
     private static final String ARG_SONG_ID = "song-id";
@@ -59,8 +56,6 @@ public class SongDetailsFragment extends Fragment {
         mBinding.queue.setOnClickListener(v -> {
             mListener.onSongQueue(mSongId);
         });
-
-
 
         mBinding.songItemFavorite.setOnClickListener(v -> {
             mListener.onToggleFavorite(mSongId);

@@ -68,18 +68,18 @@ public class PlaylistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongSelected(long songId, SongSelectionOrigin origin) {
-            mListener.onSongSelected(songId, SongSelectionOrigin.PLAYLIST);
+        public void onSongSelected(long songId) {
+            mListener.onSongSelected(songId);
         }
 
         @Override
-        public void onSongMenu(long songId, SongSelectionOrigin origin) {
-            mListener.onSongMenu(songId, SongSelectionOrigin.PLAYLIST);
+        public void onSongMenu(long songId) {
+            mListener.onSongMenu(songId);
         }
 
         private interface CustomDelegates {
-            void onSongSelected(long songId, SongSelectionOrigin origin);
-            void onSongMenu(long songId, SongSelectionOrigin origin);
+            void onSongSelected(long songId);
+            void onSongMenu(long songId);
         }
     }
 }
