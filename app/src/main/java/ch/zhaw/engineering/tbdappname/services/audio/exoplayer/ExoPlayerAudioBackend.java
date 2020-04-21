@@ -112,7 +112,7 @@ public class ExoPlayerAudioBackend implements AudioBackend {
 
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    if (playbackState == Player.STATE_ENDED) {
+                    if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
                         mListener.onStoppedPlaying();
                     }
                     if (playbackState == Player.STATE_READY) {

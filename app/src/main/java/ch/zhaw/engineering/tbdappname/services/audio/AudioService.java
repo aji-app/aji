@@ -275,7 +275,12 @@ public class AudioService extends LifecycleService {
         mCurrentState.postValue(PlayState.STOPPED);
         mCurrentSong.postValue(null);
         mAudioBackend.stop();
-        unregisterReceiver(mNoisyAudioStreamReceiver);
+        clearQueue();
+        try {
+            unregisterReceiver(mNoisyAudioStreamReceiver);
+        } catch(IllegalArgumentException e) {
+            // Was not registered
+        }
     }
 
     private void playbackControlPauseOrPlay() {
@@ -310,7 +315,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlPlayRadioStation(RadioStation station) {
-        mAudioBackend.clear();
+        clearQueue();
         mCurrentRadioStations.put(station.getId(), station);
         mAudioBackend.queueWebMedia(new RadioStationMedia(station));
         playbackControlPlay();
@@ -318,7 +323,7 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlPlayPlaylist(Playlist playlist) {
         mCurrentPositionTrackingThread.post(() -> {
-            mAudioBackend.clear();
+            clearQueue();
 
             List<Song> songsForPlaylist = mSongRepository.getSongsForPlaylistAsList(playlist.getPlaylistId());
             playbackControlQueueSongs(songsForPlaylist);
@@ -329,7 +334,8 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlPlaySongs(List<Song> songs) {
-        mAudioBackend.clear();
+        clearQueue();
+        mCurrentQueue.postValue(emptyList());
         playbackControlQueueSongs(songs);
         playbackControlPlay();
     }
@@ -341,7 +347,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlPlaySong(Song song) {
-        mAudioBackend.clear();
+        clearQueue();
         playbackControlQueueSong(song);
         playbackControlPlay();
     }
@@ -369,6 +375,7 @@ public class AudioService extends LifecycleService {
         mAudioBackend.stop();
         Log.i(TAG, "Shutdown AudioService");
         mNotificationManager.cancel();
+        mCurrentQueue.postValue(emptyList());
         stopSelf();
     }
 
@@ -406,6 +413,13 @@ public class AudioService extends LifecycleService {
 
     private LiveData<List<Song>> playbackControlGetQueue() {
         return mCurrentQueue;
+    }
+
+    private void clearQueue() {
+        mAudioBackend.clear();
+        mCurrentQueue.postValue(emptyList());
+        mCurrentSongs.clear();
+        mCurrentRadioStations.clear();
     }
 
     public class AudioServiceBinder extends Binder {

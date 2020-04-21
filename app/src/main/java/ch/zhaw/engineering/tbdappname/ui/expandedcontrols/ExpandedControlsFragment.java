@@ -75,7 +75,6 @@ public class ExpandedControlsFragment extends Fragment {
             mListener.getPlayState().observe(getViewLifecycleOwner(), state -> {
                 switch (state) {
                     case PAUSED:
-                    case STOPPED:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         break;
@@ -83,14 +82,11 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         break;
+                    case STOPPED:
                     case INITIAL:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(false);
                         break;
-                }
-                if (AudioService.PlayState.PLAYING == state) {
-                } else {
-                    mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                 }
             });
 
@@ -147,6 +143,14 @@ public class ExpandedControlsFragment extends Fragment {
                         enableImageView(mBinding.persistentControlsButtons.btnNext);
 
                     }
+                } else {
+                    mBinding.persistentControlsSonginfo.songTitleExpanded.setText(R.string.not_playing);
+                    mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(null);
+                    mBinding.persistentControlsSonginfo.songArtistExpanded.setText(null);
+                    mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
+                    mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
+                    mBinding.persistentControlsSeebar.timerTotal.setText(null);
+                    mBinding.persistentControlsSeebar.timerElapsed.setText(null);
                 }
             });
 
