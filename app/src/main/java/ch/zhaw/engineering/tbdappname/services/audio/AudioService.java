@@ -586,13 +586,14 @@ public class AudioService extends LifecycleService {
         String path;
         long duration;
         boolean isRadio;
+        boolean isFavorite;
 
         static SongInformation fromSong(Song song, String playlistName) {
-            return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false);
+            return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false, song.isFavorite());
         }
 
         static SongInformation fromRadioStation(RadioStation station) {
-            return new SongInformation(station.getId(), "", "", "", station.getName(), station.getUrl(), 0, true);
+            return new SongInformation(station.getId(), "", "", "", station.getName(), station.getUrl(), 0, true, false);
         }
     }
 

@@ -1,6 +1,9 @@
 package ch.zhaw.engineering.tbdappname.ui.song.list;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,7 +15,9 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +30,10 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.util.Color;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
+
+import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
 
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "SongRecyclerViewAdapter";
@@ -38,6 +46,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private final Mode mMode;
     private RecyclerView mRecyclerView;
     private boolean mEditMode = false;
+    private Long mHighlightedSongId;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
         this(items, listener, playlistId, dragListener != null, dragListener);
@@ -86,6 +95,8 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         Button overFlow = holder.binding.songItemOverflow;
         ImageButton favoriteButton = holder.binding.songItemFavorite;
         ImageButton dragHandle = holder.binding.songItemDraghandle;
+
+        holder.setInverted(mHighlightedSongId != null && holder.song.getSongId() == mHighlightedSongId);
 
         if (mEditMode) {
             overFlow.setVisibility(View.GONE);
@@ -201,6 +212,11 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return new Pair<>(mPlaylistId, songIds);
     }
 
+    public void setHighlighted(long songId) {
+        mHighlightedSongId = songId;
+        notifyDataSetChanged();
+    }
+
     public void setSongs(List<Song> songs) {
         int position = mRecyclerView.getVerticalScrollbarPosition();
         mValues = songs;
@@ -215,6 +231,27 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         ViewHolder(View view) {
             super(view);
             this.binding = FragmentSongItemBinding.bind(view);
+        }
+
+        void setInverted(boolean inverted) {
+            Context context = itemView.getContext();
+            if (inverted) {
+                itemView.setBackgroundColor(Color.getColorFromAttr(context, R.attr.colorPrimary));
+                binding.songItemOverflow.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
+                binding.songTitle.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
+                binding.songAlbum.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
+                binding.songArtist.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
+                ImageViewCompat.setImageTintList(binding.songItemFavorite, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorBackground)));
+                ImageViewCompat.setImageTintList(binding.songItemDraghandle, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorBackground)));
+            } else {
+                itemView.setBackgroundColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
+                binding.songItemOverflow.setTextColor(Color.getColorFromAttr(context, R.attr.colorPrimary));
+                binding.songTitle.setTextColor(Color.getColorFromAttr(context, R.attr.primaryTextColor));
+                binding.songAlbum.setTextColor(Color.getColorFromAttr(context, R.attr.secondaryTextColor));
+                binding.songArtist.setTextColor(Color.getColorFromAttr(context, R.attr.secondaryTextColor));
+                ImageViewCompat.setImageTintList(binding.songItemFavorite, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorPrimary)));
+                ImageViewCompat.setImageTintList(binding.songItemDraghandle, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorPrimary)));
+            }
         }
 
         @Override

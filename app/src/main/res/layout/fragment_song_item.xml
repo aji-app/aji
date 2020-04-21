@@ -59,7 +59,7 @@
         android:layout_marginEnd="0dp"
         android:gravity="center"
         android:padding="0dp"
-        android:src="@drawable/ic_favorite"
+        android:src="@drawable/ic_not_favorite"
         android:contentDescription="@string/contentDescription_toggle_favorite"/>
 
     <ch.zhaw.engineering.tbdappname.view.TbdImageButton

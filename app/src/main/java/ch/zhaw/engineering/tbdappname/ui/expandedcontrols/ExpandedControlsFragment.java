@@ -135,6 +135,7 @@ public class ExpandedControlsFragment extends Fragment {
                     mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setEnabled(true);
                     mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setEnabled(true);
                     mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setEnabled(true);
+                    mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(info.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
                     if (info.isRadio()) {
                         mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);

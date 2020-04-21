@@ -3,11 +3,16 @@ package ch.zhaw.engineering.tbdappname.ui.song.list;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import ch.zhaw.engineering.tbdappname.AudioInterfaceActivity;
 import ch.zhaw.engineering.tbdappname.R;
+import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
 public class QueueSongListFragment extends SongListFragment {
@@ -53,8 +58,12 @@ public class QueueSongListFragment extends SongListFragment {
     @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         if (getActivity() != null) {
-            AudioInterfaceActivity activity = (AudioInterfaceActivity) getActivity();
-            activity.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
+            mQueueListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
+                if (mAdapter != null && song != null) {
+                    mAdapter.setHighlighted(song.getId());
+                }
+            });
+            mQueueListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
                 if (mAdapter != null) {
                     mAdapter.setSongs(songs);
                     if (mRecyclerView.getAdapter() == null) {
@@ -74,5 +83,7 @@ public class QueueSongListFragment extends SongListFragment {
 
     public interface QueueListFragmentListener {
         void removeSongFromQueue(long songId);
+        LiveData<List<Song>> getCurrentQueue();
+        LiveData<AudioService.SongInformation> getCurrentSong();
     }
 }
