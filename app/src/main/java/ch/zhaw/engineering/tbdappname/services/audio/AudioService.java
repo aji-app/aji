@@ -396,6 +396,14 @@ public class AudioService extends LifecycleService {
         mAudioBackend.seekTo(position);
     }
 
+    private void playbackControlRemoveSongFromQueue(long songId) {
+        Song song = mCurrentSongs.remove(songId);
+        if (song != null) {
+            SongMedia media = new SongMedia(song);
+            mAudioBackend.removeSongFromQueue(media);
+        }
+    }
+
     private LiveData<List<Song>> playbackControlGetQueue() {
         return mCurrentQueue;
     }
@@ -497,6 +505,10 @@ public class AudioService extends LifecycleService {
 
         public void seekTo(long position) {
             playbackControlSeekTo(position);
+        }
+
+        public void removeSongFromQueue(long songId) {
+            playbackControlRemoveSongFromQueue(songId);
         }
     }
 

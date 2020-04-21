@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
@@ -114,6 +115,8 @@ public interface AudioBackend {
      * @param position the position in millis to seek to
      */
     void seekTo(long position);
+
+    void removeSongFromQueue(Media media);
 
     interface Media {
         @Nullable

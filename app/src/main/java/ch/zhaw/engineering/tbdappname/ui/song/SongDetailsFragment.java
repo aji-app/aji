@@ -92,17 +92,19 @@ public class SongDetailsFragment extends Fragment {
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
                 mSong = dao.getSong(mSongId);
-                getActivity().runOnUiThread(() -> {
-                    mSong.observe(getViewLifecycleOwner(), song -> {
-                        mBinding.songTitle.setText(song.getTitle());
-                        mBinding.songArtist.setText(song.getArtist());
-                        mBinding.songAlbum.setText(song.getAlbum());
-                        mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
-                        if (song.getAlbumArtPath() != null) {
-                            Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
-                        }
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        mSong.observe(getViewLifecycleOwner(), song -> {
+                            mBinding.songTitle.setText(song.getTitle());
+                            mBinding.songArtist.setText(song.getArtist());
+                            mBinding.songAlbum.setText(song.getAlbum());
+                            mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+                            if (song.getAlbumArtPath() != null) {
+                                Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                            }
+                        });
                     });
-                });
+                }
             });
         }
     }

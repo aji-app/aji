@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +40,11 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private boolean mEditMode = false;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
-        this(items, listener, playlistId, true, dragListener);
+        this(items, listener, playlistId, dragListener != null, dragListener);
+    }
+
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, OnTouchCallbacks dragListener) {
+        this(items, listener, null, dragListener != null, dragListener);
     }
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener) {
@@ -159,21 +164,33 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     @Override
     public void onItemDismiss(int position) {
-        if (mMode == Mode.PLAYLIST) {
-            final Song songToBeRemoved = mValues.get(position);
-            Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());
-            Snackbar snackbar = Snackbar
-                    .make(mRecyclerView, R.string.song_removed_playlist, Snackbar.LENGTH_SHORT)
-                    .setAction(R.string.undo, view -> {
-                        mValues.add(position, songToBeRemoved);
-                        notifyItemInserted(position);
-                        Log.i(TAG, "Restoring " + position + ": " + songToBeRemoved.getTitle());
-                        mRecyclerView.scrollToPosition(position);
-                    });
-            snackbar.show();
-            mValues.remove(position);
-            notifyItemRemoved(position);
+        if (mDragStartListener != null) {
+            mDragStartListener.onItemDismiss(position);
         }
+    }
+
+    public void dismissWithSnackbar(int position, @StringRes int text, OnItemDismissedCallback callback) {
+        final Song songToBeRemoved = mValues.get(position);
+        Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());
+        Snackbar snackbar = Snackbar
+                .make(mRecyclerView, text, Snackbar.LENGTH_SHORT)
+                .setAction(R.string.undo, view -> {
+                    mValues.add(position, songToBeRemoved);
+                    notifyItemInserted(position);
+                    Log.i(TAG, "Restoring " + position + ": " + songToBeRemoved.getTitle());
+                    mRecyclerView.scrollToPosition(position);
+                }).addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        if (callback != null) {
+                            callback.onItemDismissedCompletely(songToBeRemoved);
+                        }
+                    }
+                });
+        snackbar.show();
+        mValues.remove(position);
+        notifyItemRemoved(position);
     }
 
     public Pair<Integer, List<Long>> getModifiedPlaylist() {
@@ -209,10 +226,18 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
     /* package */ static class SimpleItemTouchHelperCallback extends SwipeToDeleteCallback {
         private final ItemTouchHelperAdapter mAdapter;
+        private final int mDragFlags;
+        private final int mSwipeFlags;
 
-        public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, Context context) {
+        public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, Context context, int dragFlags, int swipeFlags) {
             super(context);
             mAdapter = adapter;
+            mDragFlags = dragFlags;
+            mSwipeFlags = swipeFlags;
+        }
+
+        public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, Context context) {
+            this(adapter, context, ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.START);
         }
 
         @Override
@@ -232,9 +257,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
         @Override
         public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            int swipeFlags = ItemTouchHelper.START;
-            return makeMovementFlags(dragFlags, swipeFlags);
+            return makeMovementFlags(mDragFlags, mSwipeFlags);
         }
 
         @Override
@@ -254,6 +277,10 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         ALL_SONGS, PLAYLIST
     }
 
+    public interface OnItemDismissedCallback {
+        void onItemDismissedCompletely(Song song);
+    }
+
     public interface OnTouchCallbacks {
 
         /**
@@ -262,5 +289,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
          * @param viewHolder The holder of the view to drag.
          */
         void onStartDrag(RecyclerView.ViewHolder viewHolder);
+
+        void onItemDismiss(int position);
     }
 }

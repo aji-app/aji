@@ -24,13 +24,14 @@ import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Playlist;
 import ch.zhaw.engineering.tbdappname.services.database.entity.RadioStation;
 import ch.zhaw.engineering.tbdappname.services.database.entity.Song;
+import ch.zhaw.engineering.tbdappname.ui.song.list.QueueSongListFragment;
 import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.tbdappname.services.audio.NotificationManager.SHUTDOWN_INTENT;
 import static java.util.Collections.emptyList;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
@@ -152,6 +153,13 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         super.onDestroy();
         if (mBound) {
             unbindService(mAudioServiceConnection);
+        }
+    }
+
+    @Override
+    public void removeSongFromQueue(long songId) {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().removeSongFromQueue(songId);
         }
     }
 

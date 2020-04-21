@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 
@@ -39,6 +40,11 @@ public class PlaylistSongListFragment extends SongListFragment {
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         super.onStartDrag(viewHolder);
         mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        mAdapter.dismissWithSnackbar(position, R.string.song_removed_playlist, null);
     }
 
     @Override

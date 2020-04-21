@@ -91,6 +91,11 @@ public abstract class SongListFragment extends TbdListFragment implements SongRe
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
     }
 
+
+    @Override
+    public void onItemDismiss(int position) {
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

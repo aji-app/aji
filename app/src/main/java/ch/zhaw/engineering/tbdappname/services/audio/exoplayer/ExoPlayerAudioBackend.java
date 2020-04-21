@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -22,7 +23,9 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 
@@ -242,6 +245,18 @@ public class ExoPlayerAudioBackend implements AudioBackend {
             mAudioHandler.post(() -> {
                 mPlayer.seekTo(position);
             });
+        }
+    }
+
+    @Override
+    public void removeSongFromQueue(Media media) {
+        for (int index = 0; index < mConcatenatingMediaSource.getSize(); index++) {
+            MediaSource source = mConcatenatingMediaSource.getMediaSource(index);
+            if (source.getTag() == media.getTag()) {
+                Log.i(TAG, "Removing Source with path " + media.getPath());
+                mConcatenatingMediaSource.removeMediaSource(index);
+                break;
+            }
         }
     }
 
