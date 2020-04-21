@@ -77,15 +77,25 @@ public class ExpandedControlsFragment extends Fragment {
                     case PAUSED:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
+                        enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                        enableImageView(mBinding.persistentControlsButtons.btnNext);
                         break;
                     case PLAYING:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
+                        enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                        enableImageView(mBinding.persistentControlsButtons.btnNext);
                         break;
                     case STOPPED:
                     case INITIAL:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        disableImageView(mBinding.persistentControlsButtons.btnPlaypause, true);
+                        disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
+                        disableImageView(mBinding.persistentControlsButtons.btnNext, true);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(false);
+
                         break;
                 }
             });
@@ -122,6 +132,9 @@ public class ExpandedControlsFragment extends Fragment {
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
                     mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(info.getAlbum());
                     mBinding.persistentControlsSonginfo.songArtistExpanded.setText(info.getArtist());
+                    mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setEnabled(true);
+                    mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setEnabled(true);
+                    mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setEnabled(true);
                     if (info.isRadio()) {
                         mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
@@ -129,8 +142,8 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.seekbar.setIndeterminate(true);
                         mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(0);
                         mBinding.persistentControlsSeebar.seekbar.setBackground(null);
-                        disableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                        disableImageView(mBinding.persistentControlsButtons.btnNext);
+                        disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
+                        disableImageView(mBinding.persistentControlsButtons.btnNext, true);
                     } else {
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
                         mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.VISIBLE);
@@ -151,6 +164,9 @@ public class ExpandedControlsFragment extends Fragment {
                     mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
                     mBinding.persistentControlsSeebar.timerTotal.setText(null);
                     mBinding.persistentControlsSeebar.timerElapsed.setText(null);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, true);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, true);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat, true);
                 }
             });
 
@@ -158,7 +174,7 @@ public class ExpandedControlsFragment extends Fragment {
                 ImageButton repeatMode = mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat;
                 switch (mode) {
                     case REPEAT_OFF:
-                        disableImageView(repeatMode);
+                        disableImageView(repeatMode, false);
                         repeatMode.setImageResource(R.drawable.ic_repeat);
                         break;
                     case REPEAT_ALL:
@@ -176,7 +192,7 @@ public class ExpandedControlsFragment extends Fragment {
                 if (enabled) {
                     enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
                 } else {
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
                 }
             });
 
@@ -184,7 +200,7 @@ public class ExpandedControlsFragment extends Fragment {
                 if (enabled) {
                     enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
                 } else {
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
                 }
             });
 
@@ -204,11 +220,14 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsSeebar.timerElapsed.setText(getMillisAsTime(progress));
     }
 
-    private void disableImageView(ImageView imageView) {
+    private void disableImageView(ImageView imageView, boolean disable) {
         if (getContext() != null) {
             ImageViewCompat.setImageTintList(
                     imageView,
                     ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.disabledColor)));
+        }
+        if (disable) {
+            imageView.setEnabled(false);
         }
     }
 
@@ -218,6 +237,7 @@ public class ExpandedControlsFragment extends Fragment {
                     imageView,
                     ColorStateList.valueOf(getColorFromAttr(getContext(), R.attr.colorPrimary)));
         }
+        imageView.setEnabled(true);
     }
 
     public interface ExpandedControlsFragmentListener extends AudioControlListener {

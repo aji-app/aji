@@ -226,7 +226,6 @@ public class AudioService extends LifecycleService {
     private void updateNextSong() {
         mCurrentPositionTrackingThread.post(() -> {
             mAutoQueueSong = mSongRepository.getRandomSong();
-            addSongToCurrentSongs(mAutoQueueSong);
         });
     }
 
@@ -356,6 +355,7 @@ public class AudioService extends LifecycleService {
         if (mAutoQueueRandomTrack) {
             mAudioBackend.next(new SongMedia(mAutoQueueSong), didQueueSong -> {
                 if (didQueueSong) {
+                    addSongToCurrentSongs(mAutoQueueSong);
                     updateCurrentSong();
                     updateNextSong();
                 }
@@ -391,10 +391,8 @@ public class AudioService extends LifecycleService {
 
     private boolean playbackControlToggleAutoQueue() {
         mAutoQueueRandomTrack = !mAutoQueueRandomTrack;
-        if (mAutoQueueRandomTrack) {
+        if (mAutoQueueRandomTrack && mAutoQueueSong == null) {
             updateNextSong();
-        } else {
-            resetAutoQueue();
         }
         return mAutoQueueRandomTrack;
     }

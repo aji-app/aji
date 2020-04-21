@@ -183,7 +183,7 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                 mAudioHandler.postDelayed(() -> {
                     mPlayer.next();
                     callback.receiveValue(true);
-                }, 50);
+                }, 100);
             } else {
                 mPlayer.next();
                 callback.receiveValue(false);
