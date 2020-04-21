@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/persistent_controls_albumcover"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="200dp"
         android:src="@drawable/ic_placeholder_image"
         android:contentDescription="@string/contentDescription_album_art"/>
 
@@ -28,6 +28,13 @@
     <include
         android:id="@+id/persistent_controls_playbackmodes"
         layout="@layout/persistent_controls_playbackmodes" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/current_queue_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
 
 
 </LinearLayout>

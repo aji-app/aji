@@ -19,9 +19,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.net.MalformedURLException;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
@@ -35,6 +37,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
+import static java.util.Collections.emptyList;
+
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
     private final static String TAG = "AudioService";
@@ -46,14 +50,15 @@ public class AudioService extends LifecycleService {
     private final MutableLiveData<PlayState> mCurrentState = new MutableLiveData<>(PlayState.INITIAL);
     private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
     private final MutableLiveData<SongInformation> mCurrentSong = new MutableLiveData<>(null);
+    private final MutableLiveData<List<Song>> mCurrentQueue = new MutableLiveData<>(emptyList());
     private String mCurrentPlaylistName = null;
 
     private Handler mCurrentPositionTrackingThread;
     private Handler mRadioStationInfoThread;
     private NotificationManager mNotificationManager;
 
-    private final Dictionary<Long, Song> mCurrentSongs = new Hashtable<>();
-    private final Dictionary<Long, RadioStation> mCurrentRadioStations = new Hashtable<>();
+    private final Map<Long, Song> mCurrentSongs = new LinkedHashMap<>();
+    private final Map<Long, RadioStation> mCurrentRadioStations = new HashMap<>();
     private MediaSessionCompat mMediaSession;
 
     private final IntentFilter mNoisyAudioIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
@@ -221,7 +226,7 @@ public class AudioService extends LifecycleService {
     private void updateNextSong() {
         mCurrentPositionTrackingThread.post(() -> {
             mAutoQueueSong = mSongRepository.getRandomSong();
-            mCurrentSongs.put(mAutoQueueSong.getSongId(), mAutoQueueSong);
+            addSongToCurrentSongs(mAutoQueueSong);
         });
     }
 
@@ -294,7 +299,14 @@ public class AudioService extends LifecycleService {
     private void playbackControlQueueSong(Song song) {
         SongMedia media = new SongMedia(song);
         mAudioBackend.queueFile(media);
+        addSongToCurrentSongs(song);
+    }
+
+    private void addSongToCurrentSongs(Song song) {
         mCurrentSongs.put(song.getSongId(), song);
+        List<Song> songs = new ArrayList<>(mCurrentSongs.size());
+        songs.addAll(mCurrentSongs.values());
+        mCurrentQueue.postValue(songs);
     }
 
     private void playbackControlPlayRadioStation(RadioStation station) {
@@ -384,7 +396,16 @@ public class AudioService extends LifecycleService {
         mAudioBackend.seekTo(position);
     }
 
+    private LiveData<List<Song>> playbackControlGetQueue() {
+        return mCurrentQueue;
+    }
+
     public class AudioServiceBinder extends Binder {
+
+        public LiveData<List<Song>> getCurrentQueue() {
+            return playbackControlGetQueue();
+        }
+
         public void pause() {
             playbackControlPause();
         }

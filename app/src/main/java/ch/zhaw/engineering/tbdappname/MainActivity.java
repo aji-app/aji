@@ -57,7 +57,7 @@ public class MainActivity extends FragmentInteractionActivity {
         mAudioFileContentObserver.register();
 
         // TODO: Only sync on startup if user did not disable this functionality
-//        mAudioFileContentObserver.onChange(false);
+        mAudioFileContentObserver.onChange(false);
         RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());

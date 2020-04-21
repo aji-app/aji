@@ -21,6 +21,7 @@ import ch.zhaw.engineering.tbdappname.AudioControlListener;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.tbdappname.services.audio.AudioService;
+import ch.zhaw.engineering.tbdappname.ui.song.list.QueueSongListFragment;
 import ch.zhaw.engineering.tbdappname.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
@@ -48,6 +49,10 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
         mSeekbarBackground =  mBinding.persistentControlsSeebar.seekbar.getBackground();
+
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.current_queue_container, QueueSongListFragment.newInstance())
+                .commit();
 
         return mBinding.getRoot();
     }

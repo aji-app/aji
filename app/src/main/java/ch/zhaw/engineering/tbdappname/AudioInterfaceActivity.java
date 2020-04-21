@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.tbdappname.services.audio.NotificationManager.SHUTDOWN_INTENT;
+import static java.util.Collections.emptyList;
 
 public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener {
     private static final String TAG = "AudioInterfaceActivity";
@@ -41,6 +42,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     private final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<List<Song>> mCurrentQueue = new MutableLiveData<>(emptyList());
     private final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
 
 
@@ -54,6 +56,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
             serviceBinder.getCurrentSong().observe(AudioInterfaceActivity.this, mCurrentSong::setValue);
             serviceBinder.getPlayState().observe(AudioInterfaceActivity.this, mCurrentState::setValue);
             serviceBinder.getCurrentPosition().observe(AudioInterfaceActivity.this, mCurrentPosition::setValue);
+            serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, mCurrentQueue::setValue);
             mBound = true;
         }
 
@@ -292,6 +295,10 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     private void bindToAudioService() {
         Intent serviceIntent = new Intent(this, AudioService.class);
         bindService(serviceIntent, mAudioServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public LiveData<List<Song>> getCurrentQueue() {
+        return mCurrentQueue;
     }
 
     @Value

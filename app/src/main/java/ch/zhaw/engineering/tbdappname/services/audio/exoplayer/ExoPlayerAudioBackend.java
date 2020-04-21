@@ -27,6 +27,7 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.services.audio.backend.AudioBackend;
 
 import static android.os.Process.THREAD_PRIORITY_URGENT_AUDIO;
+import static java.util.Collections.emptyList;
 
 
 public class ExoPlayerAudioBackend implements AudioBackend {
