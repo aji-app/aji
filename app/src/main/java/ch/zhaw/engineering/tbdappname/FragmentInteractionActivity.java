@@ -17,6 +17,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,9 +180,23 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onSongDelete(long songId) {
         AsyncTask.execute(() -> {
-            Song song = mSongDao.getSongById(songId);
-            Log.i(TAG, "onSongDelete: " + song.getTitle());
-            mSongDao.deleteSongById(songId);
+            // TODO: Decide if using alert would be better here
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), R.string.song_removed_from_library, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                    }).addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            if (event != DISMISS_EVENT_ACTION) {
+                                Song song = mSongDao.getSongById(songId);
+                                Log.i(TAG, "onSongDelete: " + song.getTitle());
+                                mSongDao.deleteSongById(songId);
+                            }
+                        }
+                    });
+            snackbar.show();
+
         });
     }
 
