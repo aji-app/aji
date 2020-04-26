@@ -8,8 +8,15 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import lombok.Value;
+
 public class AudioFileContentObserver extends ContentObserver {
     private static final String TAG = "AudioFileObserver";
+    private final ExecutorService mExecutorService;
+    private Handler mHandler;
     private final Context mContext;
     private final static long WAIT_TIME = 15 * 1000;
 
@@ -17,7 +24,9 @@ public class AudioFileContentObserver extends ContentObserver {
 
     public AudioFileContentObserver(Handler handler, Context context) {
         super(handler);
+        mHandler = handler;
         mContext = context;
+        mExecutorService = Executors.newFixedThreadPool(1);
     }
 
     @Override
@@ -32,7 +41,7 @@ public class AudioFileContentObserver extends ContentObserver {
             mWaitForLotsOfUpdates.cancel(true);
         }
         mWaitForLotsOfUpdates = new BackgroundSyncTask();
-        mWaitForLotsOfUpdates.execute(mContext);
+        mWaitForLotsOfUpdates.executeOnExecutor(mExecutorService, new BackgroundArgs(mContext, mHandler));
     }
 
     public void register() {
@@ -43,10 +52,15 @@ public class AudioFileContentObserver extends ContentObserver {
         mContext.getContentResolver().unregisterContentObserver(this);
     }
 
-    private static class BackgroundSyncTask extends AsyncTask<Context, Void, Void> {
+    @Value
+    private static class BackgroundArgs {
+        Context context;
+        Handler handler;
+    }
+    private static class BackgroundSyncTask extends AsyncTask<BackgroundArgs, Void, Void> {
 
         @Override
-        protected Void doInBackground(Context... contexts) {
+        protected Void doInBackground(BackgroundArgs... contexts) {
             if (contexts.length == 0) {
                 return null;
             }
@@ -54,7 +68,7 @@ public class AudioFileContentObserver extends ContentObserver {
                 Log.i(TAG, "Wait for more updates");
                 Thread.sleep(WAIT_TIME);
                 Log.i(TAG, "Triggering Synchronization");
-                StorageHelper.synchronizeMediaStoreSongs(contexts[0]);
+                StorageHelper.synchronizeMediaStoreSongs(contexts[0].context, contexts[0].handler);
             } catch (InterruptedException e) {
                 // This happens when we cancel the task
                 Log.i(TAG, "More updates arrived");

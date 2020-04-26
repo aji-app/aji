@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -121,6 +122,9 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             Song song = mSongDao.getSongById(songId);
             playMusic(song, true);
             Log.i(TAG, "onSongQueue: " + song.getTitle());
+            runOnUiThread(() -> {
+                Toast.makeText(this, getResources().getString(R.string.song_queued, song.getTitle()), Toast.LENGTH_SHORT).show();
+            });
         });
     }
 

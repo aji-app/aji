@@ -5,7 +5,8 @@
     android:gravity="center_horizontal"
     android:orientation="horizontal"
     android:layout_marginStart="40dp"
-    android:layout_marginEnd="40dp">
+    android:layout_marginEnd="40dp"
+    android:layout_marginBottom="10dp">
 
     <ch.zhaw.engineering.aji.view.ImageButton
         android:id="@+id/playbackmode_repeat"

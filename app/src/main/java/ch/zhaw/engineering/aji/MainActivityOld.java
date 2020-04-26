@@ -51,7 +51,7 @@ public class MainActivityOld extends AppCompatActivity {
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
             if (mHasPermission.getValue() != null && mHasPermission.getValue()) {
-                StorageHelper.synchronizeMediaStoreSongs(this);
+                StorageHelper.synchronizeMediaStoreSongs(this, new Handler());
             }
         });
 

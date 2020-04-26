@@ -1,8 +1,10 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +49,7 @@ public class MainActivity extends FragmentInteractionActivity {
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
     private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
-    private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
+    private AudioFileContentObserver mAudioFileContentObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,10 @@ public class MainActivity extends FragmentInteractionActivity {
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
         // TODO: Only use this if user did not disable this functionality
+        HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
+        mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
         mAudioFileContentObserver.register();
 
         // TODO: Only sync on startup if user did not disable this functionality

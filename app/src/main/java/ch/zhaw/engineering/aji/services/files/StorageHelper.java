@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -23,8 +24,8 @@ public class StorageHelper {
 
     private static final String TAG = "StorageHelper";
 
-    public static void synchronizeMediaStoreSongs(Context context) {
-        AsyncTask.execute(() -> {
+    public static void synchronizeMediaStoreSongs(Context context, Handler handler) {
+        handler.post(() -> {
             Log.i(TAG, "Starting synchronization");
             SongDao songRepository = SongDao.getInstance(context);
             // Add new songs
