@@ -112,7 +112,7 @@ public class NotificationManager {
         return builder
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.mipmap.universal_round)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(iconBig)
                 // Add media control buttons that invoke intents in your media service
                 .addAction(R.drawable.ic_prev, "Previous", getControlIntent(AudioService.AudioServiceCommand.PREVIOUS)) // #0
