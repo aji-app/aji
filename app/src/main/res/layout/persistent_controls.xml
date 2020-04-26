@@ -64,7 +64,7 @@
 
         </LinearLayout>
 
-        <ch.zhaw.engineering.tbdappname.view.ImageButton
+        <ch.zhaw.engineering.aji.view.ImageButton
             android:id="@+id/persistent_playpause"
             android:layout_width="40dp"
             android:layout_height="40dp"

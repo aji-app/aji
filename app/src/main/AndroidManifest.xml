@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ch.zhaw.engineering.tbdappname">
+    package="ch.zhaw.engineering.aji">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
         <activity
-            android:name=".MainActivity"
+            android:name="ch.zhaw.engineering.aji.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.App.PurpleLime.NoActionBar">
             <intent-filter>
@@ -27,17 +27,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivityOld"
+            android:name="ch.zhaw.engineering.aji.MainActivityOld"
             android:exported="true" />
-        <activity android:name=".DirectorySelectionActivity" />
-        <activity android:name=".PlsFileSelectionActivity" />
+        <activity android:name="ch.zhaw.engineering.aji.DirectorySelectionActivity" />
+        <activity android:name="ch.zhaw.engineering.aji.PlsFileSelectionActivity" />
 
         <service
-            android:name=".services.files.AudioFileScanner"
+            android:name="ch.zhaw.engineering.aji.services.files.AudioFileScanner"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".services.audio.AudioService"
+            android:name="ch.zhaw.engineering.aji.services.audio.AudioService"
             android:enabled="true"
             android:exported="false" />
     </application>

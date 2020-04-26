@@ -36,7 +36,7 @@
 
     </LinearLayout>
 
-    <ch.zhaw.engineering.tbdappname.view.ImageButton
+    <ch.zhaw.engineering.aji.view.ImageButton
         android:id="@+id/radiostation_item_play"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -47,7 +47,7 @@
         android:src="@drawable/ic_play"
         android:contentDescription="@string/contentDescription_play_radiostation"/>
 
-    <ch.zhaw.engineering.tbdappname.view.Button
+    <ch.zhaw.engineering.aji.view.Button
         android:id="@+id/radiostation_item_overflow"
         android:layout_width="40dp"
         android:layout_height="match_parent"

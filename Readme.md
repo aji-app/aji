@@ -1,4 +1,4 @@
-# TBD App Name
+# Aji
 
 Aji is a [MIT](LICENSE) licensed MP3/AAC/FLAC/PCM player for Android with the following features:
 * multiple playlist support

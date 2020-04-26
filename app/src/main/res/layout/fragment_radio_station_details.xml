@@ -18,14 +18,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ch.zhaw.engineering.tbdappname.view.EditTextView
+            <ch.zhaw.engineering.aji.view.EditTextView
                 android:id="@+id/radiostation_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/hint_name" />
 
-            <ch.zhaw.engineering.tbdappname.view.ImageButton
+            <ch.zhaw.engineering.aji.view.ImageButton
                 android:id="@+id/radiostation_edit"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -38,7 +38,7 @@
         </LinearLayout>
 
 
-        <ch.zhaw.engineering.tbdappname.view.EditTextView
+        <ch.zhaw.engineering.aji.view.EditTextView
             android:id="@+id/radiostation_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                     android:text="@string/genres"
                     android:textSize="20sp" />
 
-                <ch.zhaw.engineering.tbdappname.view.ImageButton
+                <ch.zhaw.engineering.aji.view.ImageButton
                     android:id="@+id/genre_add_button"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
