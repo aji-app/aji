@@ -30,6 +30,7 @@ import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
@@ -205,6 +206,7 @@ public class MainActivity extends FragmentInteractionActivity {
                     navController.navigate(R.id.action_nav_filters_to_song_details, FilterFragmentDirections.actionNavFiltersToSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_settings:
+                    navController.navigate(R.id.action_nav_settings_to_nav_song_details, PreferenceFragmentDirections.actionNavSettingsToNavSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_playlist_details:
                     navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());

@@ -60,7 +60,11 @@
     <fragment
         android:id="@+id/nav_settings"
         android:name="ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment"
-        android:label="@string/menu_settings" />
+        android:label="@string/menu_settings" >
+        <action
+            android:id="@+id/action_nav_settings_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
+    </fragment>
     <fragment
         android:id="@+id/nav_playlist_details"
         android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragment"
