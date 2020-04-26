@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
 
@@ -102,7 +103,8 @@ public class NotificationManager {
         return builder
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_app_icon)
+                .setSmallIcon(R.mipmap.universal_round)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_icon))
                 // Add media control buttons that invoke intents in your media service
                 .addAction(R.drawable.ic_prev, "Previous", getControlIntent(AudioService.AudioServiceCommand.PREVIOUS)) // #0
                 .addAction(AudioService.PlayState.PLAYING == currentState ? R.drawable.ic_pause : R.drawable.ic_play, "Pause", getControlIntent(AudioService.AudioServiceCommand.PLAYPAUSE))  // #1

@@ -29,7 +29,7 @@
             @style/Theme.App.Widget.ListItemTextViewSecondary
         </item>
 
-        <item name="app_icon_nav">@mipmap/universal_round</item>
+        <item name="app_icon_nav">@mipmap/universal_round_light</item>
 
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
     </style>
