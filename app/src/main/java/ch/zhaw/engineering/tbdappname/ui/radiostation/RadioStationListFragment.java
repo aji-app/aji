@@ -19,10 +19,10 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
-import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
+import ch.zhaw.engineering.tbdappname.ui.ListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
-public class RadioStationListFragment extends TbdListFragment {
+public class RadioStationListFragment extends ListFragment {
     private static final String TAG = "RadioListFragment";
     private RadioStationFragmentInteractionListener mListener;
     private RadioStationRecyclerViewAdapter mAdapter;

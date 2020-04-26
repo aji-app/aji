@@ -6,8 +6,8 @@ import android.util.Log;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TbdMediaSessionCallback extends MediaSessionCompat.Callback {
-    private final static String TAG = "TbdMediaSessionCallback";
+public class AjiMediaSessionCallback extends MediaSessionCompat.Callback {
+    private final static String TAG = "AjiMediaSessionCallback";
     private final AudioService.AudioServiceBinder mBinder;
 
     @Override

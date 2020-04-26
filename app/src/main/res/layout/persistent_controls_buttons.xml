@@ -7,7 +7,7 @@
     android:gravity="center_horizontal"
     android:orientation="horizontal">
 
-    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+    <ch.zhaw.engineering.tbdappname.view.ImageButton
         android:id="@+id/btn_previous"
         android:layout_width="@dimen/expanded_controls_button_size"
         android:layout_height="@dimen/expanded_controls_button_size"
@@ -15,7 +15,7 @@
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_prev" />
 
-    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+    <ch.zhaw.engineering.tbdappname.view.ImageButton
         android:id="@+id/btn_playpause"
         android:layout_width="@dimen/expanded_controls_button_size"
         android:layout_height="@dimen/expanded_controls_button_size"
@@ -23,7 +23,7 @@
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_play" />
 
-    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+    <ch.zhaw.engineering.tbdappname.view.ImageButton
         android:id="@+id/btn_next"
         android:layout_width="@dimen/expanded_controls_button_size"
         android:layout_height="@dimen/expanded_controls_button_size"

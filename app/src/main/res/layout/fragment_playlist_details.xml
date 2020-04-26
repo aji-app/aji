@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             />
 
-        <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+        <ch.zhaw.engineering.tbdappname.view.ImageButton
             android:id="@+id/playlist_edit"
             android:layout_width="40dp"
             android:layout_height="40dp"

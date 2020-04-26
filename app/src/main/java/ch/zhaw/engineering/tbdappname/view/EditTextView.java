@@ -13,9 +13,6 @@ import android.widget.LinearLayout;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.databinding.CustomEdittextviewBinding;
 
-/**
- * TODO: document your custom view class.
- */
 public class EditTextView extends LinearLayout {
     private boolean mEditMode;
     private CustomEdittextviewBinding mBinding;

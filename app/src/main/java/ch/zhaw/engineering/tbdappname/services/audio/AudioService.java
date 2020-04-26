@@ -142,7 +142,7 @@ public class AudioService extends LifecycleService {
     private void setupMediaSession() {
         mMediaSession = new MediaSessionCompat(this, "TBD_APP_MEDIA_SESSION");
         mMediaSession.setActive(true);
-        mMediaSession.setCallback(new TbdMediaSessionCallback(mBinder));
+        mMediaSession.setCallback(new AjiMediaSessionCallback(mBinder));
     }
 
     private void setupBackgroundThreads() {

@@ -8,17 +8,17 @@
         <attr name="android:textSize" />
     </declare-styleable>
 
-    <declare-styleable name="TbdImageButton">
+    <declare-styleable name="ImageButton">
         <attr name="android:tint" />
     </declare-styleable>
 
-    <declare-styleable name="TbdButton">
+    <declare-styleable name="Button">
         <attr name="android:textColor" />
         <attr name="android:background" />
         <attr name="drawableTint" />
     </declare-styleable>
 
-    <declare-styleable name="TbdTextView">
+    <declare-styleable name="TextView">
         <attr name="drawableTint" />
     </declare-styleable>
 </resources>

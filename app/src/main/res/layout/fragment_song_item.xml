@@ -51,7 +51,7 @@
 
     </LinearLayout>
 
-    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+    <ch.zhaw.engineering.tbdappname.view.ImageButton
         android:id="@+id/song_item_favorite"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -62,7 +62,7 @@
         android:src="@drawable/ic_not_favorite"
         android:contentDescription="@string/contentDescription_toggle_favorite"/>
 
-    <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+    <ch.zhaw.engineering.tbdappname.view.ImageButton
         android:id="@+id/song_item_draghandle"
         android:layout_width="40dp"
         android:layout_height="match_parent"
@@ -74,7 +74,7 @@
         android:visibility="gone"
         android:contentDescription="@string/contentDescription_drag_to_reorder_songs_in_playlist"/>
 
-    <ch.zhaw.engineering.tbdappname.view.TbdButton
+    <ch.zhaw.engineering.tbdappname.view.Button
         android:id="@+id/song_item_overflow"
         android:layout_width="40dp"
         android:layout_height="match_parent"

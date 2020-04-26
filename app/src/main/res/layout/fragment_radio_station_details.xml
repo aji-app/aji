@@ -25,7 +25,7 @@
                 android:layout_weight="1"
                 android:hint="@string/hint_name" />
 
-            <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+            <ch.zhaw.engineering.tbdappname.view.ImageButton
                 android:id="@+id/radiostation_edit"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -65,7 +65,7 @@
                     android:text="@string/genres"
                     android:textSize="20sp" />
 
-                <ch.zhaw.engineering.tbdappname.view.TbdImageButton
+                <ch.zhaw.engineering.tbdappname.view.ImageButton
                     android:id="@+id/genre_add_button"
                     android:layout_width="40dp"
                     android:layout_height="40dp"

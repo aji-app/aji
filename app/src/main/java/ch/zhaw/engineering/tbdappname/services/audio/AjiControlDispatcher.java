@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.Player;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TbdControlDispatcher implements ControlDispatcher {
+public class AjiControlDispatcher implements ControlDispatcher {
 
     private final AudioService.AudioServiceBinder mBinder;
 

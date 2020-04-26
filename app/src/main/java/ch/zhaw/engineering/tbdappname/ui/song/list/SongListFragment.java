@@ -19,7 +19,7 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
 
-import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
+import ch.zhaw.engineering.tbdappname.ui.ListFragment;
 
 /**
  * A fragment representing a list of Songs.
@@ -27,7 +27,7 @@ import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
  * Activities containing this fragment MUST implement the {@link SongListFragmentListener}
  * interface.
  */
-public abstract class SongListFragment extends TbdListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
+public abstract class SongListFragment extends ListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
     private static final String TAG = "SongListFragment";
     private static final String ARG_SHOW_FAVORITES = "show-favorites";
 

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ch.zhaw.engineering.tbdappname.R;
 
-public class TbdListFragment extends Fragment {
+public class ListFragment extends Fragment {
 
     protected RecyclerView mRecyclerView;
 

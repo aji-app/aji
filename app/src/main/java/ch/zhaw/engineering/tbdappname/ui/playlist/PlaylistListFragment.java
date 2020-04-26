@@ -19,10 +19,10 @@ import java.util.List;
 import ch.zhaw.engineering.tbdappname.R;
 import ch.zhaw.engineering.tbdappname.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.tbdappname.ui.viewmodel.AppViewModel;
-import ch.zhaw.engineering.tbdappname.ui.TbdListFragment;
+import ch.zhaw.engineering.tbdappname.ui.ListFragment;
 import ch.zhaw.engineering.tbdappname.util.SwipeToDeleteCallback;
 
-public class PlaylistListFragment extends TbdListFragment {
+public class PlaylistListFragment extends ListFragment {
     private static final String TAG = "PlaylistListFragment";
     private PlaylistFragmentListener mListener;
     private PlaylistRecyclerViewAdapter mAdapter;
