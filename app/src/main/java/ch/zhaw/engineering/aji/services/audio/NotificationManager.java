@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
@@ -11,6 +12,10 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.LiveData;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import ch.zhaw.engineering.aji.MainActivityOld;
 import ch.zhaw.engineering.aji.R;
@@ -99,12 +104,16 @@ public class NotificationManager {
         boolean shouldShowPosition = currentState != AudioService.PlayState.STOPPED;
         long currentPosition = mCurrentPosition.getValue() == null ? 0 : mCurrentPosition.getValue();
         String currentPlaylistName = currentSongInformation == null || currentSongInformation.getPlaylistName() == null ? "" : (" - " + currentSongInformation.getPlaylistName());
+        Bitmap iconBig = currentSongInformation != null && currentSongInformation.getAlbumPath() != null ?
+                BitmapFactory.decodeFile(currentSongInformation.getAlbumPath()) :
+                BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_icon);
+
 
         return builder
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.mipmap.universal_round)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_icon))
+                .setLargeIcon(iconBig)
                 // Add media control buttons that invoke intents in your media service
                 .addAction(R.drawable.ic_prev, "Previous", getControlIntent(AudioService.AudioServiceCommand.PREVIOUS)) // #0
                 .addAction(AudioService.PlayState.PLAYING == currentState ? R.drawable.ic_pause : R.drawable.ic_play, "Pause", getControlIntent(AudioService.AudioServiceCommand.PLAYPAUSE))  // #1
