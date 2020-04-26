@@ -17,4 +17,8 @@
         <attr name="android:background" />
         <attr name="drawableTint" />
     </declare-styleable>
+
+    <declare-styleable name="TbdTextView">
+        <attr name="drawableTint" />
+    </declare-styleable>
 </resources>

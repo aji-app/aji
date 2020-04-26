@@ -150,6 +150,13 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         hideContextMenu();
                         navigateToSongDetails(songId);
                     }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_delete)
+                    .textId(R.string.delete_song)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onSongDelete(songId);
+                    }).build());
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
                 mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);

@@ -8,41 +8,35 @@ import android.os.Build;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.widget.TextViewCompat;
 
 import ch.zhaw.engineering.tbdappname.R;
 
 import static ch.zhaw.engineering.tbdappname.util.Color.getColorFromAttr;
 
-public class TbdButton extends AppCompatButton {
+public class TbdTextView extends AppCompatTextView {
 
-    public TbdButton(Context context) {
+    public TbdTextView(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public TbdButton(Context context, AttributeSet attrs) {
+    public TbdTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public TbdButton(Context context, AttributeSet attrs, int defStyle) {
+    public TbdTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        setBackground(null);
         final TypedArray attributes = getContext().obtainStyledAttributes(
-                attrs, R.styleable.TbdButton, defStyle, 0);
-        int textColor = attributes.getColor(R.styleable.TbdButton_android_textColor, 0);
-        int background = attributes.getColor(R.styleable.TbdButton_android_background, 0);
-        int tint = attributes.getColor(R.styleable.TbdButton_drawableTint, 0);
+                attrs, R.styleable.TbdTextView, defStyle, 0);
+        int tint = attributes.getColor(R.styleable.TbdTextView_drawableTint, 0);
         attributes.recycle();
-        setTextColor(textColor == 0 ? getColorFromAttr(getContext(), R.attr.colorPrimary) : textColor);
-        if (background != 0) {
-            setBackgroundColor(background);
-        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && tint != 0) {
             Drawable[] drawables = TextViewCompat.getCompoundDrawablesRelative(this);

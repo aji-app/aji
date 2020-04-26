@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.tbdappname.ui.contextmenu;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.widget.TextViewCompat;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -129,12 +131,15 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
             });
             if (currentConfig.getText() != null) {
                 holder.binding.text.setText(currentConfig.getText());
-                holder.binding.image.setContentDescription(currentConfig.getText());
+
+//                holder.binding.image.setContentDescription(currentConfig.getText());
             } else {
                 holder.binding.text.setText(currentConfig.getTextId());
-                holder.binding.image.setContentDescription(mContext.getResources().getString(currentConfig.getTextId()));
+//                holder.binding.image.setContentDescription(mContext.getResources().getString(currentConfig.getTextId()));
             }
-            holder.binding.image.setImageResource(currentConfig.getImageId());
+            Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(currentConfig.getImageId());
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.text, drawableLeft, null, null, null);
+//            holder.binding.image.setImageResource(currentConfig.getImageId());
         }
 
         @Override

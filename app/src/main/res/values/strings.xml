@@ -75,4 +75,5 @@
     <string name="not_playing">Not Playing</string>
     <string name="contentDescription_album_art">Album Art</string>
     <string name="song_removed_from_queue">Song will be removed from the Queue</string>
+    <string name="song_removed_from_library">Song will be removed from Library</string>
 </resources>
