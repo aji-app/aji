@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.ui.directories;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -45,11 +47,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         holder.mNameView.setText(mValues.get(position).getName());
 
         if (!mIsRoot && position == 0) {
-            holder.mImageView.setImageResource(R.drawable.ic_up);
+            Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_up);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
         } else if (holder.mItem.isDirectory()) {
-            holder.mImageView.setImageResource(R.drawable.ic_directory);
+            Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_directory);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
         } else {
-            holder.mImageView.setImageResource(R.drawable.ic_file);
+            Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_file);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
         }
 
         holder.mView.setOnClickListener(v -> {
@@ -60,7 +65,8 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
                     mListener.onDirectoryNavigateDown(holder.mItem);
                 } else {
                     mListener.onFileSelected(holder.mItem);
-                } }
+                }
+            }
         });
         holder.mView.setOnLongClickListener(v -> {
             mListener.onDirectorySelected(holder.mItem);
@@ -76,14 +82,12 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mNameView;
-        final ImageView mImageView;
         DirectoryItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mNameView = view.findViewById(R.id.directory_name);
-            mImageView = view.findViewById(R.id.directory_icon);
         }
 
         @Override

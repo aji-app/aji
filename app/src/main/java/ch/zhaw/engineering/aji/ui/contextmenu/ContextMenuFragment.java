@@ -131,15 +131,11 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
             });
             if (currentConfig.getText() != null) {
                 holder.binding.text.setText(currentConfig.getText());
-
-//                holder.binding.image.setContentDescription(currentConfig.getText());
             } else {
                 holder.binding.text.setText(currentConfig.getTextId());
-//                holder.binding.image.setContentDescription(mContext.getResources().getString(currentConfig.getTextId()));
             }
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(currentConfig.getImageId());
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.text, drawableLeft, null, null, null);
-//            holder.binding.image.setImageResource(currentConfig.getImageId());
         }
 
         @Override
