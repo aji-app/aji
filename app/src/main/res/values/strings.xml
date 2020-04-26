@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TBD App Name</string>
+    <string name="app_name">Aji</string>
     <string name="unknown">&lt;unknown&gt;</string>
     <plurals name="song_count">
         <item quantity="one">%1$d Song</item>

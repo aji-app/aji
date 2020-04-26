@@ -14,8 +14,8 @@
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
-        <item name="primaryTextColor">@color/purplelime_secondaryText</item>
-        <item name="secondaryTextColor">@color/purplelime_primaryText</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
         <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
@@ -29,15 +29,30 @@
             @style/Theme.App.Widget.ListItemTextViewSecondary
         </item>
 
+        <item name="app_icon_nav">@mipmap/universal_round</item>
+
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
     </style>
+
+    <style name="App.Theme.ThemeOverlay.PurpleLime" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+        <item name="disabledColor">@color/purplelime_secondaryText</item>
+    </style>
+
 
     <style name="Theme.App.BottomSheetDialog.PurpleLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
-        <item name="primaryTextColor">@color/purplelime_secondaryText</item>
-        <item name="secondaryTextColor">@color/purplelime_primaryText</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
         <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
@@ -47,8 +62,8 @@
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
-        <item name="primaryTextColor">@color/purplelime_secondaryText</item>
-        <item name="secondaryTextColor">@color/purplelime_primaryText</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
         <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purplelime_primaryText</item>

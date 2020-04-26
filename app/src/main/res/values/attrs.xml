@@ -13,4 +13,5 @@
     <attr name="primaryButtonTheme" format="reference" />
     <attr name="disabledColor" format="reference" />
     <attr name="song_item_background" format="reference" />
+    <attr name="app_icon_nav" format="reference" />
 </resources>
