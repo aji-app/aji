@@ -235,23 +235,18 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
         void setInverted(boolean inverted) {
             Context context = itemView.getContext();
-            if (inverted) {
-                itemView.setBackgroundColor(Color.getColorFromAttr(context, R.attr.colorPrimary));
-                binding.songItemOverflow.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
-                binding.songTitle.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
-                binding.songAlbum.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
-                binding.songArtist.setTextColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
-                ImageViewCompat.setImageTintList(binding.songItemFavorite, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorBackground)));
-                ImageViewCompat.setImageTintList(binding.songItemDraghandle, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorBackground)));
-            } else {
-                itemView.setBackgroundColor(Color.getColorFromAttr(context, android.R.attr.colorBackground));
-                binding.songItemOverflow.setTextColor(Color.getColorFromAttr(context, R.attr.colorPrimary));
-                binding.songTitle.setTextColor(Color.getColorFromAttr(context, R.attr.primaryTextColor));
-                binding.songAlbum.setTextColor(Color.getColorFromAttr(context, R.attr.secondaryTextColor));
-                binding.songArtist.setTextColor(Color.getColorFromAttr(context, R.attr.secondaryTextColor));
-                ImageViewCompat.setImageTintList(binding.songItemFavorite, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorPrimary)));
-                ImageViewCompat.setImageTintList(binding.songItemDraghandle, ColorStateList.valueOf(Color.getColorFromAttr(context, android.R.attr.colorPrimary)));
-            }
+            int primaryColor = Color.getPrimaryColor(context, inverted);
+            int primaryTextColor = Color.getPrimaryTextColor(context, inverted);
+            int secondaryTextColor = Color.getSecondaryTextColor(context, inverted);
+            int backgroundColor = Color.getBackgroundColor(context, inverted);
+
+            itemView.setBackgroundColor(backgroundColor);
+            binding.songItemOverflow.setTextColor(primaryColor);
+            binding.songTitle.setTextColor(primaryTextColor);
+            binding.songAlbum.setTextColor(secondaryTextColor);
+            binding.songArtist.setTextColor(secondaryTextColor);
+            ImageViewCompat.setImageTintList(binding.songItemFavorite, ColorStateList.valueOf(primaryColor));
+            ImageViewCompat.setImageTintList(binding.songItemDraghandle, ColorStateList.valueOf(primaryColor));
         }
 
         @Override

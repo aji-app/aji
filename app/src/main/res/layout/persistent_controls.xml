@@ -5,7 +5,7 @@
     android:id="@+id/persistent_controls"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/persistent_controls_background"
+    android:background="?attr/backgroundColorApp"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
@@ -13,9 +13,11 @@
     >
 
     <LinearLayout
+        android:id="@+id/persistent_controls_visible_part"
         android:layout_width="match_parent"
         android:layout_height="@dimen/persistent_controls_peek_height"
         android:orientation="horizontal"
+        android:background="?attr/backgroundColorInverted"
         android:padding="10dp">
 
         <LinearLayout
@@ -34,7 +36,7 @@
                 android:singleLine="true"
                 android:text="@string/not_playing"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="?attr/primaryTextColor"
+                android:textColor="?attr/primaryTextColorInverted"
                 tools:text="Fake Song 1" />
 
             <LinearLayout
@@ -47,6 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:textColor="?attr/secondaryTextColorInverted"
                     tools:text="Fake Artist" />
 
                 <TextView
@@ -55,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:textColor="?attr/secondaryTextColorInverted"
                     tools:text="Fake Album" />
             </LinearLayout>
 
@@ -65,7 +69,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:gravity=""
-            android:src="@drawable/ic_play" />
+            android:src="@drawable/ic_play"
+            android:tint="?attr/primaryColorInverted"/>
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView

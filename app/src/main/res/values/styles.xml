@@ -1,7 +1,13 @@
 <resources>
-
+    <style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="backgroundColorApp">?android:attr/colorBackground</item>
+        <item name="backgroundColorInverted">?attr/colorPrimary</item>
+        <item name="primaryColorInverted">?attr/backgroundColorApp</item>
+        <item name="primaryTextColorInverted">?attr/backgroundColorApp</item>
+        <item name="secondaryTextColorInverted">?attr/backgroundColorApp</item>
+    </style>
     <!-- Base application theme. -->
-    <style name="Theme.App" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.App.PurpleLime" parent="Theme.App.Base">
         <item name="primaryButtonTheme">
             @style/App.Widget.Button.Primary
         </item>
@@ -23,10 +29,10 @@
             @style/Theme.App.Widget.ListItemTextViewSecondary
         </item>
 
-        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
     </style>
 
-    <style name="Theme.App.BottomSheetDialog" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="Theme.App.BottomSheetDialog.PurpleLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
@@ -37,7 +43,7 @@
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
     </style>
 
-    <style name="Theme.App.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="Theme.App.AlertDialog.PurpleLime" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorPrimary">@color/purplelime_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
         <item name="colorAccent">@color/purplelime_colorAccent</item>
@@ -71,7 +77,7 @@
 
     </style>
 
-    <style name="Theme.App.NoActionBar">
+    <style name="Theme.App.PurpleLime.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

@@ -12,7 +12,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
-    <dimen name="persistent_controls_peek_height">60dp</dimen>
+    <!-- Height of app bar so that bottom sheet hides behind app bar when pulled up -->
+    <dimen name="persistent_controls_peek_height">70dp</dimen>
     <dimen name="expanded_controls_button_size">40dp</dimen>
     <dimen name="details_margin">50dp</dimen>
     <dimen name="button_with_image_padding">5dp</dimen>

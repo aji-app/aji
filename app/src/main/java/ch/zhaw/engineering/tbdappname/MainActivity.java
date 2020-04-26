@@ -1,10 +1,14 @@
 package ch.zhaw.engineering.tbdappname;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,6 +116,17 @@ public class MainActivity extends FragmentInteractionActivity {
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
         });
 
+        Resources r = getResources();
+        final float actionBarHeight = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                48,
+                r.getDisplayMetrics()
+        );
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mBinding.layoutAppBarMain.persistentControls.persistentControlsVisiblePart.getLayoutParams();
+        final int bottomSheetPeekHeight = params.height;
+
+        final LinearLayout bottomSheetPersistentPart = mBinding.layoutAppBarMain.persistentControls.persistentControlsVisiblePart;
+
         persistentPlayPause.setOnClickListener(v -> onPlayPause());
 
         getSupportFragmentManager().beginTransaction()
@@ -142,7 +157,10 @@ public class MainActivity extends FragmentInteractionActivity {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
+                // When sliding make persistent part slowly get as small as the action bar so it gets hidden correctly
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) bottomSheetPersistentPart.getLayoutParams();
+                params.height = (int) (actionBarHeight + ((1 - slideOffset) * (bottomSheetPeekHeight - actionBarHeight)));
+                bottomSheetPersistentPart.setLayoutParams(params);
             }
         });
     }
