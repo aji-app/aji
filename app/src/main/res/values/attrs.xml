@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="primaryTextColor" format="reference"/>
+    <attr name="secondaryTextColor" format="reference"/>
+    <attr name="primaryColorInverted" format="reference"/>
+    <attr name="primaryTextColorInverted" format="reference"/>
+    <attr name="secondaryTextColorInverted" format="reference"/>
+    <attr name="backgroundColorApp" format="reference" />
+    <attr name="backgroundColorInverted" format="reference" />
+    <attr name="buttonNormalColor" format="reference"/>
+    <attr name="buttonHighlightColor" format="reference" />
+    <attr name="buttonTextColor" format="reference" />
+    <attr name="primaryButtonTheme" format="reference" />
+    <attr name="disabledColor" format="reference" />
+    <attr name="song_item_background" format="reference" />
+    <attr name="app_icon_nav" format="reference" />
+</resources>

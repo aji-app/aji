@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/song_meta_order_title"
+        android:title="@string/order_by_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/song_meta_order_album"
+        android:title="@string/order_by_album"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/song_meta_order_artist"
+        android:title="@string/order_by_artist"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/song_meta_direction"
+        android:title="@string/direction"
+        android:icon="@drawable/ic_order"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/direction_asc"
+                android:icon="@drawable/ic_up"
+                android:title="@string/ascending" />
+            <item
+                android:id="@+id/direction_desc"
+                android:icon="@drawable/ic_down"
+                android:title="@string/descending" />
+        </menu>
+    </item>
+
+</menu>

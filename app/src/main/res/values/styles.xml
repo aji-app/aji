@@ -1,20 +1,104 @@
 <resources>
-
+    <style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="backgroundColorApp">?android:attr/colorBackground</item>
+        <item name="backgroundColorInverted">?attr/colorPrimary</item>
+        <item name="primaryColorInverted">?attr/backgroundColorApp</item>
+        <item name="primaryTextColorInverted">?attr/backgroundColorApp</item>
+        <item name="secondaryTextColorInverted">?attr/backgroundColorApp</item>
+    </style>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="Theme.App.PurpleLime" parent="Theme.App.Base">
+        <item name="primaryButtonTheme">
+            @style/App.Widget.Button.Primary
+        </item>
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+        <item name="disabledColor">@color/purplelime_secondaryText</item>
+
+        <item name="textAppearanceListItem">@style/Theme.App.Widget.ListItemTextView</item>
+
+        <item name="android:textAppearance">@style/Theme.App.Widget.TextView</item>
+
+        <item name="textAppearanceListItemSecondary">
+            @style/Theme.App.Widget.ListItemTextViewSecondary
+        </item>
+
+        <item name="app_icon_nav">@mipmap/universal_round_light</item>
+
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="App.Theme.ThemeOverlay.PurpleLime" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+        <item name="disabledColor">@color/purplelime_secondaryText</item>
+    </style>
+
+
+    <style name="Theme.App.BottomSheetDialog.PurpleLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+    </style>
+
+    <style name="Theme.App.AlertDialog.PurpleLime" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purplelime_colorAccent</item>
+        <item name="primaryTextColor">@color/purplelime_primaryText</item>
+        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purplelime_primaryText</item>
+    </style>
+
+    <style name="Theme.App.Widget.ListItemTextView" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textColor">?attr/primaryTextColor</item>
+        <item name="android:textSize">@dimen/listitem_primary_text_size</item>
+    </style>
+
+    <style name="Theme.App.Widget.TextView" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textColor">?attr/primaryTextColor</item>
+    </style>
+
+    <style name="Theme.App.Widget.ListItemTextViewSecondary" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textColor">?attr/secondaryTextColor</item>
+        <item name="android:textSize">@dimen/listitem_secondary_text_size</item>
+    </style>
+
+    <style name="App.Widget.Button.Primary" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">?attr/buttonNormalColor</item>
+        <item name="colorControlHighlight">
+            ?attr/buttonHighlightColor
+        </item>
+        <item name="android:textColor">?attr/buttonTextColor</item>
+
+    </style>
+
+    <style name="Theme.App.PurpleLime.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.App.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

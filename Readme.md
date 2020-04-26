@@ -1,6 +1,6 @@
-# TBD App Name
+# Aji
 
-TBD App Name is a [MIT](LICENSE) licensed MP3/AAC/FLAC/PCM player for Android with the following features:
+Aji is a [MIT](LICENSE) licensed MP3/AAC/FLAC/PCM player for Android with the following features:
 * multiple playlist support
 * grouping by artist, album or genre
 * plain filesystem browsing

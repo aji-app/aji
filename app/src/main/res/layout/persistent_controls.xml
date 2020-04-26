@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/persistent_controls"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/backgroundColorApp"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="@dimen/persistent_controls_peek_height"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    >
+
+    <LinearLayout
+        android:id="@+id/persistent_controls_visible_part"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/persistent_controls_peek_height"
+        android:orientation="horizontal"
+        android:background="?attr/backgroundColorInverted"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fragment_margin"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/not_playing"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="?attr/primaryTextColorInverted"
+                tools:text="Fake Song 1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/song_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:textColor="?attr/secondaryTextColorInverted"
+                    tools:text="Fake Artist" />
+
+                <TextView
+                    android:id="@+id/song_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textAppearance="?attr/textAppearanceListItemSecondary"
+                    android:textColor="?attr/secondaryTextColorInverted"
+                    tools:text="Fake Album" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ch.zhaw.engineering.aji.view.ImageButton
+            android:id="@+id/persistent_playpause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity=""
+            android:src="@drawable/ic_play"
+            android:tint="?attr/primaryColorInverted"/>
+    </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/expanded_persistent_controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_expanded_controls" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

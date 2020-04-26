@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EditTextView">
+        <attr name="editMode" format="boolean" />
+        <attr name="text" format="string" />
+        <attr name="android:inputType" />
+        <attr name="android:hint" />
+        <attr name="android:textSize" />
+    </declare-styleable>
+
+    <declare-styleable name="ImageButton">
+        <attr name="android:tint" />
+    </declare-styleable>
+
+    <declare-styleable name="Button">
+        <attr name="android:textColor" />
+        <attr name="android:background" />
+        <attr name="drawableTint" />
+    </declare-styleable>
+
+    <declare-styleable name="TextView">
+        <attr name="drawableTint" />
+    </declare-styleable>
+</resources>

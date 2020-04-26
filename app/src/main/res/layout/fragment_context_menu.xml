@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:paddingStart="@dimen/fragment_margin"
+    android:paddingEnd="@dimen/fragment_margin">
+<!--    <ImageView-->
+<!--        android:id="@+id/image"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:tint="?attr/colorPrimary"-->
+<!--        android:layout_marginEnd="@dimen/button_with_image_padding"-->
+<!--        tools:ignore="ContentDescription"-->
+<!--        tools:src="@drawable/ic_add"/>-->
+    <ch.zhaw.engineering.aji.view.TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:tint="?attr/colorPrimary"
+        android:gravity="center_vertical"
+        app:drawableTint="?attr/colorPrimary"
+        android:drawablePadding="@dimen/button_with_image_padding"
+        tools:drawableStart="@drawable/ic_add"
+        tools:text="Some Option"/>
+</LinearLayout>

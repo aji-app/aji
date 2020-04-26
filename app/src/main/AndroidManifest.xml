@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ch.zhaw.engineering.tbdappname">
+    package="ch.zhaw.engineering.aji">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -9,37 +9,35 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/universal_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/universal_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".AddOrEditRadioStationActivity"></activity>
-        <activity android:name=".CurrentlyPlayingActivity" />
-        <activity android:name=".AddOrEditPlaylistActivity" />
-        <activity android:name=".PlaylistListActivity" />
+        android:theme="@style/Theme.App.PurpleLime"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
         <activity
-            android:name=".SongListActivity"
-            android:label="@string/title_activity_song_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity">
+            android:name="ch.zhaw.engineering.aji.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.App.PurpleLime.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DirectorySelectionActivity" />
-        <activity android:name=".PlsFileSelectionActivity" />
-        <activity android:name=".RadioStationListActivity" />
+        <activity
+            android:name="ch.zhaw.engineering.aji.MainActivityOld"
+            android:exported="true" />
+        <activity android:name="ch.zhaw.engineering.aji.DirectorySelectionActivity" />
+        <activity android:name="ch.zhaw.engineering.aji.PlsFileSelectionActivity" />
 
         <service
-            android:name=".services.files.AudioFileScanner"
+            android:name="ch.zhaw.engineering.aji.services.files.AudioFileScanner"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".services.audio.AudioService"
+            android:name="ch.zhaw.engineering.aji.services.audio.AudioService"
             android:enabled="true"
             android:exported="false" />
     </application>
