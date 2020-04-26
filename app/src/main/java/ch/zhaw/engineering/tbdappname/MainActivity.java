@@ -191,9 +191,6 @@ public class MainActivity extends FragmentInteractionActivity {
 
     @Override
     protected void navigateToSongDetails(long songId) {
-        runOnUiThread(() -> {
-            Toast.makeText(this, "hello navigate from bottom sheet", Toast.LENGTH_SHORT).show();
-        });
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();

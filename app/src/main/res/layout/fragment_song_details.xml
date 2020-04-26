@@ -3,19 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/fragment_margin"
-    android:paddingStart="@dimen/details_margin"
-    android:paddingEnd="@dimen/details_margin"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:paddingStart="@dimen/details_margin"
+    android:paddingTop="@dimen/fragment_margin"
+    android:paddingEnd="@dimen/details_margin"
     tools:context=".ui.song.SongDetailsFragment">
 
     <ImageView
         android:id="@+id/album_cover"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/ic_placeholder_image"
         android:layout_marginBottom="10dp"
-        android:contentDescription="@string/contentDescription_album_art"/>
+        android:contentDescription="@string/contentDescription_album_art"
+        android:src="@drawable/ic_placeholder_image" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,45 +75,50 @@
             android:src="@drawable/ic_favorite" />
     </LinearLayout>
 
-    <ch.zhaw.engineering.tbdappname.view.TbdButton
-        android:id="@+id/play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_play"
-        android:drawableTint="?attr/colorPrimary"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="@dimen/button_with_image_padding"
-        android:text="@string/play" />
 
-    <ch.zhaw.engineering.tbdappname.view.TbdButton
-        android:id="@+id/queue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_queue"
-        android:drawableTint="?attr/colorPrimary"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="@dimen/button_with_image_padding"
-        android:text="@string/queue" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <ch.zhaw.engineering.tbdappname.view.TbdButton
+            android:id="@+id/play"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/song_details_button_height"
+            app:drawableStartCompat="@drawable/ic_play"
+            app:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="@dimen/button_with_image_padding"
+            android:text="@string/play" />
+
+        <ch.zhaw.engineering.tbdappname.view.TbdButton
+            android:id="@+id/queue"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/song_details_button_height"
+            app:drawableStartCompat="@drawable/ic_queue"
+            app:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="@dimen/button_with_image_padding"
+            android:text="@string/queue" />
 
 
-    <ch.zhaw.engineering.tbdappname.view.TbdButton
-        android:id="@+id/add_to_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_playlist_add"
-        android:drawableTint="?attr/colorPrimary"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="@dimen/button_with_image_padding"
-        android:text="@string/add_to_playlist" />
+        <ch.zhaw.engineering.tbdappname.view.TbdButton
+            android:id="@+id/add_to_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/song_details_button_height"
+            app:drawableStartCompat="@drawable/ic_playlist_add"
+            app:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="@dimen/button_with_image_padding"
+            android:text="@string/add_to_playlist" />
 
-    <ch.zhaw.engineering.tbdappname.view.TbdButton
-        android:id="@+id/delete_song"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_delete"
-        android:drawableTint="?attr/colorPrimary"
-        android:drawablePadding="@dimen/button_with_image_padding"
-        android:layout_marginTop="10dp"
-        android:text="@string/delete_song" />
-
+        <ch.zhaw.engineering.tbdappname.view.TbdButton
+            android:id="@+id/delete_song"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/song_details_button_height"
+            app:drawableStartCompat="@drawable/ic_delete"
+            app:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="@dimen/button_with_image_padding"
+            android:text="@string/delete_song" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
