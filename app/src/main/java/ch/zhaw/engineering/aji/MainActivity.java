@@ -112,7 +112,12 @@ public class MainActivity extends FragmentInteractionActivity {
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
         });
+
+
 
         Resources r = getResources();
         final float actionBarHeight = TypedValue.applyDimension(
