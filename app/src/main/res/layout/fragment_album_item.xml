@@ -26,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/fragment_margin"
-            android:layout_marginBottom="4dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?attr/textAppearanceListItem"
