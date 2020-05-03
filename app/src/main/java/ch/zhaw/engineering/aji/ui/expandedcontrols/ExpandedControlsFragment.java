@@ -190,7 +190,6 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.seekbar.setMax((int) info.getDuration());
                         enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         enableImageView(mBinding.persistentControlsButtons.btnNext);
-
                     }
                 } else {
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(R.string.not_playing);

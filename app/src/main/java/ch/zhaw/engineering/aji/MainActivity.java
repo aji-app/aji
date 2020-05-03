@@ -1,12 +1,12 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -50,6 +50,8 @@ public class MainActivity extends FragmentInteractionActivity {
     private ActivityMainBinding mBinding;
     private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
     private AudioFileContentObserver mAudioFileContentObserver;
+    private CharSequence mPreviousActionBarTitle;
+    private Menu mActionBarMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,14 +142,30 @@ public class MainActivity extends FragmentInteractionActivity {
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
                 .commit();
 
+
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
                 switch (newState) {
                     case BottomSheetBehavior.STATE_EXPANDED:
+                        if (getSupportActionBar() != null) {
+                            mPreviousActionBarTitle = getSupportActionBar().getTitle();
+                            for (int i = 0; i < mActionBarMenu.size(); i++) {
+                                mActionBarMenu.getItem(i).setVisible(false);
+                            }
+                            getSupportActionBar().setTitle(R.string.now_playing);
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                        }
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
+                        if (getSupportActionBar() != null) {
+                            for (int i = 0; i < mActionBarMenu.size(); i++) {
+                                mActionBarMenu.getItem(i).setVisible(true);
+                            }
+                            getSupportActionBar().setTitle(mPreviousActionBarTitle);
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                        }
                         break;
                     default:
                         break;
@@ -170,6 +188,12 @@ public class MainActivity extends FragmentInteractionActivity {
                 bottomSheetPersistentPart.setLayoutParams(params);
             }
         });
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mActionBarMenu = menu;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
