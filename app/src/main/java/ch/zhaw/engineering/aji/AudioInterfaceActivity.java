@@ -285,7 +285,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     final void toggleShuffle() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().toggleShuffle();
-            mShuffleEnabled.postValue(mAudioService.getValue().isShuffleModeEnabled());
+            mAudioService.getValue().isShuffleModeEnabled(mShuffleEnabled::postValue);
         }
         Log.i(TAG, "onToggleShuffle: " + mShuffleEnabled.getValue());
     }
@@ -314,6 +314,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     final void next() {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().next();
+            mAudioService.getValue().isShuffleModeEnabled(mShuffleEnabled::postValue);
         }
     }
 

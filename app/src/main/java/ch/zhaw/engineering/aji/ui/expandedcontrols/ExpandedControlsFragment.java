@@ -204,9 +204,9 @@ public class ExpandedControlsFragment extends Fragment {
                     mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
                     mBinding.persistentControlsSeebar.timerTotal.setText(null);
                     mBinding.persistentControlsSeebar.timerElapsed.setText(null);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, true);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, true);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat, true);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
+                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat, false);
                 }
             });
 

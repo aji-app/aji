@@ -72,7 +72,6 @@ public class AudioService extends LifecycleService {
         }
     };
 
-    private boolean mShuffleModeEnabled;
     private AudioBackend.RepeatModes mCurrentRepeatMode = AudioBackend.RepeatModes.REPEAT_OFF;
     private SongDao mSongRepository;
     private boolean mAutoQueueRandomTrack = false;
@@ -355,6 +354,7 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlNext() {
         if (mAutoQueueRandomTrack) {
+
             mAudioBackend.next(new SongMedia(mAutoQueueSong), didQueueSong -> {
                 if (didQueueSong) {
                     addSongToCurrentSongs(mAutoQueueSong);
@@ -382,8 +382,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlToggleShuffleModeEnabled() {
-        mShuffleModeEnabled = !mShuffleModeEnabled;
-        mAudioBackend.setShuffleModeEnabled(mShuffleModeEnabled);
+        mAudioBackend.toggleShuffleModeEnabled();
     }
 
     private void playbackControlLoopThroughRepeatMode() {
@@ -489,8 +488,8 @@ public class AudioService extends LifecycleService {
             playbackControlToggleShuffleModeEnabled();
         }
 
-        public boolean isShuffleModeEnabled() {
-            return mShuffleModeEnabled;
+        public void isShuffleModeEnabled(AudioBackend.Callback<Boolean> callback) {
+            mAudioBackend.getShuffleModeEnabled(callback);
         }
 
         public void toggleRepeatMode() {
