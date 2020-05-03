@@ -29,6 +29,7 @@ import ch.zhaw.engineering.aji.AudioControlListener;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
+import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
@@ -152,6 +153,10 @@ public class ExpandedControlsFragment extends Fragment {
                 mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
                 mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
 
+                updateRepeatButton(mListener.getRepeatMode().getValue());
+                updateShuffleButton(mListener.getShuffleEnabled().getValue());
+                updateAutoQueueButton(mListener.getAutoQueueEnabled().getValue());
+
                 if (info != null) {
                     isRadio = info.isRadio();
                     if (isRadio) {
@@ -205,45 +210,56 @@ public class ExpandedControlsFragment extends Fragment {
                 }
             });
 
-            mListener.getRepeatMode().observe(getViewLifecycleOwner(), mode -> {
-                ImageButton repeatMode = mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat;
-                switch (mode) {
-                    case REPEAT_OFF:
-                        disableImageView(repeatMode, false);
-                        repeatMode.setImageResource(R.drawable.ic_repeat);
-                        break;
-                    case REPEAT_ALL:
-                        enableImageView(repeatMode);
-                        repeatMode.setImageResource(R.drawable.ic_repeat);
-                        break;
-                    case REPEAT_ONE:
-                        enableImageView(repeatMode);
-                        repeatMode.setImageResource(R.drawable.ic_repeat_one);
-                        break;
-                }
-            });
+            mListener.getRepeatMode().observe(getViewLifecycleOwner(), this::updateRepeatButton);
 
-            mListener.getAutoQueueEnabled().observe(getViewLifecycleOwner(), enabled -> {
-                if (enabled) {
-                    enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
-                } else {
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
-                }
-            });
+            mListener.getAutoQueueEnabled().observe(getViewLifecycleOwner(), this::updateAutoQueueButton);
 
-            mListener.getShuffleEnabled().observe(getViewLifecycleOwner(), enabled -> {
-                if (enabled) {
-                    enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
-                } else {
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
-                }
-            });
+            mListener.getShuffleEnabled().observe(getViewLifecycleOwner(), this::updateShuffleButton);
 
             mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
                 if (!mSeeking && !isRadio) {
                     setSeekbarProgress(position.intValue());
                 }
             });
+        }
+    }
+
+    private void updateAutoQueueButton(Boolean enabled) {
+        enabled = enabled == null ? false : enabled;
+        if (enabled) {
+            enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
+        } else {
+            disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
+        }
+    }
+
+    private void updateShuffleButton(Boolean enabled) {
+        enabled = enabled == null ? false : enabled;
+        if (enabled) {
+            enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
+        } else {
+            disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
+        }
+    }
+
+    private void updateRepeatButton(@Nullable AudioBackend.RepeatModes mode) {
+        ImageButton repeatMode = mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat;
+        if (mode == null) {
+            mode = AudioBackend.RepeatModes.REPEAT_OFF;
+        }
+        switch (mode) {
+            case REPEAT_ALL:
+                enableImageView(repeatMode);
+                repeatMode.setImageResource(R.drawable.ic_repeat);
+                break;
+            case REPEAT_ONE:
+                enableImageView(repeatMode);
+                repeatMode.setImageResource(R.drawable.ic_repeat_one);
+                break;
+            case REPEAT_OFF:
+                disableImageView(repeatMode, false);
+                repeatMode.setImageResource(R.drawable.ic_repeat);
+                break;
         }
     }
 

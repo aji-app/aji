@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import ch.zhaw.engineering.aji.services.audio.AudioService;
@@ -12,9 +13,12 @@ public interface AudioControlListener {
 
     LiveData<Long> getCurrentPosition();
 
+    @NonNull
     LiveData<Boolean> getAutoQueueEnabled();
 
+    @NonNull
     LiveData<Boolean> getShuffleEnabled();
 
+    @NonNull
     LiveData<AudioBackend.RepeatModes> getRepeatMode();
 }

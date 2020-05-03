@@ -264,16 +264,19 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     }
 
     @Override
+    @NonNull
     public LiveData<Boolean> getAutoQueueEnabled() {
         return mAutoQueueEnabled;
     }
 
     @Override
+    @NonNull
     public LiveData<Boolean> getShuffleEnabled() {
         return mShuffleEnabled;
     }
 
     @Override
+    @NonNull
     public LiveData<AudioBackend.RepeatModes> getRepeatMode() {
         return mRepeatMode;
     }
