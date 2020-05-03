@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -20,7 +21,11 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
@@ -66,16 +71,27 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
             serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, songIds -> {
 
 //                if (songIds.size() > 0) {
-                    AsyncTask.execute(() -> {
-                        LiveData<List<Song>> songs = dao.getSongs(songIds);
-                        runOnUiThread(() -> {
-                            if (mStoredCurrentSongs != null) {
-                                mCurrentQueue.removeSource(mStoredCurrentSongs);
-                            }
-                            mStoredCurrentSongs = songs;
-                            mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
-                        });
+                AsyncTask.execute(() -> {
+                    Map<Long, Integer> orderMap = new HashMap<>(songIds.size());
+                    for (int i = 0; i < songIds.size(); i++) {
+                        orderMap.put(songIds.get(i), i);
+                    }
+                    LiveData<List<Song>> songs = Transformations.map(dao.getSongs(songIds), songList -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Collections.sort(songList, Comparator.comparing(item -> orderMap.get(item.getSongId())));
+                        } else {
+                            Collections.sort(songList, (song1, song2) -> Integer.compare(orderMap.get(song1.getSongId()), orderMap.get(song2.getSongId())));
+                        }
+                        return songList;
                     });
+                    runOnUiThread(() -> {
+                        if (mStoredCurrentSongs != null) {
+                            mCurrentQueue.removeSource(mStoredCurrentSongs);
+                        }
+                        mStoredCurrentSongs = songs;
+                        mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
+                    });
+                });
 //                }
             });
             mBound = true;
