@@ -178,7 +178,13 @@ public class ExoPlayerAudioBackend implements AudioBackend {
             if (mPlayer.getNextWindowIndex() == -1) {
                 queueMedia(media);
                 mAudioHandler.postDelayed(() -> {
-                    mPlayer.next();
+                    if (mPlayer.getShuffleModeEnabled()) {
+                        mPlayer.setShuffleModeEnabled(false);
+
+                        mPlayer.seekToDefaultPosition(mConcatenatingMediaSource.getSize() - 1);
+                    } else {
+                        mPlayer.next();
+                    }
                     callback.receiveValue(true);
                 }, 100);
             } else {
@@ -208,8 +214,13 @@ public class ExoPlayerAudioBackend implements AudioBackend {
     }
 
     @Override
-    public void setShuffleModeEnabled(boolean enabled) {
-        mAudioHandler.post(() -> mPlayer.setShuffleModeEnabled(enabled));
+    public void toggleShuffleModeEnabled() {
+        mAudioHandler.post(() -> mPlayer.setShuffleModeEnabled(!mPlayer.getShuffleModeEnabled()));
+    }
+
+    @Override
+    public void getShuffleModeEnabled(@NonNull Callback<Boolean> callback) {
+        mAudioHandler.post(() -> callback.receiveValue(mPlayer.getShuffleModeEnabled()));
     }
 
     @Override

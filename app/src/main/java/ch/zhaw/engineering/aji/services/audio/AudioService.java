@@ -50,7 +50,7 @@ public class AudioService extends LifecycleService {
     private final MutableLiveData<PlayState> mCurrentState = new MutableLiveData<>(PlayState.INITIAL);
     private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
     private final MutableLiveData<SongInformation> mCurrentSong = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Song>> mCurrentQueue = new MutableLiveData<>(emptyList());
+    private final MutableLiveData<List<Long>> mCurrentQueue = new MutableLiveData<>(emptyList());
     private String mCurrentPlaylistName = null;
 
     private Handler mCurrentPositionTrackingThread;
@@ -72,7 +72,6 @@ public class AudioService extends LifecycleService {
         }
     };
 
-    private boolean mShuffleModeEnabled;
     private AudioBackend.RepeatModes mCurrentRepeatMode = AudioBackend.RepeatModes.REPEAT_OFF;
     private SongDao mSongRepository;
     private boolean mAutoQueueRandomTrack = false;
@@ -156,7 +155,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void updateCurrentSong() {
-        if (PlayState.STOPPED != mCurrentState.getValue() && PlayState.PAUSED != mCurrentState.getValue()) {
+        if (PlayState.STOPPED != mCurrentState.getValue()) {
             mAudioBackend.getCurrentTag(tag -> {
                 if (tag != null) {
                     Song song = mCurrentSongs.get(tag);
@@ -308,8 +307,10 @@ public class AudioService extends LifecycleService {
 
     private void addSongToCurrentSongs(Song song) {
         mCurrentSongs.put(song.getSongId(), song);
-        List<Song> songs = new ArrayList<>(mCurrentSongs.size());
-        songs.addAll(mCurrentSongs.values());
+        List<Long> songs = new ArrayList<>(mCurrentSongs.size());
+        for (Song s : mCurrentSongs.values()){
+            songs.add(s.getSongId());
+        }
         mCurrentQueue.postValue(songs);
     }
 
@@ -353,6 +354,7 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlNext() {
         if (mAutoQueueRandomTrack) {
+
             mAudioBackend.next(new SongMedia(mAutoQueueSong), didQueueSong -> {
                 if (didQueueSong) {
                     addSongToCurrentSongs(mAutoQueueSong);
@@ -380,8 +382,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlToggleShuffleModeEnabled() {
-        mShuffleModeEnabled = !mShuffleModeEnabled;
-        mAudioBackend.setShuffleModeEnabled(mShuffleModeEnabled);
+        mAudioBackend.toggleShuffleModeEnabled();
     }
 
     private void playbackControlLoopThroughRepeatMode() {
@@ -409,7 +410,7 @@ public class AudioService extends LifecycleService {
         }
     }
 
-    private LiveData<List<Song>> playbackControlGetQueue() {
+    private LiveData<List<Long>> playbackControlGetQueue() {
         return mCurrentQueue;
     }
 
@@ -422,7 +423,7 @@ public class AudioService extends LifecycleService {
 
     public class AudioServiceBinder extends Binder {
 
-        public LiveData<List<Song>> getCurrentQueue() {
+        public LiveData<List<Long>> getCurrentQueue() {
             return playbackControlGetQueue();
         }
 
@@ -487,8 +488,8 @@ public class AudioService extends LifecycleService {
             playbackControlToggleShuffleModeEnabled();
         }
 
-        public boolean isShuffleModeEnabled() {
-            return mShuffleModeEnabled;
+        public void isShuffleModeEnabled(AudioBackend.Callback<Boolean> callback) {
+            mAudioBackend.getShuffleModeEnabled(callback);
         }
 
         public void toggleRepeatMode() {

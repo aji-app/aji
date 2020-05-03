@@ -93,9 +93,14 @@ public interface AudioBackend {
 
     /**
      * If enabled, plays songs in queue in a random order
-     * @param enabled True if shuffle should be enabled
      */
-    void setShuffleModeEnabled(boolean enabled);
+    void toggleShuffleModeEnabled();
+
+    /**
+     * Gets the current state of the shuffle mode
+     * @param callback A {@link Callback<Boolean>} which will be called with the current tag
+     */
+    void getShuffleModeEnabled(@NonNull Callback<Boolean> callback);
 
     /**
      * Sets the playback mode to either "REPEAT_OFF", "REPEAT_ALL" or "REPEAT_ONE"

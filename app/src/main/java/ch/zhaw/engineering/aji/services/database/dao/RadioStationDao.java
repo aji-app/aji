@@ -51,6 +51,10 @@ public abstract class RadioStationDao {
         return RadioStationDto.fromRadioStation(getRadioStation(radioStationId));
     }
 
+    public LiveData<RadioStationDto> getRadioStationLiveDataById(long radioStationId) {
+        return Transformations.map(getRadioStationLiveData(radioStationId), RadioStationDto::fromRadioStation);
+    }
+
     public void updateRadioStation(RadioStationDto updatedRadioStation) {
         update(updatedRadioStation.toRadioStation());
     }
@@ -67,6 +71,9 @@ public abstract class RadioStationDao {
 
     @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
     public abstract RadioStation getRadioStation(long id);
+
+    @Query("SELECT * FROM RadioStation WHERE id = :id LIMIT 1")
+    protected abstract LiveData<RadioStation> getRadioStationLiveData(long id);
 
     @Query("SELECT * FROM RadioStation WHERE LOWER(name) like LOWER(:text) OR LOWER(genres) like LOWER(:text) ORDER BY CASE WHEN :asc = 1 THEN LOWER(name) END ASC, CASE WHEN :asc = 0 THEN LOWER(name) END DESC")
     protected abstract LiveData<List<RadioStation>> getRadioStations(String text, boolean asc);
