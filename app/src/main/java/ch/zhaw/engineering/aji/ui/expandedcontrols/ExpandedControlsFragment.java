@@ -3,6 +3,7 @@ package ch.zhaw.engineering.aji.ui.expandedcontrols;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +17,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import ch.zhaw.engineering.aji.AudioControlListener;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
+import ch.zhaw.engineering.aji.services.database.AppDatabase;
+import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
+import ch.zhaw.engineering.aji.services.database.dao.SongDao;
+import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.song.list.QueueSongListFragment;
+import lombok.AllArgsConstructor;
 
 import static ch.zhaw.engineering.aji.util.Color.getColorFromAttr;
 import static ch.zhaw.engineering.aji.util.Duration.getMillisAsTime;
@@ -32,7 +46,8 @@ public class ExpandedControlsFragment extends Fragment {
     private FragmentExpandedControlsBinding mBinding;
     private ExpandedControlsFragmentListener mListener;
     private boolean mSeeking = false;
-    private AudioService.SongInformation mCurrentSong;
+    private boolean isRadio;
+
     private Drawable mSeekbarBackground;
 
     @Override
@@ -47,7 +62,7 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
         mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
-        mSeekbarBackground =  mBinding.persistentControlsSeebar.seekbar.getBackground();
+        mSeekbarBackground = mBinding.persistentControlsSeebar.seekbar.getBackground();
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.current_queue_container, QueueSongListFragment.newInstance())
@@ -77,15 +92,19 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
-                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                        enableImageView(mBinding.persistentControlsButtons.btnNext);
+                        if (!isRadio) {
+                            enableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                            enableImageView(mBinding.persistentControlsButtons.btnNext);
+                        }
                         break;
                     case PLAYING:
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
-                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                        enableImageView(mBinding.persistentControlsButtons.btnNext);
+                        if (!isRadio) {
+                            enableImageView(mBinding.persistentControlsButtons.btnPrevious);
+                            enableImageView(mBinding.persistentControlsButtons.btnNext);
+                        }
                         break;
                     case STOPPED:
                     case INITIAL:
@@ -115,27 +134,44 @@ public class ExpandedControlsFragment extends Fragment {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    if (mCurrentSong != null && !mCurrentSong.isRadio()) {
+                    if (!isRadio) {
                         mListener.seek(seekBar.getProgress());
                     }
                     mSeeking = false;
                 }
             });
 
-            mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
+            SongDao songDao = AppDatabase.getInstance(getActivity()).songDao();
+            Transformations.switchMap(mListener.getCurrentSong(),
+                    info -> info == null || info.isRadio() ? null : songDao.getSong(info.getId())
+            ).observe(getViewLifecycleOwner(),
+                    song -> mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
+            );
 
+            mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
                 mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
                 mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
-                mCurrentSong = info;
+
                 if (info != null) {
+                    isRadio = info.isRadio();
+                    if (isRadio) {
+                        mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(R.drawable.ic_not_favorite);
+                    }
+
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
                     mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(info.getAlbum());
                     mBinding.persistentControlsSonginfo.songArtistExpanded.setText(info.getArtist());
                     mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setEnabled(true);
                     mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setEnabled(true);
                     mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setEnabled(true);
-                    mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(info.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
-                    if (info.isRadio()) {
+
+                    if (info.getAlbumPath() != null) {
+                        Picasso.get().load(new File(info.getAlbumPath())).into(mBinding.persistentControlsSonginfo.persistentControlsAlbumcover);
+                    } else {
+                        mBinding.persistentControlsSonginfo.persistentControlsAlbumcover.setImageResource(R.drawable.ic_placeholder_image);
+                    }
+
+                    if (isRadio) {
                         mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
                         mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
@@ -205,11 +241,8 @@ public class ExpandedControlsFragment extends Fragment {
             });
 
             mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
-                Log.i(TAG, "Position: " +  position);
-                if (!mSeeking) {
-                    if (mCurrentSong != null) {
-                        setSeekbarProgress(position.intValue());
-                    }
+                if (!mSeeking && !isRadio) {
+                    setSeekbarProgress(position.intValue());
                 }
             });
         }
@@ -258,5 +291,12 @@ public class ExpandedControlsFragment extends Fragment {
         void onToggleAutoQueue();
 
         void seek(long position);
+    }
+
+    @AllArgsConstructor
+    private static class SongInfo {
+        AudioService.SongInformation info;
+        LiveData<Song> song;
+        LiveData<RadioStationDto> radioStation;
     }
 }

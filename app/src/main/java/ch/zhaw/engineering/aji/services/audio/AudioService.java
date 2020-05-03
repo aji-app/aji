@@ -50,7 +50,7 @@ public class AudioService extends LifecycleService {
     private final MutableLiveData<PlayState> mCurrentState = new MutableLiveData<>(PlayState.INITIAL);
     private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
     private final MutableLiveData<SongInformation> mCurrentSong = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Song>> mCurrentQueue = new MutableLiveData<>(emptyList());
+    private final MutableLiveData<List<Long>> mCurrentQueue = new MutableLiveData<>(emptyList());
     private String mCurrentPlaylistName = null;
 
     private Handler mCurrentPositionTrackingThread;
@@ -308,8 +308,10 @@ public class AudioService extends LifecycleService {
 
     private void addSongToCurrentSongs(Song song) {
         mCurrentSongs.put(song.getSongId(), song);
-        List<Song> songs = new ArrayList<>(mCurrentSongs.size());
-        songs.addAll(mCurrentSongs.values());
+        List<Long> songs = new ArrayList<>(mCurrentSongs.size());
+        for (Song s : mCurrentSongs.values()){
+            songs.add(s.getSongId());
+        }
         mCurrentQueue.postValue(songs);
     }
 
@@ -409,7 +411,7 @@ public class AudioService extends LifecycleService {
         }
     }
 
-    private LiveData<List<Song>> playbackControlGetQueue() {
+    private LiveData<List<Long>> playbackControlGetQueue() {
         return mCurrentQueue;
     }
 
@@ -422,7 +424,7 @@ public class AudioService extends LifecycleService {
 
     public class AudioServiceBinder extends Binder {
 
-        public LiveData<List<Song>> getCurrentQueue() {
+        public LiveData<List<Long>> getCurrentQueue() {
             return playbackControlGetQueue();
         }
 

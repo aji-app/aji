@@ -4,8 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginStart="55dp"
-    android:layout_marginEnd="55dp">
+    android:layout_marginBottom="@dimen/fragment_margin"
+    android:gravity="center_vertical">
+    <ImageView
+        android:id="@+id/persistent_controls_albumcover"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/ic_placeholder_image"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="0"
+        android:contentDescription="@string/contentDescription_album_art"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -36,6 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="Fake Artist" />
 
             <TextView
@@ -44,6 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="Fake Album" />
         </LinearLayout>
 

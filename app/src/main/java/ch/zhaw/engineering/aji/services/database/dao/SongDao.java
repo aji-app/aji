@@ -143,6 +143,9 @@ public abstract class SongDao {
             "GROUP BY song.album ")
     public abstract AlbumDto getAlbum(String album);
 
+    @Query("SELECT * from Song where songId in (:songIds)")
+    public abstract LiveData<List<Song>> getSongs(List<Long> songIds);
+
     /*
      * Protected Helper Methods
      *
@@ -202,7 +205,6 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
-
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,12 +16,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import java.util.List;
 
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
+import ch.zhaw.engineering.aji.services.database.AppDatabase;
+import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
@@ -43,9 +48,9 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     private final MutableLiveData<AudioService.SongInformation> mCurrentSong = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> mShuffleEnabled = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> mAutoQueueEnabled = new MutableLiveData<>(false);
-    private final MutableLiveData<List<Song>> mCurrentQueue = new MutableLiveData<>(emptyList());
+    private final MediatorLiveData<List<Song>> mCurrentQueue = new MediatorLiveData<>();
     private final MutableLiveData<AudioBackend.RepeatModes> mRepeatMode = new MutableLiveData<>(AudioBackend.RepeatModes.REPEAT_OFF);
-
+    private LiveData<List<Song>> mStoredCurrentSongs;
 
     private final ServiceConnection mAudioServiceConnection = new ServiceConnection() {
         @Override
@@ -57,7 +62,22 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
             serviceBinder.getCurrentSong().observe(AudioInterfaceActivity.this, mCurrentSong::setValue);
             serviceBinder.getPlayState().observe(AudioInterfaceActivity.this, mCurrentState::setValue);
             serviceBinder.getCurrentPosition().observe(AudioInterfaceActivity.this, mCurrentPosition::setValue);
-            serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, mCurrentQueue::setValue);
+            SongDao dao = AppDatabase.getInstance(getApplication()).songDao();
+            serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, songIds -> {
+
+//                if (songIds.size() > 0) {
+                    AsyncTask.execute(() -> {
+                        LiveData<List<Song>> songs = dao.getSongs(songIds);
+                        runOnUiThread(() -> {
+                            if (mStoredCurrentSongs != null) {
+                                mCurrentQueue.removeSource(mStoredCurrentSongs);
+                            }
+                            mStoredCurrentSongs = songs;
+                            mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
+                        });
+                    });
+//                }
+            });
             mBound = true;
         }
 
@@ -260,7 +280,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
 
     final void seekTo(long position) {
         if (mAudioService.getValue() != null) {
-           mAudioService.getValue().seekTo(position);
+            mAudioService.getValue().seekTo(position);
         }
     }
 
