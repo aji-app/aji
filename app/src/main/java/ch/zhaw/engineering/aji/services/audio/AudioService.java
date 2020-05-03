@@ -156,7 +156,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void updateCurrentSong() {
-        if (PlayState.STOPPED != mCurrentState.getValue() && PlayState.PAUSED != mCurrentState.getValue()) {
+        if (PlayState.STOPPED != mCurrentState.getValue()) {
             mAudioBackend.getCurrentTag(tag -> {
                 if (tag != null) {
                     Song song = mCurrentSongs.get(tag);
