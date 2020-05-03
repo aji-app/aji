@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
 import java.util.Collections;
@@ -68,32 +69,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
             serviceBinder.getPlayState().observe(AudioInterfaceActivity.this, mCurrentState::setValue);
             serviceBinder.getCurrentPosition().observe(AudioInterfaceActivity.this, mCurrentPosition::setValue);
             SongDao dao = AppDatabase.getInstance(getApplication()).songDao();
-            serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, songIds -> {
-
-//                if (songIds.size() > 0) {
-                AsyncTask.execute(() -> {
-                    Map<Long, Integer> orderMap = new HashMap<>(songIds.size());
-                    for (int i = 0; i < songIds.size(); i++) {
-                        orderMap.put(songIds.get(i), i);
-                    }
-                    LiveData<List<Song>> songs = Transformations.map(dao.getSongs(songIds), songList -> {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            Collections.sort(songList, Comparator.comparing(item -> orderMap.get(item.getSongId())));
-                        } else {
-                            Collections.sort(songList, (song1, song2) -> Integer.compare(orderMap.get(song1.getSongId()), orderMap.get(song2.getSongId())));
-                        }
-                        return songList;
-                    });
-                    runOnUiThread(() -> {
-                        if (mStoredCurrentSongs != null) {
-                            mCurrentQueue.removeSource(mStoredCurrentSongs);
-                        }
-                        mStoredCurrentSongs = songs;
-                        mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
-                    });
-                });
-//                }
-            });
+            serviceBinder.getCurrentQueue().observe(AudioInterfaceActivity.this, mapCurrentQueueToSongs(dao));
             mBound = true;
         }
 
@@ -102,6 +78,30 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
             mBound = false;
         }
     };
+
+    private Observer<List<Long>> mapCurrentQueueToSongs(SongDao dao) {
+        return songIds -> AsyncTask.execute(() -> {
+            Map<Long, Integer> orderMap = new HashMap<>(songIds.size());
+            for (int i = 0; i < songIds.size(); i++) {
+                orderMap.put(songIds.get(i), i);
+            }
+            LiveData<List<Song>> songs = Transformations.map(dao.getSongs(songIds), songList -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Collections.sort(songList, Comparator.comparing(item -> orderMap.get(item.getSongId())));
+                } else {
+                    Collections.sort(songList, (song1, song2) -> Integer.compare(orderMap.get(song1.getSongId()), orderMap.get(song2.getSongId())));
+                }
+                return songList;
+            });
+            runOnUiThread(() -> {
+                if (mStoredCurrentSongs != null) {
+                    mCurrentQueue.removeSource(mStoredCurrentSongs);
+                }
+                mStoredCurrentSongs = songs;
+                mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
+            });
+        });
+    }
 
     private final BroadcastReceiver mShutdownBroadcastReceiver = new BroadcastReceiver() {
         @Override

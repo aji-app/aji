@@ -50,7 +50,6 @@ public class MainActivity extends FragmentInteractionActivity {
     private ActivityMainBinding mBinding;
     private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
     private AudioFileContentObserver mAudioFileContentObserver;
-    private CharSequence mPreviousActionBarTitle;
     private Menu mActionBarMenu;
 
     @Override
@@ -150,7 +149,6 @@ public class MainActivity extends FragmentInteractionActivity {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_EXPANDED:
                         if (getSupportActionBar() != null) {
-                            mPreviousActionBarTitle = getSupportActionBar().getTitle();
                             for (int i = 0; i < mActionBarMenu.size(); i++) {
                                 mActionBarMenu.getItem(i).setVisible(false);
                             }
@@ -163,7 +161,7 @@ public class MainActivity extends FragmentInteractionActivity {
                             for (int i = 0; i < mActionBarMenu.size(); i++) {
                                 mActionBarMenu.getItem(i).setVisible(true);
                             }
-                            getSupportActionBar().setTitle(mPreviousActionBarTitle);
+                            getSupportActionBar().setTitle(getCurrentActionBarTitle());
                             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                         }
                         break;
@@ -218,6 +216,11 @@ public class MainActivity extends FragmentInteractionActivity {
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_playlists_to_playlist_details, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetails(playlistId).getArguments());
+    }
+
+    protected String getCurrentActionBarTitle() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return navController.getCurrentDestination().getLabel().toString();
     }
 
     @Override
