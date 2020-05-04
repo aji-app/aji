@@ -57,11 +57,6 @@ public class QueueSongListFragment extends SongListFragment {
     @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         if (getActivity() != null) {
-            mQueueListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
-                if (mAdapter != null && song != null) {
-                    mAdapter.setHighlighted(song.getId());
-                }
-            });
             mQueueListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
                 if (mAdapter != null) {
                     mAdapter.setSongs(songs);
@@ -83,6 +78,5 @@ public class QueueSongListFragment extends SongListFragment {
     public interface QueueListFragmentListener {
         void removeSongFromQueue(long songId);
         LiveData<List<Song>> getCurrentQueue();
-        LiveData<AudioService.SongInformation> getCurrentSong();
     }
 }

@@ -22,7 +22,6 @@ public final class Color {
         return typedValue.data;
     }
 
-
     @ColorInt
     public static int getPrimaryColor(Context context, boolean inverted) {
         if (inverted) {
@@ -47,6 +46,7 @@ public final class Color {
         return Color.getColorFromAttr(context, R.attr.secondaryTextColor);
     }
 
+    @ColorInt
     public static int getBackgroundColor(Context context, boolean inverted) {
         if (inverted) {
             return Color.getColorFromAttr(context, R.attr.backgroundColorInverted);

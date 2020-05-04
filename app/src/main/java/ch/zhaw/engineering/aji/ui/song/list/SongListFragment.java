@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import ch.zhaw.engineering.aji.ui.ListFragment;
@@ -29,12 +31,20 @@ import ch.zhaw.engineering.aji.ui.ListFragment;
  */
 public abstract class SongListFragment extends ListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
     private static final String TAG = "SongListFragment";
-    private static final String ARG_SHOW_FAVORITES = "show-favorites";
+    private final boolean mHighlightCurrentSong;
 
     SongListFragmentListener mListener;
     SongRecyclerViewAdapter mAdapter;
     private boolean mEditMode;
 
+    public SongListFragment() {
+        this(false);
+    }
+
+    public SongListFragment(boolean highlightCurrentSong) {
+        super();
+        mHighlightCurrentSong = highlightCurrentSong;
+    }
 
     public void setEditMode(boolean editMode) {
         mEditMode = editMode;
@@ -66,6 +76,13 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            if (mHighlightCurrentSong) {
+                mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
+                    if (mAdapter != null && song != null) {
+                        mAdapter.setHighlighted(song.getId());
+                    }
+                });
+            }
             initializeRecyclerView(appViewModel);
         }
     }
@@ -130,5 +147,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         void onToggleFavorite(long songId);
 
         void onPlaylistModified(int playlistId, List<Long> songIds);
+
+        LiveData<AudioService.SongInformation> getCurrentSong();
     }
 }

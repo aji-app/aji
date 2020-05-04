@@ -86,6 +86,7 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     @Builder
     public static class ItemConfig<T> {
         OnItemSelectedCallback<T> callback;
+
         @Builder.Default
         T value = null;
 

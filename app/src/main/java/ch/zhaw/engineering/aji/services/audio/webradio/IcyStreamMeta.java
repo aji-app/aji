@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Originally from [but modified]: https://stackoverflow.com/q/9237562
  */
-/* pacakge */ class IcyStreamMeta {
+/* package */ class IcyStreamMeta {
 
     private URL streamUrl;
     private Map<String, String> metadata;
