@@ -198,6 +198,13 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         }
     }
 
+    @Override
+    public void onSkipToSong(long songId) {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().skipToSong(songId);
+        }
+    }
+
     final void playMusic(Song song, boolean queue) {
         startService();
         if (mAudioService.getValue() != null) {

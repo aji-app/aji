@@ -12,6 +12,7 @@ import java.util.List;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
+import lombok.experimental.Delegate;
 
 public class QueueSongListFragment extends SongListFragment {
     private ItemTouchHelper mItemTouchHelper;
@@ -63,7 +64,7 @@ public class QueueSongListFragment extends SongListFragment {
                         mRecyclerView.setAdapter(getAdapter());
                     }
                 } else {
-                    setAdapter(new SongRecyclerViewAdapter(songs, mListener, this));
+                    setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener, mQueueListener), this));
                     ItemTouchHelper.Callback callback =
                             new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity(), 0, ItemTouchHelper.START);
                     mItemTouchHelper = new ItemTouchHelper(callback);
@@ -74,8 +75,32 @@ public class QueueSongListFragment extends SongListFragment {
         }
     }
 
+    private static class CustomListener implements SongListFragmentListener {
+
+        @Delegate(excludes = CustomListener.CustomDelegates.class)
+        private final SongListFragmentListener mListener;
+        private final QueueListFragmentListener mQueueListener;
+
+        private CustomListener(SongListFragmentListener listener, QueueListFragmentListener queueListener) {
+            mListener = listener;
+            mQueueListener = queueListener;
+        }
+
+        @Override
+        public void onSongSelected(long songId) {
+            mQueueListener.onSkipToSong(songId);
+        }
+
+        private interface CustomDelegates {
+            void onSongSelected(long songId);
+        }
+    }
+
     public interface QueueListFragmentListener {
         void removeSongFromQueue(long songId);
+
+        void onSkipToSong(long songId);
+
         LiveData<List<Song>> getCurrentQueue();
     }
 }

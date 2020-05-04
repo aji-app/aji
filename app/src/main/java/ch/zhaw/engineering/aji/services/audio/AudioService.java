@@ -402,6 +402,13 @@ public class AudioService extends LifecycleService {
         mAudioBackend.seekTo(position);
     }
 
+    private void playbackControlSkipToSong(long songId) {
+        if (mCurrentQueue.getValue() != null) {
+            int index = mCurrentQueue.getValue().indexOf(songId);
+            mAudioBackend.skipToMedia(index);
+        }
+    }
+
     private void playbackControlRemoveSongFromQueue(long songId) {
         Song song = mCurrentSongs.remove(songId);
         if (song != null) {
@@ -522,6 +529,10 @@ public class AudioService extends LifecycleService {
 
         public void removeSongFromQueue(long songId) {
             playbackControlRemoveSongFromQueue(songId);
+        }
+
+        public void skipToSong(long songId) {
+            playbackControlSkipToSong(songId);
         }
     }
 

@@ -66,7 +66,7 @@ public class PlaylistSongListFragment extends SongListFragment {
 
     private static class CustomListener implements SongListFragmentListener {
 
-        @Delegate(excludes=CustomDelegates.class)
+        @Delegate(excludes = CustomDelegates.class)
         private final SongListFragmentListener mListener;
 
         private CustomListener(SongListFragmentListener listener) {
@@ -85,6 +85,7 @@ public class PlaylistSongListFragment extends SongListFragment {
 
         private interface CustomDelegates {
             void onSongSelected(long songId);
+
             void onSongMenu(long songId);
         }
     }
