@@ -2,8 +2,10 @@ package ch.zhaw.engineering.aji.ui.radiostation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,12 +15,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.net.MalformedURLException;
+
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadioStationDetailsBinding;
+import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
+import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 
@@ -70,7 +77,17 @@ public class RadioStationDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
-        mBinding.radiostationEdit.setOnClickListener(v -> setEditMode(!mInEditMode));
+        mBinding.radiostationEdit.setOnClickListener(v -> {
+            if (mInEditMode) {
+                checkRadioStation(working -> {
+                    if (working && getActivity() != null) {
+                        getActivity().runOnUiThread(() -> setEditMode(false));
+                    }
+                });
+            } else {
+                setEditMode(true);
+            }
+        });
 
         mBinding.genreAddButton.setOnClickListener(v -> {
             if (mInEditMode) {
@@ -80,9 +97,14 @@ public class RadioStationDetailsFragment extends Fragment {
 
         mBinding.fabSaveRadiostation.setOnClickListener(v -> {
             updateRadioStationData();
-            if (mListener != null) {
-                mListener.onRadioStationSaved(mRadioStation);
-            }
+            checkRadioStation(working -> {
+                if (working) {
+                    if (mListener != null) {
+                        mListener.onRadioStationSaved(mRadioStation);
+                    }
+                }
+            });
+
         });
 
         mBinding.radiostationDelete.setOnClickListener(v -> {
@@ -187,6 +209,37 @@ public class RadioStationDetailsFragment extends Fragment {
         }
 
         mRadioStation.setGenres(mAdapter.getGenres());
+    }
+
+    private void checkRadioStation(AudioBackend.Callback<Boolean> callback) {
+        try {
+            RadioStationMetadataRunnable metaCheck = new RadioStationMetadataRunnable((title, artist, hasError) -> {
+                if (hasError) {
+                    showInvalidUrlAlert(callback);
+                }
+            }, mBinding.radiostationUrl.getText().toString());
+            AsyncTask.execute(metaCheck);
+        } catch (MalformedURLException e) {
+            // Display alert
+            showInvalidUrlAlert(callback);
+            return;
+        }
+    }
+
+    private void showInvalidUrlAlert(AudioBackend.Callback<Boolean> callback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.radiostation_url_invalid)
+                .setTitle(R.string.radiostation_url_invalid_title);
+        builder.setPositiveButton(R.string.ignore, (dialog, id) -> {
+            callback.receiveValue(true);
+        });
+        builder.setNegativeButton(R.string.fix, (dialog, id) -> {
+            callback.receiveValue(false);
+        });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
     public void useImportedRadioStation(RadioStationDto imported) {

@@ -35,7 +35,9 @@ import java.util.regex.Pattern;
      */
     public String getArtist() throws IOException {
         Map<String, String> data = getMetadata();
-
+        if (data == null){
+            throw new IOException("Cannot load metadata");
+        }
         if (!data.containsKey("StreamTitle"))
             return "";
 
@@ -55,6 +57,9 @@ import java.util.regex.Pattern;
      */
     public String getTitle() throws IOException {
         Map<String, String> data = getMetadata();
+        if (data == null){
+            throw new IOException("Cannot load metadata");
+        }
 
         if (!data.containsKey("StreamTitle"))
             return "";

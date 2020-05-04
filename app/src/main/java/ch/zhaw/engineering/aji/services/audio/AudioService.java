@@ -167,7 +167,7 @@ public class AudioService extends LifecycleService {
                             SongInformation baseInfo = SongInformation.fromRadioStation(station);
                             mCurrentSong.postValue(baseInfo);
                             try {
-                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
+                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist, boolean hasError) -> {
                                     if (title.equals("")) {
                                         title = getApplicationContext().getResources().getString(R.string.unknown);
                                     }
