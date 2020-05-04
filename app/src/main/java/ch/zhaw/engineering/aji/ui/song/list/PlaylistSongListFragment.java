@@ -44,7 +44,7 @@ public class PlaylistSongListFragment extends SongListFragment {
 
     @Override
     public void onItemDismiss(int position) {
-        mAdapter.dismissWithSnackbar(position, R.string.song_removed_playlist, null);
+        getAdapter().dismissWithSnackbar(position, R.string.song_removed_playlist, null);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class PlaylistSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
-                    mAdapter = new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this);
+                    setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
                     ItemTouchHelper.Callback callback =
-                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(mAdapter, getActivity());
+                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity());
                     mItemTouchHelper = new ItemTouchHelper(callback);
                     mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setAdapter(getAdapter());
                 });
             }
         });

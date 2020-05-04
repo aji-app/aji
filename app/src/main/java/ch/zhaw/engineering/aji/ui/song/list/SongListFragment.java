@@ -22,6 +22,7 @@ import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import ch.zhaw.engineering.aji.ui.ListFragment;
+import lombok.Getter;
 
 /**
  * A fragment representing a list of Songs.
@@ -34,11 +35,13 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     private final boolean mHighlightCurrentSong;
 
     SongListFragmentListener mListener;
-    SongRecyclerViewAdapter mAdapter;
+
+    @Getter
+    private SongRecyclerViewAdapter mAdapter;
     private boolean mEditMode;
 
     public SongListFragment() {
-        this(false);
+        this(true);
     }
 
     public SongListFragment(boolean highlightCurrentSong) {
@@ -46,9 +49,13 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         mHighlightCurrentSong = highlightCurrentSong;
     }
 
+    public void setAdapter(SongRecyclerViewAdapter adapter) {
+        mAdapter = adapter;
+    }
+
     public void setEditMode(boolean editMode) {
         mEditMode = editMode;
-        mAdapter.setEditMode(mEditMode);
+        getAdapter().setEditMode(mEditMode);
         if (!mEditMode) {
             notifyListenerPlaylistUpdated();
         }
@@ -76,14 +83,14 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            initializeRecyclerView(appViewModel);
             if (mHighlightCurrentSong) {
                 mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
-                    if (mAdapter != null && song != null) {
-                        mAdapter.setHighlighted(song.getId());
+                    if (getAdapter() != null && song != null) {
+                        getAdapter().setHighlighted(song.getId());
                     }
                 });
             }
-            initializeRecyclerView(appViewModel);
         }
     }
 
@@ -120,8 +127,8 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     }
 
     private void notifyListenerPlaylistUpdated() {
-        if (mListener != null && mAdapter != null) {
-            Pair<Integer, List<Long>> data = mAdapter.getModifiedPlaylist();
+        if (mListener != null && getAdapter() != null) {
+            Pair<Integer, List<Long>> data = getAdapter().getModifiedPlaylist();
             if (data.first != null && data.second != null) {
                 Log.i(TAG, "save playlist with songs: " + data.second.size());
                 mListener.onPlaylistModified(data.first, data.second);

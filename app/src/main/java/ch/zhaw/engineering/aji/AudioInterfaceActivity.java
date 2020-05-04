@@ -40,7 +40,6 @@ import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.aji.services.audio.NotificationManager.SHUTDOWN_INTENT;
-import static java.util.Collections.emptyList;
 
 public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener {
     private static final String TAG = "AudioInterfaceActivity";
@@ -128,19 +127,19 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         mAudioService.observe(this, audioService -> {
             if (audioService != null && startAction != null) {
                 if (startAction.getSong() != null) {
-                    if (startAction.queue) {
+                    if (startAction.mQueue) {
                         audioService.queue(startAction.getSong());
                     } else {
                         audioService.play(startAction.getSong());
                     }
                 } else if (startAction.getPlaylist() != null) {
-                    if (startAction.queue) {
+                    if (startAction.mQueue) {
                         audioService.queue(startAction.getPlaylist());
                     } else {
                         audioService.play(startAction.getPlaylist());
                     }
-                } else if (startAction.getRadio() != null) {
-                    audioService.play(startAction.getRadio());
+                } else if (startAction.getRadioStation() != null) {
+                    audioService.play(startAction.getRadioStation());
                 } else if (startAction.getSongs() != null) {
                     audioService.play(startAction.getSongs());
                 }
@@ -228,7 +227,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().play(radioStation);
         } else {
-            startAction = StartPlayingAction.builder().radio(radioStation).build();
+            startAction = StartPlayingAction.builder().radioStation(radioStation).build();
         }
         Log.i(TAG, "Playing radioStation: " + radioStation.toString());
     }
@@ -353,14 +352,14 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     @Builder
     private static class StartPlayingAction {
         @Builder.Default
-        Song song = null;
+        Song mSong = null;
         @Builder.Default
-        Playlist playlist = null;
+        Playlist mPlaylist = null;
         @Builder.Default
-        RadioStation radio = null;
+        RadioStation mRadioStation = null;
         @Builder.Default
-        boolean queue = false;
+        boolean mQueue = false;
         @Builder.Default
-        List<Song> songs = null;
+        List<Song> mSongs = null;
     }
 }

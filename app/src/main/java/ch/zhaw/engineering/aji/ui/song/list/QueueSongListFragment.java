@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
-import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
@@ -30,7 +29,7 @@ public class QueueSongListFragment extends SongListFragment {
 
     @Override
     public void onItemDismiss(int position) {
-        mAdapter.dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
+        getAdapter().dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
             mQueueListener.removeSongFromQueue(song.getSongId());
         });
     }
@@ -58,18 +57,18 @@ public class QueueSongListFragment extends SongListFragment {
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         if (getActivity() != null) {
             mQueueListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
-                if (mAdapter != null) {
-                    mAdapter.setSongs(songs);
+                if (getAdapter() != null) {
+                    getAdapter().setSongs(songs);
                     if (mRecyclerView.getAdapter() == null) {
-                        mRecyclerView.setAdapter(mAdapter);
+                        mRecyclerView.setAdapter(getAdapter());
                     }
                 } else {
-                    mAdapter = new SongRecyclerViewAdapter(songs, mListener, this);
+                    setAdapter(new SongRecyclerViewAdapter(songs, mListener, this));
                     ItemTouchHelper.Callback callback =
-                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(mAdapter, getActivity(), 0, ItemTouchHelper.START);
+                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity(), 0, ItemTouchHelper.START);
                     mItemTouchHelper = new ItemTouchHelper(callback);
                     mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setAdapter(getAdapter());
                 }
             });
         }

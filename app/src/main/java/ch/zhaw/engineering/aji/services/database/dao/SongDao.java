@@ -168,12 +168,6 @@ public abstract class SongDao {
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(String text, boolean asc);
 
-    @Query("SELECT DISTINCT song.album as name FROM Song song " +
-            "WHERE LOWER(song.album) LIKE LOWER(:text) " +
-            "GROUP BY song.album " +
-            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC ")
-    public abstract List<AlbumDto> getFilteredAlbumsAsList(String text, boolean asc);
-
     @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
             "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")

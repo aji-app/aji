@@ -85,23 +85,23 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     @Value
     @Builder
     public static class ItemConfig<T> {
-        OnItemSelectedCallback<T> callback;
+        OnItemSelectedCallback<T> mCallback;
 
         @Builder.Default
-        T value = null;
+        T mValue = null;
 
         @DrawableRes
-        int imageId;
+        int mImageId;
 
         @Builder.Default
         @StringRes
-        int textId = -1;
+        int mTextId = -1;
 
         @Builder.Default
-        String text = null;
+        String mText = null;
 
         public void callCallback() {
-            callback.onItemSelected(getValue());
+            mCallback.onItemSelected(getValue());
         }
     }
 

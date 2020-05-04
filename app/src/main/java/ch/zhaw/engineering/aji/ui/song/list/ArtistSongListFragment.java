@@ -34,14 +34,14 @@ public class ArtistSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    if (mAdapter != null) {
-                        mAdapter.setSongs(songs);
+                    if (getAdapter() != null) {
+                        getAdapter().setSongs(songs);
                         if (mRecyclerView.getAdapter() == null) {
-                            mRecyclerView.setAdapter(mAdapter);
+                            mRecyclerView.setAdapter(getAdapter());
                         }
                     } else {
-                        mAdapter = new SongRecyclerViewAdapter(songs, new CustomListener(mListener));
-                        mRecyclerView.setAdapter(mAdapter);
+                        setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener)));
+                        mRecyclerView.setAdapter(getAdapter());
                     }
                 });
             }

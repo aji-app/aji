@@ -41,7 +41,6 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragment;
-import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
@@ -49,8 +48,7 @@ import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
-        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener,
-        AllSongsListFragment.AllSongsListFragmentListener {
+        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
 
     private static final String TAG = "FragmentInteractions";
     private static final int REQUEST_CODE_PLS_SELECT = 2;

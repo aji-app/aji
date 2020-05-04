@@ -37,8 +37,8 @@ public class FileNameParser {
 
     @Value
     public static class ParsedFileName {
-        String artist;
-        String album;
-        String title;
+        String mArtist;
+        String mAlbum;
+        String mTitle;
     }
 }
