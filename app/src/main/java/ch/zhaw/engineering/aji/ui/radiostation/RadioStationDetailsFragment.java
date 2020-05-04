@@ -213,7 +213,9 @@ public class RadioStationDetailsFragment extends Fragment {
 
     private void checkRadioStation(AudioBackend.Callback<Boolean> callback) {
         try {
+            mListener.showProgressSpinner(true);
             RadioStationMetadataRunnable metaCheck = new RadioStationMetadataRunnable((title, artist, hasError) -> {
+                mListener.showProgressSpinner(false);
                 if (hasError) {
                     showInvalidUrlAlert(callback);
                 }
@@ -221,25 +223,29 @@ public class RadioStationDetailsFragment extends Fragment {
             AsyncTask.execute(metaCheck);
         } catch (MalformedURLException e) {
             // Display alert
+            mListener.showProgressSpinner(false);
             showInvalidUrlAlert(callback);
             return;
         }
     }
 
     private void showInvalidUrlAlert(AudioBackend.Callback<Boolean> callback) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.radiostation_url_invalid)
-                .setTitle(R.string.radiostation_url_invalid_title);
-        builder.setPositiveButton(R.string.ignore, (dialog, id) -> {
-            callback.receiveValue(true);
-        });
-        builder.setNegativeButton(R.string.fix, (dialog, id) -> {
-            callback.receiveValue(false);
-        });
+        if (getActivity() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.radiostation_url_invalid)
+                    .setTitle(R.string.radiostation_url_invalid_title);
+            builder.setPositiveButton(R.string.ignore, (dialog, id) -> {
+                callback.receiveValue(true);
+            });
+            builder.setNegativeButton(R.string.fix, (dialog, id) -> {
+                callback.receiveValue(false);
+            });
+            getActivity().runOnUiThread(() -> {
+                AlertDialog dialog = builder.create();
 
-        AlertDialog dialog = builder.create();
-
-        dialog.show();
+                dialog.show();
+            });
+        }
     }
 
     public void useImportedRadioStation(RadioStationDto imported) {
@@ -260,5 +266,7 @@ public class RadioStationDetailsFragment extends Fragment {
         void onRadioStationImport();
 
         boolean onSupportNavigateUp();
+
+        void showProgressSpinner(boolean show);
     }
 }

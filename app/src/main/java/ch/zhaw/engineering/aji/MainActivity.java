@@ -286,4 +286,11 @@ public class MainActivity extends FragmentInteractionActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    @Override
+    public void showProgressSpinner(boolean show) {
+        runOnUiThread(() -> {
+            mBinding.progressBarHolder.setVisibility(show ? View.VISIBLE : View.GONE);
+        });
+    }
 }
