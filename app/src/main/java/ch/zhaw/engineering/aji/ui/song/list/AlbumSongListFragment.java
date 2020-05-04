@@ -3,6 +3,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 import android.os.Bundle;
 import android.util.Log;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 
@@ -34,14 +35,14 @@ public class AlbumSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    if (mAdapter != null) {
-                        mAdapter.setSongs(songs);
+                    if (getAdapter() != null) {
+                        getAdapter().setSongs(songs);
                         if (mRecyclerView.getAdapter() == null) {
-                            mRecyclerView.setAdapter(mAdapter);
+                            mRecyclerView.setAdapter(getAdapter());
                         }
                     } else {
-                        mAdapter = new SongRecyclerViewAdapter(songs, new CustomListener(mListener));
-                        mRecyclerView.setAdapter(mAdapter);
+                        setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener)));
+                        mRecyclerView.setAdapter(getAdapter());
                     }
                 });
             }
@@ -63,13 +64,13 @@ public class AlbumSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId) {
+        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
             mListener.onSongMenu(songId);
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId);
-            void onSongMenu(long songId);
+            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }

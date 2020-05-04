@@ -2,8 +2,10 @@ package ch.zhaw.engineering.aji.ui.radiostation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,10 +15,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import java.net.MalformedURLException;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadioStationDetailsBinding;
+import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
+import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 
@@ -29,6 +38,7 @@ public class RadioStationDetailsFragment extends Fragment {
     private boolean mInEditMode = false;
     private RadioStationDetailsFragmentListener mListener;
     private GenreRecyclerViewAdapter mAdapter;
+    private boolean mPlaylistDeleted;
 
     public static RadioStationDetailsFragment newInstance(long radioStationId) {
         RadioStationDetailsFragment fragment = new RadioStationDetailsFragment();
@@ -67,7 +77,17 @@ public class RadioStationDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
-        mBinding.radiostationEdit.setOnClickListener(v -> setEditMode(!mInEditMode));
+        mBinding.radiostationEdit.setOnClickListener(v -> {
+            if (mInEditMode) {
+                checkRadioStation(working -> {
+                    if (working && getActivity() != null) {
+                        getActivity().runOnUiThread(() -> setEditMode(false));
+                    }
+                });
+            } else {
+                setEditMode(true);
+            }
+        });
 
         mBinding.genreAddButton.setOnClickListener(v -> {
             if (mInEditMode) {
@@ -77,9 +97,32 @@ public class RadioStationDetailsFragment extends Fragment {
 
         mBinding.fabSaveRadiostation.setOnClickListener(v -> {
             updateRadioStationData();
-            if (mListener != null) {
-                mListener.onRadioStationSaved(mRadioStation);
-            }
+            checkRadioStation(working -> {
+                if (working) {
+                    if (mListener != null) {
+                        mListener.onRadioStationSaved(mRadioStation);
+                    }
+                }
+            });
+
+        });
+
+        mBinding.radiostationDelete.setOnClickListener(v -> {
+            Snackbar snackbar = Snackbar
+                    .make(mBinding.getRoot(), R.string.radiostation_deleted, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                    }).addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            if (event != DISMISS_EVENT_ACTION && mListener != null) {
+                                mPlaylistDeleted = true;
+                                mListener.onRadioStationDelete(mRadioStationId);
+                                mListener.onSupportNavigateUp();
+                            }
+                        }
+                    });
+            snackbar.show();
         });
 
         return mBinding.getRoot();
@@ -168,6 +211,43 @@ public class RadioStationDetailsFragment extends Fragment {
         mRadioStation.setGenres(mAdapter.getGenres());
     }
 
+    private void checkRadioStation(AudioBackend.Callback<Boolean> callback) {
+        try {
+            mListener.showProgressSpinner(true);
+            RadioStationMetadataRunnable metaCheck = new RadioStationMetadataRunnable((title, artist, hasError) -> {
+                mListener.showProgressSpinner(false);
+                if (hasError) {
+                    showInvalidUrlAlert(callback);
+                }
+            }, mBinding.radiostationUrl.getText().toString());
+            AsyncTask.execute(metaCheck);
+        } catch (MalformedURLException e) {
+            // Display alert
+            mListener.showProgressSpinner(false);
+            showInvalidUrlAlert(callback);
+            return;
+        }
+    }
+
+    private void showInvalidUrlAlert(AudioBackend.Callback<Boolean> callback) {
+        if (getActivity() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.radiostation_url_invalid)
+                    .setTitle(R.string.radiostation_url_invalid_title);
+            builder.setPositiveButton(R.string.ignore, (dialog, id) -> {
+                callback.receiveValue(true);
+            });
+            builder.setNegativeButton(R.string.fix, (dialog, id) -> {
+                callback.receiveValue(false);
+            });
+            getActivity().runOnUiThread(() -> {
+                AlertDialog dialog = builder.create();
+
+                dialog.show();
+            });
+        }
+    }
+
     public void useImportedRadioStation(RadioStationDto imported) {
         mRadioStation.setName(imported.getName());
         mRadioStation.setUrl(imported.getUrl());
@@ -181,6 +261,12 @@ public class RadioStationDetailsFragment extends Fragment {
 
         void onRadioStationSaved(RadioStationDto updatedRadioStation);
 
+        void onRadioStationDelete(long radioStationId);
+
         void onRadioStationImport();
+
+        boolean onSupportNavigateUp();
+
+        void showProgressSpinner(boolean show);
     }
 }

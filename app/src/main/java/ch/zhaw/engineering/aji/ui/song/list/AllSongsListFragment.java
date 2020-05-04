@@ -14,21 +14,23 @@ public class AllSongsListFragment extends SongListFragment {
 
     @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
-        appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
-            Log.i(TAG, "Updating songs for song fragment");
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if (mAdapter != null) {
-                        mAdapter.setSongs(songs);
-                        if (mRecyclerView.getAdapter() == null) {
-                            mRecyclerView.setAdapter(mAdapter);
+        if (getActivity() != null) {
+            appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
+                Log.i(TAG, "Updating songs for song fragment");
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        if (getAdapter() != null) {
+                            getAdapter().setSongs(songs);
+                            if (mRecyclerView.getAdapter() == null) {
+                                mRecyclerView.setAdapter(getAdapter());
+                            }
+                        } else {
+                            setAdapter(new SongRecyclerViewAdapter(songs, mListener));
+                            mRecyclerView.setAdapter(getAdapter());
                         }
-                    } else {
-                        mAdapter = new SongRecyclerViewAdapter(songs, mListener);
-                        mRecyclerView.setAdapter(mAdapter);
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     }
 }

@@ -122,6 +122,12 @@ public interface AudioBackend {
 
     void removeSongFromQueue(Media media);
 
+    /**
+     * Skips to the song at the provided index in the queue
+     * @param index the index of the song
+     */
+    void skipToMedia(int index);
+
     interface Media {
         @Nullable
         Object getTag();

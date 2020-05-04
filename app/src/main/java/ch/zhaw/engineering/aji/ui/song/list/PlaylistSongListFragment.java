@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
@@ -16,9 +20,10 @@ public class PlaylistSongListFragment extends SongListFragment {
     private static final String TAG = "PlaylistSongsFragment";
     private Integer mPlaylistId;
     private ItemTouchHelper mItemTouchHelper;
+    private boolean mPlaylistDeleted;
 
-    public static SongListFragment newInstance(@Nullable Integer playlistId) {
-        SongListFragment fragment = new PlaylistSongListFragment();
+    public static PlaylistSongListFragment newInstance(@Nullable Integer playlistId) {
+        PlaylistSongListFragment fragment = new PlaylistSongListFragment();
         if (playlistId != null) {
             Bundle args = new Bundle();
             args.putInt(ARG_PLAYLIST_ID, playlistId);
@@ -44,7 +49,32 @@ public class PlaylistSongListFragment extends SongListFragment {
 
     @Override
     public void onItemDismiss(int position) {
-        mAdapter.dismissWithSnackbar(position, R.string.song_removed_playlist, null);
+        getAdapter().dismissWithSnackbar(position, R.string.song_removed_playlist, null);
+    }
+
+    public void setEditMode(boolean editMode) {
+        getAdapter().setEditMode(editMode);
+        if (!editMode && !mPlaylistDeleted) {
+            notifyListenerPlaylistUpdated();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (!mPlaylistDeleted) {
+            notifyListenerPlaylistUpdated();
+        }
+    }
+
+    private void notifyListenerPlaylistUpdated() {
+        if (mListener != null && getAdapter() != null) {
+            Pair<Integer, List<Long>> data = getAdapter().getModifiedPlaylist();
+            if (data.first != null && data.second != null) {
+                Log.i(TAG, "save playlist with songs: " + data.second.size());
+                mListener.onPlaylistModified(data.first, data.second);
+            }
+        }
     }
 
     @Override
@@ -53,20 +83,24 @@ public class PlaylistSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
-                    mAdapter = new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this);
+                    setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
                     ItemTouchHelper.Callback callback =
-                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(mAdapter, getActivity());
+                            new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity());
                     mItemTouchHelper = new ItemTouchHelper(callback);
                     mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setAdapter(getAdapter());
                 });
             }
         });
     }
 
+    public void setPlaylistDeleted(boolean playlistDeleted) {
+        mPlaylistDeleted = true;
+    }
+
     private static class CustomListener implements SongListFragmentListener {
 
-        @Delegate(excludes=CustomDelegates.class)
+        @Delegate(excludes = CustomDelegates.class)
         private final SongListFragmentListener mListener;
 
         private CustomListener(SongListFragmentListener listener) {
@@ -79,13 +113,14 @@ public class PlaylistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId) {
+        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
             mListener.onSongMenu(songId);
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId);
-            void onSongMenu(long songId);
+
+            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }

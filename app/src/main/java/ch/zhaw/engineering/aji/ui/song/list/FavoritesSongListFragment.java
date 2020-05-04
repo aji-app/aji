@@ -17,8 +17,8 @@ public class FavoritesSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    mAdapter = new SongRecyclerViewAdapter(songs, mListener);
-                    mRecyclerView.setAdapter(mAdapter);
+                    setAdapter(new SongRecyclerViewAdapter(songs, mListener));
+                    mRecyclerView.setAdapter(getAdapter());
                 });
             }
         });

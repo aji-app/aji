@@ -167,7 +167,7 @@ public class AudioService extends LifecycleService {
                             SongInformation baseInfo = SongInformation.fromRadioStation(station);
                             mCurrentSong.postValue(baseInfo);
                             try {
-                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist) -> {
+                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist, boolean hasError) -> {
                                     if (title.equals("")) {
                                         title = getApplicationContext().getResources().getString(R.string.unknown);
                                     }
@@ -276,16 +276,20 @@ public class AudioService extends LifecycleService {
         clearQueue();
         try {
             unregisterReceiver(mNoisyAudioStreamReceiver);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // Was not registered
         }
     }
 
     private void playbackControlPauseOrPlay() {
+        boolean isStopped = (PlayState.STOPPED == mCurrentState.getValue() || PlayState.INITIAL == mCurrentState.getValue());
+        boolean stoppedButSongsQueued = isStopped && mCurrentQueue.getValue() != null && mCurrentQueue.getValue().size() > 0;
         if (PlayState.PAUSED == mCurrentState.getValue()) {
             mCurrentState.postValue(PlayState.PLAYING);
             mAudioBackend.play(false);
             mNotificationManager.start();
+        } else if (stoppedButSongsQueued) {
+            playbackControlPlay();
         } else {
             playbackControlPause();
         }
@@ -308,7 +312,7 @@ public class AudioService extends LifecycleService {
     private void addSongToCurrentSongs(Song song) {
         mCurrentSongs.put(song.getSongId(), song);
         List<Long> songs = new ArrayList<>(mCurrentSongs.size());
-        for (Song s : mCurrentSongs.values()){
+        for (Song s : mCurrentSongs.values()) {
             songs.add(s.getSongId());
         }
         mCurrentQueue.postValue(songs);
@@ -400,6 +404,13 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlSeekTo(long position) {
         mAudioBackend.seekTo(position);
+    }
+
+    private void playbackControlSkipToSong(long songId) {
+        if (mCurrentQueue.getValue() != null) {
+            int index = mCurrentQueue.getValue().indexOf(songId);
+            mAudioBackend.skipToMedia(index);
+        }
     }
 
     private void playbackControlRemoveSongFromQueue(long songId) {
@@ -522,6 +533,10 @@ public class AudioService extends LifecycleService {
 
         public void removeSongFromQueue(long songId) {
             playbackControlRemoveSongFromQueue(songId);
+        }
+
+        public void skipToSong(long songId) {
+            playbackControlSkipToSong(songId);
         }
     }
 

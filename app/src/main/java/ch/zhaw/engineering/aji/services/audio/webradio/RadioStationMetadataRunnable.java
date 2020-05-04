@@ -17,13 +17,14 @@ public class RadioStationMetadataRunnable implements Runnable {
         public void run() {
             try {
                 streamMeta.refreshMeta();
-                mListener.onSongInformationChanged(streamMeta.getTitle(), streamMeta.getArtist());
+                mListener.onSongInformationChanged(streamMeta.getTitle(), streamMeta.getArtist(), false);
             } catch (IOException e) {
-                // nothing
+                mListener.onSongInformationChanged(null, null, true);
+                        // nothing
             }
         }
 
         public interface Listener {
-            void onSongInformationChanged(String title, String artist);
+            void onSongInformationChanged(String title, String artist, boolean hasError);
         }
     }

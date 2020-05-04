@@ -42,6 +42,8 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
+import lombok.Builder;
+import lombok.Value;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 
@@ -102,7 +104,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                                     .text(playlist.getName())
                                     .callback(pl -> {
                                         onSongAddToPlaylist(songId, pl.getPlaylistId());
-                                        hideContextMenu();
                                     }).build();
                             configs.add(entry);
                         }
@@ -129,7 +130,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onSongMenu(long songId) {
+    public void onSongMenu(long songId, ContextMenuItem... additionalItems) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongEdit: " + song.getTitle());
@@ -138,31 +139,26 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_play)
                     .textId(R.string.play)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onSongPlay(songId);
-                    }).build());
+                    .callback($ -> onSongPlay(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_queue)
                     .textId(R.string.queue)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onSongQueue(songId);
-                    }).build());
+                    .callback($ -> onSongQueue(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
-                    .callback($ -> {
-                        hideContextMenu();
-                        navigateToSongDetails(songId);
-                    }).build());
+                    .textId(R.string.details)
+                    .callback($ -> navigateToSongDetails(songId)).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_playlist_add)
+                    .textId(R.string.add_to_playlist)
+                    .callback($ -> onSongAddToPlaylist(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_delete)
                     .textId(R.string.delete_song)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onSongDelete(songId);
-                    }).build());
+                    .callback($ -> onSongDelete(songId)).build());
+            for (ContextMenuItem item : additionalItems) {
+                entries.add(item.getPosition(), item.getItemConfig());
+            }
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
                 mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -193,9 +189,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
                             if (event != DISMISS_EVENT_ACTION) {
-                                Song song = mSongDao.getSongById(songId);
-                                Log.i(TAG, "onSongDelete: " + song.getTitle());
-                                mSongDao.deleteSongById(songId);
+                                removeSongFromQueue(songId);
+                                AsyncTask.execute(() -> {
+                                    Song song = mSongDao.getSongById(songId);
+                                    Log.i(TAG, "onSongDelete: " + song.getTitle());
+                                    mSongDao.deleteSongById(songId);
+                                });
                             }
                         }
                     });
@@ -223,8 +222,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onPlaylistModified(int playlistId, List<Long> songIds) {
         AsyncTask.execute(() -> {
-            mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Log.i(TAG, "onPlaylistModified: " + playlist.getName());
         });
     }
@@ -250,31 +249,19 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_play)
                     .textId(R.string.play)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onPlaylistPlay(playlistId);
-                    }).build());
+                    .callback($ -> onPlaylistPlay(playlistId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_queue)
                     .textId(R.string.queue)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onPlaylistQueue(playlistId);
-                    }).build());
+                    .callback($ -> onPlaylistQueue(playlistId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
-                    .callback($ -> {
-                        hideContextMenu();
-                        navigateToPlaylist(playlistId);
-                    }).build());
+                    .textId(R.string.details)
+                    .callback($ -> navigateToPlaylist(playlistId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_delete)
                     .textId(R.string.delete)
-                    .callback($ -> {
-                        hideContextMenu();
-                        onPlaylistDelete(playlistId);
-                    }).build());
+                    .callback($ -> onPlaylistDelete(playlistId)).build());
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
                 mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -353,17 +340,15 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_play)
                     .textId(R.string.play)
-                    .callback($ -> {
-                        onRadioStationPlay(radioStationId);
-                        hideContextMenu();
-                    }).build());
+                    .callback($ -> onRadioStationPlay(radioStationId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
-                    .callback($ -> {
-                        hideContextMenu();
-                        navigateToRadioStation(radioStationId);
-                    }).build());
+                    .textId(R.string.details)
+                    .callback($ -> navigateToRadioStation(radioStationId)).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_delete)
+                    .textId(R.string.delete_radiostation)
+                    .callback($ -> onRadioStationDelete(radioStationId)).build());
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
                 mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -412,9 +397,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 mRadioStationDao.createRadioStation(updatedRadioStation);
             }
             Log.i(TAG, "onRadioStationSaved: " + updatedRadioStation.getName());
-            runOnUiThread(() -> {
-                onSupportNavigateUp();
-            });
+            runOnUiThread(this::onSupportNavigateUp);
         });
     }
 
@@ -489,24 +472,15 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_play)
                 .textId(R.string.play)
-                .callback($ -> {
-                    onAlbumPlay(album);
-                    hideContextMenu();
-                }).build());
+                .callback($ -> onAlbumPlay(album)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_queue)
                 .textId(R.string.queue)
-                .callback($ -> {
-                    hideContextMenu();
-                    onAlbumQueue(album);
-                }).build());
+                .callback($ -> onAlbumQueue(album)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_edit)
-                .textId(R.string.edit)
-                .callback($ -> {
-                    hideContextMenu();
-                    navigateToAlbum(album);
-                }).build());
+                .textId(R.string.details)
+                .callback($ -> navigateToAlbum(album)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -555,11 +529,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .callback($ -> onArtistQueue(artist)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_edit)
-                .textId(R.string.edit)
-                .callback($ -> {
-                    hideContextMenu();
-                    navigateToArtist(artist);
-                }).build());
+                .textId(R.string.details)
+                .callback($ -> navigateToArtist(artist)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -573,12 +544,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         runOnUiThread(() -> {
             navigateToArtist(artist);
         });
-    }
-
-    private void hideContextMenu() {
-        if (mContextMenuFragment != null) {
-            mContextMenuFragment.dismiss();
-        }
     }
 
     private void showCreatePlaylistDialog() {
@@ -667,4 +632,11 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     protected abstract void navigateToArtist(String artist);
 
     protected abstract void navigateToSongDetails(long songId);
+
+    @Value
+    @Builder
+    public static class ContextMenuItem {
+        ContextMenuFragment.ItemConfig mItemConfig;
+        int mPosition;
+    }
 }

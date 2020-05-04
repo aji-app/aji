@@ -10,16 +10,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import ch.zhaw.engineering.aji.ui.ListFragment;
+import lombok.Getter;
 
 /**
  * A fragment representing a list of Songs.
@@ -29,18 +33,28 @@ import ch.zhaw.engineering.aji.ui.ListFragment;
  */
 public abstract class SongListFragment extends ListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
     private static final String TAG = "SongListFragment";
-    private static final String ARG_SHOW_FAVORITES = "show-favorites";
+    private final boolean mHighlightCurrentSong;
 
     SongListFragmentListener mListener;
-    SongRecyclerViewAdapter mAdapter;
-    private boolean mEditMode;
 
+    @Getter
+    private SongRecyclerViewAdapter mAdapter;
+    private Long mPlayingSongId;
 
-    public void setEditMode(boolean editMode) {
-        mEditMode = editMode;
-        mAdapter.setEditMode(mEditMode);
-        if (!mEditMode) {
-            notifyListenerPlaylistUpdated();
+    public SongListFragment() {
+        this(true);
+    }
+
+    public SongListFragment(boolean highlightCurrentSong) {
+        super();
+        mHighlightCurrentSong = highlightCurrentSong;
+    }
+
+    public void setAdapter(SongRecyclerViewAdapter adapter) {
+        mAdapter = adapter;
+        if (mPlayingSongId != null) {
+            mAdapter.setHighlighted(mPlayingSongId);
+            mPlayingSongId = null;
         }
     }
 
@@ -67,6 +81,17 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         if (getActivity() != null) {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             initializeRecyclerView(appViewModel);
+            if (mHighlightCurrentSong) {
+                mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
+                    if (song != null) {
+                        if (getAdapter() != null) {
+                            getAdapter().setHighlighted(song.getId());
+                        } else {
+                            mPlayingSongId = song.getId();
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -96,22 +121,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     public void onItemDismiss(int position) {
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        notifyListenerPlaylistUpdated();
-    }
-
-    private void notifyListenerPlaylistUpdated() {
-        if (mListener != null && mAdapter != null) {
-            Pair<Integer, List<Long>> data = mAdapter.getModifiedPlaylist();
-            if (data.first != null && data.second != null) {
-                Log.i(TAG, "save playlist with songs: " + data.second.size());
-                mListener.onPlaylistModified(data.first, data.second);
-            }
-        }
-    }
-
     public interface SongListFragmentListener {
         void onSongSelected(long songId);
 
@@ -119,7 +128,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
         void onSongQueue(long songId);
 
-        void onSongMenu(long songId);
+        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onSongAddToPlaylist(long songId, int playlistId);
 
@@ -130,5 +139,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         void onToggleFavorite(long songId);
 
         void onPlaylistModified(int playlistId, List<Long> songIds);
+
+        LiveData<AudioService.SongInformation> getCurrentSong();
     }
 }

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -112,6 +113,10 @@ public class MainActivity extends FragmentInteractionActivity {
                         songName.setText(info.getTitle());
                         albumName.setText(info.getAlbum());
                         artistName.setText(info.getArtist());
+                    } else {
+                        songName.setText(R.string.not_playing);
+                        albumName.setText(null);
+                        artistName.setText(null);
                     }
                 });
             }
@@ -251,7 +256,7 @@ public class MainActivity extends FragmentInteractionActivity {
                     navController.navigate(R.id.action_nav_radiostation_details_to_nav_song_details, RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_song_details:
-                    navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments());
+                    navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments(), new NavOptions.Builder().setPopUpTo(R.id.nav_song_details, true).build());
                     break;
                 case R.id.nav_album_details:
                     navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
@@ -280,5 +285,12 @@ public class MainActivity extends FragmentInteractionActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void showProgressSpinner(boolean show) {
+        runOnUiThread(() -> {
+            mBinding.progressBarHolder.setVisibility(show ? View.VISIBLE : View.GONE);
+        });
     }
 }

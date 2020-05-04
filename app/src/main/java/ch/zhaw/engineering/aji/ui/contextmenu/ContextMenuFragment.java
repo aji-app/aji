@@ -61,7 +61,7 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mConfig.observe(getViewLifecycleOwner(), config -> {
-            mRecyclerView.setAdapter(new ContextMenuRecyclerViewAdapter(config, getActivity()));
+            mRecyclerView.setAdapter(new ContextMenuRecyclerViewAdapter(config, getActivity(), this));
         });
     }
 
@@ -85,22 +85,23 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     @Value
     @Builder
     public static class ItemConfig<T> {
-        OnItemSelectedCallback<T> callback;
+        OnItemSelectedCallback<T> mCallback;
+
         @Builder.Default
-        T value = null;
+        T mValue = null;
 
         @DrawableRes
-        int imageId;
+        int mImageId;
 
         @Builder.Default
         @StringRes
-        int textId = -1;
+        int mTextId = -1;
 
         @Builder.Default
-        String text = null;
+        String mText = null;
 
-        public void callCallback() {
-            callback.onItemSelected(getValue());
+        void callCallback() {
+            mCallback.onItemSelected(getValue());
         }
     }
 
@@ -111,10 +112,12 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     private static class ContextMenuRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         private List<ItemConfig> mItems;
         private Context mContext;
+        private ContextMenuFragment mFragment;
 
-        ContextMenuRecyclerViewAdapter(List<ItemConfig> items, Context context) {
+        ContextMenuRecyclerViewAdapter(List<ItemConfig> items, Context context, ContextMenuFragment fragment) {
             mItems = items;
             mContext = context;
+            mFragment = fragment;
         }
 
         @NonNull
@@ -128,6 +131,7 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
             final ItemConfig currentConfig = mItems.get(position);
             holder.itemView.setOnClickListener(v -> {
                 currentConfig.callCallback();
+                mFragment.dismiss();
             });
             if (currentConfig.getText() != null) {
                 holder.binding.text.setText(currentConfig.getText());

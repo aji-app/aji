@@ -8,24 +8,24 @@ import lombok.Value;
 @Value
 @AllArgsConstructor
 public class DirectoryItem {
-    File file;
-    String name;
-    boolean isDirectory;
+    File mFile;
+    String mName;
+    boolean mIsDirectory;
 
     public DirectoryItem(File file) {
-        this.file = file;
-        this.name = null;
-        this.isDirectory = file.isDirectory();
+        this.mFile = file;
+        this.mName = null;
+        this.mIsDirectory = file.isDirectory();
     }
 
     public static DirectoryItem parentDirectory(DirectoryItem parent) {
-        return new DirectoryItem(parent.file, "..", true);
+        return new DirectoryItem(parent.mFile, "..", true);
     }
 
     public String getName() {
-        if (name == null) {
-            return file.getName();
+        if (mName == null) {
+            return mFile.getName();
         }
-        return name;
+        return mName;
     }
 }

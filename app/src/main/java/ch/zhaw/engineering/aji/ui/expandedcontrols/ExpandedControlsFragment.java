@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 import ch.zhaw.engineering.aji.AudioControlListener;
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
@@ -58,6 +59,7 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.persistentControlsButtons.btnNext.setOnClickListener(v -> mListener.onNext());
         mBinding.persistentControlsButtons.btnPlaypause.setOnClickListener(v -> mListener.onPlayPause());
         mBinding.persistentControlsButtons.btnPrevious.setOnClickListener(v -> mListener.onPrevious());
+        mBinding.persistentControlsButtons.btnStop.setOnClickListener(v -> mListener.onStop());
 
         mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setOnClickListener(v -> mListener.onToggleAutoQueue());
         mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
@@ -93,6 +95,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                        enableImageView(mBinding.persistentControlsButtons.btnStop);
                         if (!isRadio) {
                             enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                             enableImageView(mBinding.persistentControlsButtons.btnNext);
@@ -102,6 +105,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
                         enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                        enableImageView(mBinding.persistentControlsButtons.btnStop);
                         if (!isRadio) {
                             enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                             enableImageView(mBinding.persistentControlsButtons.btnNext);
@@ -113,6 +117,7 @@ public class ExpandedControlsFragment extends Fragment {
                         disableImageView(mBinding.persistentControlsButtons.btnPlaypause, true);
                         disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
                         disableImageView(mBinding.persistentControlsButtons.btnNext, true);
+                        disableImageView(mBinding.persistentControlsButtons.btnStop, true);
                         mBinding.persistentControlsSeebar.seekbar.setEnabled(false);
 
                         break;
@@ -148,6 +153,12 @@ public class ExpandedControlsFragment extends Fragment {
             ).observe(getViewLifecycleOwner(),
                     song -> mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
             );
+
+            mListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
+                if (songs != null && songs.size() > 0) {
+                    enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                }
+            });
 
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
                 mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
@@ -185,6 +196,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.seekbar.setBackground(null);
                         disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
                         disableImageView(mBinding.persistentControlsButtons.btnNext, true);
+                        enableImageView(mBinding.persistentControlsButtons.btnStop);
                     } else {
                         mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
                         mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.VISIBLE);
@@ -195,6 +207,7 @@ public class ExpandedControlsFragment extends Fragment {
                         mBinding.persistentControlsSeebar.seekbar.setMax((int) info.getDuration());
                         enableImageView(mBinding.persistentControlsButtons.btnPrevious);
                         enableImageView(mBinding.persistentControlsButtons.btnNext);
+                        enableImageView(mBinding.persistentControlsButtons.btnStop);
                     }
                 } else {
                     mBinding.persistentControlsSonginfo.songTitleExpanded.setText(R.string.not_playing);
@@ -207,6 +220,7 @@ public class ExpandedControlsFragment extends Fragment {
                     disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
                     disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
                     disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat, false);
+                    disableImageView(mBinding.persistentControlsButtons.btnStop, false);
                 }
             });
 
@@ -291,13 +305,15 @@ public class ExpandedControlsFragment extends Fragment {
     public interface ExpandedControlsFragmentListener extends AudioControlListener {
         void onToggleFavorite(long songId);
 
-        void onSongMenu(long songId);
+        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onPlayPause();
 
         void onNext();
 
         void onPrevious();
+
+        void onStop();
 
         void onToggleShuffle();
 
@@ -306,12 +322,5 @@ public class ExpandedControlsFragment extends Fragment {
         void onToggleAutoQueue();
 
         void seek(long position);
-    }
-
-    @AllArgsConstructor
-    private static class SongInfo {
-        AudioService.SongInformation info;
-        LiveData<Song> song;
-        LiveData<RadioStationDto> radioStation;
     }
 }

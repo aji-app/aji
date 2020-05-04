@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistDetailsBinding;
 import ch.zhaw.engineering.aji.services.database.dao.PlaylistDao;
@@ -27,7 +29,8 @@ public class PlaylistDetailsFragment extends Fragment {
     private PlaylistDetailsFragmentListener mListener;
     private FragmentPlaylistDetailsBinding mBinding;
     private boolean mInEditMode = false;
-    private SongListFragment mSongListFragment;
+    private PlaylistSongListFragment mSongListFragment;
+    private boolean mPlaylistDeleted;
 
     /**
      * Use this factory method to create a new instance of
@@ -64,6 +67,25 @@ public class PlaylistDetailsFragment extends Fragment {
             }
         });
 
+        mBinding.playlistDelete.setOnClickListener(v -> {
+            Snackbar snackbar = Snackbar
+                    .make(mBinding.getRoot(), R.string.playlist_deleted, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                    }).addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            if (event != DISMISS_EVENT_ACTION && mListener != null) {
+                                mPlaylistDeleted = true;
+                                mSongListFragment.setPlaylistDeleted(true);
+                                mListener.onPlaylistDelete(mPlaylistId);
+                                mListener.onSupportNavigateUp();
+                            }
+                        }
+                    });
+            snackbar.show();
+        });
+
         return mBinding.getRoot();
     }
 
@@ -76,8 +98,6 @@ public class PlaylistDetailsFragment extends Fragment {
                 mPlaylist = playlistDao.getPlaylistById(mPlaylistId);
 
                 getActivity().runOnUiThread(() -> {
-//                    mBinding.playlistName.setText(mPlaylist.getName());
-//                    mBinding.playlistNameEdit.setText(mPlaylist.getName());
                     mBinding.playlistNameEdittext.setText(mPlaylist.getName());
                     mSongListFragment = PlaylistSongListFragment.newInstance(mPlaylistId);
                     getChildFragmentManager().beginTransaction()
@@ -107,12 +127,16 @@ public class PlaylistDetailsFragment extends Fragment {
     }
 
     private void notifyListenerNameUpdate() {
-        if (mBinding.playlistNameEdittext.getText().length() > 0 && mListener != null) {
+        if (mBinding.playlistNameEdittext.getText().length() > 0 && mListener != null && !mPlaylistDeleted) {
             mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistNameEdittext.getText().toString());
         }
     }
 
     public interface PlaylistDetailsFragmentListener {
         void onPlaylistNameChanged(int playlistId, String newName);
+
+        void onPlaylistDelete(int playlistId);
+
+        boolean onSupportNavigateUp();
     }
 }
