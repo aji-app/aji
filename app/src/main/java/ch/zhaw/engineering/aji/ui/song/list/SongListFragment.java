@@ -39,6 +39,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     @Getter
     private SongRecyclerViewAdapter mAdapter;
     private boolean mEditMode;
+    private Long mPlayingSongId;
 
     public SongListFragment() {
         this(true);
@@ -51,6 +52,10 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
     public void setAdapter(SongRecyclerViewAdapter adapter) {
         mAdapter = adapter;
+        if (mPlayingSongId != null) {
+            mAdapter.setHighlighted(mPlayingSongId);
+            mPlayingSongId = null;
+        }
     }
 
     public void setEditMode(boolean editMode) {
@@ -86,8 +91,12 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
             initializeRecyclerView(appViewModel);
             if (mHighlightCurrentSong) {
                 mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
-                    if (getAdapter() != null && song != null) {
-                        getAdapter().setHighlighted(song.getId());
+                    if (song != null) {
+                        if (getAdapter() != null) {
+                            getAdapter().setHighlighted(song.getId());
+                        } else {
+                            mPlayingSongId = song.getId();
+                        }
                     }
                 });
             }
