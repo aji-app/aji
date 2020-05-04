@@ -134,8 +134,11 @@ public class StorageHelper {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     song.setDuration(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
                 } else {
-
-                    song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+                    try {
+                        song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+                    } catch (NumberFormatException e) {
+                        song.setDuration(0);
+                    }
                 }
 
                 mmr.release();
