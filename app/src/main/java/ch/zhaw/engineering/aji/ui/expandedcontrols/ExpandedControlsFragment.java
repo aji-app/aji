@@ -154,6 +154,12 @@ public class ExpandedControlsFragment extends Fragment {
                     song -> mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
             );
 
+            mListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
+                if (songs != null && songs.size() > 0) {
+                    enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                }
+            });
+
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
                 mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
                 mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));

@@ -276,16 +276,20 @@ public class AudioService extends LifecycleService {
         clearQueue();
         try {
             unregisterReceiver(mNoisyAudioStreamReceiver);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // Was not registered
         }
     }
 
     private void playbackControlPauseOrPlay() {
+        boolean isStopped = (PlayState.STOPPED == mCurrentState.getValue() || PlayState.INITIAL == mCurrentState.getValue());
+        boolean stoppedButSongsQueued = isStopped && mCurrentQueue.getValue() != null && mCurrentQueue.getValue().size() > 0;
         if (PlayState.PAUSED == mCurrentState.getValue()) {
             mCurrentState.postValue(PlayState.PLAYING);
             mAudioBackend.play(false);
             mNotificationManager.start();
+        } else if (stoppedButSongsQueued) {
+            playbackControlPlay();
         } else {
             playbackControlPause();
         }
@@ -308,7 +312,7 @@ public class AudioService extends LifecycleService {
     private void addSongToCurrentSongs(Song song) {
         mCurrentSongs.put(song.getSongId(), song);
         List<Long> songs = new ArrayList<>(mCurrentSongs.size());
-        for (Song s : mCurrentSongs.values()){
+        for (Song s : mCurrentSongs.values()) {
             songs.add(s.getSongId());
         }
         mCurrentQueue.postValue(songs);
