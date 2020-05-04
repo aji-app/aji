@@ -151,10 +151,17 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     }).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
+                    .textId(R.string.details)
                     .callback($ -> {
                         hideContextMenu();
                         navigateToSongDetails(songId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_playlist_add)
+                    .textId(R.string.add_to_playlist)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onSongAddToPlaylist(songId);
                     }).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_delete)
@@ -263,7 +270,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     }).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
+                    .textId(R.string.details)
                     .callback($ -> {
                         hideContextMenu();
                         navigateToPlaylist(playlistId);
@@ -359,7 +366,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     }).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_edit)
-                    .textId(R.string.edit)
+                    .textId(R.string.details)
                     .callback($ -> {
                         hideContextMenu();
                         navigateToRadioStation(radioStationId);
@@ -412,9 +419,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 mRadioStationDao.createRadioStation(updatedRadioStation);
             }
             Log.i(TAG, "onRadioStationSaved: " + updatedRadioStation.getName());
-            runOnUiThread(() -> {
-                onSupportNavigateUp();
-            });
+            runOnUiThread(this::onSupportNavigateUp);
         });
     }
 
@@ -502,7 +507,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 }).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_edit)
-                .textId(R.string.edit)
+                .textId(R.string.details)
                 .callback($ -> {
                     hideContextMenu();
                     navigateToAlbum(album);
@@ -555,7 +560,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .callback($ -> onArtistQueue(artist)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_edit)
-                .textId(R.string.edit)
+                .textId(R.string.details)
                 .callback($ -> {
                     hideContextMenu();
                     navigateToArtist(artist);
