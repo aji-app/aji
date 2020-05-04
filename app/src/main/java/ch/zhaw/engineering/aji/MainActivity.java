@@ -112,6 +112,10 @@ public class MainActivity extends FragmentInteractionActivity {
                         songName.setText(info.getTitle());
                         albumName.setText(info.getAlbum());
                         artistName.setText(info.getArtist());
+                    } else {
+                        songName.setText(R.string.not_playing);
+                        albumName.setText(null);
+                        artistName.setText(null);
                     }
                 });
             }

@@ -95,12 +95,16 @@ public class SongDetailsFragment extends Fragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         mSong.observe(getViewLifecycleOwner(), song -> {
-                            mBinding.songTitle.setText(song.getTitle());
-                            mBinding.songArtist.setText(song.getArtist());
-                            mBinding.songAlbum.setText(song.getAlbum());
-                            mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
-                            if (song.getAlbumArtPath() != null) {
-                                Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                            if (song != null) {
+                                mBinding.songTitle.setText(song.getTitle());
+                                mBinding.songArtist.setText(song.getArtist());
+                                mBinding.songAlbum.setText(song.getAlbum());
+                                mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+                                if (song.getAlbumArtPath() != null) {
+                                    Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                                }
+                            } else {
+                                mListener.onSupportNavigateUp();
                             }
                         });
                     });
@@ -120,5 +124,7 @@ public class SongDetailsFragment extends Fragment {
         void onSongDelete(long songId);
 
         void onToggleFavorite(long songId);
+
+        boolean onSupportNavigateUp();
     }
 }

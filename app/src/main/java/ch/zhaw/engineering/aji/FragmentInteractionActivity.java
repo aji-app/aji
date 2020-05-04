@@ -189,9 +189,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
                             if (event != DISMISS_EVENT_ACTION) {
-                                Song song = mSongDao.getSongById(songId);
-                                Log.i(TAG, "onSongDelete: " + song.getTitle());
-                                mSongDao.deleteSongById(songId);
+                                removeSongFromQueue(songId);
+                                AsyncTask.execute(() -> {
+                                    Song song = mSongDao.getSongById(songId);
+                                    Log.i(TAG, "onSongDelete: " + song.getTitle());
+                                    mSongDao.deleteSongById(songId);
+                                });
                             }
                         }
                     });
