@@ -1,8 +1,10 @@
 package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +17,7 @@ import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 
 public class QueueSongListFragment extends SongListFragment {
+    private static final String TAG = "QueueSongListFragment";
     private ItemTouchHelper mItemTouchHelper;
     private QueueListFragmentListener mQueueListener;
 
@@ -74,6 +77,7 @@ public class QueueSongListFragment extends SongListFragment {
             });
         }
     }
+
 
     private static class CustomListener implements SongListFragmentListener {
 

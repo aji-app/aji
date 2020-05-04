@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -16,9 +19,10 @@ public class PlaylistSongListFragment extends SongListFragment {
     private static final String TAG = "PlaylistSongsFragment";
     private Integer mPlaylistId;
     private ItemTouchHelper mItemTouchHelper;
+    private boolean mPlaylistDeleted;
 
-    public static SongListFragment newInstance(@Nullable Integer playlistId) {
-        SongListFragment fragment = new PlaylistSongListFragment();
+    public static PlaylistSongListFragment newInstance(@Nullable Integer playlistId) {
+        PlaylistSongListFragment fragment = new PlaylistSongListFragment();
         if (playlistId != null) {
             Bundle args = new Bundle();
             args.putInt(ARG_PLAYLIST_ID, playlistId);
@@ -47,6 +51,31 @@ public class PlaylistSongListFragment extends SongListFragment {
         getAdapter().dismissWithSnackbar(position, R.string.song_removed_playlist, null);
     }
 
+    public void setEditMode(boolean editMode) {
+        getAdapter().setEditMode(editMode);
+        if (!editMode && !mPlaylistDeleted) {
+            notifyListenerPlaylistUpdated();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (!mPlaylistDeleted) {
+            notifyListenerPlaylistUpdated();
+        }
+    }
+
+    private void notifyListenerPlaylistUpdated() {
+        if (mListener != null && getAdapter() != null) {
+            Pair<Integer, List<Long>> data = getAdapter().getModifiedPlaylist();
+            if (data.first != null && data.second != null) {
+                Log.i(TAG, "save playlist with songs: " + data.second.size());
+                mListener.onPlaylistModified(data.first, data.second);
+            }
+        }
+    }
+
     @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         appViewModel.getSongsForPlaylist(mPlaylistId).observe(getViewLifecycleOwner(), songs -> {
@@ -62,6 +91,10 @@ public class PlaylistSongListFragment extends SongListFragment {
                 });
             }
         });
+    }
+
+    public void setPlaylistDeleted(boolean playlistDeleted) {
+        mPlaylistDeleted = true;
     }
 
     private static class CustomListener implements SongListFragmentListener {

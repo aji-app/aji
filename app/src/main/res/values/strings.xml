@@ -78,4 +78,9 @@
     <string name="song_queued">Song %s has been added to the queue</string>
     <string name="now_playing">Now Playing</string>
     <string name="details">Details</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="contentDescription_delete_playlist">Delete Playlist</string>
+    <string name="contentDescription_delete_radiostation">Delete Radiostation</string>
+    <string name="delete_radiostation">Delete Radiostation</string>
+    <string name="radiostation_deleted">Radiostation deleted</string>
 </resources>

@@ -230,8 +230,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onPlaylistModified(int playlistId, List<Long> songIds) {
         AsyncTask.execute(() -> {
-            mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
+            mPlaylistDao.modifyPlaylist(songIds, playlistId);
             Log.i(TAG, "onPlaylistModified: " + playlist.getName());
         });
     }
@@ -370,6 +370,13 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .callback($ -> {
                         hideContextMenu();
                         navigateToRadioStation(radioStationId);
+                    }).build());
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_delete)
+                    .textId(R.string.delete_radiostation)
+                    .callback($ -> {
+                        hideContextMenu();
+                        onRadioStationDelete(radioStationId);
                     }).build());
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {

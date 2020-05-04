@@ -38,7 +38,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
     @Getter
     private SongRecyclerViewAdapter mAdapter;
-    private boolean mEditMode;
     private Long mPlayingSongId;
 
     public SongListFragment() {
@@ -55,14 +54,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         if (mPlayingSongId != null) {
             mAdapter.setHighlighted(mPlayingSongId);
             mPlayingSongId = null;
-        }
-    }
-
-    public void setEditMode(boolean editMode) {
-        mEditMode = editMode;
-        getAdapter().setEditMode(mEditMode);
-        if (!mEditMode) {
-            notifyListenerPlaylistUpdated();
         }
     }
 
@@ -127,22 +118,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
     @Override
     public void onItemDismiss(int position) {
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        notifyListenerPlaylistUpdated();
-    }
-
-    private void notifyListenerPlaylistUpdated() {
-        if (mListener != null && getAdapter() != null) {
-            Pair<Integer, List<Long>> data = getAdapter().getModifiedPlaylist();
-            if (data.first != null && data.second != null) {
-                Log.i(TAG, "save playlist with songs: " + data.second.size());
-                mListener.onPlaylistModified(data.first, data.second);
-            }
-        }
     }
 
     public interface SongListFragmentListener {

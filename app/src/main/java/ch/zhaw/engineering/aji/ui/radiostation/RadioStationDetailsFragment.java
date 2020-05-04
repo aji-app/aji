@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadioStationDetailsBinding;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
@@ -29,6 +31,7 @@ public class RadioStationDetailsFragment extends Fragment {
     private boolean mInEditMode = false;
     private RadioStationDetailsFragmentListener mListener;
     private GenreRecyclerViewAdapter mAdapter;
+    private boolean mPlaylistDeleted;
 
     public static RadioStationDetailsFragment newInstance(long radioStationId) {
         RadioStationDetailsFragment fragment = new RadioStationDetailsFragment();
@@ -80,6 +83,24 @@ public class RadioStationDetailsFragment extends Fragment {
             if (mListener != null) {
                 mListener.onRadioStationSaved(mRadioStation);
             }
+        });
+
+        mBinding.radiostationDelete.setOnClickListener(v -> {
+            Snackbar snackbar = Snackbar
+                    .make(mBinding.getRoot(), R.string.radiostation_deleted, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                    }).addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            if (event != DISMISS_EVENT_ACTION && mListener != null) {
+                                mPlaylistDeleted = true;
+                                mListener.onRadioStationDelete(mRadioStationId);
+                                mListener.onSupportNavigateUp();
+                            }
+                        }
+                    });
+            snackbar.show();
         });
 
         return mBinding.getRoot();
@@ -181,6 +202,10 @@ public class RadioStationDetailsFragment extends Fragment {
 
         void onRadioStationSaved(RadioStationDto updatedRadioStation);
 
+        void onRadioStationDelete(long radioStationId);
+
         void onRadioStationImport();
+
+        boolean onSupportNavigateUp();
     }
 }
