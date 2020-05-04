@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 import ch.zhaw.engineering.aji.AudioControlListener;
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentExpandedControlsBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
@@ -291,7 +292,7 @@ public class ExpandedControlsFragment extends Fragment {
     public interface ExpandedControlsFragmentListener extends AudioControlListener {
         void onToggleFavorite(long songId);
 
-        void onSongMenu(long songId);
+        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onPlayPause();
 

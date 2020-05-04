@@ -3,6 +3,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 import android.os.Bundle;
 import android.util.Log;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 
@@ -63,13 +64,13 @@ public class ArtistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId) {
+        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
             mListener.onSongMenu(songId);
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId);
-            void onSongMenu(long songId);
+            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }

@@ -83,4 +83,5 @@
     <string name="contentDescription_delete_radiostation">Delete Radiostation</string>
     <string name="delete_radiostation">Delete Radiostation</string>
     <string name="radiostation_deleted">Radiostation deleted</string>
+    <string name="remove_from_queue">Remove from Queue</string>
 </resources>

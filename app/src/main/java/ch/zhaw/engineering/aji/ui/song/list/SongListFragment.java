@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -127,7 +128,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
         void onSongQueue(long songId);
 
-        void onSongMenu(long songId);
+        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onSongAddToPlaylist(long songId, int playlistId);
 

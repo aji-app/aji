@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
@@ -112,14 +113,14 @@ public class PlaylistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId) {
+        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
             mListener.onSongMenu(songId);
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId);
 
-            void onSongMenu(long songId);
+            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }
