@@ -33,7 +33,7 @@ import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
 public class RadioStationDetailsFragment extends Fragment {
-    private static final String ARG_RADIOSTATION_ID = "radiostation-id";
+    public static final String ARG_RADIOSTATION_ID = "radiostation-id";
 
     private Long mRadioStationId;
     private FragmentRadioStationDetailsBinding mBinding;

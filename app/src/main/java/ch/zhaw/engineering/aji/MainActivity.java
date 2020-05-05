@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavInflater;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -79,7 +82,16 @@ public class MainActivity extends FragmentInteractionActivity {
                 R.id.nav_library, R.id.nav_playlists, R.id.nav_radiostations, R.id.nav_filters)
                 .setDrawerLayout(mBinding.drawerLayout)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        NavInflater navInflater = navController.getNavInflater();
+        NavGraph graph = navInflater.inflate(R.navigation.mobile_navigation);
+
+        handlePotentialRadiostationDeepLink(graph);
+
+        navController.setGraph(graph);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
@@ -89,14 +101,31 @@ public class MainActivity extends FragmentInteractionActivity {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+    }
 
-//        if (getIntent() != null) {
-//            if (getIntent().hasExtra(EXTRA_SONG_ID)) {
-//                long songId = getIntent().getLongExtra(EXTRA_SONG_ID, -1);
-//                navController.
-//            }
-//        }
-
+    /**
+     * Overwrite NavGraph startDestination when we deeplink to a radio station
+     * That makes it so that the back button goes back to the radio station list instead of the library
+     * It seems like {@link androidx.navigation.NavDeepLinkBuilder} does uses the startDestination as parent
+     * instead of the actual parent of the destination when constructing deep links in {@link ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager}
+     */
+    private void handlePotentialRadiostationDeepLink(NavGraph navGraph) {
+        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(NavController.KEY_DEEP_LINK_INTENT)) {
+            Intent navIntent = (Intent) getIntent().getExtras().get(NavController.KEY_DEEP_LINK_INTENT);
+            if (navIntent != null) {
+                Bundle navArgs = navIntent.getExtras();
+                if (navArgs != null) {
+                    for (String key : navArgs.keySet()) {
+                        Object arg = navArgs.get(key);
+                        if (arg instanceof Bundle) {
+                            if (((Bundle)arg).containsKey(RadioStationDetailsFragment.ARG_RADIOSTATION_ID))  {
+                                navGraph.setStartDestination(R.id.nav_radiostations);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void setupPersistentBottomSheet() {

@@ -11,7 +11,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.lifecycle.LifecycleService;
+import androidx.navigation.NavController;
 import androidx.navigation.NavDeepLinkBuilder;
 
 import ch.zhaw.engineering.aji.MainActivity;
@@ -108,10 +110,26 @@ public class ErrorNotificationManager {
     private PendingIntent getRadioDetailsIntent(long radioId, int notificationId) {
         Bundle args = RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioId).getArguments();
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
+
         return new NavDeepLinkBuilder(mContext)
                 .setGraph(R.navigation.mobile_navigation)
                 .setDestination(R.id.nav_radiostation_details)
                 .setArguments(args)
                 .createPendingIntent();
+
+//        Intent notificationIntent = new Intent(mContext, MainActivity.class);
+//        notificationIntent.putExtras(args);
+//        notificationIntent.putExtra("android-support-nav:controller:deepLinkIds", new int[] { R.id.nav_radiostations, R.id.nav_radiostation_details});
+//        notificationIntent.putExtra("android-support-nav:controller:deepLinkExtras", args);
+//        TaskStackBuilder builder = TaskStackBuilder.create(mContext);
+//        builder.addNextIntentWithParentStack(new Intent(notificationIntent));
+//        for (int index = 0; index < builder.getIntentCount(); index++) {
+//            // Attach the original Intent to each Activity so that they can know
+//            // they were constructed in response to a deep link
+//            builder.editIntentAt(index)
+//                    .putExtra(NavController.KEY_DEEP_LINK_INTENT, notificationIntent);
+//        }
+//
+//        return builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
