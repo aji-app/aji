@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
         app:key="radiostation_default_import"
@@ -10,5 +11,13 @@
         app:key="mediastore_sync"
         app:defaultValue="true"
         app:title="@string/settings_media_store_title" />
+
+    <Preference
+        app:key="about"
+        android:title="@string/about" />
+
+    <Preference
+        app:key="licenses"
+        android:title="@string/licenses" />
 
 </PreferenceScreen>

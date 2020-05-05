@@ -18,13 +18,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
-import androidx.navigation.NavInflater;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
@@ -36,10 +36,11 @@ import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
-import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment;
+import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
@@ -47,7 +48,7 @@ import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 
-public class MainActivity extends FragmentInteractionActivity {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -96,6 +97,18 @@ public class MainActivity extends FragmentInteractionActivity {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+    }
+
+    @Override
+    public void onOpenAbout() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_about);
+    }
+
+    @Override
+    public void onShowOpenSourceLicenses() {
+        Intent intent = new Intent(this, OssLicensesMenuActivity.class);
+        startActivity(intent);
     }
 
     /**
