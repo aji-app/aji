@@ -64,10 +64,10 @@ public class MainActivity extends FragmentInteractionActivity {
         thread.start();
         Handler handler = new Handler(thread.getLooper());
         mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
-        mAudioFileContentObserver.register();
+//        mAudioFileContentObserver.register();
 
         // TODO: Only sync on startup if user did not disable this functionality
-        mAudioFileContentObserver.onChange(false);
+//        mAudioFileContentObserver.onChange(false);
         RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());
@@ -89,6 +89,13 @@ public class MainActivity extends FragmentInteractionActivity {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+
+//        if (getIntent() != null) {
+//            if (getIntent().hasExtra(EXTRA_SONG_ID)) {
+//                long songId = getIntent().getLongExtra(EXTRA_SONG_ID, -1);
+//                navController.
+//            }
+//        }
 
     }
 

@@ -39,7 +39,7 @@ import ch.zhaw.engineering.aji.ui.song.list.QueueSongListFragment;
 import lombok.Builder;
 import lombok.Value;
 
-import static ch.zhaw.engineering.aji.services.audio.NotificationManager.SHUTDOWN_INTENT;
+import static ch.zhaw.engineering.aji.services.audio.notification.NotificationManager.SHUTDOWN_INTENT;
 
 public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener {
     private static final String TAG = "AudioInterfaceActivity";

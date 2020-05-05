@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -28,6 +29,8 @@ import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
 public class RadioStationDetailsFragment extends Fragment {
     private static final String ARG_RADIOSTATION_ID = "radiostation-id";
@@ -133,6 +136,9 @@ public class RadioStationDetailsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             Activity activity = getActivity();
+            if (getArguments() != null && getArguments().containsKey(EXTRA_NOTIFICATION_ID)) {
+                NotificationManagerCompat.from(activity).cancel(getArguments().getInt(EXTRA_NOTIFICATION_ID));
+            }
             if (mRadioStationId != null) {
                 AsyncTask.execute(() -> {
                     RadioStationDao playlistDao = RadioStationDao.getInstance(getActivity());

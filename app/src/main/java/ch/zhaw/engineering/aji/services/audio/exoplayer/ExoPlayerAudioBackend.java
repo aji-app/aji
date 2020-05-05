@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioProcessor;
@@ -122,6 +123,12 @@ public class ExoPlayerAudioBackend implements AudioBackend {
                     if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK) {
                         mListener.onPositionDiscontinuity();
                     }
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException error) {
+                    Log.i(TAG, "BUBU error");
+                    mListener.onError(mPlayer.getCurrentTag());
                 }
             });
         });

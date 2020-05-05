@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 
@@ -19,9 +20,12 @@ import java.io.File;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongDetailsBinding;
+import ch.zhaw.engineering.aji.services.audio.notification.NotificationHelper;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
 public class SongDetailsFragment extends Fragment {
 
@@ -89,6 +93,9 @@ public class SongDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
+            if (getArguments() != null && getArguments().containsKey(EXTRA_NOTIFICATION_ID)) {
+                NotificationManagerCompat.from(getActivity()).cancel(getArguments().getInt(EXTRA_NOTIFICATION_ID));
+            }
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
                 mSong = dao.getSong(mSongId);
