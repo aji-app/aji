@@ -28,6 +28,8 @@ import java.util.Map;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.exoplayer.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager;
+import ch.zhaw.engineering.aji.services.audio.notification.NotificationManager;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
@@ -56,6 +58,7 @@ public class AudioService extends LifecycleService {
     private Handler mCurrentPositionTrackingThread;
     private Handler mRadioStationInfoThread;
     private NotificationManager mNotificationManager;
+    private ErrorNotificationManager mErrorNotificationManager;
 
     private final Map<Long, Song> mCurrentSongs = new LinkedHashMap<>();
     private final Map<Long, RadioStation> mCurrentRadioStations = new HashMap<>();
@@ -86,6 +89,7 @@ public class AudioService extends LifecycleService {
     public void onCreate() {
         super.onCreate();
         mNotificationManager = new NotificationManager(this, mCurrentSong, mCurrentPosition, mCurrentState);
+        mErrorNotificationManager = new ErrorNotificationManager(this);
 
         setupBackgroundThreads();
         setupMediaSession();
@@ -118,6 +122,20 @@ public class AudioService extends LifecycleService {
                     @Override
                     public void onPositionDiscontinuity() {
                         updateCurrentSong();
+                    }
+
+                    @Override
+                    public void onError(Object tag) {
+                        if (tag instanceof Long) {
+                            if (mCurrentSongs.containsKey(tag)) {
+                                Song errorSong = mCurrentSongs.get(tag);
+                                mErrorNotificationManager.notifyError(errorSong);
+                            } else {
+                                RadioStation errorStation = mCurrentRadioStations.get(tag);
+                                mErrorNotificationManager.notifyError(errorStation);
+                            }
+                        }
+                        Log.i(TAG, "ERROR");
                     }
                 });
 

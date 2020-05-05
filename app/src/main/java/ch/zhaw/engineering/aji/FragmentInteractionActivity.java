@@ -145,7 +145,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.queue)
                     .callback($ -> onSongQueue(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_edit)
+                    .imageId(R.drawable.ic_details)
                     .textId(R.string.details)
                     .callback($ -> navigateToSongDetails(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
@@ -255,7 +255,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.queue)
                     .callback($ -> onPlaylistQueue(playlistId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_edit)
+                    .imageId(R.drawable.ic_details)
                     .textId(R.string.details)
                     .callback($ -> navigateToPlaylist(playlistId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
@@ -342,7 +342,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.play)
                     .callback($ -> onRadioStationPlay(radioStationId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_edit)
+                    .imageId(R.drawable.ic_details)
                     .textId(R.string.details)
                     .callback($ -> navigateToRadioStation(radioStationId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
@@ -478,7 +478,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .textId(R.string.queue)
                 .callback($ -> onAlbumQueue(album)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
-                .imageId(R.drawable.ic_edit)
+                .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToAlbum(album)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
@@ -528,7 +528,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .textId(R.string.queue)
                 .callback($ -> onArtistQueue(artist)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
-                .imageId(R.drawable.ic_edit)
+                .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToArtist(artist)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);

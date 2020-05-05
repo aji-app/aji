@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.aji.services.audio;
+package ch.zhaw.engineering.aji.services.audio.notification;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,15 +10,15 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.LiveData;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
-
+import ch.zhaw.engineering.aji.MainActivity;
 import ch.zhaw.engineering.aji.MainActivityOld;
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.media.app.NotificationCompat.MediaStyle;
@@ -32,14 +32,14 @@ public class NotificationManager {
 
     private final LifecycleService mContext;
     private final LiveData<AudioService.PlayState> mCurrentState;
-    private final android.app.NotificationManager mNotificationManager;
+    private final NotificationManagerCompat mNotificationManager;
     private final LiveData<AudioService.SongInformation> mCurrentSongInformation;
     private final LiveData<Long> mCurrentPosition;
 
     public NotificationManager(LifecycleService context, LiveData<AudioService.SongInformation> currentSongInformation, LiveData<Long> currentPosition, LiveData<AudioService.PlayState> currentState) {
         mContext = context;
         mCurrentState = currentState;
-        mNotificationManager = (android.app.NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager = NotificationManagerCompat.from(mContext);
         mCurrentSongInformation = currentSongInformation;
         mCurrentPosition = currentPosition;
 
@@ -79,11 +79,11 @@ public class NotificationManager {
     }
 
     private String getNotificationChannelId() {
-        String channelId = "aji-channelId";
+        String channelId = "aji-persistent-channelId";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     channelId,
-                    "Channel human readable title", android.app.NotificationManager.IMPORTANCE_LOW);
+                    "Aji Music Media Channel", android.app.NotificationManager.IMPORTANCE_LOW);
             channel.enableLights(false);
             channel.enableVibration(false);
             mNotificationManager.createNotificationChannel(channel);
@@ -94,7 +94,7 @@ public class NotificationManager {
     private Notification createCurrentNotification() {
         String channelId = getNotificationChannelId();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
-        Intent notificationIntent = new Intent(mContext, MainActivityOld.class);
+        Intent notificationIntent = new Intent(mContext, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent openAppIntent = PendingIntent.getActivity(mContext, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -139,7 +139,6 @@ public class NotificationManager {
 
 
     }
-
 
     private PendingIntent getControlIntent(AudioService.AudioServiceCommand command) {
         Intent pauseIntent = new Intent(mContext, AudioService.class);

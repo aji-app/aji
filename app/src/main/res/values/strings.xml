@@ -88,4 +88,10 @@
     <string name="radiostation_url_invalid_title">Radio Not Working</string>
     <string name="ignore">Ignore</string>
     <string name="fix">Edit Url</string>
+    <string name="playback_error_song_title">Error playing Song</string>
+    <string name="playback_error_song_text">An error has occurred while playing %1s by %2s.</string>
+    <string name="go_to_songdetails">Song Details</string>
+    <string name="playback_error_radio_text">Error while playing station %s</string>
+    <string name="plaback_error_radio_title">Error playing Radio</string>
+    <string name="go_to_radiodetails">Radiostation details</string>
 </resources>

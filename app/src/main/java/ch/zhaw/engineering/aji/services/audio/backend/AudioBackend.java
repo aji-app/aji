@@ -167,6 +167,12 @@ public interface AudioBackend {
          * Called when the backend starts playing a new song (either automatic or manual)
          */
         void onPositionDiscontinuity();
+
+        /**
+         * Called when an error happened while playing the media source with the given tag
+         * @param tag The tag of the media source that failed to play
+         */
+        void onError(Object tag);
     }
 
     /**
