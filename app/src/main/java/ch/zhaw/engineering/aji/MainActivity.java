@@ -85,12 +85,7 @@ public class MainActivity extends FragmentInteractionActivity {
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        NavInflater navInflater = navController.getNavInflater();
-        NavGraph graph = navInflater.inflate(R.navigation.mobile_navigation);
-
-        handlePotentialRadiostationDeepLink(graph);
-
-        navController.setGraph(graph);
+        handlePotentialRadiostationDeepLink(navController);
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
@@ -109,17 +104,23 @@ public class MainActivity extends FragmentInteractionActivity {
      * It seems like {@link androidx.navigation.NavDeepLinkBuilder} does uses the startDestination as parent
      * instead of the actual parent of the destination when constructing deep links in {@link ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager}
      */
-    private void handlePotentialRadiostationDeepLink(NavGraph navGraph) {
+    private void handlePotentialRadiostationDeepLink(NavController navController) {
         if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(NavController.KEY_DEEP_LINK_INTENT)) {
             Intent navIntent = (Intent) getIntent().getExtras().get(NavController.KEY_DEEP_LINK_INTENT);
+            // If we have a navIntent (which always contains the bundle for the destination)
             if (navIntent != null) {
                 Bundle navArgs = navIntent.getExtras();
                 if (navArgs != null) {
                     for (String key : navArgs.keySet()) {
                         Object arg = navArgs.get(key);
+                        // If it is a bundle, it's the arguments for the detail view
                         if (arg instanceof Bundle) {
-                            if (((Bundle)arg).containsKey(RadioStationDetailsFragment.ARG_RADIOSTATION_ID))  {
-                                navGraph.setStartDestination(R.id.nav_radiostations);
+                            if (((Bundle) arg).containsKey(RadioStationDetailsFragment.ARG_RADIOSTATION_ID)) {
+                                NavGraph graph = navController.getGraph();
+                                // We want back to go to the radiostations instead of library
+                                graph.setStartDestination(R.id.nav_radiostations);
+                                navController.setGraph(graph);
+                                break;
                             }
                         }
                     }

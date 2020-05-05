@@ -116,20 +116,5 @@ public class ErrorNotificationManager {
                 .setDestination(R.id.nav_radiostation_details)
                 .setArguments(args)
                 .createPendingIntent();
-
-//        Intent notificationIntent = new Intent(mContext, MainActivity.class);
-//        notificationIntent.putExtras(args);
-//        notificationIntent.putExtra("android-support-nav:controller:deepLinkIds", new int[] { R.id.nav_radiostations, R.id.nav_radiostation_details});
-//        notificationIntent.putExtra("android-support-nav:controller:deepLinkExtras", args);
-//        TaskStackBuilder builder = TaskStackBuilder.create(mContext);
-//        builder.addNextIntentWithParentStack(new Intent(notificationIntent));
-//        for (int index = 0; index < builder.getIntentCount(); index++) {
-//            // Attach the original Intent to each Activity so that they can know
-//            // they were constructed in response to a deep link
-//            builder.editIntentAt(index)
-//                    .putExtra(NavController.KEY_DEEP_LINK_INTENT, notificationIntent);
-//        }
-//
-//        return builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
