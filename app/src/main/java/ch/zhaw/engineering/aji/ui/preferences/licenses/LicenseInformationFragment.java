@@ -3,12 +3,16 @@ package ch.zhaw.engineering.aji.ui.preferences.licenses;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Collections;
+import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.ListFragment;
@@ -60,11 +64,23 @@ public class LicenseInformationFragment extends ListFragment {
             mRecyclerView = (RecyclerView) view;
             LinearLayoutManager layoutManager = new LinearLayoutManager(context);
             mRecyclerView.setLayoutManager(layoutManager);
-            mRecyclerView.setAdapter(new LicenseInformationRecyclerViewAdapter(Licenses.ITEMS, mListener, getContext()));
         }
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            List<LicenseInformation> items = Licenses.ITEMS;
+            Collections.sort(items, (i1, i2) -> {
+                Context context = getActivity();
+                return context.getString(i1.getLibraryName()).compareTo(context.getString(i2.getLibraryName()));
+            });
+
+            mRecyclerView.setAdapter(new LicenseInformationRecyclerViewAdapter(items, mListener, getContext()));
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -86,6 +102,7 @@ public class LicenseInformationFragment extends ListFragment {
     public interface LicenseListFragmentListener {
         // TODO: Update argument type and name
         void onLicenseSelected(LicenseInformation item);
+
         void onLibraryUrlClicked(LicenseInformation item);
     }
 }

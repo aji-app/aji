@@ -13,9 +13,9 @@
             android:id="@+id/license_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="8sp"
             android:typeface="monospace"
-            android:gravity="center"
-            tools:text="@string/license_apache_2_0" />
+            tools:text="@string/license_apache_2_0"
+            tools:ignore="SmallSp" />
     </ScrollView>
 </LinearLayout>
