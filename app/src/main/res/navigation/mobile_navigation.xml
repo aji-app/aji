@@ -143,5 +143,18 @@
         android:id="@+id/nav_licenses"
         android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment"
         android:label="@string/menu_licenses"
-        tools:layout="@layout/fragment_license_information_list" />
+        tools:layout="@layout/fragment_license_information_list" >
+        <action
+            android:id="@+id/action_nav_licenses_to_license_details"
+            app:destination="@id/nav_license_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_license_details"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationDetailsFragment"
+        android:label="@string/menu_license_details" >
+        <argument
+            android:name="license-text-id"
+            app:argType="integer" />
+    </fragment>
 </navigation>

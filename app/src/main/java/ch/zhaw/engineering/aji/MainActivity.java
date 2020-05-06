@@ -43,7 +43,9 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
@@ -349,7 +351,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onLicenseSelected(Licenses.LicenseInformation item) {
-        Log.i(TAG, "License selected");
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_licenses_to_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
     }
 
     @Override
