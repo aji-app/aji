@@ -99,8 +99,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         setupPersistentBottomSheet();
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            switch (destination.getId()) {
+                case R.id.nav_license_details:
+                case R.id.nav_settings:
+                case R.id.nav_licenses:
+                case R.id.nav_about:
+                    mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
+                    break;
+                default:
+                    mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
+                    break;
             }
         });
     }
