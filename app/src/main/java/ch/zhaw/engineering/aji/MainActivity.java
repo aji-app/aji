@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,6 +54,8 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
+import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
+
 
 public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener {
     private static final String TAG = "MainActivity";
@@ -62,6 +65,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
     private AudioFileContentObserver mAudioFileContentObserver;
     private Menu mActionBarMenu;
+    private int mainContentMarginBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,20 +102,24 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
         setupPersistentBottomSheet();
+
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             switch (destination.getId()) {
                 case R.id.nav_license_details:
                 case R.id.nav_settings:
                 case R.id.nav_licenses:
                 case R.id.nav_about:
+                    mainContentMarginBottom = setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, 0);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
                     break;
                 default:
+                    setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, mainContentMarginBottom);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
                     break;
             }
         });
     }
+
 
     @Override
     public void onOpenAbout() {
