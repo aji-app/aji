@@ -2,9 +2,11 @@ package ch.zhaw.engineering.aji;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +43,8 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
@@ -48,7 +52,7 @@ import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -106,9 +110,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
-    public void onShowOpenSourceLicenses() {
+    public void onShowAutoLicenses() {
         Intent intent = new Intent(this, OssLicensesMenuActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onShowOpenSourceLicenses() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_licenses);
     }
 
     /**
@@ -335,6 +345,20 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onLicenseSelected(Licenses.LicenseInformation item) {
+        Log.i(TAG, "License selected");
+    }
+
+    @Override
+    public void onLibraryUrlClicked(Licenses.LicenseInformation item) {
+        Uri url = Uri.parse(getString(item.getUrl()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, url);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override

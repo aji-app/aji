@@ -19,6 +19,10 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
             mListener.onShowOpenSourceLicenses();
             return true;
         });
+        findPreference("licenses-auto").setOnPreferenceClickListener(preference -> {
+            mListener.onShowAutoLicenses();
+            return true;
+        });
         findPreference("about").setOnPreferenceClickListener(preference -> {
             mListener.onOpenAbout();
             return true;
@@ -46,6 +50,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
 
     public interface PreferenceListener {
         void onOpenAbout();
+        void onShowAutoLicenses();
         void onShowOpenSourceLicenses();
     }
 }
