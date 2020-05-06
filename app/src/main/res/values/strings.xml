@@ -100,4 +100,6 @@
     <string name="about">About</string>
     <string name="version">"Version: "</string>
     <string name="contentDescription_app_icon">App Icon</string>
+    <string name="menu_licenses">Open Source Licenses</string>
+    <string name="menu_license_details">License Details</string>
 </resources>
