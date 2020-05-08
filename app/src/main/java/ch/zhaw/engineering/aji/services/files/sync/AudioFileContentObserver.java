@@ -30,7 +30,6 @@ public class AudioFileContentObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange, Uri uri) {
-        Log.i(TAG, "Some audio file changed");
         MediaStoreSynchronizer synchronizer = new MediaStoreSynchronizer(mContext);
         synchronizer.synchronizeUri(uri);
     }

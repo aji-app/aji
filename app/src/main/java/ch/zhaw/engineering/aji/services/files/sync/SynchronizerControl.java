@@ -13,8 +13,8 @@ public class SynchronizerControl {
     private boolean mMediaStore;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public SynchronizerControl() {
-        mMediaStore = true;
+    public SynchronizerControl(boolean useMediaStore) {
+        mMediaStore = useMediaStore;
     }
 
     public void synchronizeSongsPeriodically(Context context) {

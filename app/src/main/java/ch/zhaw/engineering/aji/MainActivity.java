@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -57,6 +59,7 @@ import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener {
     private static final String TAG = "MainActivity";
+    private static final String PREF_MEDIA_STORE = "mediastore_sync";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
@@ -64,6 +67,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private AudioFileContentObserver mAudioFileContentObserver;
     private Menu mActionBarMenu;
     private int mainContentMarginBottom;
+    private SynchronizerControl mSynchronizerControl;
+    private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +76,32 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
-        // TODO:  MediaStore Preference
-        HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-        mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
-        mAudioFileContentObserver.register();
 
-        SynchronizerControl synchronizerControl = new SynchronizerControl(/* TODO: MediaStore Preference */);
-        synchronizerControl.synchronizeSongsPeriodically(this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean useMediaStore = sharedPreferences.getBoolean(PREF_MEDIA_STORE, true);
+        if (useMediaStore) {
+            setupMediaStoreIntegration();
+        }
+
+        mSynchronizerControl = new SynchronizerControl(useMediaStore);
+        mSynchronizerControl.synchronizeSongsPeriodically(this);
+
+        mOnSharedPreferenceChangeListener = (prefs, key) -> {
+            if (PREF_MEDIA_STORE.equals(key)) {
+                boolean shouldUseMediaStore = prefs.getBoolean(PREF_MEDIA_STORE, true);
+                mSynchronizerControl.setMediaStore(shouldUseMediaStore);
+                if (shouldUseMediaStore) {
+                    setupMediaStoreIntegration();
+                } else {
+                    if (mAudioFileContentObserver != null) {
+                        mAudioFileContentObserver.unregister();
+                        mAudioFileContentObserver = null;
+                    }
+                }
+            }
+        };
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
         RadioStationImporter.loadDefaultRadioStations(this);
 
@@ -123,6 +145,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAudioFileContentObserver != null) {
+            mAudioFileContentObserver.unregister();
+            mAudioFileContentObserver = null;
+        }
+        mOnSharedPreferenceChangeListener = null;
+    }
 
     @Override
     public void onOpenAbout() {
@@ -175,6 +206,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     }
                 }
             }
+        }
+    }
+
+    private void setupMediaStoreIntegration() {
+        if (mAudioFileContentObserver != null) {
+            HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
+            thread.start();
+            Handler handler = new Handler(thread.getLooper());
+            mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
+            mAudioFileContentObserver.register();
         }
     }
 
