@@ -21,9 +21,7 @@ import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses.LicenseInfo
 
 public class LicenseInformationFragment extends ListFragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private LicenseListFragmentListener mListener;
 
@@ -34,8 +32,6 @@ public class LicenseInformationFragment extends ListFragment {
     public LicenseInformationFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static LicenseInformationFragment newInstance(int columnCount) {
         LicenseInformationFragment fragment = new LicenseInformationFragment();
         Bundle args = new Bundle();
@@ -100,7 +96,6 @@ public class LicenseInformationFragment extends ListFragment {
     }
 
     public interface LicenseListFragmentListener {
-        // TODO: Update argument type and name
         void onLicenseSelected(LicenseInformation item);
 
         void onLibraryUrlClicked(LicenseInformation item);

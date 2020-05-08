@@ -83,6 +83,9 @@ public class PlaylistSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
+                    if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
+                        mListener.onSongSelected(songs.get(0).getSongId());
+                    }
                     setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
                     ItemTouchHelper.Callback callback =
                             new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity());

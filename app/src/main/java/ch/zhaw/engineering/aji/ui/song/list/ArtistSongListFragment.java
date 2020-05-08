@@ -10,15 +10,12 @@ import lombok.experimental.Delegate;
 public class ArtistSongListFragment extends SongListFragment {
     private static final String TAG = "ArtistSongsFragment";
     private static final String ARG_ARTIST = "artist";
-    private static final String ARG_TWO_PANE = "two-pane";
-    private boolean mTwoPane = false;
     private String mArtist;
 
-    public static SongListFragment newInstance(String album, boolean twoPane) {
+    public static SongListFragment newInstance(String album) {
         SongListFragment fragment = new ArtistSongListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ARTIST, album);
-        args.putBoolean(ARG_TWO_PANE, twoPane);
         fragment.setArguments(args);
 
         return fragment;
@@ -29,7 +26,6 @@ public class ArtistSongListFragment extends SongListFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(ARG_ARTIST)) {
             mArtist = getArguments().getString(ARG_ARTIST);
-            mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
     }
 
@@ -39,7 +35,7 @@ public class ArtistSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    if (mTwoPane && songs != null && songs.size() > 0) {
+                    if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
                         mListener.onSongSelected(songs.get(0).getSongId());
                     }
                     if (getAdapter() != null) {

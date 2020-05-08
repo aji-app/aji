@@ -63,10 +63,6 @@
         <argument
             android:name="album"
             app:argType="string" />
-        <argument
-            android:name="two-pane"
-            app:argType="boolean"
-            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_artist_details"
@@ -77,10 +73,6 @@
         <argument
             android:name="artist"
             app:argType="string" />
-        <argument
-            android:name="two-pane"
-            app:argType="boolean"
-            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_playlist_details"

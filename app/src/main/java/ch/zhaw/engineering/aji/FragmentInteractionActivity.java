@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -42,6 +43,7 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentInteractionListener;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.Builder;
 import lombok.Value;
 
@@ -58,7 +60,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     private PlaylistDao mPlaylistDao;
     private RadioStationDao mRadioStationDao;
     private ContextMenuFragment mContextMenuFragment;
-    protected boolean mTwoPane = false;
+    protected AppViewModel mAppViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         mSongDao = SongDao.getInstance(this);
         mPlaylistDao = PlaylistDao.getInstance(this);
         mRadioStationDao = RadioStationDao.getInstance(this);
+        mAppViewModel = new ViewModelProvider(this).get(AppViewModel.class);
     }
 
     @Override
@@ -146,7 +149,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .imageId(R.drawable.ic_queue)
                     .textId(R.string.queue)
                     .callback($ -> onSongQueue(songId)).build());
-            if (!mTwoPane) {
+            if (!mAppViewModel.isTwoPane()) {
                 entries.add(ContextMenuFragment.ItemConfig.builder()
                         .imageId(R.drawable.ic_details)
                         .textId(R.string.details)
@@ -184,7 +187,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onSongDelete(long songId) {
         AsyncTask.execute(() -> {
-            // TODO: Decide if using alert would be better here
             Snackbar snackbar = Snackbar
                     .make(findViewById(android.R.id.content), R.string.song_removed_from_library, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.undo, view -> {

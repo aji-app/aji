@@ -93,13 +93,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .setDrawerLayout(mBinding.drawerLayout)
                 .build();
 
-        try {
-            Navigation.findNavController(this, R.id.nav_details_fragment);
-            mTwoPane = true;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            // We're not on a landscape tablet
-        }
-
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         handlePotentialRadiostationDeepLink(navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -122,23 +115,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     break;
             }
         });
-
-
-        if (mTwoPane) {
-            final AppViewModel appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
-            appViewModel.getSongs().observe(this, songs -> {
-                if (songs != null && songs.size() > 0) {
-                    navigateToSongDetails(songs.get(0).getSongId());
-                    appViewModel.getSongs().removeObservers(this);
-                }
-            });
+        try {
+            Navigation.findNavController(this, R.id.nav_details_fragment);
+            mAppViewModel.setTwoPane(true);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // We're not on a landscape tablet
         }
     }
 
 
     @Override
     public void onOpenAbout() {
-        if (mTwoPane) {
+        if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             navController.navigate(R.id.nav_about);
             return;
@@ -299,7 +287,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToRadioStation(Long radioStationId) {
-        if (mTwoPane) {
+        if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
             navController.navigate(R.id.nav_radiostation_details, args);
@@ -335,7 +323,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToSongDetails(long songId) {
-        if (mTwoPane) {
+        if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             navController.navigate(R.id.nav_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
             return;
@@ -381,13 +369,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     protected void navigateToArtist(String artist) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).setTwoPane(mTwoPane).getArguments());
+        navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).getArguments());
     }
 
     @Override
     protected void navigateToAlbum(String album) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_album_details, LibraryFragmentDirections.actionNavLibraryToAlbumDetails(album).setTwoPane(mTwoPane).getArguments());
+        navController.navigate(R.id.action_nav_library_to_album_details, LibraryFragmentDirections.actionNavLibraryToAlbumDetails(album).getArguments());
     }
 
     @Override
@@ -399,7 +387,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onLicenseSelected(Licenses.LicenseInformation item) {
-        if (mTwoPane) {
+        if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             navController.navigate(R.id.nav_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
             return;

@@ -24,9 +24,7 @@ import ch.zhaw.engineering.aji.ui.song.list.AlbumSongListFragment;
 
 public class AlbumDetailsFragment extends Fragment {
     private static final String ARG_ALBUM = "album";
-    private static final String ARG_TWO_PANE = "two-pane";
     private String mAlbum;
-    private boolean mTwoPane = false;
     private FragmentAlbumDetailsBinding mBinding;
 
     @Override
@@ -34,7 +32,6 @@ public class AlbumDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mAlbum = getArguments().getString(ARG_ALBUM);
-            mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
     }
 
@@ -44,7 +41,7 @@ public class AlbumDetailsFragment extends Fragment {
         mBinding.albumName.setText(mAlbum);
 
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.album_songlist_container, AlbumSongListFragment.newInstance(mAlbum, mTwoPane))
+                .replace(R.id.album_songlist_container, AlbumSongListFragment.newInstance(mAlbum))
                 .commit();
 
         return mBinding.getRoot();
