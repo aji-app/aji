@@ -17,7 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
@@ -34,6 +33,8 @@ import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.MediaStoreSynchronizer;
+import ch.zhaw.engineering.aji.services.files.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
@@ -50,7 +51,6 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
@@ -72,15 +72,17 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
-        // TODO: Only use this if user did not disable this functionality
+        // TODO:  MediaStore Preference
         HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
         thread.start();
         Handler handler = new Handler(thread.getLooper());
         mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
         mAudioFileContentObserver.register();
 
-        // TODO: Only sync on startup if user did not disable this functionality
-//        mAudioFileContentObserver.onChange(false);
+        SynchronizerControl synchronizerControl = new SynchronizerControl(/* TODO: MediaStore Preference */);
+        synchronizerControl.synchronizeSongsPeriodically(this);
+
+
         RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());

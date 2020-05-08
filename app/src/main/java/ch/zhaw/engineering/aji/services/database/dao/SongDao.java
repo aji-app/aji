@@ -12,6 +12,7 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
+import java.util.Set;
 
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
@@ -146,6 +147,12 @@ public abstract class SongDao {
     @Query("SELECT * from Song where songId in (:songIds)")
     public abstract LiveData<List<Song>> getSongs(List<Long> songIds);
 
+    @Query("SELECT * from Song where mediaStoreSongId not in (:mediaStoreIds)")
+    public abstract List<Song> getSongsNotMatchingMediaStoreIds(List<Long> mediaStoreIds);
+
+    @Query("DELETE from Song where mediaStoreSongId in (:mediaStoreIds)")
+    public abstract void deleteSongsByMediaStoreIds(Set<Long> mediaStoreIds);
+
     /*
      * Protected Helper Methods
      *
@@ -199,6 +206,8 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
+
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

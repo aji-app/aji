@@ -48,13 +48,6 @@ public class MainActivityOld extends AppCompatActivity {
 
         RadioStationImporter.loadDefaultRadioStations(this);
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(v -> {
-            if (mHasPermission.getValue() != null && mHasPermission.getValue()) {
-                StorageHelper.synchronizeMediaStoreSongs(this, new Handler());
-            }
-        });
-
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(v -> {
             Intent directorySelect = new Intent(this, DirectorySelectionActivity.class);

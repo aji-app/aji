@@ -15,18 +15,11 @@ import lombok.Value;
 
 public class AudioFileContentObserver extends ContentObserver {
     private static final String TAG = "AudioFileObserver";
-    private final ExecutorService mExecutorService;
-    private Handler mHandler;
     private final Context mContext;
-    private final static long WAIT_TIME = 15 * 1000;
-
-    private BackgroundSyncTask mWaitForLotsOfUpdates = new BackgroundSyncTask();
 
     public AudioFileContentObserver(Handler handler, Context context) {
         super(handler);
-        mHandler = handler;
         mContext = context;
-        mExecutorService = Executors.newFixedThreadPool(1);
     }
 
     @Override
@@ -37,11 +30,7 @@ public class AudioFileContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange, Uri uri) {
         Log.i(TAG, "Some audio file changed");
-        if (mWaitForLotsOfUpdates.getStatus() == AsyncTask.Status.RUNNING) {
-            mWaitForLotsOfUpdates.cancel(true);
-        }
-        mWaitForLotsOfUpdates = new BackgroundSyncTask();
-        mWaitForLotsOfUpdates.executeOnExecutor(mExecutorService, new BackgroundArgs(mContext, mHandler));
+        StorageHelper.synchronizeSong(mContext, uri);
     }
 
     public void register() {
@@ -52,29 +41,4 @@ public class AudioFileContentObserver extends ContentObserver {
         mContext.getContentResolver().unregisterContentObserver(this);
     }
 
-    @Value
-    private static class BackgroundArgs {
-        Context context;
-        Handler handler;
-    }
-    private static class BackgroundSyncTask extends AsyncTask<BackgroundArgs, Void, Void> {
-
-        @Override
-        protected Void doInBackground(BackgroundArgs... contexts) {
-            if (contexts.length == 0) {
-                return null;
-            }
-            try {
-                Log.i(TAG, "Wait for more updates");
-                Thread.sleep(WAIT_TIME);
-                Log.i(TAG, "Triggering Synchronization");
-                StorageHelper.synchronizeMediaStoreSongs(contexts[0].context, contexts[0].handler);
-            } catch (InterruptedException e) {
-                // This happens when we cancel the task
-                Log.i(TAG, "More updates arrived");
-            }
-
-            return null;
-        }
-    }
 }
