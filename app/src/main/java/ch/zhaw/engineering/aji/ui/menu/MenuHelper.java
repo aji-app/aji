@@ -31,10 +31,8 @@ public final class MenuHelper {
             }
         });
         String searchText = appViewModel.getSearchString(sortResource);
-        if (searchText != null && searchText.length() > 0) {
-            search.setQuery(searchText, false);
-            search.setIconified(false);
-        }
+        search.setQuery(searchText, false);
+        search.setIconified(searchText == null);
     }
 
     public static boolean onOptionsItemSelected(SortResource sortResource, AppViewModel appViewModel, MenuItem item) {
