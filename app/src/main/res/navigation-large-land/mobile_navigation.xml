@@ -28,7 +28,11 @@
         android:id="@+id/nav_playlists"
         android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistFragment"
         android:label="@string/menu_playlists"
-        tools:layout="@layout/fragment_playlist"/>
+        tools:layout="@layout/fragment_playlist">
+        <action
+            android:id="@+id/action_nav_playlists_to_playlist_details"
+            app:destination="@id/nav_playlist_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_radiostations"
@@ -59,6 +63,10 @@
         <argument
             android:name="album"
             app:argType="string" />
+        <argument
+            android:name="two-pane"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_artist_details"
@@ -69,6 +77,18 @@
         <argument
             android:name="artist"
             app:argType="string" />
+        <argument
+            android:name="two-pane"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
-
+    <fragment
+        android:id="@+id/nav_playlist_details"
+        android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragment"
+        android:label="@string/menu_playlist_details"
+        tools:layout="@layout/fragment_playlist_details">
+        <argument
+            android:name="playlist-id"
+            app:argType="integer" />
+    </fragment>
 </navigation>

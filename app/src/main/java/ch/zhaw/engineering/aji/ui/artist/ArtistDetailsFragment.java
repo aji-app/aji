@@ -15,7 +15,9 @@ import ch.zhaw.engineering.aji.ui.song.list.ArtistSongListFragment;
 
 public class ArtistDetailsFragment extends Fragment {
     private static final String ARG_ARTIST = "artist";
+    private static final String ARG_TWO_PANE = "two-pane";
 
+    private boolean mTwoPane = false;
     private String mArtist;
     private FragmentArtistDetailsBinding mBinding;
 
@@ -24,8 +26,10 @@ public class ArtistDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mArtist = getArguments().getString(ARG_ARTIST);
+            mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,7 +38,7 @@ public class ArtistDetailsFragment extends Fragment {
         mBinding.artistName.setText(mArtist);
 
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.artist_songlist_container, ArtistSongListFragment.newInstance(mArtist))
+                .replace(R.id.artist_songlist_container, ArtistSongListFragment.newInstance(mArtist, mTwoPane))
                 .commit();
         return mBinding.getRoot();
     }

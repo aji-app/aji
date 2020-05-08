@@ -116,6 +116,10 @@
         <argument
             android:name="album"
             app:argType="string" />
+        <argument
+            android:name="two-pane"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_nav_album_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />
@@ -128,6 +132,10 @@
         <argument
             android:name="artist"
             app:argType="string" />
+        <argument
+            android:name="two-pane"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_nav_artist_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />

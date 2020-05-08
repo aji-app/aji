@@ -46,7 +46,7 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_playlist_selection, container, false);
+        return inflater.inflate(R.layout.fragment_context_menu_list, container, false);
     }
 
     @Override
@@ -69,7 +69,6 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) view;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder {

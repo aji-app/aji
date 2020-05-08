@@ -97,7 +97,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         try {
             Navigation.findNavController(this, R.id.nav_details_fragment);
             mTwoPane = true;
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             // We're not on a landscape tablet
         }
 
@@ -325,14 +325,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToPlaylist(int playlistId) {
-        if (mTwoPane) {
-            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
-            navController.navigate(R.id.nav_radiostation_details, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetails(playlistId).getArguments());
-            return;
-        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_playlists_to_playlist_details, PlaylistFragmentDirections.actionNavPlaylistsToPlaylistDetails(playlistId).getArguments());
-
     }
 
     protected String getCurrentActionBarTitle() {
@@ -388,13 +382,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     protected void navigateToArtist(String artist) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).getArguments());
+        navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).setTwoPane(mTwoPane).getArguments());
     }
 
     @Override
     protected void navigateToAlbum(String album) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.action_nav_library_to_album_details, LibraryFragmentDirections.actionNavLibraryToAlbumDetails(album).getArguments());
+        navController.navigate(R.id.action_nav_library_to_album_details, LibraryFragmentDirections.actionNavLibraryToAlbumDetails(album).setTwoPane(mTwoPane).getArguments());
     }
 
     @Override

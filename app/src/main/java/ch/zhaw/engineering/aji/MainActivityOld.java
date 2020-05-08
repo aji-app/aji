@@ -67,11 +67,11 @@ public class MainActivityOld extends AppCompatActivity {
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(this).songDao();
                 List<Song> fakeSongs = new ArrayList<>(songCount);
-                for (int i = 0; i < songCount; i++) {
+                for (int i = 100; i < songCount + 100; i++) {
                     fakeSongs.add(Song.builder()
                             .title("Song Nr. " + i)
                             .artist("Fake Band " + (int)i / 2)
-                            .album("Make it Fake ")
+                            .album("Make it Fake 2")
                             .filepath("bubu" + i)
                             .duration((long) (1000 * (i + 1) + Math.random() * 500))
                             .rating((int) (Math.random() * songCount))
