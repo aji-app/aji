@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
@@ -34,6 +35,7 @@ import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
@@ -52,14 +54,18 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
+import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
+import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener {
     private static final String TAG = "MainActivity";
-    private static final String PREF_MEDIA_STORE = "mediastore_sync";
+    private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
@@ -68,7 +74,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private Menu mActionBarMenu;
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
-    private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,31 +82,25 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean useMediaStore = sharedPreferences.getBoolean(PREF_MEDIA_STORE, true);
+        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+        boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
         if (useMediaStore) {
             setupMediaStoreIntegration();
         }
 
         mSynchronizerControl = new SynchronizerControl(useMediaStore);
         mSynchronizerControl.synchronizeSongsPeriodically(this);
-
-        mOnSharedPreferenceChangeListener = (prefs, key) -> {
-            if (PREF_MEDIA_STORE.equals(key)) {
-                boolean shouldUseMediaStore = prefs.getBoolean(PREF_MEDIA_STORE, true);
-                mSynchronizerControl.setMediaStore(shouldUseMediaStore);
-                if (shouldUseMediaStore) {
-                    setupMediaStoreIntegration();
-                } else {
-                    if (mAudioFileContentObserver != null) {
-                        mAudioFileContentObserver.unregister();
-                        mAudioFileContentObserver = null;
-                    }
+        preferenceHelper.observeMediaStoreSetting(enabled -> {
+            mSynchronizerControl.setMediaStore(enabled);
+            if (enabled) {
+                setupMediaStoreIntegration();
+            } else {
+                if (mAudioFileContentObserver != null) {
+                    mAudioFileContentObserver.unregister();
+                    mAudioFileContentObserver = null;
                 }
             }
-        };
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+        });
 
         RadioStationImporter.loadDefaultRadioStations(this);
 
@@ -152,7 +151,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             mAudioFileContentObserver.unregister();
             mAudioFileContentObserver = null;
         }
-        mOnSharedPreferenceChangeListener = null;
     }
 
     @Override
@@ -321,6 +319,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    public void onAddSongsButtonClick() {
+        // TODO: Use navigation instead of activity
+        Intent intent = new Intent(this, DirectorySelectionActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_DIRECTOY_SELECT);
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mActionBarMenu = menu;
         return super.onPrepareOptionsMenu(menu);
@@ -451,5 +456,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         runOnUiThread(() -> {
             mBinding.progressBarHolder.setVisibility(show ? View.VISIBLE : View.GONE);
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_DIRECTOY_SELECT) {
+            if (data != null && data.hasExtra(EXTRA_FILE)) {
+                String path = data.getStringExtra(EXTRA_FILE);
+                Intent scrapeFiles = new Intent();
+                scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
+                AudioFileScanner.enqueueWork(this, scrapeFiles);
+            }
+        }
     }
 }
