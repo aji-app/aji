@@ -18,9 +18,8 @@ import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
-import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;

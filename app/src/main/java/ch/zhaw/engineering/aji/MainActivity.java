@@ -32,9 +32,8 @@ import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.aji.services.files.AudioFileContentObserver;
-import ch.zhaw.engineering.aji.services.files.MediaStoreSynchronizer;
-import ch.zhaw.engineering.aji.services.files.SynchronizerControl;
+import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
@@ -81,7 +80,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         SynchronizerControl synchronizerControl = new SynchronizerControl(/* TODO: MediaStore Preference */);
         synchronizerControl.synchronizeSongsPeriodically(this);
-
 
         RadioStationImporter.loadDefaultRadioStations(this);
 

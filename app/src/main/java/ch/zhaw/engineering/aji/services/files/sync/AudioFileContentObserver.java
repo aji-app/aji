@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.aji.services.files;
+package ch.zhaw.engineering.aji.services.files.sync;
 
 import android.content.Context;
 import android.database.ContentObserver;
@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import lombok.Value;
 
 public class AudioFileContentObserver extends ContentObserver {
@@ -30,7 +31,8 @@ public class AudioFileContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange, Uri uri) {
         Log.i(TAG, "Some audio file changed");
-        StorageHelper.synchronizeSong(mContext, uri);
+        MediaStoreSynchronizer synchronizer = new MediaStoreSynchronizer(mContext);
+        synchronizer.synchronizeUri(uri);
     }
 
     public void register() {

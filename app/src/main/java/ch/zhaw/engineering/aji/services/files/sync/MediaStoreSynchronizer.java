@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.aji.services.files;
+package ch.zhaw.engineering.aji.services.files.sync;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,22 +10,23 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.SongDto;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.services.files.StorageHelper;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MediaStoreSynchronizer {
     private static final String TAG = "MediaStoreSync";
-    private Context mContext;
-
-    public MediaStoreSynchronizer(Context context) {
-        mContext = context;
-    }
+    private final Context mContext;
 
     public void synchronizeAllSongs() {
         String onlyAudioSelection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
@@ -50,11 +51,11 @@ public class MediaStoreSynchronizer {
         SongDao songDao = AppDatabase.getInstance(mContext).songDao();
         List<Song> potentiallyDeletedSongs = songDao.getSongsNotMatchingMediaStoreIds(mediaStoreIds);
         Set<String> nonExistingMediaStoreIds = new HashSet<>();
-        Set<Long> nonExistingMediaStoreIdsAsLong = new HashSet<>();
+        Map<Long, Song> nonExistingSongs = new HashMap<>();
         for (Song song : potentiallyDeletedSongs) {
             if (song.getMediaStoreSongId() != null) {
                 nonExistingMediaStoreIds.add(song.getMediaStoreSongId().toString());
-                nonExistingMediaStoreIdsAsLong.add(song.getMediaStoreSongId());
+                nonExistingSongs.put(song.getMediaStoreSongId(), song);
             }
         }
         String selection = onlyAudioSelection + " AND " + MediaStore.Audio.Media._ID + " IN (?)";
@@ -69,10 +70,15 @@ public class MediaStoreSynchronizer {
         }
         while (cursor.moveToNext()) {
             Long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-            nonExistingMediaStoreIdsAsLong.remove(id);
+            nonExistingSongs.remove(id);
 
         }
-        songDao.deleteSongsByMediaStoreIds(nonExistingMediaStoreIdsAsLong);
+
+        for (Song song : nonExistingSongs.values()) {
+            StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+        }
+
+        songDao.deleteSongsByMediaStoreIds(nonExistingSongs.keySet());
     }
 
     public void synchronizeUri(Uri uri) {

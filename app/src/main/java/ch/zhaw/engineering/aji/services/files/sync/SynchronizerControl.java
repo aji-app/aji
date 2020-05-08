@@ -1,4 +1,4 @@
-package ch.zhaw.engineering.aji.services.files;
+package ch.zhaw.engineering.aji.services.files.sync;
 
 import android.content.Context;
 
@@ -21,6 +21,9 @@ public class SynchronizerControl {
         if (mMediaStore) {
             final MediaStoreSynchronizer synchronizer = new MediaStoreSynchronizer(context);
             scheduler.scheduleAtFixedRate(synchronizer::synchronizeAllSongs, 0,15, TimeUnit.MINUTES );
+        } else {
+            final NoMediaStoreSynchronizer synchronizer = new NoMediaStoreSynchronizer(context);
+            scheduler.scheduleAtFixedRate(synchronizer::synchronizeDeletedSongs, 0,15, TimeUnit.MINUTES );
         }
     }
 }
