@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.ui.contextmenu;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.widget.TextViewCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.List;
@@ -28,11 +31,8 @@ import lombok.Value;
 public class ContextMenuFragment extends BottomSheetDialogFragment {
     public final static String TAG = "ContextMenuFragment";
 
-    private static final String ARG_SONG_ID = "song-id";
-    private long mSongId;
     private RecyclerView mRecyclerView;
     private final LiveData<List<ItemConfig>> mConfig;
-    private Context mContext;
 
     public ContextMenuFragment(LiveData<List<ItemConfig>> config) {
         mConfig = config;
@@ -49,12 +49,17 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
         return inflater.inflate(R.layout.fragment_context_menu_list, container, false);
     }
 
+    @NonNull
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mSongId = getArguments().getLong(ARG_SONG_ID);
-        }
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Ensure that fragment is expanded by default
+        Dialog dialog =  super.onCreateDialog(savedInstanceState);
+        dialog.setOnShowListener(v -> {
+            View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior behaviour = BottomSheetBehavior.from(bottomSheet);
+            behaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+        });
+        return dialog;
     }
 
     @Override

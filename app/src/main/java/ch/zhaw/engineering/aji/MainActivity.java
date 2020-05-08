@@ -65,7 +65,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private AudioFileContentObserver mAudioFileContentObserver;
     private Menu mActionBarMenu;
     private int mainContentMarginBottom;
-    private boolean mTwoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

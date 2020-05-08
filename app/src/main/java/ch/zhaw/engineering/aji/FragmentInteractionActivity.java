@@ -58,6 +58,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     private PlaylistDao mPlaylistDao;
     private RadioStationDao mRadioStationDao;
     private ContextMenuFragment mContextMenuFragment;
+    protected boolean mTwoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     });
             mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
             runOnUiThread(() -> {
+
                 mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
             });
         });
@@ -144,10 +146,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .imageId(R.drawable.ic_queue)
                     .textId(R.string.queue)
                     .callback($ -> onSongQueue(songId)).build());
-            entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_details)
-                    .textId(R.string.details)
-                    .callback($ -> navigateToSongDetails(songId)).build());
+            if (!mTwoPane) {
+                entries.add(ContextMenuFragment.ItemConfig.builder()
+                        .imageId(R.drawable.ic_details)
+                        .textId(R.string.details)
+                        .callback($ -> navigateToSongDetails(songId)).build());
+            }
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_playlist_add)
                     .textId(R.string.add_to_playlist)
