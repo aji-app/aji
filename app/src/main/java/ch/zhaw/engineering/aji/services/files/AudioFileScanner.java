@@ -13,6 +13,7 @@ import java.io.File;
 
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.SongDto;
+import ch.zhaw.engineering.aji.services.files.sync.DatabaseSynchronizer;
 import ch.zhaw.engineering.aji.util.FileNameParser;
 
 public class AudioFileScanner extends JobIntentService {
@@ -45,7 +46,7 @@ public class AudioFileScanner extends JobIntentService {
             String rootFolder = intent.getStringExtra(EXTRA_SCRAPE_ROOT_FOLDER);
             if (rootFolder != null) {
                 walk(new File(rootFolder), songDto -> {
-                    StorageHelper.synchronizeSongWithDb(this, songDto);
+                    DatabaseSynchronizer.synchronizeSongWithDb(this, songDto);
                 });
             }
         }

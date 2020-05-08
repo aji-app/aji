@@ -30,22 +30,13 @@ public class MainActivityOld extends AppCompatActivity {
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
 
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
-    private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_old);
 
-        // TODO: Only use this if user did not disable this functionality
-        mAudioFileContentObserver.register();
-
-        // TODO: Only sync on startup if user did not disable this functionality
-//        mAudioFileContentObserver.onChange(false);
-
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
-
-        RadioStationImporter.loadDefaultRadioStations(this);
 
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(v -> {
@@ -95,7 +86,6 @@ public class MainActivityOld extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAudioFileContentObserver.unregister();
     }
 
     @Override

@@ -44,7 +44,7 @@ public class MediaStoreSynchronizer {
         cursor.close();
         List<Long> mediaStoreIds = new ArrayList<>(songs.size());
         for (SongDto song : songs) {
-            synchronizeSongWithDb(song);
+            DatabaseSynchronizer.synchronizeSongWithDb(mContext, song);
             mediaStoreIds.add(song.getMediaStoreSongId());
         }
 
@@ -91,30 +91,10 @@ public class MediaStoreSynchronizer {
         }
         if (cursor.moveToFirst()) {
             SongDto song = loadFromCursor(cursor);
-            synchronizeSongWithDb(song);
+            DatabaseSynchronizer.synchronizeSongWithDb(mContext, song);
         }
         cursor.close();
     }
-
-    private void synchronizeSongWithDb(SongDto song) {
-        SongDao songDao = SongDao.getInstance(mContext);
-        if (songDao.exists(song.getFilepath())) {
-            Song storedSong = songDao.getSongByPath(song.getFilepath());
-            if (storedSong.getAlbumArtPath() == null) {
-                String artPath = StorageHelper.saveAlbumArt(mContext, song);
-                storedSong.setAlbumArtPath(artPath);
-            }
-            if (song.getMediaStoreSongId() != null) {
-                storedSong.setMediaStoreSongId(song.getMediaStoreSongId());
-            }
-            songDao.updateSong(storedSong);
-        } else {
-            String artPath = StorageHelper.saveAlbumArt(mContext, song);
-            Song dbSong = song.toSong(artPath);
-            songDao.insertSong(dbSong);
-        }
-    }
-
 
     private SongDto loadFromCursor(Cursor cursor) {
         SongDto song = new SongDto();
