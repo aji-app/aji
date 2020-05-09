@@ -32,7 +32,7 @@ public class StorageHelper {
             }
         }
         String filenameIdentifier = song.getMediaStoreSongId() != null ? song.getMediaStoreSongId().toString() : UUID.randomUUID().toString();
-        File albumArtPath = new File(FOLDER, getAlbumArtPath(filenameIdentifier));
+        File albumArtPath = new File(directory, getAlbumArtPath(filenameIdentifier));
 
         FileOutputStream fos;
         try {
