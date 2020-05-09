@@ -108,6 +108,7 @@
             android:gravity="bottom|start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:text="@null"
             tools:text="0:17" />
 
         <SeekBar

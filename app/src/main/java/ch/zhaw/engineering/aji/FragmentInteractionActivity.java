@@ -432,6 +432,12 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
+    public void onStopPlayback() {
+        stop();
+        Log.i(TAG, "onPrevious");
+    }
+
+    @Override
     public void onToggleShuffle() {
         toggleShuffle();
     }

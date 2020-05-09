@@ -51,6 +51,7 @@ public class ExpandedControlsFragment extends Fragment {
     private boolean isRadio;
 
     private Drawable mSeekbarBackground;
+    private AudioService.PlayState mPlaybackState;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class ExpandedControlsFragment extends Fragment {
         mBinding.btnNext.setOnClickListener(v -> mListener.onNext());
         mBinding.btnPlaypause.setOnClickListener(v -> mListener.onPlayPause());
         mBinding.btnPrevious.setOnClickListener(v -> mListener.onPrevious());
-        mBinding.btnStop.setOnClickListener(v -> mListener.onStop());
+        mBinding.btnStop.setOnClickListener(v -> mListener.onStopPlayback());
 
         mBinding.playbackmodeAutoqueue.setOnClickListener(v -> mListener.onToggleAutoQueue());
         mBinding.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
@@ -90,6 +91,7 @@ public class ExpandedControlsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mListener.getPlayState().observe(getViewLifecycleOwner(), state -> {
+                mPlaybackState = state;
                 switch (state) {
                     case PAUSED:
                         mBinding.btnPlaypause.setImageResource(R.drawable.ic_play);
@@ -114,6 +116,8 @@ public class ExpandedControlsFragment extends Fragment {
                     case STOPPED:
                     case INITIAL:
                         mBinding.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        mBinding.persistentControlsAlbumcover.setImageResource(R.drawable.ic_placeholder_image);
+                        setSeekbarProgress(0);
                         disableImageView(mBinding.btnPlaypause, true);
                         disableImageView(mBinding.btnPrevious, true);
                         disableImageView(mBinding.btnNext, true);
@@ -231,7 +235,7 @@ public class ExpandedControlsFragment extends Fragment {
             mListener.getShuffleEnabled().observe(getViewLifecycleOwner(), this::updateShuffleButton);
 
             mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
-                if (!mSeeking && !isRadio) {
+                if (!mSeeking && !isRadio && AudioService.PlayState.INITIAL!= mPlaybackState && AudioService.PlayState.STOPPED != mPlaybackState) {
                     setSeekbarProgress(position.intValue());
                 }
             });
@@ -313,7 +317,7 @@ public class ExpandedControlsFragment extends Fragment {
 
         void onPrevious();
 
-        void onStop();
+        void onStopPlayback();
 
         void onToggleShuffle();
 
