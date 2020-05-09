@@ -17,10 +17,12 @@ import lombok.Value;
 public class AudioFileContentObserver extends ContentObserver {
     private static final String TAG = "AudioFileObserver";
     private final Context mContext;
+    private final MediaStoreSynchronizer mSynchronizer;
 
     public AudioFileContentObserver(Handler handler, Context context) {
         super(handler);
         mContext = context;
+        mSynchronizer = new MediaStoreSynchronizer(mContext);
     }
 
     @Override
@@ -30,8 +32,7 @@ public class AudioFileContentObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange, Uri uri) {
-        MediaStoreSynchronizer synchronizer = new MediaStoreSynchronizer(mContext);
-        synchronizer.synchronizeUri(uri);
+        mSynchronizer.synchronizeUri(uri);
     }
 
     public void register() {

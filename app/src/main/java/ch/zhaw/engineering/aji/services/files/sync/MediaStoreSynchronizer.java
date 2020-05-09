@@ -5,9 +5,13 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,20 +19,42 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.SongDto;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.services.files.StorageHelper;
-import lombok.AllArgsConstructor;
+import lombok.Value;
 
-@AllArgsConstructor
 public class MediaStoreSynchronizer {
     private static final String TAG = "MediaStoreSync";
     private final Context mContext;
+    private final ExecutorService mExecutorService;
+    private Handler mHandler;
+    private BackgroundSyncTask mWaitForLotsOfUpdates = new BackgroundSyncTask();
+    private final static long WAIT_TIME = 5 * 1000;
+
+    public MediaStoreSynchronizer(Context context) {
+        HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
+        thread.start();
+        mHandler = new Handler(thread.getLooper());
+        mContext = context;
+        mExecutorService = Executors.newFixedThreadPool(1);
+    }
+
+    public void triggerAllSyncSoon() {
+        if (mWaitForLotsOfUpdates.getStatus() == AsyncTask.Status.RUNNING) {
+            mWaitForLotsOfUpdates.cancel(true);
+        }
+        mWaitForLotsOfUpdates = new BackgroundSyncTask();
+        mWaitForLotsOfUpdates.executeOnExecutor(mExecutorService, new BackgroundArgs(this, mHandler));
+    }
 
     public void synchronizeAllSongs() {
+        Log.i(TAG, "Synchronizing all songs");
         String onlyAudioSelection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, onlyAudioSelection, null,
@@ -82,6 +108,11 @@ public class MediaStoreSynchronizer {
     }
 
     public void synchronizeUri(Uri uri) {
+        if (!uri.toString().contains(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString())) {
+            triggerAllSyncSoon();
+            return;
+        }
+        Log.i(TAG, "Synchronizing single song");
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
         Cursor cursor = mContext.getContentResolver().query(
                 uri, null, selection, null,
@@ -89,6 +120,7 @@ public class MediaStoreSynchronizer {
         if (cursor == null) {
             return;
         }
+        Log.i(TAG, "Synchronizing single song");
         if (cursor.moveToFirst()) {
             SongDto song = loadFromCursor(cursor);
             DatabaseSynchronizer.synchronizeSongWithDb(mContext, song);
@@ -130,5 +162,33 @@ public class MediaStoreSynchronizer {
 
         return song;
 
+    }
+
+    @Value
+    private static class BackgroundArgs {
+        MediaStoreSynchronizer mSynchronizer;
+        Handler mHandler;
+    }
+    private static class BackgroundSyncTask extends AsyncTask<BackgroundArgs, Void, Void> {
+
+        @Override
+        protected Void doInBackground(BackgroundArgs... contexts) {
+            if (contexts.length == 0) {
+                return null;
+            }
+            try {
+                Log.i(TAG, "Wait for more updates");
+                Thread.sleep(WAIT_TIME);
+                Log.i(TAG, "Triggering Synchronization");
+                contexts[0].getHandler().post(() -> {
+                   contexts[0].getSynchronizer().synchronizeAllSongs();
+                });
+            } catch (InterruptedException e) {
+                // This happens when we cancel the task
+                Log.i(TAG, "More updates arrived");
+            }
+
+            return null;
+        }
     }
 }

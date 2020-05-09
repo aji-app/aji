@@ -204,7 +204,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     private void setupMediaStoreIntegration() {
-        if (mAudioFileContentObserver != null) {
+        if (mAudioFileContentObserver == null) {
             HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
             thread.start();
             Handler handler = new Handler(thread.getLooper());
