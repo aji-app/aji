@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_library">
+
+    <fragment
+        android:id="@+id/nav_licenses"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment"
+        android:label="@string/menu_licenses"
+        tools:layout="@layout/fragment_license_information_list">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_library"
+        android:name="ch.zhaw.engineering.aji.ui.library.LibraryFragment"
+        android:label="@string/menu_library"
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_nav_library_to_album_details"
+            app:destination="@id/nav_album_details" />
+        <action
+            android:id="@+id/action_nav_library_to_artist_details"
+            app:destination="@id/nav_artist_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_playlists"
+        android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistFragment"
+        android:label="@string/menu_playlists"
+        tools:layout="@layout/fragment_playlist">
+        <action
+            android:id="@+id/action_nav_playlists_to_playlist_details"
+            app:destination="@id/nav_playlist_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_radiostations"
+        android:name="ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragment"
+        android:label="@string/menu_radiostations"
+        tools:layout="@layout/fragment_radiostation"/>
+
+    <fragment
+        android:id="@+id/nav_filters"
+        android:name="ch.zhaw.engineering.aji.ui.filter.FilterFragment"
+        android:label="@string/menu_filters"
+        tools:layout="@layout/fragment_filter" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment"
+        android:label="@string/menu_settings" >
+        <action
+            android:id="@+id/action_nav_settings_to_nav_licenses"
+            app:destination="@id/nav_licenses" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_album_details"
+        android:name="ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment"
+        android:label="@string/menu_album_details"
+        tools:layout="@layout/fragment_album_details" >
+        <argument
+            android:name="album"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_artist_details"
+        android:name="ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment"
+        android:label="@string/menu_artist_details"
+        tools:layout="@layout/fragment_artist_details" >
+
+        <argument
+            android:name="artist"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_playlist_details"
+        android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragment"
+        android:label="@string/menu_playlist_details"
+        tools:layout="@layout/fragment_playlist_details">
+        <argument
+            android:name="playlist-id"
+            app:argType="integer" />
+    </fragment>
+</navigation>

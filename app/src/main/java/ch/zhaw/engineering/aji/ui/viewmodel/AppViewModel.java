@@ -18,6 +18,9 @@ import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.SortResource;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 public class AppViewModel extends AndroidViewModel {
     private final SongDao mSongDao;
@@ -27,6 +30,10 @@ public class AppViewModel extends AndroidViewModel {
     private final PlaylistViewModel mPlaylistViewModel;
     private final ArtistViewModel mArtistViewModel;
     private final AlbumViewModel mAlbumViewModel;
+
+    @Getter
+    @Setter
+    private boolean mTwoPane;
 
 
     public AppViewModel(@NonNull Application application) {
@@ -41,7 +48,6 @@ public class AppViewModel extends AndroidViewModel {
         mRadioViewModel = new RadioViewModel(radioStationDao);
         mPlaylistViewModel = new PlaylistViewModel(playlistDao);
     }
-
 
     public LiveData<List<Song>> getSongs() {
         return mSongViewModel.getFileteredSongs();

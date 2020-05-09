@@ -56,7 +56,7 @@ dependencies {
 
     implementation 'de.siegmar:fastcsv:1.0.3'
 
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
 
     implementation 'com.squareup.picasso:picasso:2.71828'
 
@@ -65,8 +65,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.navigation:navigation-fragment:2.2.2'
+    implementation 'androidx.navigation:navigation-ui:2.2.2'
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"

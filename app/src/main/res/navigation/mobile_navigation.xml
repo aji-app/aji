@@ -113,24 +113,24 @@
         android:name="ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment"
         android:label="@string/menu_album_details"
         tools:layout="@layout/fragment_album_details" >
-        <action
-            android:id="@+id/action_album_details_to_song_details"
-            app:destination="@id/nav_song_details" />
         <argument
             android:name="album"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_album_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_artist_details"
         android:name="ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment"
         android:label="@string/menu_artist_details"
         tools:layout="@layout/fragment_artist_details" >
-        <action
-            android:id="@+id/action_artist_details_to_song_details"
-            app:destination="@id/nav_song_details" />
         <argument
             android:name="artist"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_artist_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
 
     <fragment

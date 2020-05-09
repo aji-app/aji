@@ -15,7 +15,6 @@ import ch.zhaw.engineering.aji.ui.song.list.ArtistSongListFragment;
 
 public class ArtistDetailsFragment extends Fragment {
     private static final String ARG_ARTIST = "artist";
-
     private String mArtist;
     private FragmentArtistDetailsBinding mBinding;
 
@@ -26,6 +25,7 @@ public class ArtistDetailsFragment extends Fragment {
             mArtist = getArguments().getString(ARG_ARTIST);
         }
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

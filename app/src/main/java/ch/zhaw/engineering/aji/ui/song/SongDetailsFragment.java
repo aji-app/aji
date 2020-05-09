@@ -99,7 +99,7 @@ public class SongDetailsFragment extends Fragment {
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
                 mSong = dao.getSong(mSongId);
-                if (getActivity() != null) {
+                if (getActivity() != null && getView() != null) {
                     getActivity().runOnUiThread(() -> {
                         mSong.observe(getViewLifecycleOwner(), song -> {
                             if (song != null) {

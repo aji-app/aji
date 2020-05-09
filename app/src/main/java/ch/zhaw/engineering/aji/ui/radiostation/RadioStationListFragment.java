@@ -53,8 +53,13 @@ public class RadioStationListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            AppViewModel viewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            viewModel.getRadios().observe(getViewLifecycleOwner(), this::onRadiosChanged);
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            appViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
+                if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
+                    mListener.onRadioStationSelected(radios.get(0).getId());
+                }
+                this.onRadiosChanged(radios);
+            });
         }
     }
 

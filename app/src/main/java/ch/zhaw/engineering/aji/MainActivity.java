@@ -6,12 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
@@ -44,7 +43,6 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
-import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
@@ -52,6 +50,7 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
@@ -81,7 +80,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         mAudioFileContentObserver.register();
 
         // TODO: Only sync on startup if user did not disable this functionality
-        mAudioFileContentObserver.onChange(false);
+//        mAudioFileContentObserver.onChange(false);
         RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());
@@ -95,9 +94,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
         handlePotentialRadiostationDeepLink(navController);
-
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
@@ -118,11 +115,22 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     break;
             }
         });
+        try {
+            Navigation.findNavController(this, R.id.nav_details_fragment);
+            mAppViewModel.setTwoPane(true);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // We're not on a landscape tablet
+        }
     }
 
 
     @Override
     public void onOpenAbout() {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_about);
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_about);
     }
@@ -279,9 +287,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToRadioStation(Long radioStationId) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
+            navController.navigate(R.id.nav_radiostation_details, args);
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
+
     }
 
     protected void radioStationImported(RadioStationDto imported) {
@@ -308,6 +323,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToSongDetails(long songId) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
@@ -337,10 +357,10 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments(), new NavOptions.Builder().setPopUpTo(R.id.nav_song_details, true).build());
                     break;
                 case R.id.nav_album_details:
-                    navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_album_details_to_nav_song_details, AlbumDetailsFragmentDirections.actionNavAlbumDetailsToNavSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_artist_details:
-                    navController.navigate(R.id.action_artist_details_to_song_details, ArtistDetailsFragmentDirections.actionArtistDetailsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_artist_details_to_nav_song_details, ArtistDetailsFragmentDirections.actionNavArtistDetailsToNavSongDetails(songId).getArguments());
                     break;
             }
         }
@@ -367,6 +387,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onLicenseSelected(Licenses.LicenseInformation item) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_licenses_to_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
     }

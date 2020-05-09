@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:paddingStart="@dimen/fragment_margin"
     android:paddingEnd="@dimen/fragment_margin"
+    android:layout_marginBottom="@dimen/fragment_margin_bottom"
     tools:context=".ui.radiostation.RadioStationDetailsFragment">
 
     <LinearLayout
