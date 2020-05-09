@@ -26,9 +26,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
-
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
@@ -167,12 +164,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_about);
-    }
-
-    @Override
-    public void onShowAutoLicenses() {
-        Intent intent = new Intent(this, OssLicensesMenuActivity.class);
-        startActivity(intent);
     }
 
     @Override

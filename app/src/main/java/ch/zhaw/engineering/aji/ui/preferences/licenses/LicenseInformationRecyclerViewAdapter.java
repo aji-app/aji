@@ -52,7 +52,7 @@ public class LicenseInformationRecyclerViewAdapter extends RecyclerView.Adapter<
             }
         });
 
-        holder.itemView.setOnClickListener(v -> {
+        holder.binding.getRoot().setOnClickListener(v -> {
             if (null != mListener) {
                 mListener.onLicenseSelected(holder.licenseInformation);
             }
