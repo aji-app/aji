@@ -186,10 +186,10 @@ public class AudioService extends LifecycleService {
                             mCurrentSong.postValue(baseInfo);
                             try {
                                 mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist, boolean hasError) -> {
-                                    if (title.equals("")) {
+                                    if (title == null || title.equals("")) {
                                         title = getApplicationContext().getResources().getString(R.string.unknown);
                                     }
-                                    if (artist.equals("")) {
+                                    if (artist == null || artist.equals("")) {
                                         artist = getApplicationContext().getResources().getString(R.string.unknown);
                                     }
                                     if (mCurrentSong.getValue() != null && PlayState.PAUSED != mCurrentState.getValue()) {

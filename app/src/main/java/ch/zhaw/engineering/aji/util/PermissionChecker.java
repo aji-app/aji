@@ -17,13 +17,11 @@ public final class PermissionChecker {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show();
                 hasPermission.postValue(true);
             }
 
             @Override
             public void onPermissionDenied(List<String> deniedPermissions) {
-                Toast.makeText(context, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
 

@@ -1,12 +1,14 @@
 package ch.zhaw.engineering.aji.ui.radiostation;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -19,15 +21,17 @@ import java.util.Map;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadiostationItemBinding;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.aji.util.Color;
 
 public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioStationRecyclerViewAdapter.ViewHolder> {
 
     private List<RadioStationDto> mValues;
-    private final RadioStationFragmentInteractionListener mListener;
+    private final RadioStationListFragment.RadioStationFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private final Map<Long, RadioStationDto> mDeletedRadioStations = new HashMap<>();
+    private Long mHighlightedRadioId;
 
-    /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationFragmentInteractionListener listener, Context context) {
+    /* package */ RadioStationRecyclerViewAdapter(List<RadioStationDto> items, RadioStationListFragment.RadioStationFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
     }
@@ -38,6 +42,11 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_radiostation_item, parent, false);
         return new ViewHolder(view);
+    }
+
+    public void setHighlighted(long radioStationId) {
+        mHighlightedRadioId = radioStationId;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -94,6 +103,8 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
         holder.binding.radiostationItemOverflow.setOnClickListener(v -> mListener.onRadioStationMenu(holder.radio.getId()));
 
         root.setOnClickListener(v -> mListener.onRadioStationSelected(holder.radio.getId()));
+
+        holder.setInverted(holder.radio.getId().equals(mHighlightedRadioId));
     }
 
     @Override
@@ -108,6 +119,20 @@ public class RadioStationRecyclerViewAdapter extends RecyclerView.Adapter<RadioS
         ViewHolder(View view) {
             super(view);
             binding = FragmentRadiostationItemBinding.bind(view);
+        }
+
+        void setInverted(boolean inverted) {
+            Context context = itemView.getContext();
+            int primaryColor = Color.getPrimaryColor(context, inverted);
+            int primaryTextColor = Color.getPrimaryTextColor(context, inverted);
+            int secondaryTextColor = Color.getSecondaryTextColor(context, inverted);
+            int backgroundColor = Color.getBackgroundColor(context, inverted);
+
+            itemView.setBackgroundColor(backgroundColor);
+            binding.radiostationItemOverflow.setTextColor(primaryColor);
+            binding.radiostationName.setTextColor(primaryTextColor);
+            binding.radiostationGenres.setTextColor(secondaryTextColor);
+            ImageViewCompat.setImageTintList(binding.radiostationItemPlay, ColorStateList.valueOf(primaryColor));
         }
 
         @Override

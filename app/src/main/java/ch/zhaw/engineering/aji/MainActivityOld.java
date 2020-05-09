@@ -18,9 +18,8 @@ import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
-import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
@@ -31,29 +30,13 @@ public class MainActivityOld extends AppCompatActivity {
     private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
 
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
-    private final AudioFileContentObserver mAudioFileContentObserver = new AudioFileContentObserver(new Handler(), this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_old);
 
-        // TODO: Only use this if user did not disable this functionality
-        mAudioFileContentObserver.register();
-
-        // TODO: Only sync on startup if user did not disable this functionality
-//        mAudioFileContentObserver.onChange(false);
-
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
-
-        RadioStationImporter.loadDefaultRadioStations(this);
-
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(v -> {
-            if (mHasPermission.getValue() != null && mHasPermission.getValue()) {
-                StorageHelper.synchronizeMediaStoreSongs(this, new Handler());
-            }
-        });
 
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(v -> {
@@ -103,7 +86,6 @@ public class MainActivityOld extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAudioFileContentObserver.unregister();
     }
 
     @Override
