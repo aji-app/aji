@@ -83,7 +83,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
             initializeRecyclerView(appViewModel);
             if (mHighlightCurrentSong) {
                 mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
-                    if (song != null) {
+                    if (song != null && !song.isRadio()) {
                         if (getAdapter() != null) {
                             getAdapter().setHighlighted(song.getId());
                         } else {

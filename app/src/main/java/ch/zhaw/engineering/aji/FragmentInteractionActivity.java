@@ -40,7 +40,7 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistListFragment;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistSelectionFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
-import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentInteractionListener;
+import ch.zhaw.engineering.aji.ui.radiostation.RadioStationListFragment;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragment;
 import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -51,7 +51,7 @@ import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 
 public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
-        RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
+        RadioStationListFragment.RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
 
     private static final String TAG = "FragmentInteractions";

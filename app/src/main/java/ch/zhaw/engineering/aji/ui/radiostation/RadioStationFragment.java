@@ -21,7 +21,7 @@ import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class RadioStationFragment extends Fragment {
-    private RadioStationFragmentInteractionListener mListener;
+    private RadioStationListFragment.RadioStationFragmentInteractionListener mListener;
     private AppViewModel mAppViewModel;
 
     @Override
@@ -33,8 +33,8 @@ public class RadioStationFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof RadioStationFragmentInteractionListener) {
-            mListener = (RadioStationFragmentInteractionListener) context;
+        if (context instanceof RadioStationListFragment.RadioStationFragmentInteractionListener) {
+            mListener = (RadioStationListFragment.RadioStationFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement RadioStationFragmentInteractionListener");
