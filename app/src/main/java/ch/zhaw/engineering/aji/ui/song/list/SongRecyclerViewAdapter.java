@@ -207,7 +207,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return new Pair<>(mPlaylistId, songIds);
     }
 
-    public void setHighlighted(long songId) {
+    public void setHighlighted(Long songId) {
         mHighlightedSongId = songId;
         notifyDataSetChanged();
     }
