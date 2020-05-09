@@ -82,25 +82,30 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
-        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
-        boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
-        if (useMediaStore) {
-            setupMediaStoreIntegration();
-        }
-
-        mSynchronizerControl = new SynchronizerControl(useMediaStore);
-        mSynchronizerControl.synchronizeSongsPeriodically(this);
-        preferenceHelper.observeMediaStoreSetting(enabled -> {
-            mSynchronizerControl.setMediaStore(enabled);
-            if (enabled) {
-                setupMediaStoreIntegration();
-            } else {
-                if (mAudioFileContentObserver != null) {
-                    mAudioFileContentObserver.unregister();
-                    mAudioFileContentObserver = null;
+        mHasPermission.observe(this, hasPermission -> {
+            if (hasPermission) {
+                PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+                boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
+                if (useMediaStore) {
+                    setupMediaStoreIntegration();
                 }
+
+                mSynchronizerControl = new SynchronizerControl(useMediaStore);
+                mSynchronizerControl.synchronizeSongsPeriodically(this);
+                preferenceHelper.observeMediaStoreSetting(enabled -> {
+                    mSynchronizerControl.setMediaStore(enabled);
+                    if (enabled) {
+                        setupMediaStoreIntegration();
+                    } else {
+                        if (mAudioFileContentObserver != null) {
+                            mAudioFileContentObserver.unregister();
+                            mAudioFileContentObserver = null;
+                        }
+                    }
+                });
             }
         });
+
 
         RadioStationImporter.loadDefaultRadioStations(this);
 
