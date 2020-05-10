@@ -155,7 +155,7 @@ public class ExpandedControlsFragment extends Fragment {
             Transformations.switchMap(mListener.getCurrentSong(),
                     info -> info == null || info.isRadio() ? null : songDao.getSong(info.getId())
             ).observe(getViewLifecycleOwner(),
-                    song -> mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
+                    song -> mBinding.songItemFavorite.setImageResource(song != null && song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
             );
 
             mListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {

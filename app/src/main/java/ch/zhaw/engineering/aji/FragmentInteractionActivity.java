@@ -149,12 +149,10 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .imageId(R.drawable.ic_queue)
                     .textId(R.string.queue)
                     .callback($ -> onSongQueue(songId)).build());
-            if (!mAppViewModel.isTwoPane()) {
-                entries.add(ContextMenuFragment.ItemConfig.builder()
-                        .imageId(R.drawable.ic_details)
-                        .textId(R.string.details)
-                        .callback($ -> navigateToSongDetails(songId)).build());
-            }
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_details)
+                    .textId(R.string.details)
+                    .callback($ -> navigateToSongDetails(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
                     .imageId(R.drawable.ic_playlist_add)
                     .textId(R.string.add_to_playlist)
