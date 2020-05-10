@@ -68,11 +68,11 @@ public class AudioFileScanner extends JobIntentService {
                 SongDto song = new SongDto();
 
                 song.setFilepath(uri.getPath());
-                song.setArtist(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-                song.setTitle(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-                song.setAlbum(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+                song.setArtist(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST).trim());
+                song.setTitle(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE).trim());
+                song.setAlbum(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM).trim());
                 song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
-                song.setTrackNumber(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
+                song.setTrackNumber(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER).trim());
 
                 if (song.getTitle() == null) {
                     // No or not enough Metadata
@@ -96,13 +96,13 @@ public class AudioFileScanner extends JobIntentService {
     private void parseFileName(String filename, SongDto song) {
         FileNameParser.ParsedFileName parsedFileName = mFileNameParser.parseFileName(filename);
         if (song.getArtist() == null) {
-            song.setArtist(parsedFileName.getArtist());
+            song.setArtist(parsedFileName.getArtist().trim());
         }
         if (song.getAlbum() == null) {
-            song.setAlbum(parsedFileName.getAlbum());
+            song.setAlbum(parsedFileName.getAlbum().trim());
         }
         if (song.getTitle() == null) {
-            song.setTitle(parsedFileName.getTitle());
+            song.setTitle(parsedFileName.getTitle().trim());
         }
     }
 
