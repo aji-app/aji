@@ -608,9 +608,16 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     Playlist newPlaylist = Playlist.builder()
                             .name(editText.getText().toString())
                             .build();
-                    mPlaylistDao.insert(newPlaylist);
+                    Playlist playlistByName = mPlaylistDao.getPlaylistByName(newPlaylist.getName());
+                    if (playlistByName != null) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(this, getString(R.string.playlist_exists, newPlaylist.getName()), Toast.LENGTH_LONG).show();
+                        });
+                    } else {
+                        mPlaylistDao.insert(newPlaylist);
+                        alertDialog.dismiss();
+                    }
                 });
-                alertDialog.dismiss();
             });
         });
 

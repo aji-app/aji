@@ -80,6 +80,10 @@ public abstract class PlaylistDao {
     @Update
     public abstract void update(Playlist playlist);
 
+
+    @Query("SELECT * from Playlist where name = :name")
+    public abstract Playlist getPlaylistByName(String name);
+
     /*
      * Internal Helper Methods
      *
