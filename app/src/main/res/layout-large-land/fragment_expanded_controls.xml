@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/fragment_margin">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_marginTop="32dp"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/persistent_controls_albumcover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:contentDescription="@string/contentDescription_album_art"
+            android:src="@drawable/ic_placeholder_image"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:layout_marginTop="32dp"
+        android:padding="@dimen/fragment_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fragment_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/song_title_expanded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fragment_margin"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/not_playing"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="?attr/primaryTextColor"
+                    tools:text="Fake Song 1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/song_artist_expanded"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceListItemSecondary"
+                        tools:text="Fake Artist" />
+
+                    <TextView
+                        android:id="@+id/song_album_expanded"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceListItemSecondary"
+                        tools:text="Fake Album" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/song_item_favorite"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:contentDescription="@string/contentDescription_toggle_favorite"
+                android:gravity="center"
+                android:padding="0dp"
+                android:src="@drawable/ic_favorite"
+                android:visibility="gone" />
+
+            <ch.zhaw.engineering.aji.view.Button
+                android:id="@+id/song_item_overflow"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:gravity="center"
+                android:padding="0dp"
+                android:text="@string/menu_dots"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/timer_elapsed"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|start"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="0:17" />
+
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:enabled="false"
+                android:focusable="true"
+                android:max="100000"
+                android:padding="0dp"
+                android:progress="17"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/timer_total"
+                app:layout_constraintStart_toEndOf="@id/timer_elapsed"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/timer_total"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="3:52" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/btn_previous"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_prev" />
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/btn_playpause"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_play" />
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/btn_next"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_next" />
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/btn_stop"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_stop" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/playbackmode_repeat"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/contentDescription_playbackmode_repeat"
+                android:gravity="center"
+                android:padding="0dp"
+                android:src="@drawable/ic_repeat_off" />
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/playbackmode_shuffle"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/contentDescription_playbackmode_shuffle"
+                android:gravity="center"
+                android:padding="0dp"
+                android:src="@drawable/ic_shuffle_off" />
+
+            <ch.zhaw.engineering.aji.view.ImageButton
+                android:id="@+id/playbackmode_autoqueue"
+                android:layout_width="@dimen/expanded_controls_button_size"
+                android:layout_height="@dimen/expanded_controls_button_size"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/contentDescription_playbackmode_autoqueue"
+                android:gravity="center"
+                android:padding="0dp"
+                android:src="@drawable/ic_autoqueue_off" />
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/current_queue_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -51,21 +51,22 @@ public class ExpandedControlsFragment extends Fragment {
     private boolean isRadio;
 
     private Drawable mSeekbarBackground;
+    private AudioService.PlayState mPlaybackState;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentExpandedControlsBinding.inflate(inflater, container, false);
 
-        mBinding.persistentControlsButtons.btnNext.setOnClickListener(v -> mListener.onNext());
-        mBinding.persistentControlsButtons.btnPlaypause.setOnClickListener(v -> mListener.onPlayPause());
-        mBinding.persistentControlsButtons.btnPrevious.setOnClickListener(v -> mListener.onPrevious());
-        mBinding.persistentControlsButtons.btnStop.setOnClickListener(v -> mListener.onStop());
+        mBinding.btnNext.setOnClickListener(v -> mListener.onNext());
+        mBinding.btnPlaypause.setOnClickListener(v -> mListener.onPlayPause());
+        mBinding.btnPrevious.setOnClickListener(v -> mListener.onPrevious());
+        mBinding.btnStop.setOnClickListener(v -> mListener.onStopPlayback());
 
-        mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setOnClickListener(v -> mListener.onToggleAutoQueue());
-        mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
-        mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
+        mBinding.playbackmodeAutoqueue.setOnClickListener(v -> mListener.onToggleAutoQueue());
+        mBinding.playbackmodeRepeat.setOnClickListener(v -> mListener.onChangeRepeatMode());
+        mBinding.playbackmodeShuffle.setOnClickListener(v -> mListener.onToggleShuffle());
 
-        mSeekbarBackground = mBinding.persistentControlsSeebar.seekbar.getBackground();
+        mSeekbarBackground = mBinding.seekbar.getBackground();
 
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.current_queue_container, QueueSongListFragment.newInstance())
@@ -90,41 +91,44 @@ public class ExpandedControlsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mListener.getPlayState().observe(getViewLifecycleOwner(), state -> {
+                mPlaybackState = state;
                 switch (state) {
                     case PAUSED:
-                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
-                        mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
-                        enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
-                        enableImageView(mBinding.persistentControlsButtons.btnStop);
+                        mBinding.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        mBinding.seekbar.setEnabled(true);
+                        enableImageView(mBinding.btnPlaypause);
+                        enableImageView(mBinding.btnStop);
                         if (!isRadio) {
-                            enableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                            enableImageView(mBinding.persistentControlsButtons.btnNext);
+                            enableImageView(mBinding.btnPrevious);
+                            enableImageView(mBinding.btnNext);
                         }
                         break;
                     case PLAYING:
-                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_pause);
-                        mBinding.persistentControlsSeebar.seekbar.setEnabled(true);
-                        enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
-                        enableImageView(mBinding.persistentControlsButtons.btnStop);
+                        mBinding.btnPlaypause.setImageResource(R.drawable.ic_pause);
+                        mBinding.seekbar.setEnabled(true);
+                        enableImageView(mBinding.btnPlaypause);
+                        enableImageView(mBinding.btnStop);
                         if (!isRadio) {
-                            enableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                            enableImageView(mBinding.persistentControlsButtons.btnNext);
+                            enableImageView(mBinding.btnPrevious);
+                            enableImageView(mBinding.btnNext);
                         }
                         break;
                     case STOPPED:
                     case INITIAL:
-                        mBinding.persistentControlsButtons.btnPlaypause.setImageResource(R.drawable.ic_play);
-                        disableImageView(mBinding.persistentControlsButtons.btnPlaypause, true);
-                        disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
-                        disableImageView(mBinding.persistentControlsButtons.btnNext, true);
-                        disableImageView(mBinding.persistentControlsButtons.btnStop, true);
-                        mBinding.persistentControlsSeebar.seekbar.setEnabled(false);
+                        mBinding.btnPlaypause.setImageResource(R.drawable.ic_play);
+                        mBinding.persistentControlsAlbumcover.setImageResource(R.drawable.ic_placeholder_image);
+                        setSeekbarProgress(0);
+                        disableImageView(mBinding.btnPlaypause, true);
+                        disableImageView(mBinding.btnPrevious, true);
+                        disableImageView(mBinding.btnNext, true);
+                        disableImageView(mBinding.btnStop, true);
+                        mBinding.seekbar.setEnabled(false);
 
                         break;
                 }
             });
 
-            mBinding.persistentControlsSeebar.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            mBinding.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -151,18 +155,18 @@ public class ExpandedControlsFragment extends Fragment {
             Transformations.switchMap(mListener.getCurrentSong(),
                     info -> info == null || info.isRadio() ? null : songDao.getSong(info.getId())
             ).observe(getViewLifecycleOwner(),
-                    song -> mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
+                    song -> mBinding.songItemFavorite.setImageResource(song != null && song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite)
             );
 
             mListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
                 if (songs != null && songs.size() > 0) {
-                    enableImageView(mBinding.persistentControlsButtons.btnPlaypause);
+                    enableImageView(mBinding.btnPlaypause);
                 }
             });
 
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
-                mBinding.persistentControlsSonginfo.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
-                mBinding.persistentControlsSonginfo.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
+                mBinding.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
+                mBinding.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
 
                 updateRepeatButton(mListener.getRepeatMode().getValue());
                 updateShuffleButton(mListener.getShuffleEnabled().getValue());
@@ -171,56 +175,56 @@ public class ExpandedControlsFragment extends Fragment {
                 if (info != null) {
                     isRadio = info.isRadio();
                     if (isRadio) {
-                        mBinding.persistentControlsSonginfo.songItemFavorite.setImageResource(R.drawable.ic_not_favorite);
+                        mBinding.songItemFavorite.setImageResource(R.drawable.ic_not_favorite);
                     }
 
-                    mBinding.persistentControlsSonginfo.songTitleExpanded.setText(info.getTitle());
-                    mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(info.getAlbum());
-                    mBinding.persistentControlsSonginfo.songArtistExpanded.setText(info.getArtist());
-                    mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue.setEnabled(true);
-                    mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat.setEnabled(true);
-                    mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle.setEnabled(true);
+                    mBinding.songTitleExpanded.setText(info.getTitle());
+                    mBinding.songAlbumExpanded.setText(info.getAlbum());
+                    mBinding.songArtistExpanded.setText(info.getArtist());
+                    mBinding.playbackmodeAutoqueue.setEnabled(true);
+                    mBinding.playbackmodeRepeat.setEnabled(true);
+                    mBinding.playbackmodeShuffle.setEnabled(true);
 
                     if (info.getAlbumPath() != null) {
-                        Picasso.get().load(new File(info.getAlbumPath())).into(mBinding.persistentControlsSonginfo.persistentControlsAlbumcover);
+                        Picasso.get().load(new File(info.getAlbumPath())).into(mBinding.persistentControlsAlbumcover);
                     } else {
-                        mBinding.persistentControlsSonginfo.persistentControlsAlbumcover.setImageResource(R.drawable.ic_placeholder_image);
+                        mBinding.persistentControlsAlbumcover.setImageResource(R.drawable.ic_placeholder_image);
                     }
 
                     if (isRadio) {
-                        mBinding.persistentControlsSeebar.timerTotal.setText(R.string.unknown_duration);
-                        mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
-                        mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
-                        mBinding.persistentControlsSeebar.seekbar.setIndeterminate(true);
-                        mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(0);
-                        mBinding.persistentControlsSeebar.seekbar.setBackground(null);
-                        disableImageView(mBinding.persistentControlsButtons.btnPrevious, true);
-                        disableImageView(mBinding.persistentControlsButtons.btnNext, true);
-                        enableImageView(mBinding.persistentControlsButtons.btnStop);
+                        mBinding.timerTotal.setText(R.string.unknown_duration);
+                        mBinding.songItemFavorite.setVisibility(View.GONE);
+                        mBinding.songItemOverflow.setVisibility(View.GONE);
+                        mBinding.seekbar.setIndeterminate(true);
+                        mBinding.seekbar.getThumb().setAlpha(0);
+                        mBinding.seekbar.setBackground(null);
+                        disableImageView(mBinding.btnPrevious, true);
+                        disableImageView(mBinding.btnNext, true);
+                        enableImageView(mBinding.btnStop);
                     } else {
-                        mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.VISIBLE);
-                        mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.VISIBLE);
-                        mBinding.persistentControlsSeebar.timerTotal.setText(getMillisAsTime(info.getDuration()));
-                        mBinding.persistentControlsSeebar.seekbar.setIndeterminate(false);
-                        mBinding.persistentControlsSeebar.seekbar.getThumb().setAlpha(255);
-                        mBinding.persistentControlsSeebar.seekbar.setBackground(mSeekbarBackground);
-                        mBinding.persistentControlsSeebar.seekbar.setMax((int) info.getDuration());
-                        enableImageView(mBinding.persistentControlsButtons.btnPrevious);
-                        enableImageView(mBinding.persistentControlsButtons.btnNext);
-                        enableImageView(mBinding.persistentControlsButtons.btnStop);
+                        mBinding.songItemFavorite.setVisibility(View.VISIBLE);
+                        mBinding.songItemOverflow.setVisibility(View.VISIBLE);
+                        mBinding.timerTotal.setText(getMillisAsTime(info.getDuration()));
+                        mBinding.seekbar.setIndeterminate(false);
+                        mBinding.seekbar.getThumb().setAlpha(255);
+                        mBinding.seekbar.setBackground(mSeekbarBackground);
+                        mBinding.seekbar.setMax((int) info.getDuration());
+                        enableImageView(mBinding.btnPrevious);
+                        enableImageView(mBinding.btnNext);
+                        enableImageView(mBinding.btnStop);
                     }
                 } else {
-                    mBinding.persistentControlsSonginfo.songTitleExpanded.setText(R.string.not_playing);
-                    mBinding.persistentControlsSonginfo.songAlbumExpanded.setText(null);
-                    mBinding.persistentControlsSonginfo.songArtistExpanded.setText(null);
-                    mBinding.persistentControlsSonginfo.songItemFavorite.setVisibility(View.GONE);
-                    mBinding.persistentControlsSonginfo.songItemOverflow.setVisibility(View.GONE);
-                    mBinding.persistentControlsSeebar.timerTotal.setText(null);
-                    mBinding.persistentControlsSeebar.timerElapsed.setText(null);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
-                    disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat, false);
-                    disableImageView(mBinding.persistentControlsButtons.btnStop, false);
+                    mBinding.songTitleExpanded.setText(R.string.not_playing);
+                    mBinding.songAlbumExpanded.setText(null);
+                    mBinding.songArtistExpanded.setText(null);
+                    mBinding.songItemFavorite.setVisibility(View.GONE);
+                    mBinding.songItemOverflow.setVisibility(View.GONE);
+                    mBinding.timerTotal.setText(null);
+                    mBinding.timerElapsed.setText(null);
+                    disableImageView(mBinding.playbackmodeAutoqueue, false);
+                    disableImageView(mBinding.playbackmodeShuffle, false);
+                    disableImageView(mBinding.playbackmodeRepeat, false);
+                    disableImageView(mBinding.btnStop, false);
                 }
             });
 
@@ -231,7 +235,7 @@ public class ExpandedControlsFragment extends Fragment {
             mListener.getShuffleEnabled().observe(getViewLifecycleOwner(), this::updateShuffleButton);
 
             mListener.getCurrentPosition().observe(getViewLifecycleOwner(), position -> {
-                if (!mSeeking && !isRadio) {
+                if (!mSeeking && !isRadio && AudioService.PlayState.INITIAL!= mPlaybackState && AudioService.PlayState.STOPPED != mPlaybackState) {
                     setSeekbarProgress(position.intValue());
                 }
             });
@@ -241,23 +245,23 @@ public class ExpandedControlsFragment extends Fragment {
     private void updateAutoQueueButton(Boolean enabled) {
         enabled = enabled == null ? false : enabled;
         if (enabled) {
-            enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue);
+            enableImageView(mBinding.playbackmodeAutoqueue);
         } else {
-            disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeAutoqueue, false);
+            disableImageView(mBinding.playbackmodeAutoqueue, false);
         }
     }
 
     private void updateShuffleButton(Boolean enabled) {
         enabled = enabled == null ? false : enabled;
         if (enabled) {
-            enableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle);
+            enableImageView(mBinding.playbackmodeShuffle);
         } else {
-            disableImageView(mBinding.persistentControlsPlaybackmodes.playbackmodeShuffle, false);
+            disableImageView(mBinding.playbackmodeShuffle, false);
         }
     }
 
     private void updateRepeatButton(@Nullable AudioBackend.RepeatModes mode) {
-        ImageButton repeatMode = mBinding.persistentControlsPlaybackmodes.playbackmodeRepeat;
+        ImageButton repeatMode = mBinding.playbackmodeRepeat;
         if (mode == null) {
             mode = AudioBackend.RepeatModes.REPEAT_OFF;
         }
@@ -278,8 +282,8 @@ public class ExpandedControlsFragment extends Fragment {
     }
 
     private void setSeekbarProgress(int progress) {
-        mBinding.persistentControlsSeebar.seekbar.setProgress(progress);
-        mBinding.persistentControlsSeebar.timerElapsed.setText(getMillisAsTime(progress));
+        mBinding.seekbar.setProgress(progress);
+        mBinding.timerElapsed.setText(getMillisAsTime(progress));
     }
 
     private void disableImageView(ImageView imageView, boolean disable) {
@@ -313,7 +317,7 @@ public class ExpandedControlsFragment extends Fragment {
 
         void onPrevious();
 
-        void onStop();
+        void onStopPlayback();
 
         void onToggleShuffle();
 

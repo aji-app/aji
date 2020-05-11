@@ -1,7 +1,9 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -14,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
@@ -24,14 +27,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
-import ch.zhaw.engineering.aji.services.files.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
+import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
+import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
@@ -41,21 +45,33 @@ import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragment;
 import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragmentDirections;
+import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
+
+import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
+import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
+import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener {
     private static final String TAG = "MainActivity";
+    private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
     private MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>();
     private AudioFileContentObserver mAudioFileContentObserver;
     private Menu mActionBarMenu;
+    private int mainContentMarginBottom;
+    private SynchronizerControl mSynchronizerControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +79,32 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
-        // TODO: Only use this if user did not disable this functionality
-        HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-        mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
-        mAudioFileContentObserver.register();
 
-        // TODO: Only sync on startup if user did not disable this functionality
-        mAudioFileContentObserver.onChange(false);
+        mHasPermission.observe(this, hasPermission -> {
+            if (hasPermission) {
+                PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+                boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
+                if (useMediaStore) {
+                    setupMediaStoreIntegration();
+                }
+
+                mSynchronizerControl = new SynchronizerControl(useMediaStore);
+                mSynchronizerControl.synchronizeSongsPeriodically(this);
+                preferenceHelper.observeMediaStoreSetting(enabled -> {
+                    mSynchronizerControl.setMediaStore(enabled);
+                    if (enabled) {
+                        setupMediaStoreIntegration();
+                    } else {
+                        if (mAudioFileContentObserver != null) {
+                            mAudioFileContentObserver.unregister();
+                            mAudioFileContentObserver = null;
+                        }
+                    }
+                });
+            }
+        });
+
+
         RadioStationImporter.loadDefaultRadioStations(this);
 
         setContentView(mBinding.getRoot());
@@ -85,30 +118,59 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
         handlePotentialRadiostationDeepLink(navController);
-
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
         setupPersistentBottomSheet();
+
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            switch (destination.getId()) {
+                case R.id.nav_license_details:
+                case R.id.nav_settings:
+                case R.id.nav_licenses:
+                case R.id.nav_about:
+                    mainContentMarginBottom = setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, 0);
+                    mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
+                    break;
+                default:
+                    setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, mainContentMarginBottom);
+                    mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
+                    break;
             }
         });
+        try {
+            Navigation.findNavController(this, R.id.nav_details_fragment);
+            mAppViewModel.setTwoPane(true);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // We're not on a landscape tablet
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAudioFileContentObserver != null) {
+            mAudioFileContentObserver.unregister();
+            mAudioFileContentObserver = null;
+        }
     }
 
     @Override
     public void onOpenAbout() {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_about);
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_about);
     }
 
     @Override
     public void onShowOpenSourceLicenses() {
-        Intent intent = new Intent(this, OssLicensesMenuActivity.class);
-        startActivity(intent);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_licenses);
     }
 
     /**
@@ -139,6 +201,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     }
                 }
             }
+        }
+    }
+
+    private void setupMediaStoreIntegration() {
+        if (mAudioFileContentObserver == null) {
+            HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
+            thread.start();
+            Handler handler = new Handler(thread.getLooper());
+            mAudioFileContentObserver = new AudioFileContentObserver(handler, this);
+            mAudioFileContentObserver.register();
         }
     }
 
@@ -244,6 +316,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    public void onAddSongsButtonClick() {
+        // TODO: Use navigation instead of activity
+        Intent intent = new Intent(this, DirectorySelectionActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_DIRECTOY_SELECT);
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mActionBarMenu = menu;
         return super.onPrepareOptionsMenu(menu);
@@ -251,9 +330,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToRadioStation(Long radioStationId) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
+            navController.navigate(R.id.nav_radiostation_details, args);
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
+
     }
 
     protected void radioStationImported(RadioStationDto imported) {
@@ -280,6 +366,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     protected void navigateToSongDetails(long songId) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
@@ -309,10 +400,10 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments(), new NavOptions.Builder().setPopUpTo(R.id.nav_song_details, true).build());
                     break;
                 case R.id.nav_album_details:
-                    navController.navigate(R.id.action_album_details_to_song_details, AlbumDetailsFragmentDirections.actionAlbumDetailsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_album_details_to_nav_song_details, AlbumDetailsFragmentDirections.actionNavAlbumDetailsToNavSongDetails(songId).getArguments());
                     break;
                 case R.id.nav_artist_details:
-                    navController.navigate(R.id.action_artist_details_to_song_details, ArtistDetailsFragmentDirections.actionArtistDetailsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_artist_details_to_nav_song_details, ArtistDetailsFragmentDirections.actionNavArtistDetailsToNavSongDetails(songId).getArguments());
                     break;
             }
         }
@@ -331,10 +422,40 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    public void onBackPressed() {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+
+    }
+
+    @Override
+    public void onLicenseSelected(Licenses.LicenseInformation item) {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
+            return;
+        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.action_nav_licenses_to_license_details, LicenseInformationFragmentDirections.actionNavLicensesToLicenseDetails(item.getLicense()).getArguments());
+    }
+
+    @Override
+    public void onLibraryUrlClicked(Licenses.LicenseInformation item) {
+        Uri url = Uri.parse(getString(item.getUrl()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, url);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -342,5 +463,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         runOnUiThread(() -> {
             mBinding.progressBarHolder.setVisibility(show ? View.VISIBLE : View.GONE);
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_DIRECTOY_SELECT) {
+            if (data != null && data.hasExtra(EXTRA_FILE)) {
+                String path = data.getStringExtra(EXTRA_FILE);
+                Intent scrapeFiles = new Intent();
+                scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
+                AudioFileScanner.enqueueWork(this, scrapeFiles);
+            }
+        }
     }
 }

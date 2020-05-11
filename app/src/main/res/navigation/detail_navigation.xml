@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_song_details">
+
+    <fragment
+        android:id="@+id/nav_playlist_details"
+        android:name="ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragment"
+        android:label="@string/menu_playlist_details"
+        tools:layout="@layout/fragment_playlist_details">
+        <argument
+            android:name="playlist-id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_playlist_details_to_song_details"
+            app:destination="@id/nav_song_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_radiostation_details"
+        android:name="ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment"
+        android:label="@string/menu_radiostation_details"
+        tools:layout="@layout/fragment_radio_station_details">
+        <argument
+            android:name="radiostation-id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_nav_radiostation_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_song_details"
+        android:name="ch.zhaw.engineering.aji.ui.song.SongDetailsFragment"
+        android:label="@string/menu_song_details"
+        tools:layout="@layout/fragment_song_details" >
+        <argument
+            android:name="song-id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_song_details_self"
+            app:destination="@id/nav_song_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.AboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_about" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_licenses"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment"
+        android:label="@string/menu_licenses"
+        tools:layout="@layout/fragment_license_information_list" >
+        <action
+            android:id="@+id/action_nav_licenses_to_license_details"
+            app:destination="@id/nav_license_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_license_details"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationDetailsFragment"
+        android:label="@string/menu_license_details" >
+        <argument
+            android:name="license-text-id"
+            app:argType="integer" />
+    </fragment>
+</navigation>

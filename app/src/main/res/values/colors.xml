@@ -8,4 +8,5 @@
     <color name="purplelime_divider">#BDBDBD</color>
     <color name="purplelime_primaryText">#212121</color>
     <color name="purplelime_secondaryText">#757575</color>
+    <color name="purplelime_linkColor">#0000EE</color>
 </resources>

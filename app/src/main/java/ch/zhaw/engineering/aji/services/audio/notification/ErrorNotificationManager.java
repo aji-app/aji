@@ -99,6 +99,7 @@ public class ErrorNotificationManager {
 
     private PendingIntent getSongDetailsIntent(long songId, int notificationId) {
         Bundle args = LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments();
+        // TODO: Fix on landscape
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
         return new NavDeepLinkBuilder(mContext)
                 .setGraph(R.navigation.mobile_navigation)

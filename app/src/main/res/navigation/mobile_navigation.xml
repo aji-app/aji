@@ -67,6 +67,9 @@
         <action
             android:id="@+id/action_nav_settings_to_nav_about"
             app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_nav_settings_to_licenseInformationFragment"
+            app:destination="@id/nav_licenses" />
     </fragment>
     <fragment
         android:id="@+id/nav_playlist_details"
@@ -110,24 +113,24 @@
         android:name="ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment"
         android:label="@string/menu_album_details"
         tools:layout="@layout/fragment_album_details" >
-        <action
-            android:id="@+id/action_album_details_to_song_details"
-            app:destination="@id/nav_song_details" />
         <argument
             android:name="album"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_album_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_artist_details"
         android:name="ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment"
         android:label="@string/menu_artist_details"
         tools:layout="@layout/fragment_artist_details" >
-        <action
-            android:id="@+id/action_artist_details_to_song_details"
-            app:destination="@id/nav_song_details" />
         <argument
             android:name="artist"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_artist_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
 
     <fragment
@@ -135,5 +138,23 @@
         android:name="ch.zhaw.engineering.aji.ui.preferences.AboutFragment"
         android:label="@string/menu_about"
         tools:layout="@layout/fragment_about" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_licenses"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment"
+        android:label="@string/menu_licenses"
+        tools:layout="@layout/fragment_license_information_list" >
+        <action
+            android:id="@+id/action_nav_licenses_to_license_details"
+            app:destination="@id/nav_license_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_license_details"
+        android:name="ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationDetailsFragment"
+        android:label="@string/menu_license_details" >
+        <argument
+            android:name="license-text-id"
+            app:argType="integer" />
     </fragment>
 </navigation>

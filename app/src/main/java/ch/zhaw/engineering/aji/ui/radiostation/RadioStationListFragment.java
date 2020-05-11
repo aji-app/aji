@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
@@ -26,6 +28,7 @@ public class RadioStationListFragment extends ListFragment {
     private static final String TAG = "RadioListFragment";
     private RadioStationFragmentInteractionListener mListener;
     private RadioStationRecyclerViewAdapter mAdapter;
+    private Long mPlayingRadioId;
 
     @SuppressWarnings("unused")
     public static RadioStationListFragment newInstance() {
@@ -53,8 +56,22 @@ public class RadioStationListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            AppViewModel viewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            viewModel.getRadios().observe(getViewLifecycleOwner(), this::onRadiosChanged);
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            appViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
+                if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
+                    mListener.onRadioStationSelected(radios.get(0).getId());
+                }
+                this.onRadiosChanged(radios);
+            });
+            mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
+                if (song != null && song.isRadio()) {
+                    if (mAdapter != null) {
+                        mAdapter.setHighlighted(song.getId());
+                    } else {
+                        mPlayingRadioId = song.getId();
+                    }
+                }
+            });
         }
     }
 
@@ -81,6 +98,10 @@ public class RadioStationListFragment extends ListFragment {
             getActivity().runOnUiThread(() -> {
                 if (mAdapter == null) {
                     mAdapter = new RadioStationRecyclerViewAdapter(radios, mListener, getActivity());
+                    if (mPlayingRadioId != null) {
+                        mAdapter.setHighlighted(mPlayingRadioId);
+                        mPlayingRadioId = null;
+                    }
                 } else {
                     mAdapter.updateItems(radios);
                 }
@@ -97,5 +118,12 @@ public class RadioStationListFragment extends ListFragment {
             });
         }
     }
-
+    public interface RadioStationFragmentInteractionListener {
+        void onRadioStationSelected(long radioStationId);
+        void onRadioStationPlay(long radioStationId);
+        void onRadioStationMenu(long radioStationId);
+        void onRadioStationDelete(long radioStationId);
+        void onCreateRadioStation();
+        LiveData<AudioService.SongInformation> getCurrentSong();
+    }
 }
