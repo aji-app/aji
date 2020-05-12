@@ -2,9 +2,6 @@ package ch.zhaw.engineering.aji.ui.album;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,13 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
-import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
-import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class AlbumFragment extends Fragment {
-
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
     }

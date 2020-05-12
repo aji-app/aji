@@ -20,6 +20,7 @@ import java.util.List;
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import ch.zhaw.engineering.aji.ui.ListFragment;
@@ -34,6 +35,8 @@ import lombok.Getter;
 public abstract class SongListFragment extends ListFragment implements SongRecyclerViewAdapter.OnTouchCallbacks {
     private static final String TAG = "SongListFragment";
     private final boolean mHighlightCurrentSong;
+    protected List<Song> mSongs;
+    protected boolean mShowFirst = false;
 
     SongListFragmentListener mListener;
 
@@ -48,6 +51,14 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     public SongListFragment(boolean highlightCurrentSong) {
         super();
         mHighlightCurrentSong = highlightCurrentSong;
+    }
+
+    public void showFirst() {
+        if (mSongs != null && mSongs.size() > 0) {
+            mListener.onSongSelected(mSongs.get(0).getSongId());
+        } else {
+            mShowFirst = true;
+        }
     }
 
     public void setAdapter(SongRecyclerViewAdapter adapter) {
@@ -79,8 +90,9 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             initializeRecyclerView(appViewModel);
+
             if (mHighlightCurrentSong) {
                 mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
                     if (song == null) {

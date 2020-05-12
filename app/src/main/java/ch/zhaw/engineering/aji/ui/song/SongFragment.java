@@ -9,16 +9,21 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
+import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 public class SongFragment extends Fragment {
 
     private FragmentSongBinding mBinding;
     private SongFragmentListener mListener;
+    private AllSongsListFragment mListFragment;
+    private AppViewModel mAppViewModel;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -32,9 +37,16 @@ public class SongFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
+            mListFragment = AllSongsListFragment.newInstance();
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, AllSongsListFragment.newInstance())
+                    .replace(R.id.bottom_container, mListFragment)
                     .commitNow();
+        }
+    }
+
+    public void onShown() {
+        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
+            mListFragment.showFirst();
         }
     }
 
@@ -42,6 +54,7 @@ public class SongFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity()  != null) {
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             PreferenceHelper helper = new PreferenceHelper(getActivity());
             mBinding.fabAddSongs.setVisibility(helper.isMediaStoreEnabled() ? View.GONE : View.VISIBLE);
             helper.observeMediaStoreSetting(enabled -> mBinding.fabAddSongs.setVisibility(enabled ? View.GONE : View.VISIBLE));

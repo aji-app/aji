@@ -8,7 +8,7 @@ public class AllSongsListFragment extends SongListFragment {
 
     private static final String TAG = "AllSongsList";
 
-    public static SongListFragment newInstance() {
+    public static AllSongsListFragment newInstance() {
         return new AllSongsListFragment();
     }
 
@@ -17,16 +17,12 @@ public class AllSongsListFragment extends SongListFragment {
         if (getActivity() != null) {
             appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
                 Log.i(TAG, "Updating songs for song fragment");
+                mSongs = songs;
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                            if (appViewModel.isOpenFirstInList()) {
-                                mListener.onSongSelected(songs.get(0).getSongId());
-                            } else {
-                                appViewModel.resetOpenFirstInList();
-                            }
+                        if (mShowFirst) {
+                            mListener.onSongSelected(mSongs.get(0).getSongId());
                         }
-
                         if (getAdapter() != null) {
                             getAdapter().setSongs(songs);
                             if (mRecyclerView.getAdapter() == null) {

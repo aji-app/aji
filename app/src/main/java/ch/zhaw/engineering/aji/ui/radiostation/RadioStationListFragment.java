@@ -67,6 +67,8 @@ public class RadioStationListFragment extends ListFragment {
                 if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
                     if (!hasRadioStationIdExtra) {
                         mListener.onRadioStationSelected(radios.get(0).getId());
+                    } else {
+                        appViewModel.setOpenFirstInList(true);
                     }
                 }
 

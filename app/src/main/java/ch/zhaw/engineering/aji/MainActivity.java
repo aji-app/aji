@@ -368,7 +368,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return navController.getCurrentDestination().getLabel().toString();
     }
-
     @Override
     protected void navigateToSongDetails(long songId) {
         if (mAppViewModel.isTwoPane()) {
