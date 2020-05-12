@@ -112,7 +112,8 @@ public interface AudioBackend {
      * Gets the current tag of the current {@link Media} that is playing
      * @param callback A {@link Callback<Object>} which will be called with the current tag
      */
-    void getCurrentTag(@NonNull Callback<Object> callback);
+    // TODO: Return songId (tag) and position
+    void getCurrentSongInfo(@NonNull Callback<SongInfo> callback);
 
     /**
      * Seeks to the given position in the current song (or end of song if too far)
@@ -120,7 +121,10 @@ public interface AudioBackend {
      */
     void seekTo(long position);
 
-    void removeSongFromQueue(Media media);
+
+    void removeSongFromQueue(Object tag);
+
+    void removeSongFromQueueByPosition(int position);
 
     /**
      * Skips to the song at the provided index in the queue
@@ -140,6 +144,12 @@ public interface AudioBackend {
         Object getTag();
 
         String getUrl();
+    }
+
+    @Value
+    public class SongInfo {
+        Object tag;
+        int position;
     }
 
     /**

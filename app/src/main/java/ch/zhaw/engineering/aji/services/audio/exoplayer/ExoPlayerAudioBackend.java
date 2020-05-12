@@ -246,9 +246,12 @@ public class ExoPlayerAudioBackend implements AudioBackend {
     }
 
     @Override
-    public void getCurrentTag(@NonNull Callback<Object> callback) {
+    public void getCurrentSongInfo(@NonNull Callback<SongInfo> callback) {
         if (mPlayer != null) {
-            mAudioHandler.post(() -> callback.receiveValue(mPlayer.getCurrentTag()));
+            mAudioHandler.post(() -> {
+                Log.i(TAG, "Current window: " + mPlayer.getCurrentWindowIndex());
+                callback.receiveValue(new SongInfo(mPlayer.getCurrentTag(), getCurrentSongIndex(mPlayer.getCurrentTag())));
+            });
         } else {
             callback.receiveValue(null);
         }
@@ -263,16 +266,29 @@ public class ExoPlayerAudioBackend implements AudioBackend {
         }
     }
 
-    @Override
-    public void removeSongFromQueue(Media media) {
+    private int getCurrentSongIndex(Object tag) {
         for (int index = 0; index < mConcatenatingMediaSource.getSize(); index++) {
             MediaSource source = mConcatenatingMediaSource.getMediaSource(index);
-            if (source.getTag() == media.getTag()) {
-                Log.i(TAG, "Removing Source with path " + media.getPath());
-                mConcatenatingMediaSource.removeMediaSource(index);
-                break;
+            if (source.getTag() == tag) {
+               return index;
             }
         }
+        return -1;
+    }
+
+    @Override
+    public void removeSongFromQueue(Object tag) {
+        for (int index = 0; index < mConcatenatingMediaSource.getSize(); index++) {
+            MediaSource source = mConcatenatingMediaSource.getMediaSource(index);
+            if (source.getTag() == tag) {
+                mConcatenatingMediaSource.removeMediaSource(index);
+            }
+        }
+    }
+
+    @Override
+    public void removeSongFromQueueByPosition(int position) {
+        mConcatenatingMediaSource.removeMediaSource(position);
     }
 
     @Override

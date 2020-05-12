@@ -39,11 +39,12 @@ import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Value;
 
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
-    private final static String TAG = "AudioService";
+    private final static String TAG = "AjiAudioService";
 
     private final AudioBackend mAudioBackend = new ExoPlayerAudioBackend();
 
@@ -177,12 +178,13 @@ public class AudioService extends LifecycleService {
 
     private void updateCurrentSong() {
         if (PlayState.STOPPED != mCurrentState.getValue()) {
-            mAudioBackend.getCurrentTag(tag -> {
+            mAudioBackend.getCurrentSongInfo(songInfo -> {
+                Object tag = songInfo.getTag();
                 if (tag instanceof SongTag) {
                     SongTag actualTag = (SongTag) tag;
                     Song song = mCurrentSongs.get(actualTag.getSongId());
                     if (song != null) {
-                        mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName, actualTag.getPosition()));
+                        mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName, songInfo.getPosition()));
                     }
                 } else if (tag != null) {
                     RadioStation station = mCurrentRadioStations.get(tag);
@@ -332,20 +334,9 @@ public class AudioService extends LifecycleService {
     }
 
     private void addSongToCurrentSongs(SongTag tag, Song song) {
-        Set<SongTag> songTags = mCurrentSongTags.get(song.getSongId());
-        if (songTags == null) {
-            songTags = new HashSet<>();
-        }
-        songTags.add(tag);
-        mCurrentSongTags.put(song.getSongId(), songTags);
         mCurrentSongs.put(song.getSongId(), song);
         List<Long> currentQueue = mCurrentQueue.getValue();
         currentQueue.add(song.getSongId());
-//        // TODO: Handle current queue
-//        List<Long> songs = new ArrayList<>(mCurrentSongs.size());
-//        for (Song s : mCurrentSongs.values()) {
-//            songs.add(s.getSongId());
-//        }
         mCurrentQueue.postValue(currentQueue);
     }
 
@@ -445,7 +436,7 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlRemoveSongFromQueue(long songId, Integer position) {
         Song song;
-        if (position == null || (mCurrentSongTags.get(songId) != null && mCurrentSongTags.get(songId).size() == 1)) {
+        if (position == null) {
             song = mCurrentSongs.remove(songId);
         } else {
             song = mCurrentSongs.get(songId);
@@ -453,35 +444,30 @@ public class AudioService extends LifecycleService {
         if (song != null) {
             if (position != null) {
                 List<Long> currentQueue = mCurrentQueue.getValue();
-                SongMedia media = new SongMedia(song, position);
-                mAudioBackend.removeSongFromQueue(media);
+                mAudioBackend.removeSongFromQueueByPosition(position);
                 if (currentQueue != null) {
                     currentQueue.remove((int) position);
                 }
-                Set<SongTag> songTags = mCurrentSongTags.get(songId);
-                if (songTags != null) {
-                    songTags.remove(new SongTag(songId, position));
-                }
             } else {
-                Set<SongTag> tags = mCurrentSongTags.get(songId);
                 List<Long> currentQueue = mCurrentQueue.getValue();
                 List<Long> updatedQueue = new ArrayList<>();
+                List<Integer> positionsToRemove = new ArrayList<>();
                 if (currentQueue != null) {
-                    for (long id : currentQueue) {
+                    for (int i = 0; i < currentQueue.size(); i++) {
+                        long id = currentQueue.get(i);
                         if (id != songId) {
                             updatedQueue.add(id);
+                        } else {
+                            positionsToRemove.add(i);
                         }
                     }
                 }
                 mCurrentQueue.postValue(updatedQueue);
-                if (tags != null) {
-                    for (SongTag tag : tags) {
-                        SongMedia media = new SongMedia(song, tag.getPosition());
-                        mAudioBackend.removeSongFromQueue(media);
-                    }
+                for (int i = positionsToRemove.size() - 1; i >= 0; i--) {
+                    mAudioBackend.removeSongFromQueueByPosition(positionsToRemove.get(i));
                 }
-                mCurrentSongTags.remove(songId);
             }
+            updateCurrentSong();
         }
     }
 
