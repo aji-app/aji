@@ -20,6 +20,8 @@ import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
+
 public class RadioStationFragment extends Fragment {
     private RadioStationListFragment.RadioStationFragmentInteractionListener mListener;
     private AppViewModel mAppViewModel;
@@ -46,8 +48,12 @@ public class RadioStationFragment extends Fragment {
         FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater, container, false);
 
         if (savedInstanceState == null) {
+            Long radioStationId = null;
+            if (getArguments() != null && getArguments().containsKey(EXTRA_RADIOSTATION_ID)) {
+                radioStationId = getArguments().getLong(EXTRA_RADIOSTATION_ID);
+            }
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.radiostation_list_container, RadioStationListFragment.newInstance())
+                    .replace(R.id.radiostation_list_container, RadioStationListFragment.newInstance(radioStationId))
                     .commitNow();
         }
 

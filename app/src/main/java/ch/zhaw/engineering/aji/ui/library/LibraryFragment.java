@@ -31,6 +31,8 @@ import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
+
 public class LibraryFragment extends Fragment {
 
     private FragmentLibraryBinding mBinding;
@@ -41,6 +43,11 @@ public class LibraryFragment extends Fragment {
     private List<MenuItem> mSongMenuItems = new ArrayList<>();
     private List<MenuItem> mDirectionMenuItems = new ArrayList<>();
     private MenuItem mSearchMenuItem;
+
+    private ArtistFragment mArtistFragment;
+    private AlbumFragment mAlbumFragment;
+    private FavoriteFragment mFavoriteFragment;
+    private SongFragment mSongsFragment;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,11 +82,17 @@ public class LibraryFragment extends Fragment {
                         break;
                     case FAVORITES:
                         toggleMenuItems(false, false, false);
+                        mFavoriteFragment.onShown();
                         break;
                     case SONGS:
                     default:
                         mCurrentSortResource = SortResource.SONGS;
                         toggleMenuItems(true, true, true);
+                        if (showFirstSong()) {
+                            mSongsFragment.onShown();
+                        } else {
+                            mAppViewModel.setOpenFirstInList(true);
+                        }
                 }
                 if (mMenu != null) {
                     MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
@@ -105,6 +118,10 @@ public class LibraryFragment extends Fragment {
                     }
                 }
         ).attach();
+    }
+
+    private boolean showFirstSong() {
+        return mAppViewModel.isOpenFirstInList();
     }
 
     private void toggleMenuItems(boolean showSongMenuItems, boolean showDirectionMenuItems, boolean showSearchItem) {
@@ -171,8 +188,11 @@ public class LibraryFragment extends Fragment {
 
     private static class LibraryFragmentStateAdapter extends FragmentStateAdapter {
 
-        LibraryFragmentStateAdapter(@NonNull Fragment fragment) {
+        private final LibraryFragment mLibraryFragment;
+
+        LibraryFragmentStateAdapter(@NonNull LibraryFragment fragment) {
             super(fragment);
+            mLibraryFragment = fragment;
         }
 
 
@@ -182,14 +202,22 @@ public class LibraryFragment extends Fragment {
             Tab current = Tab.fromPosition(position);
             switch (current) {
                 case ARTISTS:
-                    return ArtistFragment.newInstance();
+                    ArtistFragment artistfragment = ArtistFragment.newInstance();
+                    mLibraryFragment.setArtistFragment(artistfragment);
+                    return artistfragment;
                 case ALBUMS:
-                    return AlbumFragment.newInstance();
+                    AlbumFragment albumFragment = AlbumFragment.newInstance();
+                    mLibraryFragment.setAlbumFragment(albumFragment);
+                    return albumFragment;
                 case FAVORITES:
-                    return FavoriteFragment.newInstance();
+                    FavoriteFragment favoritesFragment = FavoriteFragment.newInstance();
+                    mLibraryFragment.setFavoritesFragment(favoritesFragment);
+                    return favoritesFragment;
                 case SONGS:
                 default:
-                    return SongFragment.newInstance();
+                    SongFragment songFragment = SongFragment.newInstance();
+                    mLibraryFragment.setSongsFragment(songFragment);
+                    return songFragment;
             }
         }
 
@@ -197,6 +225,22 @@ public class LibraryFragment extends Fragment {
         public int getItemCount() {
             return 4;
         }
+    }
+
+    private void setArtistFragment(ArtistFragment fragment) {
+        mArtistFragment = fragment;
+    }
+
+    private void setAlbumFragment(AlbumFragment fragment) {
+        mAlbumFragment = fragment;
+    }
+
+    private void setFavoritesFragment(FavoriteFragment fragment) {
+        mFavoriteFragment = fragment;
+    }
+
+    private void setSongsFragment(SongFragment fragment) {
+        mSongsFragment = fragment;
     }
 
     private enum Tab {

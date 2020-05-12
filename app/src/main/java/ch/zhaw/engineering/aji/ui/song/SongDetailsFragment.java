@@ -93,9 +93,6 @@ public class SongDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            if (getArguments() != null && getArguments().containsKey(EXTRA_NOTIFICATION_ID)) {
-                NotificationManagerCompat.from(getActivity()).cancel(getArguments().getInt(EXTRA_NOTIFICATION_ID));
-            }
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
                 mSong = dao.getSong(mSongId);

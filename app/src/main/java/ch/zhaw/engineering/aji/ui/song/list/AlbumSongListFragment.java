@@ -38,6 +38,7 @@ public class AlbumSongListFragment extends SongListFragment {
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
                         mListener.onSongSelected(songs.get(0).getSongId());
                     }
+
                     if (getAdapter() != null) {
                         getAdapter().setSongs(songs);
                         if (mRecyclerView.getAdapter() == null) {

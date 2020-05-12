@@ -26,6 +26,8 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 public class ErrorNotificationManager {
     private static final String TAG = "ErrorNotificationManager";
     public static final String EXTRA_NOTIFICATION_ID = "notification-id";
+    public static final String EXTRA_RADIOSTATION_ID = "radiostation-id";
+    public static final String EXTRA_SONG_ID = "song-id";
     private final LifecycleService mContext;
     private final NotificationManagerCompat mNotificationManager;
     private static final int NOTIFICATION_ID_SONG_OFFSET = 10000000;
@@ -98,24 +100,38 @@ public class ErrorNotificationManager {
     }
 
     private PendingIntent getSongDetailsIntent(long songId, int notificationId) {
-        Bundle args = LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments();
-        // TODO: Fix on landscape
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_SONG_ID, songId);
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
-        return new NavDeepLinkBuilder(mContext)
-                .setGraph(R.navigation.mobile_navigation)
-                .setDestination(R.id.nav_song_details)
-                .setArguments(args)
-                .createPendingIntent();
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtras(args);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return PendingIntent.getActivity(mContext, (int)songId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        return new NavDeepLinkBuilder(mContext)
+//                .setGraph(R.navigation.mobile_navigation)
+//                .setDestination(R.id.nav_song_details)
+//                .setArguments(args)
+//                .createPendingIntent();
     }
 
     private PendingIntent getRadioDetailsIntent(long radioId, int notificationId) {
-        Bundle args = RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioId).getArguments();
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_RADIOSTATION_ID, radioId);
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtras(args);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return PendingIntent.getActivity(mContext, (int)radioId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        return new NavDeepLinkBuilder(mContext)
-                .setGraph(R.navigation.mobile_navigation)
-                .setDestination(R.id.nav_radiostation_details)
-                .setArguments(args)
-                .createPendingIntent();
+//        Bundle args = RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioId).getArguments();
+//        args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
+//
+//        return new NavDeepLinkBuilder(mContext)
+//                .setGraph(R.navigation.mobile_navigation)
+//                .setDestination(R.id.nav_radiostation_details)
+//                .setArguments(args)
+//                .createPendingIntent();
     }
 }
