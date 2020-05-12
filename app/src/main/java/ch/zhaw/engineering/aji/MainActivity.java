@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
@@ -57,6 +58,9 @@ import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
+import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
@@ -118,7 +122,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        handlePotentialRadiostationDeepLink(navController);
+//        handlePotentialRadiostationDeepLink(navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
@@ -145,6 +149,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         } catch (IllegalArgumentException | IllegalStateException e) {
             // We're not on a landscape tablet
         }
+
+        handleStartIntent();
     }
 
     @Override
@@ -173,32 +179,19 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         navController.navigate(R.id.nav_licenses);
     }
 
-    /**
-     * Overwrite NavGraph startDestination when we deeplink to a radio station
-     * That makes it so that the back button goes back to the radio station list instead of the library
-     * It seems like {@link androidx.navigation.NavDeepLinkBuilder} does uses the startDestination as parent
-     * instead of the actual parent of the destination when constructing deep links in {@link ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager}
-     */
-    private void handlePotentialRadiostationDeepLink(NavController navController) {
-        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(NavController.KEY_DEEP_LINK_INTENT)) {
-            Intent navIntent = (Intent) getIntent().getExtras().get(NavController.KEY_DEEP_LINK_INTENT);
-            // If we have a navIntent (which always contains the bundle for the destination)
-            if (navIntent != null) {
-                Bundle navArgs = navIntent.getExtras();
-                if (navArgs != null) {
-                    for (String key : navArgs.keySet()) {
-                        Object arg = navArgs.get(key);
-                        // If it is a bundle, it's the arguments for the detail view
-                        if (arg instanceof Bundle) {
-                            if (((Bundle) arg).containsKey(RadioStationDetailsFragment.ARG_RADIOSTATION_ID)) {
-                                NavGraph graph = navController.getGraph();
-                                // We want back to go to the radiostations instead of library
-                                graph.setStartDestination(R.id.nav_radiostations);
-                                navController.setGraph(graph);
-                                break;
-                            }
-                        }
-                    }
+    private void handleStartIntent() {
+        if (getIntent() != null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                if (extras.containsKey(EXTRA_NOTIFICATION_ID)) {
+                    NotificationManagerCompat.from(this).cancel(extras.getInt(EXTRA_NOTIFICATION_ID));
+                }
+                if (extras.containsKey(EXTRA_SONG_ID)) {
+                    navigateToSongDetails(extras.getLong(EXTRA_SONG_ID));
+                }
+                if (extras.containsKey(EXTRA_RADIOSTATION_ID)) {
+
+                    navigateToRadioStationFromLibrary(extras.getLong(EXTRA_RADIOSTATION_ID));
                 }
             }
         }
@@ -339,6 +332,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
+
+    }
+
+    private void navigateToRadioStationFromLibrary(Long radioStationId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_radiostations);
+        navigateToRadioStation(radioStationId);
+//        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
+//        navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
 
     }
 
