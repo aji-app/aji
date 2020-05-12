@@ -21,7 +21,6 @@ import androidx.lifecycle.MutableLiveData;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,6 @@ import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 public class AudioService extends LifecycleService {
@@ -63,7 +61,6 @@ public class AudioService extends LifecycleService {
 
     private final Map<Long, Song> mCurrentSongs = new LinkedHashMap<>();
     private final Map<Long, RadioStation> mCurrentRadioStations = new HashMap<>();
-    private final Map<Long, Set<SongTag>> mCurrentSongTags = new HashMap<>();
     private MediaSessionCompat mMediaSession;
 
     private final IntentFilter mNoisyAudioIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);

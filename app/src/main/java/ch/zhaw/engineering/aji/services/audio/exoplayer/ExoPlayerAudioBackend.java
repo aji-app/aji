@@ -248,10 +248,7 @@ public class ExoPlayerAudioBackend implements AudioBackend {
     @Override
     public void getCurrentSongInfo(@NonNull Callback<SongInfo> callback) {
         if (mPlayer != null) {
-            mAudioHandler.post(() -> {
-                Log.i(TAG, "Current window: " + mPlayer.getCurrentWindowIndex());
-                callback.receiveValue(new SongInfo(mPlayer.getCurrentTag(), getCurrentSongIndex(mPlayer.getCurrentTag())));
-            });
+            mAudioHandler.post(() -> callback.receiveValue(new SongInfo(mPlayer.getCurrentTag(), getCurrentSongIndex(mPlayer.getCurrentTag()))));
         } else {
             callback.receiveValue(null);
         }
