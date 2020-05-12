@@ -35,6 +35,14 @@ public class AppViewModel extends AndroidViewModel {
     @Setter
     private boolean mTwoPane;
 
+    @Getter
+    @Setter
+    private boolean mOpenFirstInList;
+
+    public void resetOpenFirstInList() {
+        mOpenFirstInList = mTwoPane;
+    }
+
 
     public AppViewModel(@NonNull Application application) {
         super(application);

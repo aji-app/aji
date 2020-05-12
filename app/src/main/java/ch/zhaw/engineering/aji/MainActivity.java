@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
@@ -54,6 +55,7 @@ import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirect
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
@@ -146,6 +148,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         try {
             Navigation.findNavController(this, R.id.nav_details_fragment);
             mAppViewModel.setTwoPane(true);
+            mAppViewModel.setOpenFirstInList(true);
         } catch (IllegalArgumentException | IllegalStateException e) {
             // We're not on a landscape tablet
         }
@@ -190,9 +193,10 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     navigateToSongDetails(extras.getLong(EXTRA_SONG_ID));
                 }
                 if (extras.containsKey(EXTRA_RADIOSTATION_ID)) {
-
                     navigateToRadioStationFromLibrary(extras.getLong(EXTRA_RADIOSTATION_ID));
                 }
+                AppViewModel appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+                appViewModel.setOpenFirstInList(false);
             }
         }
     }
@@ -337,11 +341,10 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     private void navigateToRadioStationFromLibrary(Long radioStationId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.nav_radiostations);
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_RADIOSTATION_ID, radioStationId);
+        navController.navigate(R.id.nav_radiostations, args);
         navigateToRadioStation(radioStationId);
-//        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
-//        navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
-
     }
 
     protected void radioStationImported(RadioStationDto imported) {

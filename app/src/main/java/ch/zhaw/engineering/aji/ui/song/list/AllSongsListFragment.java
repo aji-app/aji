@@ -20,8 +20,13 @@ public class AllSongsListFragment extends SongListFragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                            mListener.onSongSelected(songs.get(0).getSongId());
+                            if (appViewModel.isOpenFirstInList()) {
+                                mListener.onSongSelected(songs.get(0).getSongId());
+                            } else {
+                                appViewModel.resetOpenFirstInList();
+                            }
                         }
+
                         if (getAdapter() != null) {
                             getAdapter().setSongs(songs);
                             if (mRecyclerView.getAdapter() == null) {
