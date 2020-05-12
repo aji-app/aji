@@ -84,7 +84,7 @@ public class PlaylistSongListFragment extends SongListFragment {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                        mListener.onSongSelected(songs.get(0).getSongId());
+                        mListener.onSongSelected(songs.get(0).getSongId(), 0);
                     }
 
                     setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
@@ -112,8 +112,8 @@ public class PlaylistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongSelected(long songId) {
-            mListener.onSongSelected(songId);
+        public void onSongSelected(long songId, int position) {
+            mListener.onSongSelected(songId, position);
         }
 
         @Override
@@ -122,7 +122,7 @@ public class PlaylistSongListFragment extends SongListFragment {
         }
 
         private interface CustomDelegates {
-            void onSongSelected(long songId);
+            void onSongSelected(long songId, int position);
 
             void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }

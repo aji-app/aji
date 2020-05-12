@@ -72,7 +72,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onSongSelected(long songId) {
+    public void onSongSelected(long songId, int position) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongSelected: " + song.getTitle());
@@ -193,7 +193,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
                             if (event != DISMISS_EVENT_ACTION) {
-                                removeSongFromQueue(songId);
+                                removeSongFromQueue(songId, null);
                                 AsyncTask.execute(() -> {
                                     Song song = mSongDao.getSongById(songId);
                                     Log.i(TAG, "onSongDelete: " + song.getTitle());

@@ -2,14 +2,12 @@ package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,25 +35,28 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     private final boolean mHighlightCurrentSong;
     protected List<Song> mSongs;
     protected boolean mShowFirst = false;
+    private final boolean mHighlightCurrentSongOnlyWithCorrectPosition;
 
     SongListFragmentListener mListener;
 
     @Getter
     private SongRecyclerViewAdapter mAdapter;
     private Long mPlayingSongId;
+    private Integer mPlayingPosition;
 
     public SongListFragment() {
-        this(true);
+        this(true, false);
     }
 
-    public SongListFragment(boolean highlightCurrentSong) {
+    public SongListFragment(boolean highlightCurrentSong, boolean respectPosition) {
         super();
         mHighlightCurrentSong = highlightCurrentSong;
+        mHighlightCurrentSongOnlyWithCorrectPosition = respectPosition;
     }
 
     public void showFirst() {
         if (mSongs != null && mSongs.size() > 0) {
-            mListener.onSongSelected(mSongs.get(0).getSongId());
+            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
         } else {
             mShowFirst = true;
         }
@@ -64,8 +65,9 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     public void setAdapter(SongRecyclerViewAdapter adapter) {
         mAdapter = adapter;
         if (mPlayingSongId != null) {
-            mAdapter.setHighlighted(mPlayingSongId);
+            mAdapter.setHighlighted(mPlayingSongId, mPlayingPosition);
             mPlayingSongId = null;
+            mPlayingPosition = null;
         }
     }
 
@@ -98,11 +100,11 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
                     if (song == null) {
                         mPlayingSongId = null;
                         if (getAdapter() != null) {
-                            getAdapter().setHighlighted(null);
+                            getAdapter().setHighlighted(null, null);
                         }
                     } else if (!song.isRadio()) {
                         if (getAdapter() != null) {
-                            getAdapter().setHighlighted(song.getId());
+                            getAdapter().setHighlighted(song.getId(), mHighlightCurrentSongOnlyWithCorrectPosition ? song.getPositionInQueue() : null);
                         } else {
                             mPlayingSongId = song.getId();
                         }
@@ -140,7 +142,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     }
 
     public interface SongListFragmentListener {
-        void onSongSelected(long songId);
+        void onSongSelected(long songId, int position);
 
         void onSongPlay(long songId);
 

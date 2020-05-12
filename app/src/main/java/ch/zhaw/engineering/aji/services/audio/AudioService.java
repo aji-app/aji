@@ -41,8 +41,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
-import static java.util.Collections.emptyList;
-
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
     private final static String TAG = "AudioService";
@@ -129,15 +127,17 @@ public class AudioService extends LifecycleService {
 
                     @Override
                     public void onError(Object tag) {
-                        if (tag instanceof Long) {
-                            if (mCurrentSongs.containsKey(tag)) {
-                                Song errorSong = mCurrentSongs.get(tag);
+                        if (tag instanceof SongTag) {
+                            SongTag actualTag = (SongTag) tag;
+                            if (mCurrentSongs.containsKey(actualTag.getSongId())) {
+                                Song errorSong = mCurrentSongs.get(actualTag.getSongId());
                                 mErrorNotificationManager.notifyError(errorSong);
-                            } else {
-                                RadioStation errorStation = mCurrentRadioStations.get(tag);
-                                mErrorNotificationManager.notifyError(errorStation);
                             }
+                        } else {
+                            RadioStation errorStation = mCurrentRadioStations.get(tag);
+                            mErrorNotificationManager.notifyError(errorStation);
                         }
+
                         Log.i(TAG, "ERROR");
                     }
                 });
@@ -337,6 +337,7 @@ public class AudioService extends LifecycleService {
             songTags = new HashSet<>();
         }
         songTags.add(tag);
+        mCurrentSongTags.put(song.getSongId(), songTags);
         mCurrentSongs.put(song.getSongId(), song);
         List<Long> currentQueue = mCurrentQueue.getValue();
         currentQueue.add(song.getSongId());
@@ -369,7 +370,7 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlPlaySongs(List<Song> songs) {
         clearQueue();
-        mCurrentQueue.postValue(emptyList());
+        mCurrentQueue.postValue(new ArrayList<>());
         playbackControlQueueSongs(songs);
         playbackControlPlay();
     }
@@ -388,10 +389,10 @@ public class AudioService extends LifecycleService {
 
     private void playbackControlNext() {
         if (mAutoQueueRandomTrack) {
-
-            mAudioBackend.next(new SongMedia(mAutoQueueSong, mCurrentQueue.getValue().size()), didQueueSong -> {
+            SongMedia songMedia = new SongMedia(mAutoQueueSong, mCurrentQueue.getValue().size());
+            mAudioBackend.next(songMedia, didQueueSong -> {
                 if (didQueueSong) {
-                    addSongToCurrentSongs(mAutoQueueSong);
+                    addSongToCurrentSongs(songMedia.getTag(), mAutoQueueSong);
                     updateCurrentSong();
                     updateNextSong();
                 }
@@ -411,7 +412,7 @@ public class AudioService extends LifecycleService {
         mAudioBackend.stop();
         Log.i(TAG, "Shutdown AudioService");
         mNotificationManager.cancel();
-        mCurrentQueue.postValue(emptyList());
+        mCurrentQueue.postValue(new ArrayList<>());
         stopSelf();
     }
 
@@ -436,18 +437,51 @@ public class AudioService extends LifecycleService {
         mAudioBackend.seekTo(position);
     }
 
-    private void playbackControlSkipToSong(long songId) {
+    private void playbackControlSkipToSongAtPosition(int position) {
         if (mCurrentQueue.getValue() != null) {
-            int index = mCurrentQueue.getValue().indexOf(songId);
-            mAudioBackend.skipToMedia(index);
+            mAudioBackend.skipToMedia(position);
         }
     }
 
-    private void playbackControlRemoveSongFromQueue(SongTag tag) {
-        Song song = mCurrentSongs.remove(tag.getSongId());
+    private void playbackControlRemoveSongFromQueue(long songId, Integer position) {
+        Song song;
+        if (position == null || (mCurrentSongTags.get(songId) != null && mCurrentSongTags.get(songId).size() == 1)) {
+            song = mCurrentSongs.remove(songId);
+        } else {
+            song = mCurrentSongs.get(songId);
+        }
         if (song != null) {
-            SongMedia media = new SongMedia(song, tag.getPosition());
-            mAudioBackend.removeSongFromQueue(media);
+            if (position != null) {
+                List<Long> currentQueue = mCurrentQueue.getValue();
+                SongMedia media = new SongMedia(song, position);
+                mAudioBackend.removeSongFromQueue(media);
+                if (currentQueue != null) {
+                    currentQueue.remove((int) position);
+                }
+                Set<SongTag> songTags = mCurrentSongTags.get(songId);
+                if (songTags != null) {
+                    songTags.remove(new SongTag(songId, position));
+                }
+            } else {
+                Set<SongTag> tags = mCurrentSongTags.get(songId);
+                List<Long> currentQueue = mCurrentQueue.getValue();
+                List<Long> updatedQueue = new ArrayList<>();
+                if (currentQueue != null) {
+                    for (long id : currentQueue) {
+                        if (id != songId) {
+                            updatedQueue.add(id);
+                        }
+                    }
+                }
+                mCurrentQueue.postValue(updatedQueue);
+                if (tags != null) {
+                    for (SongTag tag : tags) {
+                        SongMedia media = new SongMedia(song, tag.getPosition());
+                        mAudioBackend.removeSongFromQueue(media);
+                    }
+                }
+                mCurrentSongTags.remove(songId);
+            }
         }
     }
 
@@ -457,7 +491,7 @@ public class AudioService extends LifecycleService {
 
     private void clearQueue() {
         mAudioBackend.clear();
-        mCurrentQueue.postValue(emptyList());
+        mCurrentQueue.postValue(new ArrayList<>());
         mCurrentSongs.clear();
         mCurrentRadioStations.clear();
     }
@@ -561,12 +595,12 @@ public class AudioService extends LifecycleService {
             playbackControlSeekTo(position);
         }
 
-        public void removeSongFromQueue(long songId, int position) {
-            playbackControlRemoveSongFromQueue(new SongTag(songId, position));
+        public void removeSongFromQueue(long songId, Integer position) {
+            playbackControlRemoveSongFromQueue(songId, position);
         }
 
-        public void skipToSong(long songId) {
-            playbackControlSkipToSong(songId);
+        public void skipToSong(int position) {
+            playbackControlSkipToSongAtPosition(position);
         }
     }
 
