@@ -192,9 +192,9 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void removeSongFromQueue(long songId) {
+    public void removeSongFromQueue(long songId, int position) {
         if (mAudioService.getValue() != null) {
-            mAudioService.getValue().removeSongFromQueue(songId);
+            mAudioService.getValue().removeSongFromQueue(songId, position);
         }
     }
 

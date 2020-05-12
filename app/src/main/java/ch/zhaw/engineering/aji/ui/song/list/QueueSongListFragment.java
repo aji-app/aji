@@ -137,7 +137,7 @@ public class QueueSongListFragment extends SongListFragment {
 
 
     public interface QueueListFragmentListener {
-        void removeSongFromQueue(long songId);
+        void removeSongFromQueue(long songId, int position);
 
         void onSkipToSong(long songId);
 

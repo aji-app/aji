@@ -21,9 +21,11 @@ import androidx.lifecycle.MutableLiveData;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
@@ -52,7 +54,7 @@ public class AudioService extends LifecycleService {
     private final MutableLiveData<PlayState> mCurrentState = new MutableLiveData<>(PlayState.INITIAL);
     private final MutableLiveData<Long> mCurrentPosition = new MutableLiveData<>(0L);
     private final MutableLiveData<SongInformation> mCurrentSong = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Long>> mCurrentQueue = new MutableLiveData<>(emptyList());
+    private final MutableLiveData<List<Long>> mCurrentQueue = new MutableLiveData<>(new ArrayList<>(0));
     private String mCurrentPlaylistName = null;
 
     private Handler mCurrentPositionTrackingThread;
@@ -62,6 +64,7 @@ public class AudioService extends LifecycleService {
 
     private final Map<Long, Song> mCurrentSongs = new LinkedHashMap<>();
     private final Map<Long, RadioStation> mCurrentRadioStations = new HashMap<>();
+    private final Map<Long, Set<SongTag>> mCurrentSongTags = new HashMap<>();
     private MediaSessionCompat mMediaSession;
 
     private final IntentFilter mNoisyAudioIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
@@ -175,34 +178,35 @@ public class AudioService extends LifecycleService {
     private void updateCurrentSong() {
         if (PlayState.STOPPED != mCurrentState.getValue()) {
             mAudioBackend.getCurrentTag(tag -> {
-                if (tag != null) {
-                    Song song = mCurrentSongs.get(tag);
+                if (tag instanceof SongTag) {
+                    SongTag actualTag = (SongTag) tag;
+                    Song song = mCurrentSongs.get(actualTag.getSongId());
                     if (song != null) {
-                        mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName));
-                    } else {
-                        RadioStation station = mCurrentRadioStations.get(tag);
-                        if (station != null) {
-                            SongInformation baseInfo = SongInformation.fromRadioStation(station);
-                            mCurrentSong.postValue(baseInfo);
-                            try {
-                                mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist, boolean hasError) -> {
-                                    if (title == null || title.equals("")) {
-                                        title = getApplicationContext().getResources().getString(R.string.unknown);
+                        mCurrentSong.postValue(SongInformation.fromSong(song, mCurrentPlaylistName, actualTag.getPosition()));
+                    }
+                } else if (tag != null) {
+                    RadioStation station = mCurrentRadioStations.get(tag);
+                    if (station != null) {
+                        SongInformation baseInfo = SongInformation.fromRadioStation(station);
+                        mCurrentSong.postValue(baseInfo);
+                        try {
+                            mUpdateSongInfoRunnable = new RadioStationMetadataRunnable((String title, String artist, boolean hasError) -> {
+                                if (title == null || title.equals("")) {
+                                    title = getApplicationContext().getResources().getString(R.string.unknown);
+                                }
+                                if (artist == null || artist.equals("")) {
+                                    artist = getApplicationContext().getResources().getString(R.string.unknown);
+                                }
+                                if (mCurrentSong.getValue() != null && PlayState.PAUSED != mCurrentState.getValue()) {
+                                    SongInformation nextInfo = baseInfo.toBuilder().artist(artist).title(title).build();
+                                    if (!mCurrentSong.getValue().equals(nextInfo)) {
+                                        mCurrentSong.postValue(nextInfo);
                                     }
-                                    if (artist == null || artist.equals("")) {
-                                        artist = getApplicationContext().getResources().getString(R.string.unknown);
-                                    }
-                                    if (mCurrentSong.getValue() != null && PlayState.PAUSED != mCurrentState.getValue()) {
-                                        SongInformation nextInfo = baseInfo.toBuilder().artist(artist).title(title).build();
-                                        if (!mCurrentSong.getValue().equals(nextInfo)) {
-                                            mCurrentSong.postValue(nextInfo);
-                                        }
-                                    }
-                                }, station.getUrl());
+                                }
+                            }, station.getUrl());
 
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -322,18 +326,26 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlQueueSong(Song song) {
-        SongMedia media = new SongMedia(song);
+        SongMedia media = new SongMedia(song, mCurrentQueue.getValue().size());
         mAudioBackend.queueFile(media);
-        addSongToCurrentSongs(song);
+        addSongToCurrentSongs(media.getTag(), song);
     }
 
-    private void addSongToCurrentSongs(Song song) {
-        mCurrentSongs.put(song.getSongId(), song);
-        List<Long> songs = new ArrayList<>(mCurrentSongs.size());
-        for (Song s : mCurrentSongs.values()) {
-            songs.add(s.getSongId());
+    private void addSongToCurrentSongs(SongTag tag, Song song) {
+        Set<SongTag> songTags = mCurrentSongTags.get(song.getSongId());
+        if (songTags == null) {
+            songTags = new HashSet<>();
         }
-        mCurrentQueue.postValue(songs);
+        songTags.add(tag);
+        mCurrentSongs.put(song.getSongId(), song);
+        List<Long> currentQueue = mCurrentQueue.getValue();
+        currentQueue.add(song.getSongId());
+//        // TODO: Handle current queue
+//        List<Long> songs = new ArrayList<>(mCurrentSongs.size());
+//        for (Song s : mCurrentSongs.values()) {
+//            songs.add(s.getSongId());
+//        }
+        mCurrentQueue.postValue(currentQueue);
     }
 
     private void playbackControlPlayRadioStation(RadioStation station) {
@@ -377,7 +389,7 @@ public class AudioService extends LifecycleService {
     private void playbackControlNext() {
         if (mAutoQueueRandomTrack) {
 
-            mAudioBackend.next(new SongMedia(mAutoQueueSong), didQueueSong -> {
+            mAudioBackend.next(new SongMedia(mAutoQueueSong, mCurrentQueue.getValue().size()), didQueueSong -> {
                 if (didQueueSong) {
                     addSongToCurrentSongs(mAutoQueueSong);
                     updateCurrentSong();
@@ -431,10 +443,10 @@ public class AudioService extends LifecycleService {
         }
     }
 
-    private void playbackControlRemoveSongFromQueue(long songId) {
-        Song song = mCurrentSongs.remove(songId);
+    private void playbackControlRemoveSongFromQueue(SongTag tag) {
+        Song song = mCurrentSongs.remove(tag.getSongId());
         if (song != null) {
-            SongMedia media = new SongMedia(song);
+            SongMedia media = new SongMedia(song, tag.getPosition());
             mAudioBackend.removeSongFromQueue(media);
         }
     }
@@ -549,8 +561,8 @@ public class AudioService extends LifecycleService {
             playbackControlSeekTo(position);
         }
 
-        public void removeSongFromQueue(long songId) {
-            playbackControlRemoveSongFromQueue(songId);
+        public void removeSongFromQueue(long songId, int position) {
+            playbackControlRemoveSongFromQueue(new SongTag(songId, position));
         }
 
         public void skipToSong(long songId) {
@@ -567,16 +579,17 @@ public class AudioService extends LifecycleService {
     }
 
     private static class SongMedia implements AudioBackend.Media {
-        private final long tag;
+        private final SongTag tag;
         private final String filepath;
 
-        SongMedia(Song song) {
-            this.tag = song.getSongId();
+        SongMedia(Song song, int position) {
+            this.tag = new SongTag(song.getSongId(), position);
             this.filepath = song.getFilepath();
         }
 
         @Override
-        public Object getTag() {
+        @NonNull
+        public SongTag getTag() {
             return tag;
         }
 
@@ -622,15 +635,21 @@ public class AudioService extends LifecycleService {
         boolean isRadio;
         boolean isFavorite;
         String albumPath;
+        int positionInQueue;
 
-        static SongInformation fromSong(Song song, String playlistName) {
-            return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false, song.isFavorite(), song.getAlbumArtPath());
+        static SongInformation fromSong(Song song, String playlistName, int positionInQueue) {
+            return new SongInformation(song.getSongId(), song.getTitle(), song.getArtist(), song.getAlbum(), playlistName, song.getFilepath(), song.getDuration(), false, song.isFavorite(), song.getAlbumArtPath(), positionInQueue);
         }
 
         static SongInformation fromRadioStation(RadioStation station) {
-            return new SongInformation(station.getId(), "", "", "", station.getName(), station.getUrl(), 0, true, false, null);
+            return new SongInformation(station.getId(), "", "", "", station.getName(), station.getUrl(), 0, true, false, null, 0);
         }
     }
 
+    @Value
+    private static class SongTag {
+        long songId;
+        int position;
+    }
 
 }
