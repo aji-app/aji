@@ -90,10 +90,6 @@ public class QueueSongListFragment extends SongListFragment {
         }
     }
 
-    private Integer getPositionOfSong(long songId) {
-        return mSongIdToPosition.get(songId);
-    }
-
     private static class CustomListener implements SongListFragmentListener {
 
         @Delegate(excludes = CustomListener.CustomDelegates.class)
