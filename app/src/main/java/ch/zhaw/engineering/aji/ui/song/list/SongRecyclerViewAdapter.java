@@ -179,6 +179,13 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
+    public void dismissWithoutSnackbar(int position,@NonNull OnItemDismissedCallback callback ) {
+        final Song songToBeRemoved = mValues.get(position);
+        callback.onItemDismissedCompletely(songToBeRemoved);
+        mValues.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public void dismissWithSnackbar(int position, @StringRes int text, OnItemDismissedCallback callback) {
         final Song songToBeRemoved = mValues.get(position);
         Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());

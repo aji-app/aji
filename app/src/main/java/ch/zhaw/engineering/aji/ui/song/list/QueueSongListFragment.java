@@ -40,7 +40,7 @@ public class QueueSongListFragment extends SongListFragment {
 
     @Override
     public void onItemDismiss(int position) {
-        getAdapter().dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
+        getAdapter().dismissWithoutSnackbar(position, song -> {
             mQueueListener.removeSongFromQueue(song.getSongId(), position);
         });
     }
@@ -122,7 +122,8 @@ public class QueueSongListFragment extends SongListFragment {
                             .callback($ -> {
                                 Integer position = mFragment.getPositionOfSong(songId);
                                 if (position != null) {
-                                    mFragment.getAdapter().dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
+                                    // TODO: Fix position
+                                    mFragment.getAdapter().dismissWithoutSnackbar(position, song -> {
                                         mQueueListener.removeSongFromQueue(song.getSongId(), position);
                                     });
                                 }
