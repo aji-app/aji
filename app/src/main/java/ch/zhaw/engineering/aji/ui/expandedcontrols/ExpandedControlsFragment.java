@@ -166,7 +166,7 @@ public class ExpandedControlsFragment extends Fragment {
 
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), info -> {
                 mBinding.songItemFavorite.setOnClickListener(v -> mListener.onToggleFavorite(info.getId()));
-                mBinding.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId()));
+                mBinding.songItemOverflow.setOnClickListener(v -> mListener.onSongMenu(info.getId(), null));
 
                 updateRepeatButton(mListener.getRepeatMode().getValue());
                 updateShuffleButton(mListener.getShuffleEnabled().getValue());
@@ -309,7 +309,7 @@ public class ExpandedControlsFragment extends Fragment {
     public interface ExpandedControlsFragmentListener extends AudioControlListener {
         void onToggleFavorite(long songId);
 
-        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+        void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onPlayPause();
 

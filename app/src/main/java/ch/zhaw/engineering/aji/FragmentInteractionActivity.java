@@ -135,7 +135,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onSongMenu(long songId, ContextMenuItem... additionalItems) {
+    public void onSongMenu(long songId, Integer position, ContextMenuItem... additionalItems) {
         AsyncTask.execute(() -> {
             Song song = mSongDao.getSongById(songId);
             Log.i(TAG, "onSongEdit: " + song.getTitle());

@@ -67,14 +67,8 @@ public class AlbumSongListFragment extends SongListFragment {
             mListener.onSongSelected(songId, position);
         }
 
-        @Override
-        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId);
-        }
-
         private interface CustomDelegates {
             void onSongSelected(long songId, int position);
-            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }

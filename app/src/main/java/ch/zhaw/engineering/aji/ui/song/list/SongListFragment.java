@@ -148,7 +148,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
         void onSongQueue(long songId);
 
-        void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+        void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onSongAddToPlaylist(long songId, int playlistId);
 

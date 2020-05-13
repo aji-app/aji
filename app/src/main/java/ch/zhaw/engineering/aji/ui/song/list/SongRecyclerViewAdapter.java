@@ -131,7 +131,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
             overFlow.setOnClickListener(v -> {
                 if (mListener != null) {
-                    mListener.onSongMenu(holder.song.getSongId());
+                    mListener.onSongMenu(holder.song.getSongId(), position);
                 }
             });
         }
@@ -179,7 +179,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
-    public void dismissWithoutSnackbar(int position,@NonNull OnItemDismissedCallback callback ) {
+    public void dismissWithoutSnackbar(int position, @NonNull OnItemDismissedCallback callback) {
         final Song songToBeRemoved = mValues.get(position);
         callback.onItemDismissedCompletely(songToBeRemoved);
         mValues.remove(position);

@@ -68,13 +68,13 @@ public class ArtistSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId);
+        public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
+            mListener.onSongMenu(songId, position );
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId, int position);
-            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+            void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 }

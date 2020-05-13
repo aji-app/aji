@@ -113,16 +113,14 @@ public class QueueSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId, FragmentInteractionActivity.ContextMenuItem.builder()
+        public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
+            mListener.onSongMenu(songId, position, FragmentInteractionActivity.ContextMenuItem.builder()
                     .position(0)
                     .itemConfig(ContextMenuFragment.ItemConfig.builder()
                             .imageId(R.drawable.ic_remove_from_queue)
                             .textId(R.string.remove_from_queue)
                             .callback($ -> {
-                                Integer position = mFragment.getPositionOfSong(songId);
                                 if (position != null) {
-                                    // TODO: Fix position
                                     mFragment.getAdapter().dismissWithoutSnackbar(position, song -> {
                                         mQueueListener.removeSongFromQueue(song.getSongId(), position);
                                     });
@@ -135,7 +133,7 @@ public class QueueSongListFragment extends SongListFragment {
         private interface CustomDelegates {
             void onSongSelected(long songId, int position);
 
-            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+            void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 
