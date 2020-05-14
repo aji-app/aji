@@ -100,11 +100,13 @@ public class MediaStoreSynchronizer {
 
         }
 
+        List<Long> songsToDelete = new ArrayList<>();
         for (Song song : nonExistingSongs.values()) {
             StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+            songsToDelete.add(song.getSongId());
         }
 
-        songDao.deleteSongsByMediaStoreIds(nonExistingSongs.keySet());
+        songDao.deleteSongsByIds(songsToDelete);
     }
 
     public void synchronizeUri(Uri uri) {

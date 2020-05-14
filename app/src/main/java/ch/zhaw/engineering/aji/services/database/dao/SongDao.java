@@ -12,6 +12,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +166,10 @@ public abstract class SongDao {
 
     @Query("DELETE from Song where mediaStoreSongId in (:mediaStoreIds)")
     public abstract void deleteSongsByMediaStoreIds(Set<Long> mediaStoreIds);
+
+
+    @Query("DELETE from Song where songId in (:ids)")
+    public abstract void deleteSongsByIds(Collection<Long> ids);
 
     /*
      * Protected Helper Methods
