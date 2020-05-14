@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -80,23 +81,18 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
 
     private Observer<List<Long>> mapCurrentQueueToSongs(SongDao dao) {
         return songIds -> AsyncTask.execute(() -> {
-            Map<Long, Integer> orderMap = new HashMap<>(songIds.size());
-            for (int i = 0; i < songIds.size(); i++) {
-                orderMap.put(songIds.get(i), i);
-            }
-            LiveData<List<Song>> songs = Transformations.map(dao.getSongs(songIds), songList -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Collections.sort(songList, Comparator.comparing(item -> orderMap.get(item.getSongId())));
-                } else {
-                    Collections.sort(songList, (song1, song2) -> Integer.compare(orderMap.get(song1.getSongId()), orderMap.get(song2.getSongId())));
+            LiveData<List<Song>> currentQueue = Transformations.map(dao.getSongsById(songIds), songMap -> {
+                List<Song> queue = new ArrayList<>(songIds.size());
+                for (long id : songIds) {
+                    queue.add(songMap.get(id));
                 }
-                return songList;
+                return queue;
             });
             runOnUiThread(() -> {
                 if (mStoredCurrentSongs != null) {
                     mCurrentQueue.removeSource(mStoredCurrentSongs);
                 }
-                mStoredCurrentSongs = songs;
+                mStoredCurrentSongs = currentQueue;
                 mCurrentQueue.addSource(mStoredCurrentSongs, mCurrentQueue::postValue);
             });
         });
@@ -192,14 +188,14 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void removeSongFromQueue(long songId) {
+    public void removeSongFromQueue(long songId, Integer position) {
         if (mAudioService.getValue() != null) {
-            mAudioService.getValue().removeSongFromQueue(songId);
+            mAudioService.getValue().removeSongFromQueue(songId, position);
         }
     }
 
     @Override
-    public void onSkipToSong(long songId) {
+    public void onSkipToSong(int songId) {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().skipToSong(songId);
         }

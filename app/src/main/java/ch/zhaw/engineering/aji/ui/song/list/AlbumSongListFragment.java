@@ -36,7 +36,7 @@ public class AlbumSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                        mListener.onSongSelected(songs.get(0).getSongId());
+                        mListener.onSongSelected(songs.get(0).getSongId(), 0);
                     }
 
                     if (getAdapter() != null) {
@@ -63,18 +63,12 @@ public class AlbumSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongSelected(long songId) {
-            mListener.onSongSelected(songId);
-        }
-
-        @Override
-        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId);
+        public void onSongSelected(long songId, int position) {
+            mListener.onSongSelected(songId, position);
         }
 
         private interface CustomDelegates {
-            void onSongSelected(long songId);
-            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+            void onSongSelected(long songId, int position);
         }
     }
 }

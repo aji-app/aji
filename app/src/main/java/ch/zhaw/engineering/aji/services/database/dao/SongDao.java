@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -11,7 +12,9 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
@@ -146,6 +149,16 @@ public abstract class SongDao {
 
     @Query("SELECT * from Song where songId in (:songIds)")
     public abstract LiveData<List<Song>> getSongs(List<Long> songIds);
+
+    public LiveData<Map<Long, Song>> getSongsById(List<Long> songIds) {
+        return Transformations.map(getSongs(songIds), songs -> {
+            HashMap<Long, Song> songMap = new HashMap<>(songs.size());
+            for (Song song : songs) {
+                songMap.put(song.getSongId(), song);
+            }
+            return songMap;
+        });
+    }
 
     @Query("SELECT * from Song where mediaStoreSongId not in (:mediaStoreIds)")
     public abstract List<Song> getSongsNotMatchingMediaStoreIds(List<Long> mediaStoreIds);

@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.content.Context;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -29,6 +28,10 @@ public class QueueSongListFragment extends SongListFragment {
         return new QueueSongListFragment();
     }
 
+    public QueueSongListFragment() {
+        super(true, true);
+    }
+
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         super.onStartDrag(viewHolder);
@@ -37,8 +40,8 @@ public class QueueSongListFragment extends SongListFragment {
 
     @Override
     public void onItemDismiss(int position) {
-        getAdapter().dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
-            mQueueListener.removeSongFromQueue(song.getSongId());
+        getAdapter().dismissWithoutSnackbar(position, song -> {
+            mQueueListener.removeSongFromQueue(song.getSongId(), position);
         });
     }
 
@@ -87,10 +90,6 @@ public class QueueSongListFragment extends SongListFragment {
         }
     }
 
-    private Integer getPositionOfSong(long songId) {
-        return mSongIdToPosition.get(songId);
-    }
-
     private static class CustomListener implements SongListFragmentListener {
 
         @Delegate(excludes = CustomListener.CustomDelegates.class)
@@ -105,22 +104,21 @@ public class QueueSongListFragment extends SongListFragment {
         }
 
         @Override
-        public void onSongSelected(long songId) {
-            mQueueListener.onSkipToSong(songId);
+        public void onSongSelected(long songId, int position) {
+            mQueueListener.onSkipToSong(position);
         }
 
         @Override
-        public void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId, FragmentInteractionActivity.ContextMenuItem.builder()
+        public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
+            mListener.onSongMenu(songId, position, FragmentInteractionActivity.ContextMenuItem.builder()
                     .position(0)
                     .itemConfig(ContextMenuFragment.ItemConfig.builder()
                             .imageId(R.drawable.ic_remove_from_queue)
                             .textId(R.string.remove_from_queue)
                             .callback($ -> {
-                                Integer position = mFragment.getPositionOfSong(songId);
                                 if (position != null) {
-                                    mFragment.getAdapter().dismissWithSnackbar(position, R.string.song_removed_from_queue, song -> {
-                                        mQueueListener.removeSongFromQueue(song.getSongId());
+                                    mFragment.getAdapter().dismissWithoutSnackbar(position, song -> {
+                                        mQueueListener.removeSongFromQueue(song.getSongId(), position);
                                     });
                                 }
                             }).build()
@@ -129,17 +127,17 @@ public class QueueSongListFragment extends SongListFragment {
         }
 
         private interface CustomDelegates {
-            void onSongSelected(long songId);
+            void onSongSelected(long songId, int position);
 
-            void onSongMenu(long songId, FragmentInteractionActivity.ContextMenuItem... additionalItems);
+            void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }
 
 
     public interface QueueListFragmentListener {
-        void removeSongFromQueue(long songId);
+        void removeSongFromQueue(long songId, Integer position);
 
-        void onSkipToSong(long songId);
+        void onSkipToSong(int position);
 
         LiveData<List<Song>> getCurrentQueue();
     }

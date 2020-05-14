@@ -42,6 +42,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private RecyclerView mRecyclerView;
     private boolean mEditMode = false;
     private Long mHighlightedSongId;
+    private Integer mHighlightedSongPosition;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
         this(items, listener, playlistId, dragListener != null, dragListener);
@@ -91,7 +92,10 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         ImageButton favoriteButton = holder.binding.songItemFavorite;
         ImageButton dragHandle = holder.binding.songItemDraghandle;
 
-        holder.setInverted(mHighlightedSongId != null && holder.song.getSongId() == mHighlightedSongId);
+        boolean highlightSong = mHighlightedSongId != null && holder.song.getSongId() == mHighlightedSongId;
+        boolean highlightCurrentSongInstance = mHighlightedSongPosition == null || position == mHighlightedSongPosition;
+
+        holder.setInverted(highlightSong && highlightCurrentSongInstance);
 
         if (mEditMode) {
             overFlow.setVisibility(View.GONE);
@@ -127,7 +131,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
 
             overFlow.setOnClickListener(v -> {
                 if (mListener != null) {
-                    mListener.onSongMenu(holder.song.getSongId());
+                    mListener.onSongMenu(holder.song.getSongId(), position);
                 }
             });
         }
@@ -136,7 +140,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                mListener.onSongSelected(holder.song.getSongId());
+                mListener.onSongSelected(holder.song.getSongId(), position);
             }
         });
     }
@@ -175,6 +179,13 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
+    public void dismissWithoutSnackbar(int position, @NonNull OnItemDismissedCallback callback) {
+        final Song songToBeRemoved = mValues.get(position);
+        callback.onItemDismissedCompletely(songToBeRemoved);
+        mValues.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public void dismissWithSnackbar(int position, @StringRes int text, OnItemDismissedCallback callback) {
         final Song songToBeRemoved = mValues.get(position);
         Log.i(TAG, "Removing " + position + ": " + songToBeRemoved.getTitle());
@@ -207,8 +218,9 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         return new Pair<>(mPlaylistId, songIds);
     }
 
-    public void setHighlighted(Long songId) {
+    public void setHighlighted(Long songId, Integer position) {
         mHighlightedSongId = songId;
+        mHighlightedSongPosition = position;
         notifyDataSetChanged();
     }
 

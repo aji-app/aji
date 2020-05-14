@@ -21,7 +21,7 @@ public class AllSongsListFragment extends SongListFragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         if (mShowFirst) {
-                            mListener.onSongSelected(mSongs.get(0).getSongId());
+                            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
                         }
                         if (getAdapter() != null) {
                             getAdapter().setSongs(songs);
