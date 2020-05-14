@@ -179,21 +179,23 @@ public abstract class SongDao {
     protected abstract void deleteSongBySongId(long songId);
 
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
-            "WHERE song.artist LIKE :text " +
+            "WHERE song.artist LIKE :text AND song.deleted = 0" +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(String text, boolean asc);
 
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
+            "WHERE song.deleted = 0 " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(boolean asc);
 
     @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
-            "WHERE LOWER(song.album) LIKE LOWER(:text) " +
+            "WHERE LOWER(song.album) LIKE LOWER(:text) AND song.deleted = 0 " +
             "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(String text, boolean asc);
 
     @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
+            "WHERE song.deleted = 0 " +
             "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(boolean asc);
@@ -224,7 +226,6 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
-
 
 
     public enum SortType {
