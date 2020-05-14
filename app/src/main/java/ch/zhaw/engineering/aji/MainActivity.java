@@ -334,6 +334,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             return;
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
 
@@ -376,6 +377,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             return;
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
             switch (id) {
