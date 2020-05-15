@@ -147,7 +147,9 @@ public class LibraryFragment extends Fragment {
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_album));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_artist));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_title));
-        mSongMenuItems.add(mMenu.findItem(R.id.song_meta_show_hidden));
+        MenuItem showHidden = mMenu.findItem(R.id.song_meta_show_hidden);
+        setHideMenuTitle(showHidden, mAppViewModel.showHiddenSongs());
+        mSongMenuItems.add(showHidden);
 
         mDirectionMenuItems = new ArrayList<>(3);
         mDirectionMenuItems.add(mMenu.findItem(R.id.direction_asc));
@@ -169,11 +171,7 @@ public class LibraryFragment extends Fragment {
                 mAppViewModel.changeSortType(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_show_hidden:
-                if (mAppViewModel.toggleHiddenSongs()) {
-                    item.setTitle(R.string.hide_hidden);
-                } else {
-                    item.setTitle(R.string.show_hidden);
-                }
+                setHideMenuTitle(item,mAppViewModel.toggleHiddenSongs() );
                 return true;
             case R.id.direction_asc:
                 mAppViewModel.changeSortDirection(mCurrentSortResource, true);
@@ -183,6 +181,14 @@ public class LibraryFragment extends Fragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setHideMenuTitle(@NonNull MenuItem item, boolean hiddenShown) {
+        if (hiddenShown) {
+            item.setTitle(R.string.hide_hidden);
+        } else {
+            item.setTitle(R.string.show_hidden);
         }
     }
 
