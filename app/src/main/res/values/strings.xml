@@ -106,4 +106,6 @@
     <string name="show_hidden">Show hidden Songs</string>
     <string name="hide_hidden">Hide hidden songs</string>
     <string name="show_in_library">Show in Library</string>
+    <string name="menu_directory_selection">Directory</string>
+    <string name="scanning_directory">Directory \'%s\' will be scanned for audio files</string>
 </resources>

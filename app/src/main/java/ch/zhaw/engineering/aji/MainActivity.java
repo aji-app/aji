@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.io.File;
+
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
@@ -40,6 +44,7 @@ import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
@@ -67,9 +72,8 @@ import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRA
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener, DirectoryFragment.OnDirectoryFragmentListener {
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
@@ -124,7 +128,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        handlePotentialRadiostationDeepLink(navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
@@ -314,9 +317,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onAddSongsButtonClick() {
-        // TODO: Use navigation instead of activity
-        Intent intent = new Intent(this, DirectorySelectionActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_DIRECTOY_SELECT);
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_directory);
+            return;
+        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_directory);
     }
 
     @Override
@@ -369,6 +376,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return navController.getCurrentDestination().getLabel().toString();
     }
+
     @Override
     protected void navigateToSongDetails(long songId) {
         if (mAppViewModel.isTwoPane()) {
@@ -472,15 +480,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_DIRECTOY_SELECT) {
-            if (data != null && data.hasExtra(EXTRA_FILE)) {
-                String path = data.getStringExtra(EXTRA_FILE);
-                Intent scrapeFiles = new Intent();
-                scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
-                AudioFileScanner.enqueueWork(this, scrapeFiles);
-            }
-        }
+    public void onSelectionFinished(File directory) {
+        Intent scrapeFiles = new Intent();
+        scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, directory.getAbsolutePath());
+        AudioFileScanner.enqueueWork(this, scrapeFiles);
+        Toast.makeText(this, getString(R.string.scanning_directory, directory.getName()), Toast.LENGTH_LONG).show();
+        onSupportNavigateUp();
     }
 }
