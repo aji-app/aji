@@ -30,6 +30,10 @@ import ch.zhaw.engineering.aji.services.database.entity.Song;
         return mShowHidden;
     }
 
+    public boolean showHiddenSongs() {
+        return mShowHidden;
+    }
+
     @Override
     protected LiveData<List<Song>> getUpdatedFilteredSource() {
         if (mSortType == null) {

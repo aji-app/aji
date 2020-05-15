@@ -73,7 +73,7 @@
     <string name="unknown_duration">---</string>
     <string name="not_playing">Not Playing</string>
     <string name="contentDescription_album_art">Album Art</string>
-    <string name="song_removed_from_library">Song will be removed from Library</string>
+    <string name="song_removed_from_library">Song will be hidden from Library</string>
     <string name="song_queued">Song %s has been added to the queue</string>
     <string name="now_playing">Now Playing</string>
     <string name="details">Details</string>
@@ -105,4 +105,5 @@
     <string name="hide_artist_from_library">Hide in Library</string>
     <string name="show_hidden">Show hidden Songs</string>
     <string name="hide_hidden">Hide hidden songs</string>
+    <string name="show_in_library">Show in Library</string>
 </resources>

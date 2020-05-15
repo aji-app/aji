@@ -29,6 +29,7 @@ import ch.zhaw.engineering.aji.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.util.Color;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
+import lombok.Setter;
 
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "SongRecyclerViewAdapter";
@@ -43,25 +44,30 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     private boolean mEditMode = false;
     private Long mHighlightedSongId;
     private Integer mHighlightedSongPosition;
+    private boolean mShowFavoriteButton;
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @NonNull Integer playlistId, OnTouchCallbacks dragListener) {
-        this(items, listener, playlistId, dragListener != null, dragListener);
+        this(items, listener, playlistId, dragListener != null, dragListener, true);
     }
 
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, OnTouchCallbacks dragListener) {
-        this(items, listener, null, dragListener != null, dragListener);
+        this(items, listener, null, dragListener != null, dragListener, true);
     }
 
+    /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, boolean showFavoriteButton) {
+        this(items, listener, null, false, null, showFavoriteButton);
+    }
     /* package */ SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener) {
-        this(items, listener, null, false, null);
+        this(items, listener, null, false, null, true);
     }
 
-    private SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @Nullable Integer playlistId, boolean enableDrag, OnTouchCallbacks dragListener) {
+    private SongRecyclerViewAdapter(List<Song> items, SongListFragment.SongListFragmentListener listener, @Nullable Integer playlistId, boolean enableDrag, OnTouchCallbacks dragListener, boolean showFavoriteButton) {
         mValues = items;
         mListener = listener;
         mPlaylistId = playlistId;
         mDragStartListener = dragListener;
         mMode = enableDrag && playlistId != null ? Mode.PLAYLIST : Mode.ALL_SONGS;
+        mShowFavoriteButton = showFavoriteButton;
     }
 
     @Override
@@ -81,6 +87,10 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         }
     }
 
+    public void setShowFavoriteButton(boolean showFavoriteButton) {
+        mShowFavoriteButton = showFavoriteButton;
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.song = mValues.get(position);
@@ -96,6 +106,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
         boolean highlightCurrentSongInstance = mHighlightedSongPosition == null || position == mHighlightedSongPosition;
 
         holder.setInverted(highlightSong && highlightCurrentSongInstance);
+
 
         if (mEditMode) {
             overFlow.setVisibility(View.GONE);
@@ -128,6 +139,7 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
                 favoriteButton.setImageResource(R.drawable.ic_not_favorite);
             }
             favoriteButton.setOnClickListener(v -> mListener.onToggleFavorite(holder.song.getSongId()));
+            favoriteButton.setVisibility(mShowFavoriteButton ? View.VISIBLE : View.GONE);
 
             overFlow.setOnClickListener(v -> {
                 if (mListener != null) {

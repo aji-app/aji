@@ -137,8 +137,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onSongMenu(long songId, Integer position, ContextMenuItem... additionalItems) {
         AsyncTask.execute(() -> {
-            Song song = mSongDao.getSongById(songId);
-            Log.i(TAG, "onSongEdit: " + song.getTitle());
+            Song song = mSongDao.getSongByIdInclusiveHidden(songId);
+            Log.i(TAG, "onSongMenu: " + song.getTitle());
             MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
             List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
             entries.add(ContextMenuFragment.ItemConfig.builder()
@@ -158,7 +158,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.add_to_playlist)
                     .callback($ -> onSongAddToPlaylist(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_delete)
+                    .imageId(R.drawable.ic_hide)
                     .textId(R.string.delete_song)
                     .callback($ -> onSongDelete(songId)).build());
             for (ContextMenuItem item : additionalItems) {
@@ -492,7 +492,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .textId(R.string.details)
                 .callback($ -> navigateToAlbum(album)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
-                .imageId(R.drawable.ic_delete)
+                .imageId(R.drawable.ic_hide)
                 .textId(R.string.hide_artist_from_library)
                 .callback($ -> hideSongsByAlbum(album)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
@@ -546,7 +546,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .textId(R.string.details)
                 .callback($ -> navigateToArtist(artist)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
-                .imageId(R.drawable.ic_delete)
+                .imageId(R.drawable.ic_show)
                 .textId(R.string.hide_artist_from_library)
                 .callback($ -> hideSongsByArtist(artist)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);

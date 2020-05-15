@@ -115,7 +115,7 @@
             android:id="@+id/delete_song"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/song_details_button_height"
-            app:drawableStartCompat="@drawable/ic_delete"
+            app:drawableStartCompat="@drawable/ic_hide"
             app:drawableTint="?attr/colorPrimary"
             android:drawablePadding="@dimen/button_with_image_padding"
             android:text="@string/delete_song" />

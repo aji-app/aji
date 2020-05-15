@@ -103,6 +103,10 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song s WHERE s.deleted = 0 AND s.songId = :id LIMIT 1")
     public abstract Song getSongById(long id);
 
+    @Query("SELECT * FROM Song s WHERE s.songId = :id LIMIT 1")
+    public abstract Song getSongByIdInclusiveHidden(long id);
+
+
     @Query("SELECT * FROM Song s WHERE s.deleted = 0 AND s.songId = :id LIMIT 1")
     public abstract LiveData<Song> getSong(long id);
 
@@ -167,9 +171,11 @@ public abstract class SongDao {
     @Query("DELETE from Song where mediaStoreSongId in (:mediaStoreIds)")
     public abstract void deleteSongsByMediaStoreIds(Set<Long> mediaStoreIds);
 
-
     @Query("DELETE from Song where songId in (:ids)")
     public abstract void deleteSongsByIds(Collection<Long> ids);
+
+    @Query("UPDATE Song SET deleted = 0 WHERE songId = :songId")
+    public abstract void unhideSong(long songId);
 
     @Query("UPDATE song SET deleted = 1 WHERE artist = :artist")
     public abstract void hideSongsByArtist(String artist);
@@ -232,6 +238,7 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
 
     public enum SortType {
         TITLE, ARTIST, ALBUM
