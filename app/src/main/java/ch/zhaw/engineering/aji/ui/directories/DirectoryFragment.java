@@ -20,10 +20,13 @@ import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.files.AudioFileFilter;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 /**
@@ -40,7 +43,6 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
 
     private int mColumnCount = 1;
     private boolean mMultiSelect = false;
-    private ArrayList<String> mFileExtensionsToShow = new ArrayList<>();
     private OnDirectoryFragmentListener mListener;
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
     private final Deque<DirectoryItem> mNavigationStack = new ArrayDeque<>();
@@ -55,7 +57,6 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     public DirectoryFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static DirectoryFragment newInstance(int columnCount, boolean multiSelect, String... fileExtensionsToShow) {
         DirectoryFragment fragment = new DirectoryFragment();
@@ -74,7 +75,6 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mMultiSelect = getArguments().getBoolean(ARG_MULTI_SELECT);
-            mFileExtensionsToShow = getArguments().getStringArrayList(ARG_SHOW_FILE_EXTENSIONS);
         }
     }
 
@@ -126,10 +126,16 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                     mNavigationStack.push(new DirectoryItem(Environment.getExternalStorageDirectory()));
                 }
                 List<DirectoryItem> directories = new ArrayList<>();
-                for (File file : mNavigationStack.peek().getFile().listFiles(this::filterFile)) {
+                for (File file : mNavigationStack.peek().getFile().listFiles(new AudioFileFilter(true))) {
                     DirectoryItem directoryItem = new DirectoryItem(file);
                     directories.add(directoryItem);
                 }
+                Collections.sort(directories, (d1, d2) -> {
+                    if (d1.isDirectory() == d2.isDirectory()){
+                        return d1.getName().compareTo(d2.getName());
+                    }
+                    return d1.isDirectory() ? -1 : 1;
+                });
                 List<DirectoryItem> dirs = new ArrayList<>(directories.size() + 1);
                 boolean isRoot = mNavigationStack.size() == 1;
                 if (!isRoot) {
@@ -141,16 +147,6 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                 }
             });
         }
-    }
-
-    private boolean filterFile(File file) {
-        if (file.isDirectory()) {
-            return true;
-        }
-        if (file.getName().contains(".")) {
-            return mFileExtensionsToShow.contains(file.getName().substring(file.getName().lastIndexOf(".") + 1));
-        }
-        return false;
     }
 
     @Override

@@ -8,26 +8,28 @@
 
     <ch.zhaw.engineering.aji.view.TextView
         android:id="@+id/directory_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_weight="1"
         android:drawablePadding="@dimen/button_with_image_padding"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="?attr/primaryTextColor"
         app:drawableStartCompat="@drawable/ic_directory"
         app:drawableTint="?attr/colorPrimary"
         tools:text="Downloads" />
 
-
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal"
         android:gravity="end"
-        >
+        android:orientation="horizontal">
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/content_container"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -36,8 +38,8 @@
                 android:id="@+id/containing_directories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
                 android:layout_marginEnd="20dp"
+                android:textSize="13sp"
                 tools:text="5 Directories" />
 
             <ch.zhaw.engineering.aji.view.TextView
@@ -47,14 +49,16 @@
                 android:textSize="13sp"
                 tools:text="5 Files" />
         </LinearLayout>
+
+        <ch.zhaw.engineering.aji.view.ImageButton
+            android:id="@+id/add_directory"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:src="@drawable/ic_add" />
     </LinearLayout>
 
-    <ch.zhaw.engineering.aji.view.ImageButton
-        android:id="@+id/add_directory"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        android:src="@drawable/ic_add" />
+
 </LinearLayout>

@@ -7,6 +7,15 @@ import java.io.FileFilter;
  * Inspired by https://stackoverflow.com/a/11015925
  */
 public class AudioFileFilter implements FileFilter {
+    private final boolean mShowDirectories;
+
+    public AudioFileFilter() {
+        this(false);
+    }
+
+    public AudioFileFilter(boolean showDirectories) {
+        this.mShowDirectories = showDirectories;
+    }
 
     @Override
     public boolean accept(File f) {
@@ -15,7 +24,7 @@ public class AudioFileFilter implements FileFilter {
         }
 
         if (f.isDirectory()) {
-            return false;
+            return mShowDirectories;
         }
         return checkFileExtension(f);
     }

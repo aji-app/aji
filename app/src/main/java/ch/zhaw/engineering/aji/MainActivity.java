@@ -91,27 +91,27 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
         mHasPermission.observe(this, hasPermission -> {
-            if (hasPermission) {
-                PreferenceHelper preferenceHelper = new PreferenceHelper(this);
-                boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
-                if (useMediaStore) {
-                    setupMediaStoreIntegration();
-                }
-
-                mSynchronizerControl = new SynchronizerControl(useMediaStore);
-                mSynchronizerControl.synchronizeSongsPeriodically(this);
-                preferenceHelper.observeMediaStoreSetting(enabled -> {
-                    mSynchronizerControl.setMediaStore(enabled);
-                    if (enabled) {
-                        setupMediaStoreIntegration();
-                    } else {
-                        if (mAudioFileContentObserver != null) {
-                            mAudioFileContentObserver.unregister();
-                            mAudioFileContentObserver = null;
-                        }
-                    }
-                });
-            }
+//            if (hasPermission) {
+//                PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+//                boolean useMediaStore = preferenceHelper.isMediaStoreEnabled();
+//                if (useMediaStore) {
+//                    setupMediaStoreIntegration();
+//                }
+//
+//                mSynchronizerControl = new SynchronizerControl(useMediaStore);
+//                mSynchronizerControl.synchronizeSongsPeriodically(this);
+//                preferenceHelper.observeMediaStoreSetting(enabled -> {
+//                    mSynchronizerControl.setMediaStore(enabled);
+//                    if (enabled) {
+//                        setupMediaStoreIntegration();
+//                    } else {
+//                        if (mAudioFileContentObserver != null) {
+//                            mAudioFileContentObserver.unregister();
+//                            mAudioFileContentObserver = null;
+//                        }
+//                    }
+//                });
+//            }
         });
 
 
@@ -480,11 +480,17 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
-    public void onSelectionFinished(File directory) {
+    public void onSelectionFinished(File file) {
         Intent scrapeFiles = new Intent();
-        scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, directory.getAbsolutePath());
+        scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, file.getAbsolutePath());
         AudioFileScanner.enqueueWork(this, scrapeFiles);
-        Toast.makeText(this, getString(R.string.scanning_directory, directory.getName()), Toast.LENGTH_LONG).show();
-        onSupportNavigateUp();
+        if (file.isDirectory()) {
+            Toast.makeText(this, getString(R.string.scanning_directory, file.getName()), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
+        }
+        if (!mAppViewModel.isTwoPane()) {
+            onSupportNavigateUp();
+        }
     }
 }

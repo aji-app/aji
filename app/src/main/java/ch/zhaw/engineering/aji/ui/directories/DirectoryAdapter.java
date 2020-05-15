@@ -54,11 +54,11 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         }
 
         holder.binding.addDirectory.setVisibility(View.VISIBLE);
+        holder.binding.contentContainer.setVisibility(View.VISIBLE);
         if (!mIsRoot && position == 0) {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_up);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
-            holder.binding.containingDirectories.setText(null);
-            holder.binding.containingFiles.setText(null);
+            holder.binding.contentContainer.setVisibility(View.GONE);
             holder.binding.addDirectory.setVisibility(View.GONE);
         } else if (holder.mItem.isDirectory()) {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_directory);
@@ -66,6 +66,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         } else {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_file);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
+            holder.binding.contentContainer.setVisibility(View.GONE);
         }
 
         holder.binding.getRoot().setOnClickListener(v -> {
@@ -82,6 +83,9 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         holder.binding.getRoot().setOnLongClickListener(v -> {
             mListener.onDirectorySelected(holder.mItem);
             return true;
+        });
+        holder.binding.addDirectory.setOnClickListener(v -> {
+            mListener.onDirectorySelected(holder.mItem);
         });
     }
 

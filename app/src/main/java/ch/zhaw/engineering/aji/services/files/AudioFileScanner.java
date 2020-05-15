@@ -23,6 +23,7 @@ public class AudioFileScanner extends JobIntentService {
 
     private SongDao mSongDao;
     private FileNameParser mFileNameParser;
+    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 
     public static void enqueueWork(Context context, Intent intent) {
         enqueueWork(context, AudioFileScanner.class, 2, intent);
@@ -45,9 +46,14 @@ public class AudioFileScanner extends JobIntentService {
         if (intent.hasExtra(EXTRA_SCRAPE_ROOT_FOLDER)) {
             String rootFolder = intent.getStringExtra(EXTRA_SCRAPE_ROOT_FOLDER);
             if (rootFolder != null) {
-                walk(new File(rootFolder), songDto -> {
-                    DatabaseSynchronizer.synchronizeSongWithDb(this, songDto);
-                });
+                File root = new File(rootFolder);
+                if (root.isDirectory()) {
+                    walk(new File(rootFolder), songDto -> {
+                        DatabaseSynchronizer.synchronizeSongWithDb(this, songDto);
+                    });
+                } else {
+                    DatabaseSynchronizer.synchronizeSongWithDb(this, fromFile(root));
+                }
             }
         }
     }
@@ -57,32 +63,8 @@ public class AudioFileScanner extends JobIntentService {
         File[] audioFiles = root.listFiles(new SupportedFileTypeFilter());
 
         if (audioFiles != null) {
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
             for (File f : audioFiles) {
-                Uri uri = Uri.fromFile(f);
-                if (mSongDao.exists(uri.getPath())) {
-                    continue;
-                }
-                mmr.setDataSource(getApplicationContext(), uri);
-
-                SongDto song = new SongDto();
-
-                song.setFilepath(uri.getPath());
-                song.setArtist(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST).trim());
-                song.setTitle(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE).trim());
-                song.setAlbum(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM).trim());
-                song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
-                song.setTrackNumber(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER).trim());
-
-                if (song.getTitle() == null) {
-                    // No or not enough Metadata
-                    parseFileName(f.getName(), song);
-                }
-
-                byte[] albumArt = mmr.getEmbeddedPicture();
-                if (albumArt != null) {
-                    song.albumArt = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
-                }
+                SongDto song = fromFile(f);
                 callback.handleSong(song);
             }
         }
@@ -91,6 +73,42 @@ public class AudioFileScanner extends JobIntentService {
                 walk(folder, callback);
             }
         }
+    }
+
+    private SongDto fromFile(File file) {
+        Uri uri = Uri.fromFile(file);
+        if (mSongDao.exists(uri.getPath())) {
+            return null;
+        }
+        mmr.setDataSource(getApplicationContext(), uri);
+
+        SongDto song = new SongDto();
+
+        song.setFilepath(uri.getPath());
+        song.setArtist(extractData(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+        song.setTitle(extractData(MediaMetadataRetriever.METADATA_KEY_TITLE));
+        song.setAlbum(extractData(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+        song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+        song.setTrackNumber(extractData(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
+
+        if (song.getTitle() == null) {
+            // No or not enough Metadata
+            parseFileName(file.getName(), song);
+        }
+
+        byte[] albumArt = mmr.getEmbeddedPicture();
+        if (albumArt != null) {
+            song.albumArt = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
+        }
+        return song;
+    }
+
+    private String extractData(int metadata) {
+        String data = mmr.extractMetadata(metadata);
+        if (data != null){
+            return data.trim();
+        }
+        return null;
     }
 
     private void parseFileName(String filename, SongDto song) {
