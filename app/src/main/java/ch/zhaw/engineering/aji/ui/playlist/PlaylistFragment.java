@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import ch.zhaw.engineering.aji.MainActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistBinding;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
@@ -44,14 +43,26 @@ public class PlaylistFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof PlaylistFragmentListener) {
             mListener = (PlaylistFragmentListener) context;
-            mListener.setFabCallback(v -> {
-                if (mListener != null) {
-                    mListener.onCreatePlaylist(null);
-                }
-            });
+            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PlaylistFragmentListener");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        configureFab();
+    }
+
+    private void configureFab() {
+        if (mListener != null) {
+            mListener.configureFab(v -> {
+                if (mListener != null) {
+                    mListener.onCreatePlaylist(null);
+                }
+            }, R.drawable.ic_add);
         }
     }
 

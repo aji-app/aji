@@ -26,17 +26,17 @@
         android:id="@+id/layout_content_main"
         layout="@layout/content_main" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin_bottom"
-        android:contentDescription="@string/add_playlist"
-        android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end|bottom"-->
+<!--        android:layout_marginEnd="@dimen/fab_margin"-->
+<!--        android:layout_marginBottom="@dimen/fab_margin_bottom"-->
+<!--        android:contentDescription="@string/add_playlist"-->
+<!--        android:src="@drawable/ic_add"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
     <include
         android:id="@+id/persistent_controls"

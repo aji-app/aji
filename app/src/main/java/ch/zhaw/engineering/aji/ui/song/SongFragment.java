@@ -15,7 +15,6 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
-import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
@@ -73,10 +72,12 @@ public class SongFragment extends Fragment {
     }
 
     private void configureFab(boolean enabled) {
-        if (enabled) {
-            mListener.setFabCallback(v -> mListener.onAddSongsButtonClick());
-        } else {
-            mListener.setFabCallback(null);
+        if (mListener != null) {
+            if (enabled) {
+                mListener.configureFab(v -> mListener.onAddSongsButtonClick(), R.drawable.ic_add);
+            } else {
+                mListener.disableFab();
+            }
         }
     }
 
@@ -90,6 +91,12 @@ public class SongFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        configureFab();
     }
 
     @Override

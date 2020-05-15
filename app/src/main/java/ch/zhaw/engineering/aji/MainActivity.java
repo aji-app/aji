@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -49,6 +50,7 @@ import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
@@ -76,7 +78,8 @@ import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRA
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener, DirectoryFragment.OnDirectoryFragmentListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener,
+        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -138,14 +141,14 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         setupPersistentBottomSheet();
 
-        mBinding.layoutAppBarMain.fab.setOnClickListener(v -> {
+        mBinding.layoutAppBarMain.layoutContentMain.fab.setOnClickListener(v -> {
             if (mFabCallback != null) {
                 mFabCallback.onClick(v);
             }
         });
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            setFabCallback(null);
+            // TODO: Call fragment#onShown() or something to enable fab configuration
             switch (destination.getId()) {
                 case R.id.nav_license_details:
                 case R.id.nav_settings:
@@ -513,9 +516,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
-    public void setFabCallback(FabCallback fabCallback) {
+    public void configureFab(@NonNull FabCallback fabCallback, @DrawableRes int icon) {
         mFabCallback = fabCallback;
-        mBinding.layoutAppBarMain.fab.setVisibility(fabCallback == null ? View.GONE : View.VISIBLE);
+        mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.VISIBLE);
+        mBinding.layoutAppBarMain.layoutContentMain.fab.setImageResource(icon);
+    }
+
+    @Override
+    public void disableFab() {
+        mFabCallback = null;
+        mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.GONE);
     }
 
     public interface FabCallback {

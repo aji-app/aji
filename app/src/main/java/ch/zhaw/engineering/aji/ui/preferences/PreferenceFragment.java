@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceFragmentCompat;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class PreferenceFragment extends PreferenceFragmentCompat {
@@ -59,12 +60,19 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         super.onAttach(context);
         if (context instanceof PreferenceListener) {
             mListener = (PreferenceListener) context;
+            mListener.disableFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PreferenceListener");
         }
     }
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mListener != null) {
+            mListener.disableFab();
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -73,7 +81,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     }
 
 
-    public interface PreferenceListener {
+    public interface PreferenceListener  extends FabCallbackListener {
         void onOpenAbout();
 
         void onShowOpenSourceLicenses();

@@ -37,14 +37,26 @@ public class RadioStationFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof RadioStationListFragment.RadioStationFragmentInteractionListener) {
             mListener = (RadioStationListFragment.RadioStationFragmentInteractionListener) context;
-            mListener.setFabCallback(v -> {
-                if (mListener != null) {
-                    mListener.onCreateRadioStation();
-                }
-            });
+            setupFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement RadioStationFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setupFab();
+    }
+
+    private void setupFab() {
+        if (mListener != null) {
+            mListener.configureFab(v -> {
+                if (mListener != null) {
+                    mListener.onCreateRadioStation();
+                }
+            }, R.drawable.ic_add);
         }
     }
 

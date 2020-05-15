@@ -17,8 +17,8 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistDetailsBinding;
 import ch.zhaw.engineering.aji.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.song.list.PlaylistSongListFragment;
-import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
 
 
 public class PlaylistDetailsFragment extends Fragment {
@@ -55,17 +55,23 @@ public class PlaylistDetailsFragment extends Fragment {
         }
     }
 
+    private void setEditMode(boolean editMode) {
+        mInEditMode = editMode;
+        mBinding.playlistNameEdittext.setEditMode(mInEditMode);
+        mSongListFragment.setEditMode(mInEditMode);
+        if (mInEditMode) {
+            mListener.configureFab(u -> setEditMode(false), R.drawable.ic_save);
+        } else {
+            mListener.disableFab();
+            saveEditedPlaylist();
+        }
+
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentPlaylistDetailsBinding.inflate(inflater, container, false);
-        mBinding.playlistEdit.setOnClickListener(v -> {
-            mInEditMode = !mInEditMode;
-            mBinding.playlistNameEdittext.setEditMode(mInEditMode);
-            mSongListFragment.setEditMode(mInEditMode);
-            if (!mInEditMode) {
-                notifyListenerNameUpdate();
-            }
-        });
+        mBinding.playlistEdit.setOnClickListener(v -> setEditMode(!mInEditMode));
 
         mBinding.playlistDelete.setOnClickListener(v -> {
             Snackbar snackbar = Snackbar
@@ -113,6 +119,7 @@ public class PlaylistDetailsFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof PlaylistDetailsFragmentListener) {
             mListener = (PlaylistDetailsFragmentListener) context;
+            mListener.disableFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PlaylistDetailsFragmentListener");
@@ -120,19 +127,29 @@ public class PlaylistDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        notifyListenerNameUpdate();
-        mListener = null;
-    }
-
-    private void notifyListenerNameUpdate() {
-        if (mBinding.playlistNameEdittext.getText().length() > 0 && mListener != null && !mPlaylistDeleted) {
-            mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistNameEdittext.getText().toString());
+    public void onStart() {
+        super.onStart();
+        if (mListener != null) {
+            mListener.disableFab();
         }
     }
 
-    public interface PlaylistDetailsFragmentListener {
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        saveEditedPlaylist();
+        mListener = null;
+    }
+
+    private void saveEditedPlaylist() {
+        if (mListener != null) {
+            if (mBinding.playlistNameEdittext.getText().length() > 0 && !mPlaylistDeleted) {
+                mListener.onPlaylistNameChanged(mPlaylistId, mBinding.playlistNameEdittext.getText().toString());
+            }
+        }
+    }
+
+    public interface PlaylistDetailsFragmentListener extends FabCallbackListener {
         void onPlaylistNameChanged(int playlistId, String newName);
 
         void onPlaylistDelete(int playlistId);
