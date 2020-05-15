@@ -27,28 +27,13 @@
         android:gravity="end"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/content_container"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <ch.zhaw.engineering.aji.view.TextView
-                android:id="@+id/containing_directories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:textSize="13sp"
-                tools:text="5 Directories" />
-
-            <ch.zhaw.engineering.aji.view.TextView
-                android:id="@+id/containing_files"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                tools:text="5 Files" />
-        </LinearLayout>
+        <ch.zhaw.engineering.aji.view.TextView
+            android:id="@+id/containing_files"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_gravity="center_vertical"
+            tools:text="5 Files" />
 
         <ch.zhaw.engineering.aji.view.ImageButton
             android:id="@+id/add_directory"

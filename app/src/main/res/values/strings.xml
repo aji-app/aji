@@ -114,7 +114,8 @@
         <item quantity="other">%1$d Directories</item>
     </plurals>
     <plurals name="files">
-        <item quantity="one">%1$d File</item>
-        <item quantity="other">%1$d Files</item>
+        <item quantity="one">%1$d Audio File</item>
+        <item quantity="other">%1$d Audio Files</item>
     </plurals>
+    <string name="unknown_files">\? Audio Files</string>
 </resources>

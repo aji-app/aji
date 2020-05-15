@@ -1,7 +1,10 @@
 package ch.zhaw.engineering.aji.ui.directories;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,8 @@ import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentDirectoryBinding;
@@ -19,20 +24,21 @@ import ch.zhaw.engineering.aji.databinding.FragmentDirectoryBinding;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DirectoryItem} and makes a call to the
- * TODO: Replace the implementation with code for your data type.
  */
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.ViewHolder> {
 
     private final List<DirectoryItem> mValues;
     private final DirectoryAdapterClickListener mListener;
     private final boolean mIsRoot;
-    private Context mContext;
+    private final ExecutorService mExecutorService;
+    private Activity mContext;
 
-    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Context context) {
+    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context) {
         mValues = items;
         mListener = listener;
         mIsRoot = isRoot;
         mContext = context;
+        mExecutorService = Executors.newCachedThreadPool();
     }
 
 
@@ -48,25 +54,29 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.binding.directoryName.setText(mValues.get(position).getName());
-        if (holder.mItem.getFileCount() >= 0 && holder.mItem.getSubDirectoryCount() >= 0) {
-            holder.binding.containingDirectories.setText(mContext.getResources().getQuantityString(R.plurals.directories, holder.mItem.getSubDirectoryCount(), holder.mItem.getSubDirectoryCount()));
-            holder.binding.containingFiles.setText(mContext.getResources().getQuantityString(R.plurals.files, holder.mItem.getFileCount(), holder.mItem.getFileCount()));
-        }
 
         holder.binding.addDirectory.setVisibility(View.VISIBLE);
-        holder.binding.contentContainer.setVisibility(View.VISIBLE);
+        holder.binding.containingFiles.setVisibility(View.VISIBLE);
         if (!mIsRoot && position == 0) {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_up);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
-            holder.binding.contentContainer.setVisibility(View.GONE);
+            holder.binding.containingFiles.setVisibility(View.GONE);
             holder.binding.addDirectory.setVisibility(View.GONE);
         } else if (holder.mItem.isDirectory()) {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_directory);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
+            holder.mItem.getFileCount(mExecutorService, i -> {
+                mContext.runOnUiThread(() -> {
+                    holder.binding.containingFiles.setVisibility(i == null ? View.GONE : View.VISIBLE);
+                    if (i != null) {
+                        holder.binding.containingFiles.setText(mContext.getResources().getQuantityString(R.plurals.files, i, i));
+                    }
+                });
+            });
         } else {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_file);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
-            holder.binding.contentContainer.setVisibility(View.GONE);
+            holder.binding.containingFiles.setVisibility(View.GONE);
         }
 
         holder.binding.getRoot().setOnClickListener(v -> {
