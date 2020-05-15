@@ -489,8 +489,5 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         } else {
             Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
         }
-        if (!mAppViewModel.isTwoPane()) {
-            onSupportNavigateUp();
-        }
     }
 }
