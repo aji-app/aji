@@ -120,25 +120,27 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     }
 
     private void loadCurrentDirectories() {
-        AsyncTask.execute(() -> {
-            if (mNavigationStack.isEmpty()) {
-                mNavigationStack.push(new DirectoryItem(Environment.getExternalStorageDirectory()));
-            }
-            List<DirectoryItem> directories = new ArrayList<>();
-            for (File file : mNavigationStack.peek().getFile().listFiles(this::filterFile)) {
-                DirectoryItem directoryItem = new DirectoryItem(file);
-                directories.add(directoryItem);
-            }
-            List<DirectoryItem> dirs = new ArrayList<>(directories.size() + 1);
-            boolean isRoot = mNavigationStack.size() == 1;
-            if (!isRoot) {
-                dirs.add(DirectoryItem.parentDirectory(mNavigationStack.peek()));
-            }
-            dirs.addAll(directories);
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot)));
-            }
-        });
+        if (getActivity() != null) {
+            AsyncTask.execute(() -> {
+                if (mNavigationStack.isEmpty()) {
+                    mNavigationStack.push(new DirectoryItem(Environment.getExternalStorageDirectory()));
+                }
+                List<DirectoryItem> directories = new ArrayList<>();
+                for (File file : mNavigationStack.peek().getFile().listFiles(this::filterFile)) {
+                    DirectoryItem directoryItem = new DirectoryItem(file);
+                    directories.add(directoryItem);
+                }
+                List<DirectoryItem> dirs = new ArrayList<>(directories.size() + 1);
+                boolean isRoot = mNavigationStack.size() == 1;
+                if (!isRoot) {
+                    dirs.add(DirectoryItem.parentDirectory(mNavigationStack.peek()));
+                }
+                dirs.addAll(directories);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot, getActivity())));
+                }
+            });
+        }
     }
 
     private boolean filterFile(File file) {

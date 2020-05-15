@@ -108,4 +108,12 @@
     <string name="show_in_library">Show in Library</string>
     <string name="menu_directory_selection">Directory</string>
     <string name="scanning_directory">Directory \'%s\' will be scanned for audio files</string>
+    <plurals name="directories">
+        <item quantity="one">%1$d Directory</item>
+        <item quantity="other">%1$d Directories</item>
+    </plurals>
+    <plurals name="files">
+        <item quantity="one">%1$d File</item>
+        <item quantity="other">%1$d Files</item>
+    </plurals>
 </resources>
