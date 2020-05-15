@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
+import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.ui.contextmenu.ContextMenuFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 
@@ -36,7 +38,7 @@ public class ArtistSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                            mListener.onSongSelected(songs.get(0).getSongId(), 0);
+                        mListener.onSongSelected(songs.get(0).getSongId(), 0);
                     }
 
                     if (getAdapter() != null) {
@@ -55,7 +57,7 @@ public class ArtistSongListFragment extends SongListFragment {
 
     private static class CustomListener implements SongListFragmentListener {
 
-        @Delegate(excludes=CustomDelegates.class)
+        @Delegate(excludes = CustomDelegates.class)
         private final SongListFragmentListener mListener;
 
         private CustomListener(SongListFragmentListener listener) {
@@ -69,11 +71,12 @@ public class ArtistSongListFragment extends SongListFragment {
 
         @Override
         public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-            mListener.onSongMenu(songId, position );
+           mListener.onSongMenu(songId, position);
         }
 
         private interface CustomDelegates {
             void onSongSelected(long songId, int position);
+
             void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
         }
     }

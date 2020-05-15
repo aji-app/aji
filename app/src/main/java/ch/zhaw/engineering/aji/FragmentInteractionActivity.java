@@ -491,6 +491,10 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToAlbum(album)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_delete)
+                .textId(R.string.remove_artist_from_library)
+                .callback($ -> hideSongsByAlbum(album)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -541,6 +545,10 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToArtist(artist)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_delete)
+                .textId(R.string.remove_artist_from_library)
+                .callback($ -> hideSongsByArtist(artist)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -636,6 +644,18 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 });
             }
         }
+    }
+
+    private void hideSongsByArtist(String artist) {
+        AsyncTask.execute(() -> {
+           mSongDao.hideSongsByArtist(artist);
+        });
+    }
+
+    private void hideSongsByAlbum(String album) {
+        AsyncTask.execute(() -> {
+            mSongDao.hideSongsByAlbum(album);
+        });
     }
 
     protected abstract void navigateToPlaylist(int playlistId);

@@ -102,4 +102,6 @@
     <string name="menu_licenses">Open Source Licenses</string>
     <string name="menu_license_details">License Details</string>
     <string name="playlist_exists">Playlist with name \'%s\' already exists.</string>
+    <string name="remove_all_songs_from_artist_from_library">Remove all songs from library</string>
+    <string name="remove_artist_from_library">Remove from Library</string>
 </resources>

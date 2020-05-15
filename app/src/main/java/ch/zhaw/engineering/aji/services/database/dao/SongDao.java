@@ -171,6 +171,12 @@ public abstract class SongDao {
     @Query("DELETE from Song where songId in (:ids)")
     public abstract void deleteSongsByIds(Collection<Long> ids);
 
+    @Query("UPDATE song SET deleted = 1 WHERE artist = :artist")
+    public abstract void hideSongsByArtist(String artist);
+
+    @Query("UPDATE song SET deleted = 1 WHERE album = :album")
+    public abstract void hideSongsByAlbum(String album);
+
     /*
      * Protected Helper Methods
      *
@@ -179,7 +185,7 @@ public abstract class SongDao {
     protected abstract void deleteSongBySongId(long songId);
 
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
-            "WHERE song.artist LIKE :text AND song.deleted = 0" +
+            "WHERE song.artist LIKE :text AND song.deleted = 0 " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(String text, boolean asc);
 
@@ -226,7 +232,6 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
-
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

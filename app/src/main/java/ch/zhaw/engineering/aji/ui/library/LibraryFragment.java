@@ -30,6 +30,7 @@ import ch.zhaw.engineering.aji.ui.artist.ArtistFragment;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
+import lombok.Setter;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 
@@ -82,13 +83,15 @@ public class LibraryFragment extends Fragment {
                         break;
                     case FAVORITES:
                         toggleMenuItems(false, false, false);
-                        mFavoriteFragment.onShown();
+                        if (mFavoriteFragment != null) {
+                            mFavoriteFragment.onShown();
+                        }
                         break;
                     case SONGS:
                     default:
                         mCurrentSortResource = SortResource.SONGS;
                         toggleMenuItems(true, true, true);
-                        if (showFirstSong()) {
+                        if (showFirstSong() && mSongsFragment != null) {
                             mSongsFragment.onShown();
                         } else {
                             mAppViewModel.setOpenFirstInList(true);
