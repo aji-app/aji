@@ -33,6 +33,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 
@@ -65,6 +66,7 @@ import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
+import lombok.Setter;
 
 import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
@@ -84,6 +86,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private Menu mActionBarMenu;
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
+    private FabCallback mFabCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +138,14 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
         setupPersistentBottomSheet();
 
+        mBinding.layoutAppBarMain.fab.setOnClickListener(v -> {
+            if (mFabCallback != null) {
+                mFabCallback.onClick(v);
+            }
+        });
+
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            setFabCallback(null);
             switch (destination.getId()) {
                 case R.id.nav_license_details:
                 case R.id.nav_settings:
@@ -500,5 +510,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         } else {
             Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void setFabCallback(FabCallback fabCallback) {
+        mFabCallback = fabCallback;
+        mBinding.layoutAppBarMain.fab.setVisibility(fabCallback == null ? View.GONE : View.VISIBLE);
+    }
+
+    public interface FabCallback {
+        void onClick(View view);
     }
 }

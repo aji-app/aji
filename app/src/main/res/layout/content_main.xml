@@ -8,7 +8,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_marginBottom="@dimen/persistent_controls_peek_height"
     tools:showIn="@layout/app_bar_main">
-
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"

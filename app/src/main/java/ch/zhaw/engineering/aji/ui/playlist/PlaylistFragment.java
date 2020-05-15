@@ -14,8 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import ch.zhaw.engineering.aji.MainActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistBinding;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -42,6 +44,11 @@ public class PlaylistFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof PlaylistFragmentListener) {
             mListener = (PlaylistFragmentListener) context;
+            mListener.setFabCallback(v -> {
+                if (mListener != null) {
+                    mListener.onCreatePlaylist(null);
+                }
+            });
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PlaylistFragmentListener");
@@ -63,12 +70,6 @@ public class PlaylistFragment extends Fragment {
                     .replace(R.id.playlist_container, PlaylistListFragment.newInstance())
                     .commitNow();
         }
-
-        binding.fabAddPlaylist.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onCreatePlaylist(null);
-            }
-        });
 
         return binding.getRoot();
     }
@@ -96,7 +97,7 @@ public class PlaylistFragment extends Fragment {
         return true;
     }
 
-    public interface PlaylistFragmentListener {
+    public interface PlaylistFragmentListener extends FabCallbackListener {
         void onCreatePlaylist(Long songToAdd);
     }
 }

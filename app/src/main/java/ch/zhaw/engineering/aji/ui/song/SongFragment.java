@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -48,34 +49,43 @@ public class SongFragment extends Fragment {
         if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
             mListFragment.showFirst();
         }
+        configureFab();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+    }
+
+    private void configureFab() {
         if (getActivity()  != null) {
             mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             PreferenceHelper helper = new PreferenceHelper(getActivity());
-            mBinding.fabAddSongs.setVisibility(helper.isMediaStoreEnabled() ? View.GONE : View.VISIBLE);
-            helper.observeMediaStoreSetting(enabled -> mBinding.fabAddSongs.setVisibility(enabled ? View.GONE : View.VISIBLE));
+            configureFab(!helper.isMediaStoreEnabled());
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentSongBinding.inflate(inflater, container, false);
-        mBinding.fabAddSongs.setOnClickListener(v -> {
-            mListener.onAddSongsButtonClick();
-        });
         return mBinding.getRoot();
     }
 
+    private void configureFab(boolean enabled) {
+        if (enabled) {
+            mListener.setFabCallback(v -> mListener.onAddSongsButtonClick());
+        } else {
+            mListener.setFabCallback(null);
+        }
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SongFragmentListener) {
             mListener = (SongFragmentListener) context;
+            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
@@ -88,7 +98,7 @@ public class SongFragment extends Fragment {
         mListener = null;
     }
 
-    public interface SongFragmentListener {
+    public interface SongFragmentListener extends FabCallbackListener {
         void onAddSongsButtonClick();
     }
 }
