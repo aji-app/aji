@@ -109,6 +109,8 @@
     <string name="menu_directory_selection">Select File or Folder</string>
     <string name="scanning_directory">Directory \'%s\' will be scanned for audio files</string>
     <string name="add_file">File \'%s\' will be added to library</string>
+    <string name="playlist_created">Playlist \'%s\' has been created</string>
+    <string name="song_added_to_playlist">Song \'%1s\' has been added to Playlist \'%2s\'</string>
     <plurals name="directories">
         <item quantity="one">%1$d Directory</item>
         <item quantity="other">%1$d Directories</item>

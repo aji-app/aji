@@ -66,7 +66,7 @@ public class PlaylistFragment extends Fragment {
 
         binding.fabAddPlaylist.setOnClickListener(v -> {
             if (mListener != null) {
-                mListener.onCreatePlaylist();
+                mListener.onCreatePlaylist(null);
             }
         });
 
@@ -97,6 +97,6 @@ public class PlaylistFragment extends Fragment {
     }
 
     public interface PlaylistFragmentListener {
-        void onCreatePlaylist();
+        void onCreatePlaylist(Long songToAdd);
     }
 }

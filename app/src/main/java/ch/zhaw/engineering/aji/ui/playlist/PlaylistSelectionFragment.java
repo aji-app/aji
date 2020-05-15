@@ -150,7 +150,7 @@ public class PlaylistSelectionFragment extends BottomSheetDialogFragment {
             if (holder.getItemViewType() == 0) {
                 CreatePlaylistViewHolder playlistViewHolder = (CreatePlaylistViewHolder) holder;
                 playlistViewHolder.binding.createPlaylist.setOnClickListener(v -> {
-                    mListener.onCreatePlaylist();
+                    mListener.onCreatePlaylist(null);
                 });
             } else {
                 ViewHolder playlistViewHolder = (ViewHolder) holder;
@@ -171,7 +171,7 @@ public class PlaylistSelectionFragment extends BottomSheetDialogFragment {
     public interface PlaylistSelectionListener {
         void onSongAddToPlaylist(long songId, int playlistId);
 
-        void onCreatePlaylist();
+        void onCreatePlaylist(Long songToAdd);
     }
 
 }

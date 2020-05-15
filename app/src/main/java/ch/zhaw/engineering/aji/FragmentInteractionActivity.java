@@ -100,7 +100,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         configs.add(ContextMenuFragment.ItemConfig.builder()
                                 .imageId(R.drawable.ic_playlist_add)
                                 .textId(R.string.create_playlist)
-                                .callback($ -> onCreatePlaylist()).build());
+                                .callback($ -> onCreatePlaylist(songId)).build());
                         for (Playlist playlist : playlists) {
                             ContextMenuFragment.ItemConfig<Playlist> entry = ContextMenuFragment.ItemConfig.<Playlist>builder()
                                     .value(playlist)
@@ -179,6 +179,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName());
+            runOnUiThread(() -> Toast.makeText(this, getString(R.string.song_added_to_playlist, song.getTitle(), playlist.getName()),  Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -208,8 +209,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onCreatePlaylist() {
-        showCreatePlaylistDialog();
+    public void onCreatePlaylist(Long songToAdd) {
+        showCreatePlaylistDialog(songToAdd, songToAdd == null);
         Log.i(TAG, "onCreatePlaylist: ");
     }
 
@@ -564,7 +565,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         });
     }
 
-    private void showCreatePlaylistDialog() {
+    private void showCreatePlaylistDialog(Long songToAdd, boolean showConfirmation) {
         View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
         editText.setOnFocusChangeListener((View v, boolean hasFocus) -> {
@@ -619,11 +620,19 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     Playlist playlistByName = mPlaylistDao.getPlaylistByName(newPlaylist.getName());
                     if (playlistByName != null) {
                         runOnUiThread(() -> {
-                            Toast.makeText(this, getString(R.string.playlist_exists, newPlaylist.getName()), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, getString(R.string.playlist_exists, newPlaylist.getName()), Toast.LENGTH_SHORT).show();
                         });
                     } else {
-                        mPlaylistDao.insert(newPlaylist);
+                        int newPlaylistId = (int) mPlaylistDao.insert(newPlaylist);
                         alertDialog.dismiss();
+                        if (showConfirmation) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, getString(R.string.playlist_created, newPlaylist.getName()), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                        if (songToAdd != null) {
+                            onSongAddToPlaylist(songToAdd, newPlaylistId);
+                        }
                     }
                 });
             });
@@ -648,7 +657,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     private void hideSongsByArtist(String artist) {
         AsyncTask.execute(() -> {
-           mSongDao.hideSongsByArtist(artist);
+            mSongDao.hideSongsByArtist(artist);
         });
     }
 
