@@ -183,6 +183,9 @@ public abstract class SongDao {
     @Query("UPDATE song SET deleted = 1 WHERE album = :album")
     public abstract void hideSongsByAlbum(String album);
 
+    @Query("DELETE FROM Song")
+    public abstract void removeAllSongs();
+
     /*
      * Protected Helper Methods
      *
@@ -238,7 +241,6 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
-
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

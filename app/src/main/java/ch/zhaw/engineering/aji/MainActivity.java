@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -38,6 +39,7 @@ import java.io.File;
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
+import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
@@ -183,6 +185,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     public void onShowOpenSourceLicenses() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_licenses);
+    }
+
+    @Override
+    public void cleanupDatabase() {
+        AsyncTask.execute(() -> {
+            AppDatabase database = AppDatabase.getInstance(this);
+            database.playlistDao().removeAllPlaylists();
+            database.songDao().removeAllSongs();
+        });
     }
 
     private void handleStartIntent() {

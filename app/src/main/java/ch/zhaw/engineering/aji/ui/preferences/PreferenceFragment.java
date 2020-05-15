@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -18,6 +19,20 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.root_preferences);
 
+        findPreference("remove_all_songs").setOnPreferenceClickListener(preference -> {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_App_AlertDialog_PurpleLime)
+                    .setTitle(R.string.remove_all_songs)
+                    .setMessage(R.string.remove_all_songs_and_playlists)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        mListener.cleanupDatabase();
+                    })
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+            dialogBuilder.show();
+            return true;
+        });
+
+        // TODO: Add remove all songs button when media store is disabled
         findPreference("licenses").setOnPreferenceClickListener(preference -> {
             mListener.onShowOpenSourceLicenses();
             return true;
@@ -62,5 +77,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         void onOpenAbout();
 
         void onShowOpenSourceLicenses();
+
+        void cleanupDatabase();
     }
 }

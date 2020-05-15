@@ -118,4 +118,6 @@
         <item quantity="other">%1$d Audio Files</item>
     </plurals>
     <string name="unknown_files">\? Audio Files</string>
+    <string name="remove_all_songs">Remove all Songs and Playlists</string>
+    <string name="remove_all_songs_and_playlists">Are you sure you want to remove all songs and playlists?</string>
 </resources>

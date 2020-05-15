@@ -80,14 +80,26 @@ public abstract class PlaylistDao {
     @Update
     public abstract void update(Playlist playlist);
 
-
     @Query("SELECT * from Playlist where name = :name")
     public abstract Playlist getPlaylistByName(String name);
+
+
+    @Transaction
+    public void removeAllPlaylists() {
+        deleteAllPlaylistEntries();
+        deleteAllPlaylists();
+    }
 
     /*
      * Internal Helper Methods
      *
      */
+
+    @Query("DELETE FROM PlaylistSongCrossRef")
+    protected abstract void deleteAllPlaylistEntries();
+
+    @Query("DELETE FROM Playlist")
+    protected abstract void deleteAllPlaylists();
 
     @Transaction
     public void addSongToPlaylist(long songId, int playlistId) {
@@ -140,5 +152,4 @@ public abstract class PlaylistDao {
 
     @Query("DELETE FROM Playlist WHERE playlistId = :playlistId")
     protected abstract void deletePlaylistByPlaylistId(int playlistId);
-
 }
