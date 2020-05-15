@@ -81,11 +81,7 @@ public class RadioStationDetailsFragment extends Fragment {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
         mBinding.radiostationEdit.setOnClickListener(v -> {
             if (mInEditMode) {
-                checkRadioStation(working -> {
-                    if (working && getActivity() != null) {
-                        getActivity().runOnUiThread(() -> setEditMode(false));
-                    }
-                });
+                save();
             } else {
                 setEditMode(true);
             }
@@ -118,6 +114,14 @@ public class RadioStationDetailsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    private void save() {
+        checkRadioStation(working -> {
+            if (working && getActivity() != null) {
+                getActivity().runOnUiThread(() -> setEditMode(false));
+            }
+        });
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -148,6 +152,7 @@ public class RadioStationDetailsFragment extends Fragment {
         mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
         mAdapter.setEditMode(mInEditMode);
         if (!mInEditMode) {
+            updateRadioStationData();
             notifyListenerEdited();
         }
         setMenuVisibility(mInEditMode);
@@ -182,15 +187,7 @@ public class RadioStationDetailsFragment extends Fragment {
     private void setFabCallback(boolean enabled) {
         if (enabled) {
             mListener.configureFab(v -> {
-                updateRadioStationData();
-                checkRadioStation(working -> {
-                    if (working) {
-                        if (mListener != null) {
-                            mListener.onRadioStationSaved(mRadioStation);
-                        }
-                    }
-                });
-
+                save();
             }, R.drawable.ic_save);
         } else {
             mListener.disableFab();
@@ -236,6 +233,8 @@ public class RadioStationDetailsFragment extends Fragment {
                 mListener.showProgressSpinner(false);
                 if (hasError) {
                     showInvalidUrlAlert(callback);
+                } else {
+                    callback.receiveValue(true);
                 }
             }, mBinding.radiostationUrl.getText().toString());
             AsyncTask.execute(metaCheck);
