@@ -30,9 +30,6 @@ import ch.zhaw.engineering.aji.ui.artist.ArtistFragment;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
-import lombok.Setter;
-
-import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 
 public class LibraryFragment extends Fragment {
 
@@ -146,10 +143,11 @@ public class LibraryFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.filter_list_menu_song, menu);
         MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
-        mSongMenuItems = new ArrayList<>(3);
+        mSongMenuItems = new ArrayList<>(4);
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_album));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_artist));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_title));
+        mSongMenuItems.add(mMenu.findItem(R.id.song_meta_show_hidden));
 
         mDirectionMenuItems = new ArrayList<>(3);
         mDirectionMenuItems.add(mMenu.findItem(R.id.direction_asc));
@@ -169,6 +167,13 @@ public class LibraryFragment extends Fragment {
                 return true;
             case R.id.song_meta_order_title:
                 mAppViewModel.changeSortType(SongDao.SortType.TITLE);
+                return true;
+            case R.id.song_meta_show_hidden:
+                if (mAppViewModel.toggleHiddenSongs()) {
+                    item.setTitle(R.string.hide_hidden);
+                } else {
+                    item.setTitle(R.string.show_hidden);
+                }
                 return true;
             case R.id.direction_asc:
                 mAppViewModel.changeSortDirection(mCurrentSortResource, true);

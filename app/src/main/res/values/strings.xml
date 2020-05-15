@@ -63,7 +63,7 @@
     <string name="contentDescription_playbackmode_shuffle">Toggle shuffle</string>
     <string name="contentDescription_playbackmode_autoqueue">Automatically play next song</string>
     <string name="menu_song_details">Song Details</string>
-    <string name="delete_song">Remove from Library</string>
+    <string name="delete_song">Hide in Library</string>
     <string name="tab_artists">Artists</string>
     <string name="tab_albums">Albums</string>
     <string name="tab_favorites">Favorites</string>
@@ -102,6 +102,7 @@
     <string name="menu_licenses">Open Source Licenses</string>
     <string name="menu_license_details">License Details</string>
     <string name="playlist_exists">Playlist with name \'%s\' already exists.</string>
-    <string name="remove_all_songs_from_artist_from_library">Remove all songs from library</string>
-    <string name="remove_artist_from_library">Remove from Library</string>
+    <string name="hide_artist_from_library">Hide in Library</string>
+    <string name="show_hidden">Show hidden Songs</string>
+    <string name="hide_hidden">Hide hidden songs</string>
 </resources>

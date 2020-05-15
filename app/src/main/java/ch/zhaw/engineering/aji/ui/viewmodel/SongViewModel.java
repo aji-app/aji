@@ -9,6 +9,7 @@ import ch.zhaw.engineering.aji.services.database.entity.Song;
 
 /* package */ class SongViewModel extends FilteringViewModel<SongDao, List<Song>> {
     private SongDao.SortType mSortType;
+    private boolean mShowHidden = false;
 
     SongViewModel(SongDao songDao) {
         super(songDao);
@@ -23,11 +24,17 @@ import ch.zhaw.engineering.aji.services.database.entity.Song;
         return mList;
     }
 
+    public boolean toggleShowHidden() {
+        mShowHidden = !mShowHidden;
+        update();
+        return mShowHidden;
+    }
+
     @Override
     protected LiveData<List<Song>> getUpdatedFilteredSource() {
         if (mSortType == null) {
             mSortType = SongDao.SortType.TITLE;
         }
-        return mDao.getSortedSongs(mSortType, mAscending, mSearchText);
+        return mDao.getSortedSongs(mSortType, mAscending, mSearchText, mShowHidden);
     }
 }

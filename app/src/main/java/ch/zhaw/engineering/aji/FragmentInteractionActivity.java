@@ -493,7 +493,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .callback($ -> navigateToAlbum(album)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_delete)
-                .textId(R.string.remove_artist_from_library)
+                .textId(R.string.hide_artist_from_library)
                 .callback($ -> hideSongsByAlbum(album)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
@@ -547,7 +547,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .callback($ -> navigateToArtist(artist)).build());
         entries.add(ContextMenuFragment.ItemConfig.builder()
                 .imageId(R.drawable.ic_delete)
-                .textId(R.string.remove_artist_from_library)
+                .textId(R.string.hide_artist_from_library)
                 .callback($ -> hideSongsByArtist(artist)).build());
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
