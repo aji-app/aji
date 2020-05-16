@@ -661,13 +661,32 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     private void hideSongsByArtist(String artist) {
         AsyncTask.execute(() -> {
             mSongDao.hideSongsByArtist(artist);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), getString(R.string.artist_removed_from_library, artist), Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSongsByArtist(artist);
+                        });
+                    });
+            snackbar.show();
+
         });
     }
 
     private void hideSongsByAlbum(String album) {
         AsyncTask.execute(() -> {
             mSongDao.hideSongsByAlbum(album);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), getString(R.string.album_removed_from_library, album), Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSongsByAlbum(album);
+                        });
+                    });
+            snackbar.show();
+
         });
+
     }
 
     protected abstract void navigateToPlaylist(int playlistId);

@@ -184,8 +184,14 @@ public abstract class SongDao {
     @Query("UPDATE song SET deleted = 1 WHERE artist = :artist")
     public abstract void hideSongsByArtist(String artist);
 
+    @Query("UPDATE song SET deleted = 0 WHERE artist = :artist")
+    public abstract void unhideSongsByArtist(String artist);
+
     @Query("UPDATE song SET deleted = 1 WHERE album = :album")
     public abstract void hideSongsByAlbum(String album);
+
+    @Query("UPDATE song SET deleted = 0 WHERE album = :album")
+    public abstract void unhideSongsByAlbum(String album);
 
     @Query("DELETE FROM Song")
     public abstract void removeAllSongs();

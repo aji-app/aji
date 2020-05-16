@@ -122,4 +122,6 @@
     <string name="unknown_files">\? Audio Files</string>
     <string name="remove_all_songs">Remove all Songs and Playlists</string>
     <string name="remove_all_songs_and_playlists">Are you sure you want to remove all songs and playlists?</string>
+    <string name="artist_removed_from_library">Artist \'%s\' has been hidden</string>
+    <string name="album_removed_from_library">Album \'%s\' has been hidden</string>
 </resources>
