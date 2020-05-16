@@ -41,10 +41,14 @@ public abstract class SongDao {
         }
     }
 
+    public void hideSong(long songId) {
+        hideSongBySongId(songId);
+    }
+
     @Transaction
     public void deleteSongById(long songId) {
         deleteSongsFromPlaylist(songId);
-        deleteSongBySongId(songId);
+        hideSongBySongId(songId);
     }
 
     public LiveData<List<Song>> getSortedSongs(SortType sortType, boolean ascending, String searchText, boolean onlyHidden) {
@@ -191,26 +195,26 @@ public abstract class SongDao {
      *
      */
     @Query("UPDATE song SET deleted = 1 WHERE songId = :songId")
-    protected abstract void deleteSongBySongId(long songId);
+    protected abstract void hideSongBySongId(long songId);
 
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
-            "WHERE song.artist LIKE :text AND song.deleted = 0 " +
+            "WHERE song.artist LIKE :text AND song.deleted = 0 AND song.artist IS NOT NULL " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(String text, boolean asc);
 
     @Query("SELECT DISTINCT song.artist as name FROM Song song " +
-            "WHERE song.deleted = 0 " +
+            "WHERE song.deleted = 0 AND song.artist IS NOT NULL " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
     protected abstract LiveData<List<ArtistDto>> getFilteredArtists(boolean asc);
 
     @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
-            "WHERE LOWER(song.album) LIKE LOWER(:text) AND song.deleted = 0 " +
+            "WHERE LOWER(song.album) LIKE LOWER(:text) AND song.deleted = 0 AND song.album IS NOT NULL " +
             "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(String text, boolean asc);
 
     @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
-            "WHERE song.deleted = 0 " +
+            "WHERE song.deleted = 0 AND song.album IS NOT NULL " +
             "GROUP BY song.album " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
     protected abstract LiveData<List<AlbumDto>> getFilteredAlbums(boolean asc);

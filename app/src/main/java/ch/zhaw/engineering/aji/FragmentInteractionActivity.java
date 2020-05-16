@@ -179,26 +179,29 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName());
-            runOnUiThread(() -> Toast.makeText(this, getString(R.string.song_added_to_playlist, song.getTitle(), playlist.getName()),  Toast.LENGTH_SHORT).show());
+            runOnUiThread(() -> Toast.makeText(this, getString(R.string.song_added_to_playlist, song.getTitle(), playlist.getName()), Toast.LENGTH_SHORT).show());
         });
     }
 
     @Override
     public void onSongDelete(long songId) {
         AsyncTask.execute(() -> {
+            removeSongFromQueue(songId, null);
+            mSongDao.hideSong(songId);
             Snackbar snackbar = Snackbar
                     .make(findViewById(android.R.id.content), R.string.song_removed_from_library, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSong(songId);
+                        });
                     }).addCallback(new Snackbar.Callback() {
                         @Override
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
                             if (event != DISMISS_EVENT_ACTION) {
-                                removeSongFromQueue(songId, null);
                                 AsyncTask.execute(() -> {
-                                    Song song = mSongDao.getSongById(songId);
+                                    Song song = mSongDao.getSongByIdInclusiveHidden(songId);
                                     Log.i(TAG, "onSongDelete: " + song.getTitle());
-                                    mSongDao.deleteSongById(songId);
                                 });
                             }
                         }

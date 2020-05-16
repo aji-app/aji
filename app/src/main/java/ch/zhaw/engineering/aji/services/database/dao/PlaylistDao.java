@@ -113,7 +113,7 @@ public abstract class PlaylistDao {
             "WHERE pl.playlistId NOT IN " +
             "(SELECT ref2.playlistId FROM PlaylistSongCrossRef ref2 WHERE ref2.songId == :songId) " +
             "GROUP BY pl.playlistId " +
-            "ORDER BY  pl.name DESC")
+            "ORDER BY  pl.name ASC")
     public abstract LiveData<List<Playlist>> getPlaylistsWhereSongCanBeAdded(long songId);
 
     @Transaction
@@ -130,21 +130,24 @@ public abstract class PlaylistDao {
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId AND songId = :songId")
     public abstract void deleteSongFromPlaylist(long songId, int playlistId);
 
-    @Query("SELECT pl.name as name, pl.playlistId as playlistId, COUNT(ref.playlistId) as songCount FROM Playlist pl " +
-            "LEFT JOIN PlaylistSongCrossRef ref ON ref.playlistId = pl.playlistId " +
+    @Query("SELECT pl.name as name, pl.playlistId as playlistId, " +
+            "(SELECT COUNT(r.playlistId) FROM PlaylistSongCrossRef r JOIN Song s ON s.songId = r.songId AND r.playlistId = pl.playlistId WHERE s.deleted = 0) as songCount " +
+            "FROM Playlist pl " +
             "WHERE pl.name LIKE :text " +
             "GROUP BY pl.playlistId " +
             "ORDER BY CASE WHEN :asc = 1 THEN pl.name END ASC, CASE WHEN :asc = 0 THEN pl.name END DESC")
     protected abstract LiveData<List<PlaylistWithSongCount>> getPlaylistWithSongCount(String text, boolean asc);
 
-    @Query("SELECT pl.name as name, pl.playlistId as playlistId, COUNT(ref.playlistId) as songCount FROM Playlist pl " +
-            "LEFT JOIN PlaylistSongCrossRef ref ON ref.playlistId = pl.playlistId " +
+    @Query("SELECT pl.name as name, pl.playlistId as playlistId, " +
+            "(SELECT COUNT(r.playlistId) FROM PlaylistSongCrossRef r JOIN Song s ON s.songId = r.songId AND r.playlistId = pl.playlistId WHERE s.deleted = 0) as songCount " +
+            "FROM Playlist pl " +
             "GROUP BY pl.playlistId " +
             "ORDER BY CASE WHEN :asc = 1 THEN pl.name END ASC, CASE WHEN :asc = 0 THEN pl.name END DESC")
     protected abstract LiveData<List<PlaylistWithSongCount>> getPlaylistWithSongCount(boolean asc);
 
-    @Query("SELECT pl.name as name, pl.playlistId as playlistId, COUNT(ref.playlistId) as songCount FROM Playlist pl " +
-            "LEFT JOIN PlaylistSongCrossRef ref ON ref.playlistId = pl.playlistId " +
+    @Query("SELECT pl.name as name, pl.playlistId as playlistId, " +
+            "(SELECT COUNT(r.playlistId) FROM PlaylistSongCrossRef r JOIN Song s ON s.songId = r.songId AND r.playlistId = pl.playlistId WHERE s.deleted = 0) as songCount " +
+            "FROM Playlist pl " +
             "WHERE pl.playlistId = :playlistId " +
             "GROUP BY pl.playlistId " +
             "LIMIT 1")
