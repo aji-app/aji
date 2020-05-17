@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/fragment_margin"
+    android:paddingTop="@dimen/fragment_margin"
+    android:layout_marginLeft="@dimen/margin_around_lists"
+    android:layout_marginRight="@dimen/margin_around_lists"
+    android:layout_marginBottom="@dimen/fragment_margin_bottom"
     tools:context=".ui.album.AlbumDetailsFragment"
     android:orientation="vertical">
 
