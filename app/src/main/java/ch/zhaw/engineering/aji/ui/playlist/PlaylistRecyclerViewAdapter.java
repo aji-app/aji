@@ -16,9 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistItemBinding;
 import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.aji.ui.contextmenu.ContextMenuFragment;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.ViewHolder> {
 
@@ -95,7 +97,13 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
         });
 
         overFlowButton.setOnClickListener(v -> {
-            mListener.onPlaylistMenu(holder.playlist.getPlaylistId());
+            mListener.onPlaylistMenu(holder.playlist.getPlaylistId(), FragmentInteractionActivity.ContextMenuItem.builder()
+                    .position(3)
+                    .itemConfig(ContextMenuFragment.ItemConfig.builder()
+                            .imageId(R.drawable.ic_delete)
+                            .textId(R.string.delete)
+                            .callback($ -> onDismiss(position)).build())
+                    .build());
         });
     }
 
