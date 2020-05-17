@@ -385,12 +385,14 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onRadioStationEdited(RadioStationDto updatedRadioStation) {
-        AsyncTask.execute(() -> {
-            if (updatedRadioStation.getId() != null) {
-                mRadioStationDao.updateRadioStation(updatedRadioStation);
-            }
-            Log.i(TAG, "onRadioStationEdit: " + updatedRadioStation.getName());
-        });
+        if (updatedRadioStation != null) {
+            AsyncTask.execute(() -> {
+                if (updatedRadioStation.getId() != null) {
+                    mRadioStationDao.updateRadioStation(updatedRadioStation);
+                }
+                Log.i(TAG, "onRadioStationEdit: " + updatedRadioStation.getName());
+            });
+        }
     }
 
     @Override

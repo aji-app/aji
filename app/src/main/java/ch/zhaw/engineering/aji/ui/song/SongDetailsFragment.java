@@ -108,23 +108,23 @@ public class SongDetailsFragment extends Fragment {
             AsyncTask.execute(() -> {
                 SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
                 mSong = dao.getSong(mSongId);
-                if (getActivity() != null && getView() != null) {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        mSong.observe(getViewLifecycleOwner(), song -> {
-                            if (song != null) {
-                                mBinding.songTitle.setText(song.getTitle());
-                                mBinding.songArtist.setText(song.getArtist());
-                                mBinding.songAlbum.setText(song.getAlbum());
-                                mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
-                                if (song.getAlbumArtPath() != null) {
-                                    Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                        if (getActivity() != null && getView() != null) {
+                            mSong.observe(getViewLifecycleOwner(), song -> {
+                                if (song != null) {
+                                    mBinding.songTitle.setText(song.getTitle());
+                                    mBinding.songArtist.setText(song.getArtist());
+                                    mBinding.songAlbum.setText(song.getAlbum());
+                                    mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+                                    if (song.getAlbumArtPath() != null) {
+                                        Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                                    }
                                 } else {
-                                    mBinding.albumCover.setImageResource(R.drawable.ic_placeholder_image);
+                                    mListener.onSupportNavigateUp();
                                 }
-                            } else {
-                                mListener.onSupportNavigateUp();
-                            }
-                        });
+                            });
+                        }
                     });
                 }
             });
