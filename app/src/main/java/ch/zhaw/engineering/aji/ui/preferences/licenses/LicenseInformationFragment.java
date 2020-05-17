@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses.LicenseInformation;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class LicenseInformationFragment extends ListFragment {
 
@@ -73,6 +75,10 @@ public class LicenseInformationFragment extends ListFragment {
                 Context context = getActivity();
                 return context.getString(i1.getLibraryName()).compareTo(context.getString(i2.getLibraryName()));
             });
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            if (appViewModel.isTwoPane() && items.size() > 0) {
+                mListener.onLicenseSelected(items.get(0));
+            }
 
             mRecyclerView.setAdapter(new LicenseInformationRecyclerViewAdapter(items, mListener, getContext()));
         }
