@@ -1,14 +1,12 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,21 +18,16 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 
@@ -63,7 +56,6 @@ import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
-import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
@@ -71,13 +63,12 @@ import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
-import lombok.Setter;
 
-import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
+import static ch.zhaw.engineering.aji.ui.directories.DirectoryFragment.ARG_SELECT_FILES_ONLY;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
@@ -160,6 +151,12 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     mainContentMarginBottom = setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, 0);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
                     break;
+                case R.id.nav_directory:
+                    if (arguments != null && arguments.containsKey(ARG_SELECT_FILES_ONLY)) {
+                        getSupportActionBar().setTitle(R.string.menu_select_file);
+                    } else {
+                        getSupportActionBar().setTitle(R.string.menu_directory_selection);
+                    }
                 default:
                     setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, mainContentMarginBottom);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
@@ -380,17 +377,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         args.putLong(EXTRA_RADIOSTATION_ID, radioStationId);
         navController.navigate(R.id.nav_radiostations, args);
         navigateToRadioStation(radioStationId);
-    }
-
-    protected void radioStationImported() {
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null && navHostFragment.getChildFragmentManager().getFragments().size() > 0) {
-
-            Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
-            if (currentFragment instanceof RadioStationDetailsFragment) {
-                ((RadioStationDetailsFragment) currentFragment).useImportedRadioStation(mImportedRadioStation);
-            }
-        }
     }
 
     @Override

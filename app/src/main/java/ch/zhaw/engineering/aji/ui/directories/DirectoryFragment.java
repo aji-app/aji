@@ -40,7 +40,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_MULTI_SELECT = "multi-select";
-    private static final String ARG_SELECT_FILES_ONLY = "select-files-only";
+    public static final String ARG_SELECT_FILES_ONLY = "select-files-only";
     private static final String ARG_SHOW_FILE_EXTENSIONS = "show-files-extensions";
 
     private int mColumnCount = 1;
