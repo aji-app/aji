@@ -84,11 +84,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
     private FabCallback mFabCallback;
+    @DrawableRes
+    private int mFabIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        if (mFabCallback != null) {
+            configureFab(mFabCallback, mFabIcon);
+        } else {
+            disableFab();
+        }
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
@@ -162,15 +169,22 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     break;
             }
         });
+
+
+        handleStartIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         try {
             Navigation.findNavController(this, R.id.nav_details_fragment);
             mAppViewModel.setTwoPane(true);
             mAppViewModel.setOpenFirstInList(true);
         } catch (IllegalArgumentException | IllegalStateException e) {
             // We're not on a landscape tablet
+            mAppViewModel.setTwoPane(false);
         }
-
-        handleStartIntent();
     }
 
     @Override
@@ -527,14 +541,19 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     public void configureFab(@NonNull FabCallback fabCallback, @DrawableRes int icon) {
         mFabCallback = fabCallback;
-        mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.VISIBLE);
-        mBinding.layoutAppBarMain.layoutContentMain.fab.setImageResource(icon);
+        mFabIcon = icon;
+        if (mBinding != null) {
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.VISIBLE);
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setImageResource(icon);
+        }
     }
 
     @Override
     public void disableFab() {
         mFabCallback = null;
-        mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.GONE);
+        if (mBinding != null) {
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.GONE);
+        }
     }
 
     public interface FabCallback {
