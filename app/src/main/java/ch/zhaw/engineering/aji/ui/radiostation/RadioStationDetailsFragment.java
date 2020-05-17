@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadioStationDetailsBinding;
@@ -154,7 +155,6 @@ public class RadioStationDetailsFragment extends Fragment {
         mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
         mAdapter.setEditMode(mInEditMode);
         if (!mInEditMode) {
-            updateRadioStationData();
             notifyListenerEdited();
         }
         setMenuVisibility(mInEditMode);
@@ -219,8 +219,7 @@ public class RadioStationDetailsFragment extends Fragment {
     }
 
     private void notifyListenerEdited() {
-        updateRadioStationData();
-        if (mListener != null) {
+        if (mListener != null && updateRadioStationData()) {
             if (mRadioStationId != null) {
                 mListener.onRadioStationEdited(mRadioStation);
             } else {
@@ -229,16 +228,31 @@ public class RadioStationDetailsFragment extends Fragment {
         }
     }
 
-    private void updateRadioStationData() {
-        if (mBinding.radiostationName.getText().length() > 0) {
+    private boolean updateRadioStationData() {
+        boolean changed = false;
+        if (mBinding.radiostationName.getText().length() > 0 && !mRadioStation.getName().equals(mBinding.radiostationName.getText())) {
             mRadioStation.setName(mBinding.radiostationName.getText().toString());
+            changed = true;
         }
 
-        if (mBinding.radiostationUrl.getText().length() > 0) {
+        if (mBinding.radiostationUrl.getText().length() > 0 && !mRadioStation.getUrl().equals(mBinding.radiostationUrl.getText())) {
             mRadioStation.setUrl(mBinding.radiostationUrl.getText().toString());
+            changed = true;
+        }
+        List<String> genres = mAdapter.getGenres();
+        boolean genresChanged = false;
+        for (String genre : genres) {
+            if (!mRadioStation.getGenres().contains(genre)) {
+                genresChanged = true;
+                break;
+            }
+        }
+        if (mRadioStation.getGenres().size()!= genres.size() || genresChanged) {
+            mRadioStation.setGenres(genres);
+            changed = true;
         }
 
-        mRadioStation.setGenres(mAdapter.getGenres());
+        return changed;
     }
 
     private void checkRadioStation(AudioBackend.Callback<Boolean> callback) {

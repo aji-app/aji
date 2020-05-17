@@ -395,10 +395,11 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             if (updatedRadioStation.getId() != null) {
                 mRadioStationDao.updateRadioStation(updatedRadioStation);
             } else {
-                mRadioStationDao.createRadioStation(updatedRadioStation);
+                long id = mRadioStationDao.createRadioStation(updatedRadioStation);
+                mAppViewModel.setOpenFirstInList(false);
+                runOnUiThread(() ->navigateToRadioStation(id == -1 ? null : id));
             }
             Log.i(TAG, "onRadioStationSaved: " + updatedRadioStation.getName());
-            runOnUiThread(this::onSupportNavigateUp);
         });
     }
 

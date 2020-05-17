@@ -66,7 +66,7 @@ public class RadioStationListFragment extends ListFragment {
             AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             appViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
                 if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
-                    if (!hasRadioStationIdExtra) {
+                    if (!hasRadioStationIdExtra && appViewModel.isOpenFirstInList()) {
                         mListener.onRadioStationSelected(radios.get(0).getId());
                     } else {
                         appViewModel.setOpenFirstInList(true);
