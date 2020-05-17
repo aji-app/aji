@@ -75,5 +75,9 @@
         <argument
             android:name="show-files-extensions"
             app:argType="string[]" />
+        <argument
+            android:name="select-files-only"
+            app:argType="boolean"
+            app:defaultValue="false" />
     </fragment>
 </navigation>

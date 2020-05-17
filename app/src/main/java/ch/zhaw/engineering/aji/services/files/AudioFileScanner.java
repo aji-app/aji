@@ -76,31 +76,36 @@ public class AudioFileScanner extends JobIntentService {
     }
 
     private SongDto fromFile(File file) {
-        Uri uri = Uri.fromFile(file);
-        if (mSongDao.exists(uri.getPath())) {
+        try {
+            Uri uri = Uri.fromFile(file);
+            if (mSongDao.exists(uri.getPath())) {
+                return null;
+            }
+            mmr.setDataSource(getApplicationContext(), uri);
+
+            SongDto song = new SongDto();
+
+            song.setFilepath(uri.getPath());
+            song.setArtist(extractData(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+            song.setTitle(extractData(MediaMetadataRetriever.METADATA_KEY_TITLE));
+            song.setAlbum(extractData(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+            song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+            song.setTrackNumber(extractData(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
+
+            if (song.getTitle() == null) {
+                // No or not enough Metadata
+                parseFileName(file.getName(), song);
+            }
+
+            byte[] albumArt = mmr.getEmbeddedPicture();
+            if (albumArt != null) {
+                song.albumArt = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
+            }
+            return song;
+        } catch (RuntimeException e) {
+            // Some weird file
             return null;
         }
-        mmr.setDataSource(getApplicationContext(), uri);
-
-        SongDto song = new SongDto();
-
-        song.setFilepath(uri.getPath());
-        song.setArtist(extractData(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        song.setTitle(extractData(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        song.setAlbum(extractData(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-        song.setDuration(Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
-        song.setTrackNumber(extractData(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
-
-        if (song.getTitle() == null) {
-            // No or not enough Metadata
-            parseFileName(file.getName(), song);
-        }
-
-        byte[] albumArt = mmr.getEmbeddedPicture();
-        if (albumArt != null) {
-            song.albumArt = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
-        }
-        return song;
     }
 
     private String extractData(int metadata) {

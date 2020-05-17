@@ -204,7 +204,11 @@ public class RadioStationDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setFabCallback(mInEditMode);
-
+        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (appViewModel.getImportedRadioStation() != null) {
+            useImportedRadioStation(appViewModel.getImportedRadioStation());
+            appViewModel.setImportedRadioStation(null);
+        }
     }
 
     @Override

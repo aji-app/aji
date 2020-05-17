@@ -39,6 +39,10 @@ public class AppViewModel extends AndroidViewModel {
     @Setter
     private boolean mOpenFirstInList;
 
+    @Getter
+    @Setter
+    private RadioStationDto mImportedRadioStation;
+
     public void resetOpenFirstInList() {
         mOpenFirstInList = mTwoPane;
     }

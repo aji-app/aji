@@ -639,19 +639,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         editText.requestFocus();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PLS_SELECT) {
-            if (data != null && data.hasExtra(EXTRA_FILE)) {
-                String path = data.getStringExtra(EXTRA_FILE);
-                AsyncTask.execute(() -> {
-                    radioStationImported(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path));
-                });
-            }
-        }
-    }
-
     private void hideSongsByArtist(String artist) {
         AsyncTask.execute(() -> {
             mSongDao.hideSongsByArtist(artist);
@@ -686,8 +673,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     protected abstract void navigateToPlaylist(int playlistId);
 
     protected abstract void navigateToRadioStation(Long radioStationId);
-
-    protected abstract void radioStationImported(RadioStationDto imported);
 
     protected abstract void navigateToAlbum(String album);
 

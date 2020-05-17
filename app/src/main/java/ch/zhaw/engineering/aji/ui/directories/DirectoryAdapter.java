@@ -33,13 +33,15 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     private final ExecutorService mExecutorService;
     private Activity mContext;
     private boolean mAudioFiles;
+    private boolean mSelectFilesOnly;
 
-    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context, boolean audioFiles) {
+    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context, boolean audioFiles, boolean selectFilesOnly) {
         mValues = items;
         mListener = listener;
         mIsRoot = isRoot;
         mContext = context;
         mAudioFiles = audioFiles;
+        mSelectFilesOnly = selectFilesOnly;
         mExecutorService = Executors.newCachedThreadPool();
     }
 
@@ -65,6 +67,9 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             holder.binding.containingFiles.setVisibility(View.GONE);
             holder.binding.addDirectory.setVisibility(View.GONE);
         } else if (holder.mItem.isDirectory()) {
+            if (mSelectFilesOnly) {
+                holder.binding.addDirectory.setVisibility(View.GONE);
+            }
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_directory);
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
             holder.mItem.getFileCount(mExecutorService, i -> {

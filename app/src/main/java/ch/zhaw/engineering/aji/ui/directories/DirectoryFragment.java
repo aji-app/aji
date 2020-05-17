@@ -40,6 +40,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_MULTI_SELECT = "multi-select";
+    private static final String ARG_SELECT_FILES_ONLY = "select-files-only";
     private static final String ARG_SHOW_FILE_EXTENSIONS = "show-files-extensions";
 
     private int mColumnCount = 1;
@@ -48,6 +49,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     private final MutableLiveData<Boolean> mHasPermission = new MutableLiveData<>(false);
     private final Deque<DirectoryItem> mNavigationStack = new ArrayDeque<>();
     private String[] mFileExtensions;
+    private boolean mSelectFilesOnly = false;
 
     private RecyclerView mRecyclerView;
 
@@ -78,6 +80,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mMultiSelect = getArguments().getBoolean(ARG_MULTI_SELECT);
             mFileExtensions = getArguments().getStringArray(ARG_SHOW_FILE_EXTENSIONS);
+            mSelectFilesOnly = getArguments().getBoolean(ARG_SELECT_FILES_ONLY);
         }
     }
 
@@ -158,7 +161,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                 }
                 dirs.addAll(directories);
                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot, getActivity(), mFileExtensions == null)));
+                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(new DirectoryAdapter(dirs, this, isRoot, getActivity(), mFileExtensions == null, mSelectFilesOnly)));
                 }
             });
         }
@@ -173,7 +176,11 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
     @Override
     public void onDirectorySelected(DirectoryItem directory) {
         if (!mMultiSelect) {
-            mListener.onSelectionFinished(directory.getFile());
+            if (directory.isDirectory()) {
+                mListener.onSelectionFinished(directory.getFile());
+            } else  {
+                onFileSelected(directory);
+            }
         }
     }
 

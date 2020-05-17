@@ -44,6 +44,7 @@ import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
+import ch.zhaw.engineering.aji.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment;
@@ -92,6 +93,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
     private FabCallback mFabCallback;
+    private RadioStationDto mImportedRadioStation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -380,13 +382,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         navigateToRadioStation(radioStationId);
     }
 
-    protected void radioStationImported(RadioStationDto imported) {
+    protected void radioStationImported() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         if (navHostFragment != null && navHostFragment.getChildFragmentManager().getFragments().size() > 0) {
 
             Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
             if (currentFragment instanceof RadioStationDetailsFragment) {
-                ((RadioStationDetailsFragment) currentFragment).useImportedRadioStation(imported);
+                ((RadioStationDetailsFragment) currentFragment).useImportedRadioStation(mImportedRadioStation);
             }
         }
     }
@@ -506,7 +508,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onRadioStationImport() {
-        Bundle args = RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavDirectory(new String[]{".pls"}).getArguments();
+        Bundle args = RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavDirectory(new String[]{".pls"}, true).getArguments();
         if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             navController.navigate(R.id.nav_directory, args);
@@ -518,13 +520,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onSelectionFinished(File file) {
-        Intent scrapeFiles = new Intent();
-        scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, file.getAbsolutePath());
-        AudioFileScanner.enqueueWork(this, scrapeFiles);
-        if (file.isDirectory()) {
-            Toast.makeText(this, getString(R.string.scanning_directory, file.getName()), Toast.LENGTH_LONG).show();
+        if (file.isDirectory() || !file.getName().endsWith(".pls")) {
+            Intent scrapeFiles = new Intent();
+            scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, file.getAbsolutePath());
+            AudioFileScanner.enqueueWork(this, scrapeFiles);
+            if (file.isDirectory()) {
+                Toast.makeText(this, getString(R.string.scanning_directory, file.getName()), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
+            mAppViewModel.setImportedRadioStation(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(file.getPath()));
+            onSupportNavigateUp();
         }
     }
 
