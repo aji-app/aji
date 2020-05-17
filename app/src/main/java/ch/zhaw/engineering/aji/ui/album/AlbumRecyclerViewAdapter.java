@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.album;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -19,10 +20,12 @@ import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
     private final List<AlbumDto> mAlbums;
     private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
+    private boolean mShowHidden;
 
-    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener) {
+    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden) {
         mAlbums = albums;
         mListener = listener;
+        mShowHidden = showHidden;
     }
 
     @NonNull
@@ -41,7 +44,15 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         holder.binding.albumName.setText(holder.album.getName());
         holder.binding.albumItemPlay.setOnClickListener(v -> mListener.onAlbumPlay(holder.album.getName()));
         holder.binding.albumItemOverflow.setOnClickListener(v -> mListener.onAlbumMenu(holder.album.getName()));
-        holder.itemView.setOnClickListener(v -> mListener.onAlbumSelected(holder.album.getName()));
+        holder.itemView.setOnClickListener(v -> {
+            if (mShowHidden) {
+                mListener.onAlbumMenu(holder.album.getName());
+            } else {
+                mListener.onAlbumSelected(holder.album.getName());
+            }
+        });
+
+        holder.binding.albumItemPlay.setVisibility(mShowHidden ? View.GONE : View.VISIBLE);
 
         if (holder.album.getCoverPath() != null) {
             Picasso.get().load(new File(holder.album.getCoverPath())).into(holder.binding.albumCover);

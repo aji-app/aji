@@ -149,7 +149,7 @@ public class LibraryFragment extends Fragment {
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_title));
         MenuItem showHidden = mMenu.findItem(R.id.song_meta_show_hidden);
         setHideMenuTitle(showHidden, mAppViewModel.showHiddenSongs());
-        mSongMenuItems.add(showHidden);
+        mDirectionMenuItems.add(showHidden);
 
         mDirectionMenuItems = new ArrayList<>(3);
         mDirectionMenuItems.add(mMenu.findItem(R.id.direction_asc));

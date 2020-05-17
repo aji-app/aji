@@ -84,7 +84,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
     private FabCallback mFabCallback;
-    private RadioStationDto mImportedRadioStation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

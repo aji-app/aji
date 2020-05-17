@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.artist;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,10 +17,12 @@ import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecyclerViewAdapter.ViewHolder> {
     private final List<ArtistDto> mAlbums;
     private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
+    private boolean mShowHidden;
 
-    public ArtistRecyclerViewAdapter(List<ArtistDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener) {
+    public ArtistRecyclerViewAdapter(List<ArtistDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden) {
         mAlbums = albums;
         mListener = listener;
+        mShowHidden = showHidden;
     }
 
     @NonNull
@@ -38,7 +41,16 @@ public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecycl
         holder.binding.artistName.setText(holder.artist.getName());
         holder.binding.artistItemPlay.setOnClickListener(v -> mListener.onArtistPlay(holder.artist.getName()));
         holder.binding.artistItemOverflow.setOnClickListener(v -> mListener.onArtistMenu(holder.artist.getName()));
-        holder.itemView.setOnClickListener(v -> mListener.onArtistSelected(holder.artist.getName()));
+
+        holder.itemView.setOnClickListener(v -> {
+            if (mShowHidden) {
+                mListener.onAlbumMenu(holder.artist.getName());
+            } else {
+                mListener.onArtistSelected(holder.artist.getName());
+            }
+        });
+
+        holder.binding.artistItemPlay.setVisibility(mShowHidden ? View.GONE : View.VISIBLE);
     }
 
     @Override

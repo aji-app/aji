@@ -151,6 +151,8 @@ public class AppViewModel extends AndroidViewModel {
     }
 
     public boolean toggleHiddenSongs() {
+        mAlbumViewModel.toggleShowHidden();
+        mArtistViewModel.toggleShowHidden();
         return mSongViewModel.toggleShowHidden();
     }
 

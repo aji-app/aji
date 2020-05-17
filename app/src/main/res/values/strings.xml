@@ -103,8 +103,8 @@
     <string name="menu_license_details">License Details</string>
     <string name="playlist_exists">Playlist with name \'%s\' already exists.</string>
     <string name="hide_artist_from_library">Hide in Library</string>
-    <string name="show_hidden">Show hidden Songs</string>
-    <string name="hide_hidden">Hide hidden songs</string>
+    <string name="show_hidden">Show hidden</string>
+    <string name="hide_hidden">Hide hidden</string>
     <string name="show_in_library">Show in Library</string>
     <string name="menu_directory_selection">Select File or Folder</string>
     <string name="menu_select_file">Select File</string>
@@ -129,4 +129,6 @@
     <string name="remove_all_songs_and_playlists">Are you sure you want to remove all songs and playlists?</string>
     <string name="artist_removed_from_library">Artist \'%s\' has been hidden</string>
     <string name="album_removed_from_library">Album \'%s\' has been hidden</string>
+    <string name="unhide_artist_from_library">Show artist in Library</string>
+    <string name="unhide_album_from_library">Show album in Library</string>
 </resources>
