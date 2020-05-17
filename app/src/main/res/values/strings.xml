@@ -94,7 +94,7 @@
     <string name="plaback_error_radio_title">Error playing Radio</string>
     <string name="go_to_radiodetails">Radiostation details</string>
     <string name="menu_about">About</string>
-    <string name="about_app">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</string>
+    <string name="about_app">Music your way.\n\nAji is a customizable audio player for android devices.</string>
     <string name="licenses">Licenses</string>
     <string name="about">About</string>
     <string name="version">"Version: "</string>
