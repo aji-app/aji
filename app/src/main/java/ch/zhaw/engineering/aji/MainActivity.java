@@ -531,7 +531,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             }
         } else {
             mAppViewModel.setImportedRadioStation(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(file.getPath()));
-            onSupportNavigateUp();
+            if (!mAppViewModel.isTwoPane()) {
+                onSupportNavigateUp();
+            } else {
+                onCreateRadioStation();
+            }
         }
     }
 

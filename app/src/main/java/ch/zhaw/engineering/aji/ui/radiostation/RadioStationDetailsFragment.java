@@ -139,7 +139,7 @@ public class RadioStationDetailsFragment extends Fragment {
                     setupAdapter(activity);
                 });
             } else {
-                mBinding.radiostationEdit.setVisibility(View.GONE);
+                mBinding.radiostationEdit.setImageResource(R.drawable.ic_save);
                 mRadioStation = new RadioStationDto();
                 setupAdapter(activity);
                 setEditMode(true);
