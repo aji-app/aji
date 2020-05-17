@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -101,7 +102,7 @@ public class PlaylistListFragment extends ListFragment {
     public interface PlaylistFragmentListener {
         void onPlaylistSelected(int playlist);
 
-        void onPlaylistMenu(int playlist);
+        void onPlaylistMenu(int playlist, FragmentInteractionActivity.ContextMenuItem... additionalItems);
 
         void onPlaylistPlay(int playlist);
 
