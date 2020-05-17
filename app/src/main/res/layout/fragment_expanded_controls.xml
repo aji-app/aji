@@ -154,6 +154,15 @@
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_prev" />
 
+
+        <ch.zhaw.engineering.aji.view.ImageButton
+            android:id="@+id/btn_stop"
+            android:layout_width="@dimen/expanded_controls_button_size"
+            android:layout_height="@dimen/expanded_controls_button_size"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_stop" />
+
         <ch.zhaw.engineering.aji.view.ImageButton
             android:id="@+id/btn_playpause"
             android:layout_width="@dimen/expanded_controls_button_size"
@@ -169,14 +178,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_next" />
-
-        <ch.zhaw.engineering.aji.view.ImageButton
-            android:id="@+id/btn_stop"
-            android:layout_width="@dimen/expanded_controls_button_size"
-            android:layout_height="@dimen/expanded_controls_button_size"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_stop" />
 
     </LinearLayout>
 
