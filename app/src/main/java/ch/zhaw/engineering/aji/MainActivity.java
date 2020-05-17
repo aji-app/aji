@@ -1,9 +1,9 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -14,33 +14,39 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.io.File;
+
 import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
+import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
+import ch.zhaw.engineering.aji.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
+import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
+import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
@@ -50,7 +56,6 @@ import ch.zhaw.engineering.aji.ui.preferences.PreferenceFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragment;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.LicenseInformationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.preferences.licenses.data.Licenses;
-import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragment;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 import ch.zhaw.engineering.aji.ui.song.SongDetailsFragmentDirections;
@@ -59,17 +64,17 @@ import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
-import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
+import static ch.zhaw.engineering.aji.ui.directories.DirectoryFragment.ARG_SELECT_FILES_ONLY;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
-public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener {
+public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener,
+        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CODE_DIRECTOY_SELECT = 1;
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
     private ActivityMainBinding mBinding;
@@ -78,11 +83,19 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     private Menu mActionBarMenu;
     private int mainContentMarginBottom;
     private SynchronizerControl mSynchronizerControl;
+    private FabCallback mFabCallback;
+    @DrawableRes
+    private int mFabIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        if (mFabCallback != null) {
+            configureFab(mFabCallback, mFabIcon);
+        } else {
+            disableFab();
+        }
 
         PermissionChecker.checkForExternalStoragePermission(this, mHasPermission);
 
@@ -124,11 +137,16 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        handlePotentialRadiostationDeepLink(navController);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
 
         setupPersistentBottomSheet();
+
+        mBinding.layoutAppBarMain.layoutContentMain.fab.setOnClickListener(v -> {
+            if (mFabCallback != null) {
+                mFabCallback.onClick(v);
+            }
+        });
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             switch (destination.getId()) {
@@ -139,21 +157,34 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     mainContentMarginBottom = setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, 0);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
                     break;
+                case R.id.nav_directory:
+                    if (arguments != null && arguments.containsKey(ARG_SELECT_FILES_ONLY)) {
+                        getSupportActionBar().setTitle(R.string.menu_select_file);
+                    } else {
+                        getSupportActionBar().setTitle(R.string.menu_directory_selection);
+                    }
                 default:
                     setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, mainContentMarginBottom);
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
                     break;
             }
         });
+
+
+        handleStartIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         try {
             Navigation.findNavController(this, R.id.nav_details_fragment);
             mAppViewModel.setTwoPane(true);
             mAppViewModel.setOpenFirstInList(true);
         } catch (IllegalArgumentException | IllegalStateException e) {
             // We're not on a landscape tablet
+            mAppViewModel.setTwoPane(false);
         }
-
-        handleStartIntent();
     }
 
     @Override
@@ -180,6 +211,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     public void onShowOpenSourceLicenses() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_licenses);
+    }
+
+    @Override
+    public void cleanupDatabase() {
+        AsyncTask.execute(() -> {
+            AppDatabase database = AppDatabase.getInstance(this);
+            database.playlistDao().removeAllPlaylists();
+            database.songDao().removeAllSongs();
+        });
     }
 
     private void handleStartIntent() {
@@ -314,9 +354,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void onAddSongsButtonClick() {
-        // TODO: Use navigation instead of activity
-        Intent intent = new Intent(this, DirectorySelectionActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_DIRECTOY_SELECT);
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_directory);
+            return;
+        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_directory);
     }
 
     @Override
@@ -334,6 +378,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             return;
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
         navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
 
@@ -347,17 +392,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         navigateToRadioStation(radioStationId);
     }
 
-    protected void radioStationImported(RadioStationDto imported) {
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null && navHostFragment.getChildFragmentManager().getFragments().size() > 0) {
-
-            Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
-            if (currentFragment instanceof RadioStationDetailsFragment) {
-                ((RadioStationDetailsFragment) currentFragment).useImportedRadioStation(imported);
-            }
-        }
-    }
-
     @Override
     protected void navigateToPlaylist(int playlistId) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -368,6 +402,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return navController.getCurrentDestination().getLabel().toString();
     }
+
     @Override
     protected void navigateToSongDetails(long songId) {
         if (mAppViewModel.isTwoPane()) {
@@ -376,6 +411,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             return;
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
             switch (id) {
@@ -470,15 +506,57 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_DIRECTOY_SELECT) {
-            if (data != null && data.hasExtra(EXTRA_FILE)) {
-                String path = data.getStringExtra(EXTRA_FILE);
-                Intent scrapeFiles = new Intent();
-                scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, path);
-                AudioFileScanner.enqueueWork(this, scrapeFiles);
+    public void onRadioStationImport() {
+        Bundle args = RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavDirectory(new String[]{".pls"}, true).getArguments();
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_directory, args);
+            return;
+        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_directory, args);
+    }
+
+    @Override
+    public void onSelectionFinished(File file) {
+        if (file.isDirectory() || !file.getName().endsWith(".pls")) {
+            Intent scrapeFiles = new Intent();
+            scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, file.getAbsolutePath());
+            AudioFileScanner.enqueueWork(this, scrapeFiles);
+            if (file.isDirectory()) {
+                Toast.makeText(this, getString(R.string.scanning_directory, file.getName()), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, getString(R.string.add_file, file.getName()), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            mAppViewModel.setImportedRadioStation(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(file.getPath()));
+            if (!mAppViewModel.isTwoPane()) {
+                onSupportNavigateUp();
+            } else {
+                onCreateRadioStation();
             }
         }
+    }
+
+    @Override
+    public void configureFab(@NonNull FabCallback fabCallback, @DrawableRes int icon) {
+        mFabCallback = fabCallback;
+        mFabIcon = icon;
+        if (mBinding != null) {
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.VISIBLE);
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setImageResource(icon);
+        }
+    }
+
+    @Override
+    public void disableFab() {
+        mFabCallback = null;
+        if (mBinding != null) {
+            mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.GONE);
+        }
+    }
+
+    public interface FabCallback {
+        void onClick(View view);
     }
 }

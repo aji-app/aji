@@ -13,6 +13,10 @@
         app:title="@string/settings_media_store_title" />
 
     <Preference
+        app:key="remove_all_songs"
+        android:title="@string/remove_all_songs" />
+
+    <Preference
         app:key="about"
         android:title="@string/about" />
 

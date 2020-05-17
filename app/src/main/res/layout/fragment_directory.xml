@@ -1,18 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <ch.zhaw.engineering.aji.view.TextView
         android:id="@+id/directory_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_weight="1"
         android:drawablePadding="@dimen/button_with_image_padding"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="?attr/primaryTextColor"
         app:drawableStartCompat="@drawable/ic_directory"
-        app:drawableTint="?attr/colorPrimary" />
+        app:drawableTint="?attr/colorPrimary"
+        tools:text="Downloads" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <ch.zhaw.engineering.aji.view.TextView
+            android:id="@+id/containing_files"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_gravity="center_vertical"
+            tools:text="5 Files" />
+
+        <ch.zhaw.engineering.aji.view.ImageButton
+            android:id="@+id/add_directory"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:src="@drawable/ic_add" />
+    </LinearLayout>
+
+
 </LinearLayout>

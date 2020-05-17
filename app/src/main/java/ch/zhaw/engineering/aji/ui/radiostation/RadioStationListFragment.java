@@ -20,6 +20,7 @@ import java.util.List;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
@@ -129,7 +130,7 @@ public class RadioStationListFragment extends ListFragment {
             });
         }
     }
-    public interface RadioStationFragmentInteractionListener {
+    public interface RadioStationFragmentInteractionListener extends FabCallbackListener {
         void onRadioStationSelected(long radioStationId);
         void onRadioStationPlay(long radioStationId);
         void onRadioStationMenu(long radioStationId);

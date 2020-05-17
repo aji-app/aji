@@ -71,7 +71,9 @@ public class QueueSongListFragment extends SongListFragment {
                 mSongIdToPosition.clear();
                 for (int i = 0; i < songs.size(); i++) {
                     Song song = songs.get(i);
-                    mSongIdToPosition.put(song.getSongId(), i);
+                    if (song != null) {
+                        mSongIdToPosition.put(song.getSongId(), i);
+                    }
                 }
                 if (getAdapter() != null) {
                     getAdapter().setSongs(songs);

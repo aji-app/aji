@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.aji;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -31,7 +29,6 @@ import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.aji.ui.contextmenu.ContextMenuFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
@@ -46,8 +43,6 @@ import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.Builder;
 import lombok.Value;
-
-import static ch.zhaw.engineering.aji.DirectorySelectionActivity.EXTRA_FILE;
 
 public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
@@ -100,7 +95,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                         configs.add(ContextMenuFragment.ItemConfig.builder()
                                 .imageId(R.drawable.ic_playlist_add)
                                 .textId(R.string.create_playlist)
-                                .callback($ -> onCreatePlaylist()).build());
+                                .callback($ -> onCreatePlaylist(songId)).build());
                         for (Playlist playlist : playlists) {
                             ContextMenuFragment.ItemConfig<Playlist> entry = ContextMenuFragment.ItemConfig.<Playlist>builder()
                                     .value(playlist)
@@ -137,8 +132,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     @Override
     public void onSongMenu(long songId, Integer position, ContextMenuItem... additionalItems) {
         AsyncTask.execute(() -> {
-            Song song = mSongDao.getSongById(songId);
-            Log.i(TAG, "onSongEdit: " + song.getTitle());
+            Song song = mSongDao.getSongByIdInclusiveHidden(songId);
+            Log.i(TAG, "onSongMenu: " + song.getTitle());
             MutableLiveData<List<ContextMenuFragment.ItemConfig>> contextMenuEntries = new MutableLiveData<>();
             List<ContextMenuFragment.ItemConfig> entries = new ArrayList<>();
             entries.add(ContextMenuFragment.ItemConfig.builder()
@@ -158,7 +153,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     .textId(R.string.add_to_playlist)
                     .callback($ -> onSongAddToPlaylist(songId)).build());
             entries.add(ContextMenuFragment.ItemConfig.builder()
-                    .imageId(R.drawable.ic_delete)
+                    .imageId(R.drawable.ic_hide)
                     .textId(R.string.delete_song)
                     .callback($ -> onSongDelete(songId)).build());
             for (ContextMenuItem item : additionalItems) {
@@ -179,25 +174,29 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             Song song = mSongDao.getSongById(songId);
             Playlist playlist = mPlaylistDao.getPlaylistById(playlistId);
             Log.i(TAG, "onSongAddToPlaylist: " + song.getTitle() + ", " + playlist.getName());
+            runOnUiThread(() -> Toast.makeText(this, getString(R.string.song_added_to_playlist, song.getTitle(), playlist.getName()), Toast.LENGTH_SHORT).show());
         });
     }
 
     @Override
     public void onSongDelete(long songId) {
         AsyncTask.execute(() -> {
+            removeSongFromQueue(songId, null);
+            mSongDao.hideSong(songId);
             Snackbar snackbar = Snackbar
                     .make(findViewById(android.R.id.content), R.string.song_removed_from_library, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSong(songId);
+                        });
                     }).addCallback(new Snackbar.Callback() {
                         @Override
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
                             if (event != DISMISS_EVENT_ACTION) {
-                                removeSongFromQueue(songId, null);
                                 AsyncTask.execute(() -> {
-                                    Song song = mSongDao.getSongById(songId);
+                                    Song song = mSongDao.getSongByIdInclusiveHidden(songId);
                                     Log.i(TAG, "onSongDelete: " + song.getTitle());
-                                    mSongDao.deleteSongById(songId);
                                 });
                             }
                         }
@@ -208,8 +207,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onCreatePlaylist() {
-        showCreatePlaylistDialog();
+    public void onCreatePlaylist(Long songToAdd) {
+        showCreatePlaylistDialog(songToAdd, songToAdd == null);
         Log.i(TAG, "onCreatePlaylist: ");
     }
 
@@ -406,12 +405,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onRadioStationImport() {
-        Intent intent = new Intent(this, PlsFileSelectionActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_PLS_SELECT);
-    }
-
-    @Override
     public void onPlayPause() {
         playPause();
         Log.i(TAG, "onPlayPause");
@@ -491,6 +484,17 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToAlbum(album)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_hide)
+                .textId(R.string.hide_artist_from_library)
+                .callback($ -> hideSongsByAlbum(album)).build());
+        if (mAppViewModel.showHiddenSongs()) {
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_hide)
+                    .exclusive(true)
+                    .textId(R.string.unhide_album_from_library)
+                    .callback($ -> unhideSongsByAlbum(album)).build());
+        }
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -541,6 +545,17 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                 .imageId(R.drawable.ic_details)
                 .textId(R.string.details)
                 .callback($ -> navigateToArtist(artist)).build());
+        entries.add(ContextMenuFragment.ItemConfig.builder()
+                .imageId(R.drawable.ic_show)
+                .textId(R.string.hide_artist_from_library)
+                .callback($ -> hideSongsByArtist(artist)).build());
+        if (mAppViewModel.showHiddenSongs()) {
+            entries.add(ContextMenuFragment.ItemConfig.builder()
+                    .imageId(R.drawable.ic_hide)
+                    .exclusive(true)
+                    .textId(R.string.unhide_artist_from_library)
+                    .callback($ -> unhideSongsByArtist(artist)).build());
+        }
         mContextMenuFragment = ContextMenuFragment.newInstance(contextMenuEntries);
         runOnUiThread(() -> {
             mContextMenuFragment.show(getSupportFragmentManager(), ContextMenuFragment.TAG);
@@ -556,7 +571,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         });
     }
 
-    private void showCreatePlaylistDialog() {
+    private void showCreatePlaylistDialog(Long songToAdd, boolean showConfirmation) {
         View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
         editText.setOnFocusChangeListener((View v, boolean hasFocus) -> {
@@ -611,11 +626,19 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
                     Playlist playlistByName = mPlaylistDao.getPlaylistByName(newPlaylist.getName());
                     if (playlistByName != null) {
                         runOnUiThread(() -> {
-                            Toast.makeText(this, getString(R.string.playlist_exists, newPlaylist.getName()), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, getString(R.string.playlist_exists, newPlaylist.getName()), Toast.LENGTH_SHORT).show();
                         });
                     } else {
-                        mPlaylistDao.insert(newPlaylist);
+                        int newPlaylistId = (int) mPlaylistDao.insert(newPlaylist);
                         alertDialog.dismiss();
+                        if (showConfirmation) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, getString(R.string.playlist_created, newPlaylist.getName()), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                        if (songToAdd != null) {
+                            onSongAddToPlaylist(songToAdd, newPlaylistId);
+                        }
                     }
                 });
             });
@@ -625,24 +648,53 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         editText.requestFocus();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PLS_SELECT) {
-            if (data != null && data.hasExtra(EXTRA_FILE)) {
-                String path = data.getStringExtra(EXTRA_FILE);
-                AsyncTask.execute(() -> {
-                    radioStationImported(WebRadioPlsParser.parseSingleRadioStationFromPlsFile(path));
-                });
-            }
-        }
+    private void hideSongsByArtist(String artist) {
+        AsyncTask.execute(() -> {
+            mSongDao.hideSongsByArtist(artist);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), getString(R.string.artist_removed_from_library, artist), Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSongsByArtist(artist);
+                        });
+                    });
+            snackbar.show();
+
+        });
     }
+
+    private void hideSongsByAlbum(String album) {
+        AsyncTask.execute(() -> {
+            mSongDao.hideSongsByAlbum(album);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), getString(R.string.album_removed_from_library, album), Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, view -> {
+                        AsyncTask.execute(() -> {
+                            mSongDao.unhideSongsByAlbum(album);
+                        });
+                    });
+            snackbar.show();
+
+        });
+
+    }
+
+    private void unhideSongsByAlbum(String album) {
+        AsyncTask.execute(() -> {
+            mSongDao.unhideSongsByAlbum(album);
+        });
+    }
+
+    private void unhideSongsByArtist(String artist) {
+        AsyncTask.execute(() -> {
+            mSongDao.unhideSongsByArtist(artist);
+        });
+    }
+
 
     protected abstract void navigateToPlaylist(int playlistId);
 
     protected abstract void navigateToRadioStation(Long radioStationId);
-
-    protected abstract void radioStationImported(RadioStationDto imported);
 
     protected abstract void navigateToAlbum(String album);
 

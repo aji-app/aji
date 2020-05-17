@@ -1,6 +1,10 @@
 package ch.zhaw.engineering.aji.ui.directories;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +15,34 @@ import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentDirectoryBinding;
 
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DirectoryItem} and makes a call to the
- * TODO: Replace the implementation with code for your data type.
  */
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.ViewHolder> {
 
     private final List<DirectoryItem> mValues;
     private final DirectoryAdapterClickListener mListener;
     private final boolean mIsRoot;
+    private final ExecutorService mExecutorService;
+    private Activity mContext;
+    private boolean mAudioFiles;
+    private boolean mSelectFilesOnly;
 
-    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot) {
+    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context, boolean audioFiles, boolean selectFilesOnly) {
         mValues = items;
         mListener = listener;
         mIsRoot = isRoot;
+        mContext = context;
+        mAudioFiles = audioFiles;
+        mSelectFilesOnly = selectFilesOnly;
+        mExecutorService = Executors.newCachedThreadPool();
     }
 
 
@@ -43,20 +57,36 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mNameView.setText(mValues.get(position).getName());
+        holder.binding.directoryName.setText(mValues.get(position).getName());
 
+        holder.binding.addDirectory.setVisibility(View.VISIBLE);
+        holder.binding.containingFiles.setVisibility(View.VISIBLE);
         if (!mIsRoot && position == 0) {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_up);
-            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
+            holder.binding.containingFiles.setVisibility(View.GONE);
+            holder.binding.addDirectory.setVisibility(View.GONE);
         } else if (holder.mItem.isDirectory()) {
+            if (mSelectFilesOnly) {
+                holder.binding.addDirectory.setVisibility(View.GONE);
+            }
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_directory);
-            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
+            holder.mItem.getFileCount(mExecutorService, i -> {
+                mContext.runOnUiThread(() -> {
+                    holder.binding.containingFiles.setVisibility(i == null ? View.GONE : View.VISIBLE);
+                    if (i != null) {
+                        holder.binding.containingFiles.setText(mContext.getResources().getQuantityString(mAudioFiles ? R.plurals.audio_files : R.plurals.files, i, i));
+                    }
+                });
+            });
         } else {
             Drawable drawableLeft = holder.itemView.getContext().getResources().getDrawable(R.drawable.ic_file);
-            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.mNameView, drawableLeft, null, null, null);
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(holder.binding.directoryName, drawableLeft, null, null, null);
+            holder.binding.containingFiles.setVisibility(View.GONE);
         }
 
-        holder.mView.setOnClickListener(v -> {
+        holder.binding.getRoot().setOnClickListener(v -> {
             if (null != mListener) {
                 if (position == 0 && !mIsRoot) {
                     mListener.onDirectoryNavigateUp();
@@ -67,9 +97,12 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
                 }
             }
         });
-        holder.mView.setOnLongClickListener(v -> {
+        holder.binding.getRoot().setOnLongClickListener(v -> {
             mListener.onDirectorySelected(holder.mItem);
             return true;
+        });
+        holder.binding.addDirectory.setOnClickListener(v -> {
+            mListener.onDirectorySelected(holder.mItem);
         });
     }
 
@@ -79,20 +112,18 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        final View mView;
-        final TextView mNameView;
         DirectoryItem mItem;
+        FragmentDirectoryBinding binding;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mNameView = view.findViewById(R.id.directory_name);
+            binding = FragmentDirectoryBinding.bind(view);
         }
 
         @Override
         @NonNull
         public String toString() {
-            return super.toString() + " '" + mNameView.getText() + "'";
+            return super.toString() + " '" + binding.directoryName.getText() + "'";
         }
     }
 

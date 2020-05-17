@@ -154,7 +154,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
         void onSongDelete(long songId);
 
-        void onCreatePlaylist();
+        void onCreatePlaylist(Long songToAdd);
 
         void onToggleFavorite(long songId);
 

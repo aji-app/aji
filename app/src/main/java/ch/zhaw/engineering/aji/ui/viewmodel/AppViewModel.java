@@ -39,6 +39,10 @@ public class AppViewModel extends AndroidViewModel {
     @Setter
     private boolean mOpenFirstInList;
 
+    @Getter
+    @Setter
+    private RadioStationDto mImportedRadioStation;
+
     public void resetOpenFirstInList() {
         mOpenFirstInList = mTwoPane;
     }
@@ -146,4 +150,13 @@ public class AppViewModel extends AndroidViewModel {
         return null;
     }
 
+    public boolean toggleHiddenSongs() {
+        mAlbumViewModel.toggleShowHidden();
+        mArtistViewModel.toggleShowHidden();
+        return mSongViewModel.toggleShowHidden();
+    }
+
+    public boolean showHiddenSongs() {
+        return mSongViewModel.showHiddenSongs();
+    }
 }

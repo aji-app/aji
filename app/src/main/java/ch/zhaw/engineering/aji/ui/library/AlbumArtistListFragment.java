@@ -74,12 +74,12 @@ public class AlbumArtistListFragment extends ListFragment {
             final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             if (mMode == Mode.ALBUM) {
                 appViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
-                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener);
+                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, appViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
                 });
             } else if (mMode == Mode.ARTIST) {
                 appViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener);
+                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, appViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
                 });
             }

@@ -2,10 +2,8 @@ package ch.zhaw.engineering.aji.ui.radiostation;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -29,6 +28,8 @@ import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
@@ -82,11 +83,7 @@ public class RadioStationDetailsFragment extends Fragment {
         mBinding = FragmentRadioStationDetailsBinding.inflate(inflater, container, false);
         mBinding.radiostationEdit.setOnClickListener(v -> {
             if (mInEditMode) {
-                checkRadioStation(working -> {
-                    if (working && getActivity() != null) {
-                        getActivity().runOnUiThread(() -> setEditMode(false));
-                    }
-                });
+                save();
             } else {
                 setEditMode(true);
             }
@@ -96,18 +93,6 @@ public class RadioStationDetailsFragment extends Fragment {
             if (mInEditMode) {
                 mAdapter.addEmptyGenre();
             }
-        });
-
-        mBinding.fabSaveRadiostation.setOnClickListener(v -> {
-            updateRadioStationData();
-            checkRadioStation(working -> {
-                if (working) {
-                    if (mListener != null) {
-                        mListener.onRadioStationSaved(mRadioStation);
-                    }
-                }
-            });
-
         });
 
         mBinding.radiostationDelete.setOnClickListener(v -> {
@@ -131,6 +116,14 @@ public class RadioStationDetailsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    private void save() {
+        checkRadioStation(working -> {
+            if (working && getActivity() != null) {
+                getActivity().runOnUiThread(() -> setEditMode(false));
+            }
+        });
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -146,7 +139,7 @@ public class RadioStationDetailsFragment extends Fragment {
                     setupAdapter(activity);
                 });
             } else {
-                mBinding.radiostationEdit.setVisibility(View.GONE);
+                mBinding.radiostationEdit.setImageResource(R.drawable.ic_save);
                 mRadioStation = new RadioStationDto();
                 setupAdapter(activity);
                 setEditMode(true);
@@ -161,9 +154,12 @@ public class RadioStationDetailsFragment extends Fragment {
         mBinding.genreAddButton.setVisibility(mInEditMode ? View.VISIBLE : View.GONE);
         mAdapter.setEditMode(mInEditMode);
         if (!mInEditMode) {
+            updateRadioStationData();
             notifyListenerEdited();
         }
         setMenuVisibility(mInEditMode);
+        mBinding.radiostationEdit.setImageResource(mInEditMode ? R.drawable.ic_save : R.drawable.ic_edit);
+        setFabCallback(mInEditMode);
     }
 
     private void setupAdapter(@NonNull Activity activity) {
@@ -184,12 +180,36 @@ public class RadioStationDetailsFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof RadioStationDetailsFragmentListener) {
             mListener = (RadioStationDetailsFragmentListener) context;
+            setFabCallback(mInEditMode);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PlaylistDetailsFragmentListener");
         }
     }
 
+    private void setFabCallback(boolean enabled) {
+        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (!appViewModel.isTwoPane()) {
+            if (enabled) {
+                mListener.configureFab(v -> {
+                    save();
+                }, R.drawable.ic_save);
+            } else {
+                mListener.disableFab();
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setFabCallback(mInEditMode);
+        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (appViewModel.getImportedRadioStation() != null) {
+            useImportedRadioStation(appViewModel.getImportedRadioStation());
+            appViewModel.setImportedRadioStation(null);
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -224,6 +244,8 @@ public class RadioStationDetailsFragment extends Fragment {
                 mListener.showProgressSpinner(false);
                 if (hasError) {
                     showInvalidUrlAlert(callback);
+                } else {
+                    callback.receiveValue(true);
                 }
             }, mBinding.radiostationUrl.getText().toString());
             AsyncTask.execute(metaCheck);
@@ -262,7 +284,7 @@ public class RadioStationDetailsFragment extends Fragment {
         }
     }
 
-    public interface RadioStationDetailsFragmentListener {
+    public interface RadioStationDetailsFragmentListener extends FabCallbackListener {
         void onRadioStationEdited(RadioStationDto updatedRadioStation);
 
         void onRadioStationSaved(RadioStationDto updatedRadioStation);

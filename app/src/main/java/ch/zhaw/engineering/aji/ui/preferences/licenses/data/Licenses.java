@@ -106,6 +106,17 @@ public class Licenses {
                 .libraryName(R.string.library_pcm_resampler)
                 .license(R.string.license_lgpl)
                 .url(R.string.library_pcm_resampler_url).build());
+
+
+        addItem(LicenseInformation.builder()
+                .libraryName(R.string.crossed_eye_icon)
+                .license(R.string.license_cc_by_3_0)
+                .url(R.string.crossed_eye_url).build());
+
+        addItem(LicenseInformation.builder()
+                .libraryName(R.string.eye_icon)
+                .license(R.string.license_cc_by_3_0)
+                .url(R.string.eye_url).build());
     }
 
 

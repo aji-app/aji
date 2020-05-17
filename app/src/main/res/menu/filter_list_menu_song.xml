@@ -29,21 +29,9 @@
         android:icon="@drawable/ic_down"
         android:title="@string/descending" />
 
-<!--    <item-->
-<!--        android:id="@+id/song_meta_direction"-->
-<!--        android:title="@string/direction"-->
-<!--        android:icon="@drawable/ic_order"-->
-<!--        app:showAsAction="never">-->
-<!--        <menu>-->
-<!--            <item-->
-<!--                android:id="@+id/direction_asc"-->
-<!--                android:icon="@drawable/ic_up"-->
-<!--                android:title="@string/ascending" />-->
-<!--            <item-->
-<!--                android:id="@+id/direction_desc"-->
-<!--                android:icon="@drawable/ic_down"-->
-<!--                android:title="@string/descending" />-->
-<!--        </menu>-->
-<!--    </item>-->
+    <item
+        android:id="@+id/song_meta_show_hidden"
+        android:icon="@drawable/ic_down"
+        android:title="@string/show_hidden" />
 
 </menu>

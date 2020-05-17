@@ -8,6 +8,7 @@ import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.ArtistDto;
 
 /* package */  class ArtistViewModel extends FilteringViewModel<SongDao, List<ArtistDto>> {
+    private boolean mShowHidden = false;
     ArtistViewModel(SongDao playlistDao) {
         super(playlistDao);
         update();
@@ -19,6 +20,16 @@ import ch.zhaw.engineering.aji.services.database.dto.ArtistDto;
 
     @Override
     protected LiveData<List<ArtistDto>> getUpdatedFilteredSource() {
-        return mDao.getArtists(mSearchText, mAscending);
+        return mDao.getArtists(mSearchText, mAscending, mShowHidden);
+    }
+
+    public boolean toggleShowHidden() {
+        mShowHidden = !mShowHidden;
+        update();
+        return mShowHidden;
+    }
+
+    public boolean showHiddenSongs() {
+        return mShowHidden;
     }
 }

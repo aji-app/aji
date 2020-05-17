@@ -24,7 +24,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:gravity="center"
-            android:src="@mipmap/universal_round"
+            android:src="?attr/app_icon_nav"
             android:contentDescription="@string/contentDescription_app_icon"/>
 
         <TextView

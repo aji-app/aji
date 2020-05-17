@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistBinding;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -42,9 +43,26 @@ public class PlaylistFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof PlaylistFragmentListener) {
             mListener = (PlaylistFragmentListener) context;
+            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement PlaylistFragmentListener");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        configureFab();
+    }
+
+    private void configureFab() {
+        if (mListener != null) {
+            mListener.configureFab(v -> {
+                if (mListener != null) {
+                    mListener.onCreatePlaylist(null);
+                }
+            }, R.drawable.ic_add);
         }
     }
 
@@ -63,12 +81,6 @@ public class PlaylistFragment extends Fragment {
                     .replace(R.id.playlist_container, PlaylistListFragment.newInstance())
                     .commitNow();
         }
-
-        binding.fabAddPlaylist.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onCreatePlaylist();
-            }
-        });
 
         return binding.getRoot();
     }
@@ -96,7 +108,7 @@ public class PlaylistFragment extends Fragment {
         return true;
     }
 
-    public interface PlaylistFragmentListener {
-        void onCreatePlaylist();
+    public interface PlaylistFragmentListener extends FabCallbackListener {
+        void onCreatePlaylist(Long songToAdd);
     }
 }

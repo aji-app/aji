@@ -67,4 +67,17 @@
             android:name="license-text-id"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_directory"
+        android:name="ch.zhaw.engineering.aji.ui.directories.DirectoryFragment"
+        android:label="@string/menu_directory_selection"
+        tools:layout="@layout/fragment_directory_list" >
+        <argument
+            android:name="show-files-extensions"
+            app:argType="string[]" />
+        <argument
+            android:name="select-files-only"
+            app:argType="boolean"
+            app:defaultValue="false" />
+    </fragment>
 </navigation>

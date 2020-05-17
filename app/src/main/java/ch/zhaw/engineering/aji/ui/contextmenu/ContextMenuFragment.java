@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
@@ -66,7 +67,16 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mConfig.observe(getViewLifecycleOwner(), config -> {
-            mRecyclerView.setAdapter(new ContextMenuRecyclerViewAdapter(config, getActivity(), this));
+            List<ItemConfig> exclusiveItems = new ArrayList<>();
+            List<ItemConfig> normalItems = new ArrayList<>();
+            for (ItemConfig itemConfig : config) {
+                if (itemConfig.isExclusive()) {
+                    exclusiveItems.add(itemConfig);
+                } else {
+                    normalItems.add(itemConfig);
+                }
+            }
+            mRecyclerView.setAdapter(new ContextMenuRecyclerViewAdapter(exclusiveItems.size() > 0 ? exclusiveItems : normalItems, getActivity(), this));
         });
     }
 
@@ -103,6 +113,9 @@ public class ContextMenuFragment extends BottomSheetDialogFragment {
 
         @Builder.Default
         String mText = null;
+
+        @Builder.Default
+        boolean mExclusive = false;
 
         void callCallback() {
             mCallback.onItemSelected(getValue());

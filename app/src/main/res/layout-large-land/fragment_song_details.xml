@@ -126,7 +126,7 @@
                     android:layout_height="@dimen/song_details_button_height"
                     android:drawablePadding="@dimen/button_with_image_padding"
                     android:text="@string/delete_song"
-                    app:drawableStartCompat="@drawable/ic_delete"
+                    app:drawableStartCompat="@drawable/ic_hide"
                     app:drawableTint="?attr/colorPrimary" />
             </LinearLayout>
         </ScrollView>

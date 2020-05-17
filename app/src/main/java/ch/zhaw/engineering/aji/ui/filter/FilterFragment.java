@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.ui.filter;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +26,7 @@ public class FilterFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private FilterFragmentListener mListener;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -59,5 +62,36 @@ public class FilterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_filter, container, false);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FilterFragmentListener) {
+            mListener = (FilterFragmentListener) context;
+            mListener.disableFab();
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FilterFragmentListener");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mListener != null) {
+            mListener.disableFab();
+        }
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+
+    public interface FilterFragmentListener  extends FabCallbackListener {
     }
 }

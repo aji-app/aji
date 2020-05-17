@@ -47,6 +47,9 @@ public class StorageHelper {
     }
 
     public static void deleteAlbumArt(String albumArtPath) {
+        if (albumArtPath == null) {
+            return;
+        }
         File albumArt = new File(albumArtPath);
         try {
             boolean deleted = albumArt.delete();

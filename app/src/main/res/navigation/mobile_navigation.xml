@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_nav_library_to_artist_details"
             app:destination="@id/nav_artist_details" />
+        <action
+            android:id="@+id/action_nav_library_to_nav_directory"
+            app:destination="@id/nav_directory" />
     </fragment>
 
     <fragment
@@ -95,6 +98,9 @@
         <action
             android:id="@+id/action_nav_radiostation_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_radiostation_details_to_nav_directory"
+            app:destination="@id/nav_directory" />
     </fragment>
     <fragment
         android:id="@+id/nav_song_details"
@@ -156,5 +162,17 @@
         <argument
             android:name="license-text-id"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_directory"
+        android:name="ch.zhaw.engineering.aji.ui.directories.DirectoryFragment"
+        tools:layout="@layout/fragment_directory_list" >
+        <argument
+            android:name="show-files-extensions"
+            app:argType="string[]" />
+        <argument
+            android:name="select-files-only"
+            app:argType="boolean"
+            app:defaultValue="false" />
     </fragment>
 </navigation>
