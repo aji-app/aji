@@ -410,12 +410,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     }
 
     @Override
-    public void onRadioStationImport() {
-        Intent intent = new Intent(this, PlsFileSelectionActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_PLS_SELECT);
-    }
-
-    @Override
     public void onPlayPause() {
         playPause();
         Log.i(TAG, "onPlayPause");

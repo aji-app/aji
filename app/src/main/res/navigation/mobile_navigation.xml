@@ -98,6 +98,9 @@
         <action
             android:id="@+id/action_nav_radiostation_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_radiostation_details_to_nav_directory"
+            app:destination="@id/nav_directory" />
     </fragment>
     <fragment
         android:id="@+id/nav_song_details"
@@ -165,5 +168,8 @@
         android:name="ch.zhaw.engineering.aji.ui.directories.DirectoryFragment"
         android:label="@string/menu_directory_selection"
         tools:layout="@layout/fragment_directory_list" >
+        <argument
+            android:name="show-files-extensions"
+            app:argType="string[]" />
     </fragment>
 </navigation>

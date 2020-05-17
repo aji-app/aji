@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,6 +29,7 @@ import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunna
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
@@ -156,6 +158,7 @@ public class RadioStationDetailsFragment extends Fragment {
             notifyListenerEdited();
         }
         setMenuVisibility(mInEditMode);
+        mBinding.radiostationEdit.setImageResource(mInEditMode ? R.drawable.ic_save : R.drawable.ic_edit);
         setFabCallback(mInEditMode);
     }
 
@@ -185,12 +188,15 @@ public class RadioStationDetailsFragment extends Fragment {
     }
 
     private void setFabCallback(boolean enabled) {
-        if (enabled) {
-            mListener.configureFab(v -> {
-                save();
-            }, R.drawable.ic_save);
-        } else {
-            mListener.disableFab();
+        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (!appViewModel.isTwoPane()) {
+            if (enabled) {
+                mListener.configureFab(v -> {
+                    save();
+                }, R.drawable.ic_save);
+            } else {
+                mListener.disableFab();
+            }
         }
     }
 
@@ -198,6 +204,7 @@ public class RadioStationDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setFabCallback(mInEditMode);
+
     }
 
     @Override

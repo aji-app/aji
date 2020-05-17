@@ -505,6 +505,18 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    public void onRadioStationImport() {
+        Bundle args = RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavDirectory(new String[]{".pls"}).getArguments();
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_directory, args);
+            return;
+        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.navigate(R.id.nav_directory, args);
+    }
+
+    @Override
     public void onSelectionFinished(File file) {
         Intent scrapeFiles = new Intent();
         scrapeFiles.putExtra(EXTRA_SCRAPE_ROOT_FOLDER, file.getAbsolutePath());

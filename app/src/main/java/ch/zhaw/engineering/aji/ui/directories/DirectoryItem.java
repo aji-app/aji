@@ -15,17 +15,29 @@ import lombok.Value;
 @AllArgsConstructor
 public class DirectoryItem {
     File mFile;
+    private String[] mFileExtensions;
     String mName;
     boolean mIsDirectory;
 
-    public DirectoryItem(File file) {
+    public DirectoryItem(File file, String[] fileExtensions) {
         mFile = file;
+        mFileExtensions = fileExtensions;
         mName = null;
         mIsDirectory = file.isDirectory();
     }
 
     private int countFiles(File file) {
-        File[] files = file.listFiles(new AudioFileFilter(true));
+        File[] files = mFileExtensions == null ? file.listFiles(new AudioFileFilter(true)) : file.listFiles(dir -> {
+            if (dir.isDirectory()) {
+                return true;
+            }
+            for (String ext : mFileExtensions) {
+                if (dir.getName().endsWith(ext)) {
+                    return true;
+                }
+            }
+            return false;
+        });
         int count = 0;
         if (files != null) {
 
@@ -41,7 +53,7 @@ public class DirectoryItem {
     }
 
     public static DirectoryItem parentDirectory(DirectoryItem parent) {
-        return new DirectoryItem(parent.mFile, "..", true);
+        return new DirectoryItem(parent.mFile, parent.mFileExtensions, "..", true);
     }
 
     public void getFileCount(ExecutorService executor, AudioBackend.Callback<Integer> callback) {

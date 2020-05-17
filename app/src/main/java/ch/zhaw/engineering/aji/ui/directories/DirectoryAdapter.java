@@ -32,12 +32,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     private final boolean mIsRoot;
     private final ExecutorService mExecutorService;
     private Activity mContext;
+    private boolean mAudioFiles;
 
-    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context) {
+    public DirectoryAdapter(List<DirectoryItem> items, DirectoryAdapterClickListener listener, boolean isRoot, Activity context, boolean audioFiles) {
         mValues = items;
         mListener = listener;
         mIsRoot = isRoot;
         mContext = context;
+        mAudioFiles = audioFiles;
         mExecutorService = Executors.newCachedThreadPool();
     }
 
@@ -69,7 +71,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
                 mContext.runOnUiThread(() -> {
                     holder.binding.containingFiles.setVisibility(i == null ? View.GONE : View.VISIBLE);
                     if (i != null) {
-                        holder.binding.containingFiles.setText(mContext.getResources().getQuantityString(R.plurals.files, i, i));
+                        holder.binding.containingFiles.setText(mContext.getResources().getQuantityString(mAudioFiles ? R.plurals.audio_files : R.plurals.files, i, i));
                     }
                 });
             });

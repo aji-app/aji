@@ -115,9 +115,13 @@
         <item quantity="one">%1$d Directory</item>
         <item quantity="other">%1$d Directories</item>
     </plurals>
-    <plurals name="files">
+    <plurals name="audio_files">
         <item quantity="one">%1$d Audio File</item>
         <item quantity="other">%1$d Audio Files</item>
+    </plurals>
+    <plurals name="files">
+        <item quantity="one">%1$d File</item>
+        <item quantity="other">%1$d Files</item>
     </plurals>
     <string name="unknown_files">\? Audio Files</string>
     <string name="remove_all_songs">Remove all Songs and Playlists</string>
