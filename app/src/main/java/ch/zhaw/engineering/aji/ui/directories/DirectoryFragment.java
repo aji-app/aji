@@ -28,6 +28,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.files.AudioFileFilter;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 
 /**
@@ -113,6 +114,11 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
         PermissionChecker.checkForExternalStoragePermission(getActivity(), mHasPermission);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mListener.disableFab();
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -211,7 +217,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnDirectoryFragmentListener {
+    public interface OnDirectoryFragmentListener extends FabCallbackListener {
         // TODO: Update argument type and name
         void onSelectionFinished(File directory);
     }

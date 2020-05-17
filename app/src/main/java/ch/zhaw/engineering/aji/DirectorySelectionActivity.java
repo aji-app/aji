@@ -3,6 +3,7 @@ package ch.zhaw.engineering.aji;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
@@ -21,6 +22,16 @@ public class DirectorySelectionActivity extends AppCompatActivity implements Dir
                     .replace(R.id.container, DirectoryFragment.newInstance(1, false))
                     .commitNow();
         }
+    }
+
+    @Override
+    public void disableFab() {
+
+    }
+
+    @Override
+    public void configureFab(@NonNull MainActivity.FabCallback fabCallback, int icon) {
+
     }
 
     @Override

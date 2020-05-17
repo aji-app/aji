@@ -31,7 +31,6 @@
             android:name="ch.zhaw.engineering.aji.MainActivityOld"
             android:exported="true" />
         <activity android:name="ch.zhaw.engineering.aji.DirectorySelectionActivity" />
-        <activity android:name="ch.zhaw.engineering.aji.PlsFileSelectionActivity" />
 
         <service
             android:name="ch.zhaw.engineering.aji.services.files.AudioFileScanner"
