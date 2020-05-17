@@ -59,8 +59,8 @@ public abstract class RadioStationDao {
         update(updatedRadioStation.toRadioStation());
     }
 
-    public void createRadioStation(RadioStationDto radioStation) {
-        insertRadioStation(radioStation.toRadioStation());
+    public long createRadioStation(RadioStationDto radioStation) {
+       return insertRadioStation(radioStation.toRadioStation());
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

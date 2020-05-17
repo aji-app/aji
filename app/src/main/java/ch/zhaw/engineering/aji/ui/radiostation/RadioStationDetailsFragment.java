@@ -221,7 +221,11 @@ public class RadioStationDetailsFragment extends Fragment {
     private void notifyListenerEdited() {
         updateRadioStationData();
         if (mListener != null) {
-            mListener.onRadioStationEdited(mRadioStation);
+            if (mRadioStationId != null) {
+                mListener.onRadioStationEdited(mRadioStation);
+            } else {
+                mListener.onRadioStationSaved(mRadioStation);
+            }
         }
     }
 
