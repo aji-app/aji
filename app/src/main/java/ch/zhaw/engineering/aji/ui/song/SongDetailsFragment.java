@@ -24,6 +24,7 @@ import ch.zhaw.engineering.aji.services.audio.notification.NotificationHelper;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
@@ -73,6 +74,12 @@ public class SongDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mListener.disableFab();
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SongDetailsFragmentListener) {
@@ -117,7 +124,7 @@ public class SongDetailsFragment extends Fragment {
         }
     }
 
-    public interface SongDetailsFragmentListener {
+    public interface SongDetailsFragmentListener extends FabCallbackListener {
 
         void onSongAddToPlaylist(long songId);
 

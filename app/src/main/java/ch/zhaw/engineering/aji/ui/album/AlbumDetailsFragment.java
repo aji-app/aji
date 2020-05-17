@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.ui.album;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -20,12 +21,14 @@ import ch.zhaw.engineering.aji.databinding.FragmentAlbumDetailsBinding;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.song.list.AlbumSongListFragment;
 
 public class AlbumDetailsFragment extends Fragment {
     private static final String ARG_ALBUM = "album";
     private String mAlbum;
     private FragmentAlbumDetailsBinding mBinding;
+    private AlbumDetailsListener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,29 @@ public class AlbumDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof AlbumDetailsListener) {
+            mListener = (AlbumDetailsListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement AlbumDetailsListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mListener.disableFab();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         AsyncTask.execute(() -> {
@@ -59,6 +85,8 @@ public class AlbumDetailsFragment extends Fragment {
                 });
             }
         });
+    }
 
+    public interface AlbumDetailsListener extends FabCallbackListener {
     }
 }

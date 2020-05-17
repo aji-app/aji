@@ -46,7 +46,9 @@ import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
+import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragment;
 import ch.zhaw.engineering.aji.ui.album.AlbumDetailsFragmentDirections;
+import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
@@ -79,7 +81,7 @@ import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
 public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener,
-        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener {
+        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
