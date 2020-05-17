@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
-final VERSION_NAME = "1.0.0-rc1"
-final VERSION_CODE = 1
+final VERSION_NAME = "1.0.0-rc2"
+final VERSION_CODE = 2
 
 android {
     compileSdkVersion 29
