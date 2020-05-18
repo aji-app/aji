@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginBottom="10dp"
-        android:contentDescription="@string/contentDescription_album_art"
-        android:src="@drawable/ic_placeholder_image" />
+        android:contentDescription="@string/contentDescription_album_art"/>
 
     <LinearLayout
         android:layout_width="match_parent"

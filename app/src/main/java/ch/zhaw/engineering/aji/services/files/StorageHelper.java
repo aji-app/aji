@@ -31,7 +31,7 @@ public class StorageHelper {
                 return null;
             }
         }
-        String filenameIdentifier = song.getMediaStoreSongId() != null ? song.getMediaStoreSongId().toString() : UUID.randomUUID().toString();
+        String filenameIdentifier = song.getAlbum();
         File albumArtPath = new File(directory, getAlbumArtPath(filenameIdentifier));
 
         FileOutputStream fos;
@@ -47,6 +47,7 @@ public class StorageHelper {
     }
 
     public static void deleteAlbumArt(String albumArtPath) {
+        // TODO: Check that we don't delete albums we still have
         if (albumArtPath == null) {
             return;
         }

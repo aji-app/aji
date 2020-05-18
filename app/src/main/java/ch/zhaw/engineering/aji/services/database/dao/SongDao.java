@@ -159,6 +159,9 @@ public abstract class SongDao {
             "GROUP BY song.album ")
     public abstract AlbumDto getAlbum(String album);
 
+    @Query("SELECT Count(song.songID) as name FROM Song song WHERE song.album = :album ")
+    public abstract int getAlbumSongCount(String album);
+
     @Query("SELECT * from Song where songId in (:songIds)")
     public abstract LiveData<List<Song>> getSongs(List<Long> songIds);
 

@@ -118,6 +118,8 @@ public class SongDetailsFragment extends Fragment {
                                 mBinding.songItemFavorite.setImageResource(song.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
                                 if (song.getAlbumArtPath() != null) {
                                     Picasso.get().load(new File(song.getAlbumArtPath())).into(mBinding.albumCover);
+                                } else {
+                                    mBinding.albumCover.setImageResource(R.drawable.ic_placeholder_image);
                                 }
                             } else {
                                 mListener.onSupportNavigateUp();
