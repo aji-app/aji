@@ -48,6 +48,7 @@ import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
+import ch.zhaw.engineering.aji.ui.library.FavoriteFragment;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;

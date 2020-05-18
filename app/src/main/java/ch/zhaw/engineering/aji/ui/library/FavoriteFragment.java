@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.ui.library;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,18 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentFavoriteBinding;
+import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
-import ch.zhaw.engineering.aji.ui.song.list.SongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class FavoriteFragment extends Fragment {
 
     private FavoritesSongListFragment mListFragment;
     private AppViewModel mAppViewModel;
+    private FavoritesFragmentListener mListener;
+    private boolean mConfigureAtStart = false;
 
     public static FavoriteFragment newInstance() {
         return new FavoriteFragment();
@@ -35,6 +37,7 @@ public class FavoriteFragment extends Fragment {
         if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
             mListFragment.showFirst();
         }
+        configureFab();
     }
 
     @Override
@@ -54,5 +57,45 @@ public class FavoriteFragment extends Fragment {
                 .commit();
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FavoritesFragmentListener) {
+            mListener = (FavoritesFragmentListener) context;
+            if (mConfigureAtStart) {
+                configureFab();
+                mConfigureAtStart = false;
+            }
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FavoritesFragmentListener");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    private void configureFab() {
+        if (mListener != null) {
+            mListener.configureFab(view -> {
+                mListener.onPlayFavorites();
+            }, R.drawable.ic_play);
+        } else {
+            mConfigureAtStart = true;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface FavoritesFragmentListener extends FabCallbackListener {
+        void onPlayFavorites();
     }
 }

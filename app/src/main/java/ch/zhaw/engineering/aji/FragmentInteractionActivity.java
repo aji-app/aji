@@ -29,9 +29,12 @@ import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.ui.album.AlbumFragment;
+import ch.zhaw.engineering.aji.ui.artist.ArtistFragment;
 import ch.zhaw.engineering.aji.ui.contextmenu.ContextMenuFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
+import ch.zhaw.engineering.aji.ui.library.FavoriteFragment;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragment;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragment;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistListFragment;
@@ -47,7 +50,8 @@ import lombok.Value;
 public abstract class FragmentInteractionActivity extends AudioInterfaceActivity implements SongListFragment.SongListFragmentListener,
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationListFragment.RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
-        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener {
+        SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener,
+        FavoriteFragment.FavoritesFragmentListener, ArtistFragment.ArtistFragmentListener, AlbumFragment.AlbumFragmentListener {
 
     private static final String TAG = "FragmentInteractions";
     private static final int REQUEST_CODE_PLS_SELECT = 2;
@@ -397,7 +401,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             } else {
                 long id = mRadioStationDao.createRadioStation(updatedRadioStation);
                 mAppViewModel.setOpenFirstInList(false);
-                runOnUiThread(() ->navigateToRadioStation(id == -1 ? null : id));
+                runOnUiThread(() -> navigateToRadioStation(id == -1 ? null : id));
             }
             Log.i(TAG, "onRadioStationSaved: " + updatedRadioStation.getName());
         });
@@ -570,6 +574,14 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         });
     }
 
+    @Override
+    public void onPlayFavorites() {
+        AsyncTask.execute(() -> {
+            List<Song> favorites = mSongDao.getFavoritesAsList();
+            playMusic(favorites, false);
+        });
+    }
+
     private void showCreatePlaylistDialog(Long songToAdd, boolean showConfirmation) {
         View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
@@ -689,7 +701,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             mSongDao.unhideSongsByArtist(artist);
         });
     }
-
 
     protected abstract void navigateToPlaylist(int playlistId);
 

@@ -104,7 +104,13 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
                         }
                     } else if (!song.isRadio()) {
                         if (getAdapter() != null) {
-                            getAdapter().setHighlighted(song.getId(), mHighlightCurrentSongOnlyWithCorrectPosition ? song.getPositionInQueue() : null);
+                            if (mHighlightCurrentSongOnlyWithCorrectPosition) {
+                                int position = song.getPositionInQueue();
+                                getAdapter().setHighlighted(song.getId(), position);
+                                mRecyclerView.scrollToPosition(position);
+                            } else {
+                                getAdapter().setHighlighted(song.getId(), null);
+                            }
                         } else {
                             mPlayingSongId = song.getId();
                         }

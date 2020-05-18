@@ -46,6 +46,9 @@ public class LibraryFragment extends Fragment {
     private AlbumFragment mAlbumFragment;
     private FavoriteFragment mFavoriteFragment;
     private SongFragment mSongsFragment;
+    private boolean mTriggerArtistOnShown = false;
+    private boolean mTriggerAlbumOnShown = false;
+    private boolean mTriggerFavoriteOnShown = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,15 +76,27 @@ public class LibraryFragment extends Fragment {
                     case ARTISTS:
                         mCurrentSortResource = SortResource.ARTISTS;
                         toggleMenuItems(false, true, true);
+                        if (mArtistFragment != null) {
+                            mArtistFragment.onShown();
+                        } else {
+                            mTriggerArtistOnShown = true;
+                        }
                         break;
                     case ALBUMS:
                         mCurrentSortResource = SortResource.ALBUMS;
                         toggleMenuItems(false, true, true);
+                        if (mAlbumFragment != null) {
+                            mAlbumFragment.onShown();
+                        } else {
+                            mTriggerAlbumOnShown = true;
+                        }
                         break;
                     case FAVORITES:
                         toggleMenuItems(false, false, false);
                         if (mFavoriteFragment != null) {
                             mFavoriteFragment.onShown();
+                        } else {
+                            mTriggerFavoriteOnShown = true;
                         }
                         break;
                     case SONGS:
@@ -218,14 +233,23 @@ public class LibraryFragment extends Fragment {
                 case ARTISTS:
                     ArtistFragment artistfragment = ArtistFragment.newInstance();
                     mLibraryFragment.setArtistFragment(artistfragment);
+                    if(mLibraryFragment.mTriggerArtistOnShown) {
+                        artistfragment.onShown();
+                    }
                     return artistfragment;
                 case ALBUMS:
                     AlbumFragment albumFragment = AlbumFragment.newInstance();
                     mLibraryFragment.setAlbumFragment(albumFragment);
+                    if(mLibraryFragment.mTriggerAlbumOnShown) {
+                        albumFragment.onShown();
+                    }
                     return albumFragment;
                 case FAVORITES:
                     FavoriteFragment favoritesFragment = FavoriteFragment.newInstance();
                     mLibraryFragment.setFavoritesFragment(favoritesFragment);
+                    if(mLibraryFragment.mTriggerFavoriteOnShown) {
+                        favoritesFragment.onShown();
+                    }
                     return favoritesFragment;
                 case SONGS:
                 default:
