@@ -22,6 +22,14 @@
         app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
         app:navGraph="@navigation/detail_navigation"
         tools:ignore="FragmentTagUsage" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/content_divider_color"
+        app:layout_constraintTop_toBottomOf="@id/nav_details_fragment"
+        app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
+        android:layout_marginStart="@dimen/divider_tablet_margin_left_right_top"
+        android:layout_marginEnd="@dimen/divider_tablet_margin_left_right_top"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

@@ -21,6 +21,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation"
         tools:ignore="FragmentTagUsage" />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="?attr/content_divider_color"
+        app:layout_constraintStart_toEndOf="@id/nav_host_fragment"
+        app:layout_constraintEnd_toStartOf="@id/nav_details_fragment"
+        android:layout_marginTop="@dimen/divider_tablet_margin_left_right_top"
+        android:layout_marginBottom="@dimen/divider_tablet_margin_bottom"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

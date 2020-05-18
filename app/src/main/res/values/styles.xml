@@ -21,6 +21,7 @@
         <item name="buttonTextColor">@color/purplelime_primaryText</item>
         <item name="disabledColor">@color/purplelime_secondaryText</item>
         <item name="link_color">@color/purplelime_linkColor</item>
+        <item name="content_divider_color">@color/purplelime_divider</item>
 
         <item name="textAppearanceListItem">@style/Theme.App.Widget.ListItemTextView</item>
 
