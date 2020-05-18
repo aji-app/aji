@@ -31,8 +31,7 @@ public class StorageHelper {
                 return null;
             }
         }
-        // TODO: Store by album name
-        String filenameIdentifier = song.getMediaStoreSongId() != null ? song.getMediaStoreSongId().toString() : UUID.randomUUID().toString();
+        String filenameIdentifier = song.getAlbum();
         File albumArtPath = new File(directory, getAlbumArtPath(filenameIdentifier));
 
         FileOutputStream fos;

@@ -102,7 +102,10 @@ public class MediaStoreSynchronizer {
 
         List<Long> songsToDelete = new ArrayList<>();
         for (Song song : nonExistingSongs.values()) {
-            StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+            int albumSongCount = songDao.getAlbumSongCount(song.getAlbum());
+            if (albumSongCount == 1) {
+                StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+            }
             songsToDelete.add(song.getSongId());
         }
 
@@ -171,6 +174,7 @@ public class MediaStoreSynchronizer {
         MediaStoreSynchronizer mSynchronizer;
         Handler mHandler;
     }
+
     private static class BackgroundSyncTask extends AsyncTask<BackgroundArgs, Void, Void> {
 
         @Override
@@ -183,7 +187,7 @@ public class MediaStoreSynchronizer {
                 Thread.sleep(WAIT_TIME);
                 Log.i(TAG, "Triggering Synchronization");
                 contexts[0].getHandler().post(() -> {
-                   contexts[0].getSynchronizer().synchronizeAllSongs();
+                    contexts[0].getSynchronizer().synchronizeAllSongs();
                 });
             } catch (InterruptedException e) {
                 // This happens when we cancel the task
