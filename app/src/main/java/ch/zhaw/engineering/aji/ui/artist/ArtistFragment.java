@@ -36,16 +36,11 @@ public class ArtistFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_artist, container, false);
     }
 
-    public void onShown() {
-        configureFab();
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof ArtistFragmentListener) {
             mListener = (ArtistFragmentListener) context;
-            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
@@ -53,8 +48,8 @@ public class ArtistFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         configureFab();
     }
 

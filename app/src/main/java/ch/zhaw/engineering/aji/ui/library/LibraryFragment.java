@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,17 +43,13 @@ public class LibraryFragment extends Fragment {
     private List<MenuItem> mDirectionMenuItems = new ArrayList<>();
     private MenuItem mSearchMenuItem;
 
-    private ArtistFragment mArtistFragment;
-    private AlbumFragment mAlbumFragment;
-    private FavoriteFragment mFavoriteFragment;
-    private SongFragment mSongsFragment;
-    private boolean mTriggerArtistOnShown = false;
-    private boolean mTriggerAlbumOnShown = false;
-    private boolean mTriggerFavoriteOnShown = false;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            List<Fragment> frags = getChildFragmentManager().getFragments();
+            Log.i("BUBU", "BUBU");
+        }
         setHasOptionsMenu(true);
     }
 
@@ -76,38 +73,18 @@ public class LibraryFragment extends Fragment {
                     case ARTISTS:
                         mCurrentSortResource = SortResource.ARTISTS;
                         toggleMenuItems(false, true, true);
-                        if (mArtistFragment != null) {
-                            mArtistFragment.onShown();
-                        } else {
-                            mTriggerArtistOnShown = true;
-                        }
                         break;
                     case ALBUMS:
                         mCurrentSortResource = SortResource.ALBUMS;
                         toggleMenuItems(false, true, true);
-                        if (mAlbumFragment != null) {
-                            mAlbumFragment.onShown();
-                        } else {
-                            mTriggerAlbumOnShown = true;
-                        }
                         break;
                     case FAVORITES:
                         toggleMenuItems(false, false, false);
-                        if (mFavoriteFragment != null) {
-                            mFavoriteFragment.onShown();
-                        } else {
-                            mTriggerFavoriteOnShown = true;
-                        }
                         break;
                     case SONGS:
                     default:
                         mCurrentSortResource = SortResource.SONGS;
                         toggleMenuItems(true, true, true);
-                        if (showFirstSong() && mSongsFragment != null) {
-                            mSongsFragment.onShown();
-                        } else {
-                            mAppViewModel.setOpenFirstInList(true);
-                        }
                 }
                 if (mMenu != null) {
                     MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
@@ -231,30 +208,14 @@ public class LibraryFragment extends Fragment {
             Tab current = Tab.fromPosition(position);
             switch (current) {
                 case ARTISTS:
-                    ArtistFragment artistfragment = ArtistFragment.newInstance();
-                    mLibraryFragment.setArtistFragment(artistfragment);
-                    if(mLibraryFragment.mTriggerArtistOnShown) {
-                        artistfragment.onShown();
-                    }
-                    return artistfragment;
+                    return ArtistFragment.newInstance();
                 case ALBUMS:
-                    AlbumFragment albumFragment = AlbumFragment.newInstance();
-                    mLibraryFragment.setAlbumFragment(albumFragment);
-                    if(mLibraryFragment.mTriggerAlbumOnShown) {
-                        albumFragment.onShown();
-                    }
-                    return albumFragment;
+                    return AlbumFragment.newInstance();
                 case FAVORITES:
-                    FavoriteFragment favoritesFragment = FavoriteFragment.newInstance();
-                    mLibraryFragment.setFavoritesFragment(favoritesFragment);
-                    if(mLibraryFragment.mTriggerFavoriteOnShown) {
-                        favoritesFragment.onShown();
-                    }
-                    return favoritesFragment;
+                    return FavoriteFragment.newInstance();
                 case SONGS:
                 default:
                     SongFragment songFragment = SongFragment.newInstance();
-                    mLibraryFragment.setSongsFragment(songFragment);
                     return songFragment;
             }
         }
@@ -263,22 +224,6 @@ public class LibraryFragment extends Fragment {
         public int getItemCount() {
             return 4;
         }
-    }
-
-    private void setArtistFragment(ArtistFragment fragment) {
-        mArtistFragment = fragment;
-    }
-
-    private void setAlbumFragment(AlbumFragment fragment) {
-        mAlbumFragment = fragment;
-    }
-
-    private void setFavoritesFragment(FavoriteFragment fragment) {
-        mFavoriteFragment = fragment;
-    }
-
-    private void setSongsFragment(SongFragment fragment) {
-        mSongsFragment = fragment;
     }
 
     private enum Tab {

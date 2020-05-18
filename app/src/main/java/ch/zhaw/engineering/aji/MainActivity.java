@@ -480,6 +480,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mAppViewModel.setOpenFirstInList(true);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
 

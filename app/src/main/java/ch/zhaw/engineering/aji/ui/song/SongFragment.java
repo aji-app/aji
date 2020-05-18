@@ -36,30 +36,32 @@ public class SongFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            mListFragment = AllSongsListFragment.newInstance();
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, mListFragment)
-                    .commitNow();
+        mListFragment = AllSongsListFragment.newInstance();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.bottom_container, mListFragment)
+                .commitNow();
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
         }
     }
 
-    public void onShown() {
+    @Override
+    public void onResume() {
+        super.onResume();
         if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
             mListFragment.showFirst();
         }
         configureFab();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
     private void configureFab() {
-        if (getActivity()  != null) {
-            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (getActivity() != null) {
             PreferenceHelper helper = new PreferenceHelper(getActivity());
             configureFab(!helper.isMediaStoreEnabled());
         }
@@ -86,7 +88,7 @@ public class SongFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof SongFragmentListener) {
             mListener = (SongFragmentListener) context;
-            configureFab();
+//            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
@@ -96,7 +98,7 @@ public class SongFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        configureFab();
+//        configureFab();
     }
 
     @Override

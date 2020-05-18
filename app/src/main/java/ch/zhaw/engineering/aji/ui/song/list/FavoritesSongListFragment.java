@@ -21,8 +21,12 @@ public class FavoritesSongListFragment extends SongListFragment {
             mSongs = songs;
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
+                    if (mShowFirst && mSongs.size() > 0) {
+                        mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
+                    }
                     setAdapter(new SongRecyclerViewAdapter(songs, mListener));
                     mRecyclerView.setAdapter(getAdapter());
+
                 });
             }
         });

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentFavoriteBinding;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
@@ -33,19 +34,21 @@ public class FavoriteFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    public void onShown() {
-        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
-            mListFragment.showFirst();
-        }
-        configureFab();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
+            mListFragment.showFirst();
+        }
+        configureFab();
     }
 
     @Override
@@ -64,19 +67,10 @@ public class FavoriteFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof FavoritesFragmentListener) {
             mListener = (FavoritesFragmentListener) context;
-            if (mConfigureAtStart) {
-                configureFab();
-                mConfigureAtStart = false;
-            }
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement FavoritesFragmentListener");
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     private void configureFab() {
@@ -84,8 +78,6 @@ public class FavoriteFragment extends Fragment {
             mListener.configureFab(view -> {
                 mListener.onPlayFavorites();
             }, R.drawable.ic_play);
-        } else {
-            mConfigureAtStart = true;
         }
     }
 

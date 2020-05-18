@@ -40,20 +40,15 @@ public class AlbumFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof AlbumFragmentListener) {
             mListener = (AlbumFragmentListener) context;
-            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement AlbumFragmentListener");
         }
     }
 
-    public void onShown() {
-        configureFab();
-    }
-
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         configureFab();
     }
 
