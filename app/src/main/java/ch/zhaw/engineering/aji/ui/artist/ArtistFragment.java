@@ -59,7 +59,9 @@ public class ArtistFragment extends Fragment {
     }
 
     private void configureFab() {
-        mListener.disableFab();
+        if (mListener != null) {
+            mListener.disableFab();
+        }
     }
 
     @Override
