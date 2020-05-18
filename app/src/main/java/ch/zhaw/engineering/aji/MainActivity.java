@@ -380,8 +380,14 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
-        navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
-
+        if (navController.getCurrentDestination() != null) {
+            int id = navController.getCurrentDestination().getId();
+            if (id == R.id.nav_radiostation_details) {
+                navController.navigate(R.id.action_nav_radiostation_details_self, args, new NavOptions.Builder().setPopUpTo(R.id.nav_radiostation_details, true).build());
+            } else {
+                navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args);
+            }
+        }
     }
 
     private void navigateToRadioStationFromLibrary(Long radioStationId) {
