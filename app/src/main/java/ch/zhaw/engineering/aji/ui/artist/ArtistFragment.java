@@ -51,6 +51,9 @@ public class ArtistFragment extends Fragment {
     public void onResume() {
         super.onResume();
         configureFab();
+        if (mListener != null) {
+            mListener.showEmptyDetails();
+        }
     }
 
     private void configureFab() {
@@ -66,5 +69,6 @@ public class ArtistFragment extends Fragment {
     }
 
     public interface ArtistFragmentListener extends FabCallbackListener {
+        void showEmptyDetails();
     }
 }

@@ -564,6 +564,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         }
     }
 
+    @Override
+    public void showEmptyDetails() {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_placeholder_details);
+            return;
+        }
+    }
+
     public interface FabCallback {
         void onClick(View view);
     }

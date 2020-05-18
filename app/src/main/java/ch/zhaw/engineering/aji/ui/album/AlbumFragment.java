@@ -50,6 +50,9 @@ public class AlbumFragment extends Fragment {
     public void onResume() {
         super.onResume();
         configureFab();
+        if (mListener != null) {
+            mListener.showEmptyDetails();
+        }
     }
 
     private void configureFab() {
@@ -65,5 +68,6 @@ public class AlbumFragment extends Fragment {
     }
 
     public interface AlbumFragmentListener extends FabCallbackListener {
+        void showEmptyDetails();
     }
 }

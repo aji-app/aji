@@ -80,4 +80,8 @@
             app:argType="boolean"
             app:defaultValue="false" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_placeholder_details"
+        android:name="ch.zhaw.engineering.aji.ui.placeholder.PlaceholderFragment"
+        android:label="" />
 </navigation>

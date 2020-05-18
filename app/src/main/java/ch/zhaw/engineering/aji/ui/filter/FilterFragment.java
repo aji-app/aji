@@ -70,6 +70,7 @@ public class FilterFragment extends Fragment {
         if (context instanceof FilterFragmentListener) {
             mListener = (FilterFragmentListener) context;
             mListener.disableFab();
+            mListener.showEmptyDetails();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement FilterFragmentListener");
@@ -93,5 +94,6 @@ public class FilterFragment extends Fragment {
 
 
     public interface FilterFragmentListener  extends FabCallbackListener {
+        void showEmptyDetails();
     }
 }

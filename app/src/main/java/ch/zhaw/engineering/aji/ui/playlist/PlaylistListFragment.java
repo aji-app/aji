@@ -51,6 +51,14 @@ public class PlaylistListFragment extends ListFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mListener != null) {
+            mListener.showEmptyDetails();
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
@@ -110,5 +118,6 @@ public class PlaylistListFragment extends ListFragment {
 
         void onPlaylistDelete(int playlist);
 
+        void showEmptyDetails();
     }
 }
