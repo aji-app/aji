@@ -51,14 +51,6 @@ public class PlaylistListFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mListener != null) {
-            mListener.showEmptyDetails();
-        }
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
@@ -88,20 +80,6 @@ public class PlaylistListFragment extends ListFragment {
     private void onPlaylistsChanged(List<PlaylistWithSongCount> playlists) {
         Log.i(TAG, "Updating playlists for playlist list fragment");
         if (getActivity() != null) {
-            if (playlists.size() > 0) {
-                AsyncTask.execute(() -> {
-                    Song song = mAppViewModel.getFirstSongOfPlaylist(playlists.get(0).getPlaylistId());
-                    if (song != null && mAppViewModel.isTwoPane()) {
-                        getActivity().runOnUiThread(() -> {
-                            mListener.onSongSelected(song.getSongId(), 0);
-                        });
-                    } else {
-                        mAppViewModel.setPlaceholderText(R.string.empty_playlist_prompt);
-                    }
-                });
-            } else {
-                mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
-            }
             getActivity().runOnUiThread(() -> {
                 mBinding.songPrompt.setVisibility(!playlists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                 if (mAdapter == null) {
@@ -133,9 +111,5 @@ public class PlaylistListFragment extends ListFragment {
         void onPlaylistQueue(int playlist);
 
         void onPlaylistDelete(int playlist);
-
-        public void onSongSelected(long songId, int position);
-
-        void showEmptyDetails();
     }
 }
