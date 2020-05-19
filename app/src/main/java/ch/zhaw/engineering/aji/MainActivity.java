@@ -172,7 +172,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         });
 
 
-        handleStartIntent();
+        handleStartIntent(getIntent());
     }
 
     @Override
@@ -223,9 +223,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         });
     }
 
-    private void handleStartIntent() {
-        if (getIntent() != null) {
-            Bundle extras = getIntent().getExtras();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleStartIntent(intent);
+    }
+
+    private void handleStartIntent(Intent intent) {
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
             if (extras != null) {
                 if (extras.containsKey(EXTRA_NOTIFICATION_ID)) {
                     NotificationManagerCompat.from(this).cancel(extras.getInt(EXTRA_NOTIFICATION_ID));

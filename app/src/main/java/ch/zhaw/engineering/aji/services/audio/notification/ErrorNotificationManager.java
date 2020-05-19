@@ -1,5 +1,6 @@
 package ch.zhaw.engineering.aji.services.audio.notification;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -108,14 +109,9 @@ public class ErrorNotificationManager {
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtras(args);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        return PendingIntent.getActivity(mContext, (int) songId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        return new NavDeepLinkBuilder(mContext)
-//                .setGraph(R.navigation.mobile_navigation)
-//                .setDestination(R.id.nav_song_details)
-//                .setArguments(args)
-//                .createPendingIntent();
+        intent.setAction("song-details " + songId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return PendingIntent.getActivity(mContext, (int) songId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent getRadioDetailsIntent(long radioId, int notificationId) {
@@ -124,17 +120,8 @@ public class ErrorNotificationManager {
         args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtras(args);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        return PendingIntent.getActivity(mContext, (int) radioId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-//        Bundle args = RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioId).getArguments();
-//        args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
-//
-//        return new NavDeepLinkBuilder(mContext)
-//                .setGraph(R.navigation.mobile_navigation)
-//                .setDestination(R.id.nav_radiostation_details)
-//                .setArguments(args)
-//                .createPendingIntent();
+        intent.setAction("radio-details " + radioId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return PendingIntent.getActivity(mContext, (int) radioId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
