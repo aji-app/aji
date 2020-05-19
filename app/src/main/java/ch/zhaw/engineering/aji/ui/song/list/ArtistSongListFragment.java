@@ -2,6 +2,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
@@ -37,6 +38,7 @@ public class ArtistSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
+                    mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
                         mListener.onSongSelected(songs.get(0).getSongId(), 0);
                     }

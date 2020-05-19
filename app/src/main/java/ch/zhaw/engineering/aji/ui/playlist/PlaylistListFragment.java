@@ -19,6 +19,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentPlaylistListBinding;
 import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -30,6 +31,7 @@ public class PlaylistListFragment extends ListFragment {
     private PlaylistFragmentListener mListener;
     private PlaylistRecyclerViewAdapter mAdapter;
     private AppViewModel mAppViewModel;
+    private FragmentPlaylistListBinding mBinding;
 
     @SuppressWarnings("unused")
     public static PlaylistListFragment newInstance() {
@@ -41,16 +43,11 @@ public class PlaylistListFragment extends ListFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-        return view;
+        mBinding = FragmentPlaylistListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -106,6 +103,7 @@ public class PlaylistListFragment extends ListFragment {
                 mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
             }
             getActivity().runOnUiThread(() -> {
+                mBinding.songPrompt.setVisibility(!playlists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                 if (mAdapter == null) {
                     mAdapter = new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity());
                 } else {

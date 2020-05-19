@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentAlbumArtistListBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
@@ -32,6 +33,7 @@ public class AlbumArtistListFragment extends ListFragment {
     private AlbumArtistListFragmentListener mListener;
     private Song mFirstSong;
     private AppViewModel mAppViewModel;
+    private FragmentAlbumArtistListBinding mBinding;
 
     public static AlbumArtistListFragment newArtistsInstance() {
         AlbumArtistListFragment fragment = new AlbumArtistListFragment();
@@ -65,6 +67,7 @@ public class AlbumArtistListFragment extends ListFragment {
 
     private void handleDetails() {
         if (mListener != null && getActivity() != null && mAppViewModel.isTwoPane()) {
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
             if (mFirstSong != null) {
                 getActivity().runOnUiThread(() -> {
                     mListener.onSongSelected(mFirstSong.getSongId(), 0);
@@ -77,16 +80,11 @@ public class AlbumArtistListFragment extends ListFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_album_artist_list, container, false);
-
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-
-        return view;
+        mBinding = FragmentAlbumArtistListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -97,7 +95,10 @@ public class AlbumArtistListFragment extends ListFragment {
             if (mMode == Mode.ALBUM) {
                 mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
                     AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs());
-                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                    getActivity().runOnUiThread(() -> {
+                        mBinding.songPrompt.setVisibility(!albums.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
+                        mRecyclerView.setAdapter(adapter);
+                    });
                     AsyncTask.execute(() -> {
                         if (albums.size() > 0) {
                             mFirstSong = mAppViewModel.getFirstSongOfAlbum(albums.get(0));
@@ -111,7 +112,10 @@ public class AlbumArtistListFragment extends ListFragment {
             } else if (mMode == Mode.ARTIST) {
                 mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
                     ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs());
-                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                    getActivity().runOnUiThread(() -> {
+                        mBinding.songPrompt.setVisibility(!artists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
+                        mRecyclerView.setAdapter(adapter);
+                    });
 
                     AsyncTask.execute(() -> {
                         if (artists.size() > 0) {

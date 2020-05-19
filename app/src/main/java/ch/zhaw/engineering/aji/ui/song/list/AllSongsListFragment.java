@@ -2,6 +2,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
@@ -28,6 +29,7 @@ public class AllSongsListFragment extends SongListFragment {
                 mSongs = songs;
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
+                        mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                         if (mShowFirst && mSongs.size() > 0) {
                             mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
                         }

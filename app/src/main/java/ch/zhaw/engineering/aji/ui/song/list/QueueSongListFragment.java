@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.content.Context;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -68,6 +69,7 @@ public class QueueSongListFragment extends SongListFragment {
     protected void initializeRecyclerView(AppViewModel appViewModel) {
         if (getActivity() != null) {
             mQueueListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
+                mBinding.songPrompt.setVisibility(View.GONE);
                 mSongIdToPosition.clear();
                 for (int i = 0; i < songs.size(); i++) {
                     Song song = songs.get(i);
