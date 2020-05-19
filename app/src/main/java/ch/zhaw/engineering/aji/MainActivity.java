@@ -108,8 +108,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     setupMediaStoreIntegration();
                 }
 
-                mSynchronizerControl = new SynchronizerControl(useMediaStore);
-                mSynchronizerControl.synchronizeSongsPeriodically(this);
+                mSynchronizerControl = new SynchronizerControl(useMediaStore, this);
                 preferenceHelper.observeMediaStoreSetting(enabled -> {
                     mSynchronizerControl.setMediaStore(enabled);
                     if (enabled) {
