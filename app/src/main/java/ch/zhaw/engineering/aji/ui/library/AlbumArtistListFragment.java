@@ -68,6 +68,9 @@ public class AlbumArtistListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+                mBinding.songPrompt.setText(text);
+            });
             if (mMode == Mode.ALBUM) {
                 mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
                     AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs());

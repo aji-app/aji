@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
@@ -37,7 +38,6 @@ public class AlbumFragment extends TabletAwareFragment {
         if (mTopSong != null) {
             mListener.onSongSelected(mTopSong.getSongId(), 0);
         } else {
-            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
             mListener.showEmptyDetails();
         }
     }
@@ -47,8 +47,16 @@ public class AlbumFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
             AsyncTask.execute(() -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.ALBUMS);
+                if (searchText!= null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+                }
                 if (albums.size() > 0) {
                     mTopSong = mAppViewModel.getFirstSongOfAlbum(albums.get(0));
+                } else {
+                    mTopSong = null;
                 }
                 triggerTabletLogic();
             });
@@ -92,6 +100,7 @@ public class AlbumFragment extends TabletAwareFragment {
 
     public interface AlbumFragmentListener extends FabCallbackListener {
         void showEmptyDetails();
+
         void onSongSelected(long songId, int position);
     }
 }

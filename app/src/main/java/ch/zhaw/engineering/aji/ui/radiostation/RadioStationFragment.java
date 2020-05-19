@@ -37,7 +37,6 @@ public class RadioStationFragment extends TabletAwareFragment {
         if (mRadioStationId == null && mTopRadio != null) {
             mListener.onRadioStationSelected(mTopRadio.getId());
         } else {
-            mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
             mListener.showEmptyDetails();
         }
     }
@@ -98,6 +97,12 @@ public class RadioStationFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.RADIOS);
+                if (searchText != null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
+                }
                 if (radios.size() > 0) {
                     mTopRadio = radios.get(0);
                 } else {

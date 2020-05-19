@@ -57,6 +57,9 @@ public class PlaylistListFragment extends ListFragment {
             mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             mAppViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
             mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+                mBinding.songPrompt.setText(text);
+            });
         }
     }
 

@@ -3,6 +3,7 @@ package ch.zhaw.engineering.aji.ui.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -111,6 +112,7 @@ public class AppViewModel extends AndroidViewModel {
         return true;
     }
 
+    @Nullable
     public String getSearchString(SortResource sortResource) {
         FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
         if (currentViewModel != null) {

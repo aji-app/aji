@@ -13,6 +13,7 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
@@ -21,6 +22,7 @@ public class SongFragment extends TabletAwareFragment {
     private SongFragmentListener mListener;
     private boolean mShowFirst = true;
     private Song mTopSong;
+    private FragmentSongBinding mBinding;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -39,6 +41,7 @@ public class SongFragment extends TabletAwareFragment {
         if (mTopSong != null) {
             mListener.onSongSelected(mTopSong.getSongId(), 0);
         } else {
+
             mListener.showEmptyDetails();
         }
     }
@@ -54,12 +57,18 @@ public class SongFragment extends TabletAwareFragment {
     }
 
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
+
             mAppViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.SONGS);
+                if (searchText != null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+                }
                 if (songs.isEmpty()) {
                     mTopSong = null;
                 } else {
@@ -86,13 +95,14 @@ public class SongFragment extends TabletAwareFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return FragmentSongBinding.inflate(inflater, container, false).getRoot();
+        mBinding = FragmentSongBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     private void configureFab(boolean enabled) {
         if (mListener != null) {
             if (enabled) {
-                mListener.configureFab(v ->{
+                mListener.configureFab(v -> {
                     mShowFirst = false;
                     mListener.onAddSongsButtonClick();
                 }, R.drawable.ic_add);
@@ -121,7 +131,9 @@ public class SongFragment extends TabletAwareFragment {
 
     public interface SongFragmentListener extends FabCallbackListener {
         void onAddSongsButtonClick();
+
         void onSongSelected(long songId, int position);
+
         void showEmptyDetails();
     }
 }

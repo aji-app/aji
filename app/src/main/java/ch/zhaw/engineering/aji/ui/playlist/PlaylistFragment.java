@@ -39,12 +39,11 @@ public class PlaylistFragment extends TabletAwareFragment {
 
     @Override
     protected void showDetails() {
-        mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
         if (mTopPlaylist != null) {
-            mAppViewModel.setPlaceholderText(R.string.empty_playlist_prompt);
             if (mTopSong != null) {
                 mListener.onSongSelected(mTopSong.getSongId(), 0);
             } else {
+                mAppViewModel.setPlaceholderText(R.string.empty_playlist_prompt);
                 mListener.showEmptyDetails();
             }
         } else {
@@ -110,6 +109,12 @@ public class PlaylistFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), playlists -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.PLAYLISTS);
+                if (searchText != null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
+                }
                 if (playlists.size() > 0) {
                     mTopPlaylist = playlists.get(0);
                     AsyncTask.execute(() -> {
