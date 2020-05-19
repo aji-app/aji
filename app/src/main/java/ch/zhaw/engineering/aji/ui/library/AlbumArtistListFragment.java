@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.library;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.ui.album.AlbumRecyclerViewAdapter;
@@ -28,6 +30,7 @@ public class AlbumArtistListFragment extends ListFragment {
 
     private Mode mMode;
     private AlbumArtistListFragmentListener mListener;
+    private Song mFirstSong;
 
     public static AlbumArtistListFragment newArtistsInstance() {
         AlbumArtistListFragment fragment = new AlbumArtistListFragment();
@@ -54,6 +57,22 @@ public class AlbumArtistListFragment extends ListFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        handleDetails();
+    }
+
+    private void handleDetails() {
+        if (mListener != null) {
+            if (mFirstSong != null) {
+                mListener.onSongSelected(mFirstSong.getSongId(), 0);
+            } else {
+                mListener.showEmptyDetails();
+            }
+        }
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album_artist_list, container, false);
 
@@ -76,11 +95,29 @@ public class AlbumArtistListFragment extends ListFragment {
                 appViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
                     AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, appViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                    AsyncTask.execute(() -> {
+                        if (albums.size() > 0) {
+                            mFirstSong = appViewModel.getFirstSongOfAlbum(albums.get(0));
+                            handleDetails();
+                        } else {
+                            handleDetails();
+                        }
+                    });
+
                 });
             } else if (mMode == Mode.ARTIST) {
                 appViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
                     ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, appViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+
+                    AsyncTask.execute(() -> {
+                        if (artists.size() > 0) {
+                            mFirstSong = appViewModel.getFirstSongOfArtist(artists.get(0));
+                            handleDetails();
+                        } else {
+                            handleDetails();
+                        }
+                    });
                 });
             }
         }
@@ -115,12 +152,16 @@ public class AlbumArtistListFragment extends ListFragment {
 
         void onArtistPlay(String artist);
 
+        void onSongSelected(long songId, int position);
+
 
         void onArtistQueue(String artist);
 
         void onArtistMenu(String artist);
 
         void onArtistSelected(String artist);
+
+        void showEmptyDetails();
     }
 
     private enum Mode {

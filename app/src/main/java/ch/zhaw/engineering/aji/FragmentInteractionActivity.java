@@ -72,10 +72,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onSongSelected(long songId, int position) {
-        AsyncTask.execute(() -> {
-            Song song = mSongDao.getSongById(songId);
-            Log.i(TAG, "onSongSelected: " + song.getTitle());
-        });
         navigateToSongDetails(songId);
     }
 

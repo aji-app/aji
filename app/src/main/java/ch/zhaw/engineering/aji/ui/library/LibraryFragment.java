@@ -189,6 +189,7 @@ public class LibraryFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
         }
     }
 

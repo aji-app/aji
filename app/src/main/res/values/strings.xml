@@ -131,4 +131,9 @@
     <string name="album_removed_from_library">Album \'%s\' has been hidden</string>
     <string name="unhide_artist_from_library">Show artist in Library</string>
     <string name="unhide_album_from_library">Show album in Library</string>
+
+    <string name="empty_playlists_prompt">No playlists available. Start by tapping the plus button to create your first playlist and then add some songs in the library</string>
+    <string name="empty_playlist_prompt">Start by some songs to your playlists in the library</string>
+    <string name="no_songs_prompt">Start by adding some songs to your device</string>
+    <string name="no_favorites_prompt">Start by adding some songs to your favorites</string>
 </resources>

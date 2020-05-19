@@ -59,6 +59,7 @@ public class AudioFileFilter implements FileFilter {
     public enum SupportedFileFormat {
         AAC("aac"),
         FLAC("flac"),
+        M4A("m4a"),
         MP3("mp3");
 
         private final String filesuffix;

@@ -101,6 +101,9 @@ public abstract class SongDao {
     @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId ORDER BY ps.`order`")
     public abstract LiveData<List<Song>> getSongsForPlaylist(long playlistId);
 
+    @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId and ps.`order` = 0 LIMIT 1")
+    public abstract Song getFirstSongOfPlaylist(long playlistId);
+
     @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId ORDER BY ps.`order`")
     public abstract List<Song> getSongsForPlaylistAsList(long playlistId);
 
@@ -202,6 +205,12 @@ public abstract class SongDao {
     @Query("DELETE FROM Song")
     public abstract void removeAllSongs();
 
+    @Query("SELECT * from Song where song.album = :name ORDER BY song.trackNumber, song.title LIMIT 1")
+    public abstract Song getFirstSongOfAlbum(String name);
+
+    @Query("SELECT * from Song where song.artist= :name ORDER BY song.album, song.trackNumber, song.title LIMIT 1")
+    public abstract Song getFirstSongOfArtist(String name);
+
     /*
      * Protected Helper Methods
      *
@@ -273,6 +282,7 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

@@ -45,9 +45,10 @@ public class FavoriteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
+        if (mAppViewModel.isTwoPane()) {
             mListFragment.showFirst();
         }
+        mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
         configureFab();
     }
 

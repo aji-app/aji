@@ -24,6 +24,7 @@ public class SongFragment extends Fragment {
     private SongFragmentListener mListener;
     private AllSongsListFragment mListFragment;
     private AppViewModel mAppViewModel;
+    private boolean mShowFirst = true;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -54,7 +55,7 @@ public class SongFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
+        if (mAppViewModel != null && mAppViewModel.isTwoPane() && mShowFirst) {
             mListFragment.showFirst();
         }
         configureFab();
@@ -76,7 +77,10 @@ public class SongFragment extends Fragment {
     private void configureFab(boolean enabled) {
         if (mListener != null) {
             if (enabled) {
-                mListener.configureFab(v -> mListener.onAddSongsButtonClick(), R.drawable.ic_add);
+                mListener.configureFab(v ->{
+                    mShowFirst = false;
+                    mListener.onAddSongsButtonClick();
+                }, R.drawable.ic_add);
             } else {
                 mListener.disableFab();
             }

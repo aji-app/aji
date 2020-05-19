@@ -23,13 +23,15 @@
         app:navGraph="@navigation/detail_navigation"
         tools:ignore="FragmentTagUsage" />
     <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?attr/content_divider_color"
         app:layout_constraintTop_toBottomOf="@id/nav_details_fragment"
         app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
         android:layout_marginStart="@dimen/divider_tablet_margin_left_right_top"
-        android:layout_marginEnd="@dimen/divider_tablet_margin_left_right_top"/>
+        android:layout_marginEnd="@dimen/divider_tablet_margin_left_right_top"
+        android:layout_marginBottom="10dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -48,10 +50,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nav_details_fragment"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         app:navGraph="@navigation/mobile_navigation"
         tools:ignore="FragmentTagUsage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

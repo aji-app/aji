@@ -58,7 +58,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         if (mSongs != null && mSongs.size() > 0) {
             mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
         } else {
-            mShowFirst = true;
+            mListener.showEmptyDetails();
         }
     }
 
@@ -167,5 +167,7 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         void onPlaylistModified(int playlistId, List<Long> songIds);
 
         LiveData<AudioService.SongInformation> getCurrentSong();
+
+        void showEmptyDetails();
     }
 }
