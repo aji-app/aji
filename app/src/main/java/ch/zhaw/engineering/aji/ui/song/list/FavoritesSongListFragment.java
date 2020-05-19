@@ -25,9 +25,6 @@ public class FavoritesSongListFragment extends SongListFragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
-                    if (mShowFirst && mSongs.size() > 0) {
-                        mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
-                    }
                     setAdapter(new SongRecyclerViewAdapter(songs, mListener));
                     mRecyclerView.setAdapter(getAdapter());
 

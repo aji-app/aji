@@ -134,5 +134,7 @@ public class RadioStationListFragment extends ListFragment {
         void onCreateRadioStation();
 
         LiveData<AudioService.SongInformation> getCurrentSong();
+
+        void showEmptyDetails();
     }
 }

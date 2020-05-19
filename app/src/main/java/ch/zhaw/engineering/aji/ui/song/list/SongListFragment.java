@@ -58,12 +58,12 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     }
 
     public void showFirst() {
-        mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
-        if (mSongs != null && mSongs.size() > 0) {
-            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
-        } else {
-            mListener.showEmptyDetails();
-        }
+//        mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+//        if (mSongs != null && mSongs.size() > 0) {
+//            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
+//        } else {
+//            mListener.showEmptyDetails();
+//        }
     }
 
     public void setAdapter(SongRecyclerViewAdapter adapter) {

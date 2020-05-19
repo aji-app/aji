@@ -13,18 +13,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
-public class SongFragment extends Fragment {
+public class SongFragment extends TabletAwareFragment {
 
     private FragmentSongBinding mBinding;
     private SongFragmentListener mListener;
     private AllSongsListFragment mListFragment;
-    private AppViewModel mAppViewModel;
     private boolean mShowFirst = true;
+    private Song mTopSong;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -32,6 +34,19 @@ public class SongFragment extends Fragment {
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    protected void showDetails() {
+        mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+        if (!mShowFirst) {
+            return;
+        }
+        if (mTopSong != null) {
+            mListener.onSongSelected(mTopSong.getSongId(), 0);
+        } else {
+            mListener.showEmptyDetails();
+        }
     }
 
     @Override
@@ -48,7 +63,14 @@ public class SongFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
+                if (songs.isEmpty()) {
+                    mTopSong = null;
+                } else {
+                    mTopSong = songs.get(0);
+                }
+                triggerTabletLogic();
+            });
         }
     }
 
@@ -113,5 +135,7 @@ public class SongFragment extends Fragment {
 
     public interface SongFragmentListener extends FabCallbackListener {
         void onAddSongsButtonClick();
+        void onSongSelected(long songId, int position);
+        void showEmptyDetails();
     }
 }

@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.album;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,14 +9,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
-public class AlbumFragment extends Fragment {
+public class AlbumFragment extends TabletAwareFragment {
     private AlbumFragmentListener mListener;
+    private Song mTopSong;
 
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
@@ -27,6 +30,29 @@ public class AlbumFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.album_list_container, AlbumArtistListFragment.newAlbumInstance())
                 .commitNow();
+    }
+
+    @Override
+    protected void showDetails() {
+        if (mTopSong != null) {
+            mListener.onSongSelected(mTopSong.getSongId(), 0);
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+            mListener.showEmptyDetails();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
+            AsyncTask.execute(() -> {
+                if (albums.size() > 0) {
+                    mTopSong = mAppViewModel.getFirstSongOfAlbum(albums.get(0));
+                }
+                triggerTabletLogic();
+            });
+        });
     }
 
     @Override
@@ -50,9 +76,6 @@ public class AlbumFragment extends Fragment {
     public void onResume() {
         super.onResume();
         configureFab();
-//        if (mListener != null) {
-//            mListener.showEmptyDetails();
-//        }
     }
 
     private void configureFab() {
@@ -69,5 +92,6 @@ public class AlbumFragment extends Fragment {
 
     public interface AlbumFragmentListener extends FabCallbackListener {
         void showEmptyDetails();
+        void onSongSelected(long songId, int position);
     }
 }

@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.artist;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +9,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
-public class ArtistFragment extends Fragment {
+public class ArtistFragment extends TabletAwareFragment {
 
     private ArtistFragmentListener mListener;
+    private Song mTopSong;
 
     public static ArtistFragment newInstance() {
         return new ArtistFragment();
@@ -28,6 +31,29 @@ public class ArtistFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.artist_list_container, AlbumArtistListFragment.newArtistsInstance())
                 .commitNow();
+    }
+
+    @Override
+    protected void showDetails() {
+        if (mTopSong != null) {
+            mListener.onSongSelected(mTopSong.getSongId(), 0);
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+            mListener.showEmptyDetails();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+            AsyncTask.execute(() -> {
+                if (artists.size() > 0) {
+                    mTopSong = mAppViewModel.getFirstSongOfArtist(artists.get(0));
+                }
+                triggerTabletLogic();
+            });
+        });
     }
 
     @Override
@@ -70,5 +96,6 @@ public class ArtistFragment extends Fragment {
 
     public interface ArtistFragmentListener extends FabCallbackListener {
         void showEmptyDetails();
+        void onSongSelected(long songId, int position);
     }
 }

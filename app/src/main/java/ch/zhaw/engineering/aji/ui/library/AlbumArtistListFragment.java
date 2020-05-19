@@ -31,7 +31,6 @@ public class AlbumArtistListFragment extends ListFragment {
 
     private Mode mMode;
     private AlbumArtistListFragmentListener mListener;
-    private Song mFirstSong;
     private AppViewModel mAppViewModel;
     private FragmentAlbumArtistListBinding mBinding;
 
@@ -62,20 +61,6 @@ public class AlbumArtistListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        handleDetails();
-    }
-
-    private void handleDetails() {
-        if (mListener != null && getActivity() != null && mAppViewModel.isTwoPane()) {
-            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
-            if (mFirstSong != null) {
-                getActivity().runOnUiThread(() -> {
-                    mListener.onSongSelected(mFirstSong.getSongId(), 0);
-                });
-            } else {
-                mListener.showEmptyDetails();
-            }
-        }
     }
 
     @Override
@@ -99,15 +84,6 @@ public class AlbumArtistListFragment extends ListFragment {
                         mBinding.songPrompt.setVisibility(!albums.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                         mRecyclerView.setAdapter(adapter);
                     });
-                    AsyncTask.execute(() -> {
-                        if (albums.size() > 0) {
-                            mFirstSong = mAppViewModel.getFirstSongOfAlbum(albums.get(0));
-                            handleDetails();
-                        } else {
-                            handleDetails();
-                        }
-                    });
-
                 });
             } else if (mMode == Mode.ARTIST) {
                 mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
@@ -115,15 +91,6 @@ public class AlbumArtistListFragment extends ListFragment {
                     getActivity().runOnUiThread(() -> {
                         mBinding.songPrompt.setVisibility(!artists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                         mRecyclerView.setAdapter(adapter);
-                    });
-
-                    AsyncTask.execute(() -> {
-                        if (artists.size() > 0) {
-                            mFirstSong = mAppViewModel.getFirstSongOfArtist(artists.get(0));
-                            handleDetails();
-                        } else {
-                            handleDetails();
-                        }
                     });
                 });
             }
@@ -159,16 +126,11 @@ public class AlbumArtistListFragment extends ListFragment {
 
         void onArtistPlay(String artist);
 
-        void onSongSelected(long songId, int position);
-
-
         void onArtistQueue(String artist);
 
         void onArtistMenu(String artist);
 
         void onArtistSelected(String artist);
-
-        void showEmptyDetails();
     }
 
     private enum Mode {

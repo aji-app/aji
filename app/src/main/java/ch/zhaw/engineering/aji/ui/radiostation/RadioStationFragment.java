@@ -41,6 +41,7 @@ public class RadioStationFragment extends TabletAwareFragment {
             mListener.onRadioStationSelected(mTopRadio.getId());
         } else {
             mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
+            mListener.showEmptyDetails();
         }
     }
 
