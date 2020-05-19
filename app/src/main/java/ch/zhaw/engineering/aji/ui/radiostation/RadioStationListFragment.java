@@ -62,17 +62,8 @@ public class RadioStationListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            boolean hasRadioStationIdExtra = getArguments() != null && getArguments().containsKey(EXTRA_RADIOSTATION_ID);
             AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             appViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
-                if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
-                    if (!hasRadioStationIdExtra && appViewModel.isOpenFirstInList()) {
-                        mListener.onRadioStationSelected(radios.get(0).getId());
-                    } else {
-                        appViewModel.setOpenFirstInList(true);
-                    }
-                }
-
                 this.onRadiosChanged(radios);
             });
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
@@ -130,12 +121,18 @@ public class RadioStationListFragment extends ListFragment {
             });
         }
     }
+
     public interface RadioStationFragmentInteractionListener extends FabCallbackListener {
         void onRadioStationSelected(long radioStationId);
+
         void onRadioStationPlay(long radioStationId);
+
         void onRadioStationMenu(long radioStationId);
+
         void onRadioStationDelete(long radioStationId);
+
         void onCreateRadioStation();
+
         LiveData<AudioService.SongInformation> getCurrentSong();
     }
 }

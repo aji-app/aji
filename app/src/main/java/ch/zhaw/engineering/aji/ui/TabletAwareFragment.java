@@ -23,6 +23,10 @@ public abstract class TabletAwareFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        triggerTabletLogic();
+    }
+
+    protected void triggerTabletLogic() {
         if (mAppViewModel.isTwoPane()) {
             showDetails();
         }

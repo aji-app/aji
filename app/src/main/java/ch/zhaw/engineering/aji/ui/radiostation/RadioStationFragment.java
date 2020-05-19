@@ -16,20 +16,32 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadiostationBinding;
+import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.ui.SortResource;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
 
-public class RadioStationFragment extends Fragment {
+public class RadioStationFragment extends TabletAwareFragment {
     private RadioStationListFragment.RadioStationFragmentInteractionListener mListener;
-    private AppViewModel mAppViewModel;
+    private RadioStationDto mTopRadio;
+    private Long mRadioStationId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    protected void showDetails() {
+        if (mRadioStationId == null && mTopRadio != null) {
+            mListener.onRadioStationSelected(mTopRadio.getId());
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
+        }
     }
 
     @Override
@@ -71,16 +83,14 @@ public class RadioStationFragment extends Fragment {
         FragmentRadiostationBinding binding = FragmentRadiostationBinding.inflate(inflater, container, false);
 
         if (savedInstanceState == null) {
-            Long radioStationId = null;
+            mRadioStationId = null;
             if (getArguments() != null && getArguments().containsKey(EXTRA_RADIOSTATION_ID)) {
-                radioStationId = getArguments().getLong(EXTRA_RADIOSTATION_ID);
+                mRadioStationId = getArguments().getLong(EXTRA_RADIOSTATION_ID);
             }
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.radiostation_list_container, RadioStationListFragment.newInstance(radioStationId))
+                    .replace(R.id.radiostation_list_container, RadioStationListFragment.newInstance(mRadioStationId))
                     .commitNow();
         }
-
-
 
         return binding.getRoot();
     }
@@ -89,7 +99,14 @@ public class RadioStationFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
+                if (radios.size() > 0) {
+                    mTopRadio = radios.get(0);
+                } else {
+                    mTopRadio = null;
+                }
+                triggerTabletLogic();
+            });
         }
     }
 

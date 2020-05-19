@@ -114,13 +114,13 @@ public class PlaylistFragment extends TabletAwareFragment {
                     mTopPlaylist = playlists.get(0);
                     AsyncTask.execute(() -> {
                         mTopSong = mAppViewModel.getFirstSongOfPlaylist(mTopPlaylist.getPlaylistId());
-                        showDetails();
+                        triggerTabletLogic();
                     });
                 } else {
                     mTopPlaylist = null;
                     mTopSong = null;
                 }
-                showDetails();
+                triggerTabletLogic();
             });
         }
     }

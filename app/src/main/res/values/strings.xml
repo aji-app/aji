@@ -136,4 +136,5 @@
     <string name="empty_playlist_prompt">Start by some songs to your playlists in the library</string>
     <string name="no_songs_prompt">Start by adding some songs to your device</string>
     <string name="no_favorites_prompt">Start by adding some songs to your favorites</string>
+    <string name="no_radios_prompt">Start by adding a radio station</string>
 </resources>
