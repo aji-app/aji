@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
@@ -17,14 +15,10 @@ import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 public class SongFragment extends TabletAwareFragment {
-
-    private FragmentSongBinding mBinding;
     private SongFragmentListener mListener;
-    private AllSongsListFragment mListFragment;
     private boolean mShowFirst = true;
     private Song mTopSong;
 
@@ -52,12 +46,14 @@ public class SongFragment extends TabletAwareFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListFragment = AllSongsListFragment.newInstance();
+        AllSongsListFragment listFragment = AllSongsListFragment.newInstance();
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.bottom_container, mListFragment)
+                .replace(R.id.bottom_container, listFragment)
                 .commitNow();
 
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -77,9 +73,7 @@ public class SongFragment extends TabletAwareFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mAppViewModel != null && mAppViewModel.isTwoPane() && mShowFirst) {
-            mListFragment.showFirst();
-        }
+        mShowFirst = true;
         configureFab();
     }
 
@@ -92,8 +86,7 @@ public class SongFragment extends TabletAwareFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentSongBinding.inflate(inflater, container, false);
-        return mBinding.getRoot();
+        return FragmentSongBinding.inflate(inflater, container, false).getRoot();
     }
 
     private void configureFab(boolean enabled) {
@@ -114,17 +107,10 @@ public class SongFragment extends TabletAwareFragment {
         super.onAttach(context);
         if (context instanceof SongFragmentListener) {
             mListener = (SongFragmentListener) context;
-//            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        configureFab();
     }
 
     @Override

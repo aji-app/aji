@@ -1,31 +1,22 @@
 package ch.zhaw.engineering.aji.ui.library;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ch.zhaw.engineering.aji.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import ch.zhaw.engineering.aji.databinding.FragmentAlbumArtistListBinding;
-import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.ui.album.AlbumRecyclerViewAdapter;
 import ch.zhaw.engineering.aji.ui.artist.ArtistRecyclerViewAdapter;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AlbumArtistListFragment extends ListFragment {
     private static final String ARG_MODE = "mode";
 
