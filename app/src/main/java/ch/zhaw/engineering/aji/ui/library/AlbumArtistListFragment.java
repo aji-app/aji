@@ -31,6 +31,7 @@ public class AlbumArtistListFragment extends ListFragment {
     private Mode mMode;
     private AlbumArtistListFragmentListener mListener;
     private Song mFirstSong;
+    private AppViewModel mAppViewModel;
 
     public static AlbumArtistListFragment newArtistsInstance() {
         AlbumArtistListFragment fragment = new AlbumArtistListFragment();
@@ -63,9 +64,11 @@ public class AlbumArtistListFragment extends ListFragment {
     }
 
     private void handleDetails() {
-        if (mListener != null) {
+        if (mListener != null && getActivity() != null && mAppViewModel.isTwoPane()) {
             if (mFirstSong != null) {
-                mListener.onSongSelected(mFirstSong.getSongId(), 0);
+                getActivity().runOnUiThread(() -> {
+                    mListener.onSongSelected(mFirstSong.getSongId(), 0);
+                });
             } else {
                 mListener.showEmptyDetails();
             }
@@ -90,14 +93,14 @@ public class AlbumArtistListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
             if (mMode == Mode.ALBUM) {
-                appViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
-                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, appViewModel.showHiddenSongs());
+                mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
+                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
                     AsyncTask.execute(() -> {
                         if (albums.size() > 0) {
-                            mFirstSong = appViewModel.getFirstSongOfAlbum(albums.get(0));
+                            mFirstSong = mAppViewModel.getFirstSongOfAlbum(albums.get(0));
                             handleDetails();
                         } else {
                             handleDetails();
@@ -106,13 +109,13 @@ public class AlbumArtistListFragment extends ListFragment {
 
                 });
             } else if (mMode == Mode.ARTIST) {
-                appViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, appViewModel.showHiddenSongs());
+                mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs());
                     getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
 
                     AsyncTask.execute(() -> {
                         if (artists.size() > 0) {
-                            mFirstSong = appViewModel.getFirstSongOfArtist(artists.get(0));
+                            mFirstSong = mAppViewModel.getFirstSongOfArtist(artists.get(0));
                             handleDetails();
                         } else {
                             handleDetails();
