@@ -57,15 +57,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         mHighlightCurrentSongOnlyWithCorrectPosition = respectPosition;
     }
 
-    public void showFirst() {
-//        mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
-//        if (mSongs != null && mSongs.size() > 0) {
-//            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
-//        } else {
-//            mListener.showEmptyDetails();
-//        }
-    }
-
     public void setAdapter(SongRecyclerViewAdapter adapter) {
         mAdapter = adapter;
         if (mPlayingSongId != null) {
@@ -165,7 +156,5 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         void onPlaylistModified(int playlistId, List<Long> songIds);
 
         LiveData<AudioService.SongInformation> getCurrentSong();
-
-        void showEmptyDetails();
     }
 }

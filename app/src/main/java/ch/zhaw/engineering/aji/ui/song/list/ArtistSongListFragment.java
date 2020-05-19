@@ -49,37 +49,11 @@ public class ArtistSongListFragment extends SongListFragment {
                             mRecyclerView.setAdapter(getAdapter());
                         }
                     } else {
-                        setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener)));
+                        setAdapter(new SongRecyclerViewAdapter(songs, mListener));
                         mRecyclerView.setAdapter(getAdapter());
                     }
                 });
             }
         });
-    }
-
-    private static class CustomListener implements SongListFragmentListener {
-
-        @Delegate(excludes = CustomDelegates.class)
-        private final SongListFragmentListener mListener;
-
-        private CustomListener(SongListFragmentListener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        public void onSongSelected(long songId, int position) {
-            mListener.onSongSelected(songId, position);
-        }
-
-        @Override
-        public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-           mListener.onSongMenu(songId, position);
-        }
-
-        private interface CustomDelegates {
-            void onSongSelected(long songId, int position);
-
-            void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
-        }
     }
 }

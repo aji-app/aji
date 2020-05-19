@@ -86,11 +86,7 @@ public class PlaylistSongListFragment extends SongListFragment {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
                     mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
-                    if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                        mListener.onSongSelected(songs.get(0).getSongId(), 0);
-                    }
-
-                    setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
+                    setAdapter(new SongRecyclerViewAdapter(songs, mListener, mPlaylistId, this));
                     ItemTouchHelper.Callback callback =
                             new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity());
                     mItemTouchHelper = new ItemTouchHelper(callback);
