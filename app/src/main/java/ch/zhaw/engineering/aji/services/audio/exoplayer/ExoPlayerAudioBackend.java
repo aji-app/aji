@@ -127,7 +127,6 @@ public class ExoPlayerAudioBackend implements AudioBackend {
 
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
-                    Log.i(TAG, "BUBU error");
                     mListener.onError(mPlayer.getCurrentTag());
                 }
             });

@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -24,13 +25,14 @@ import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 
 public class ErrorNotificationManager {
-    private static final String TAG = "ErrorNotificationManager";
+    private static final String TAG = "ErrorNotification";
     public static final String EXTRA_NOTIFICATION_ID = "notification-id";
     public static final String EXTRA_RADIOSTATION_ID = "radiostation-id";
     public static final String EXTRA_SONG_ID = "song-id";
     private final LifecycleService mContext;
     private final NotificationManagerCompat mNotificationManager;
     private static final int NOTIFICATION_ID_SONG_OFFSET = 10000000;
+    private static final int NOTIFICATION_ID_RADIO_OFFSET = 10000;
 
     public ErrorNotificationManager(LifecycleService context) {
         mContext = context;
@@ -45,8 +47,9 @@ public class ErrorNotificationManager {
     }
 
     public void notifyError(@Nullable RadioStation station) {
+        Log.i(TAG, "Error playing radiostation ");
         if (station != null) {
-            int id = (int) station.getId();
+            int id = (int) station.getId() + NOTIFICATION_ID_RADIO_OFFSET;
             mNotificationManager.notify(id, createNotification(station, id));
         }
     }
@@ -107,7 +110,7 @@ public class ErrorNotificationManager {
         intent.putExtras(args);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        return PendingIntent.getActivity(mContext, (int)songId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getActivity(mContext, (int) songId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 //        return new NavDeepLinkBuilder(mContext)
 //                .setGraph(R.navigation.mobile_navigation)
 //                .setDestination(R.id.nav_song_details)
@@ -123,7 +126,7 @@ public class ErrorNotificationManager {
         intent.putExtras(args);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        return PendingIntent.getActivity(mContext, (int)radioId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getActivity(mContext, (int) radioId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 //        Bundle args = RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioId).getArguments();
 //        args.putInt(EXTRA_NOTIFICATION_ID, notificationId);
