@@ -35,11 +35,7 @@ public class FavoriteFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel.getFavorites().observe(getViewLifecycleOwner(), songs -> {
-                if (mAppViewModel.showHiddenSongs()) {
-                    mAppViewModel.setPlaceholderText(R.string.no_hidden);
-                } else {
-                    mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
-                }
+                mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
                 if (songs.isEmpty()) {
                     mTopSong = null;
                 } else {
