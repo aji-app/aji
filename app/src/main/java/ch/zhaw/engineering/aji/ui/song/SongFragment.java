@@ -34,7 +34,6 @@ public class SongFragment extends TabletAwareFragment {
 
     @Override
     protected void showDetails() {
-        mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
         if (!mShowFirst) {
             return;
         }
@@ -64,7 +63,9 @@ public class SongFragment extends TabletAwareFragment {
 
             mAppViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
                 String searchText = mAppViewModel.getSearchString(SortResource.SONGS);
-                if (searchText != null && !searchText.equals("")) {
+                if (mAppViewModel.showHiddenSongs()) {
+                    mAppViewModel.setPlaceholderText(R.string.no_hidden);
+                } else if (searchText != null && !searchText.equals("")) {
                     mAppViewModel.setPlaceholderText(R.string.search_no_result);
                 } else {
                     mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);

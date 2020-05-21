@@ -131,7 +131,6 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-
     public LiveData<List<Song>> getFavorites() {
         return mSongDao.getFavorites();
     }

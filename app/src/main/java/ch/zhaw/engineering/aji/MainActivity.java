@@ -168,6 +168,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
                     break;
             }
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
 
@@ -287,9 +288,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             }
         });
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
-
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -312,7 +310,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
                 .commit();
-
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override

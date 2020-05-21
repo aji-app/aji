@@ -49,7 +49,9 @@ public class ArtistFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
             String searchText = mAppViewModel.getSearchString(SortResource.ARTISTS);
-            if (searchText != null && !searchText.equals("")) {
+            if (mAppViewModel.showHiddenSongs()) {
+                mAppViewModel.setPlaceholderText(R.string.no_hidden);
+            } else  if (searchText != null && !searchText.equals("")) {
                 mAppViewModel.setPlaceholderText(R.string.search_no_result);
             } else {
                 mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);

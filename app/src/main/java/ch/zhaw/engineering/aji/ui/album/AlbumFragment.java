@@ -48,7 +48,9 @@ public class AlbumFragment extends TabletAwareFragment {
         mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
             AsyncTask.execute(() -> {
                 String searchText = mAppViewModel.getSearchString(SortResource.ALBUMS);
-                if (searchText!= null && !searchText.equals("")) {
+                if (mAppViewModel.showHiddenSongs()) {
+                    mAppViewModel.setPlaceholderText(R.string.no_hidden);
+                } else if (searchText!= null && !searchText.equals("")) {
                     mAppViewModel.setPlaceholderText(R.string.search_no_result);
                 } else {
                     mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);

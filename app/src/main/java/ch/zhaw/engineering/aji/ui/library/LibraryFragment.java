@@ -84,6 +84,7 @@ public class LibraryFragment extends Fragment {
                         mCurrentSortResource = SortResource.SONGS;
                         setMenuItemStates(true, true, true);
                 }
+                toggleMenuItems();
                 if (mMenu != null) {
                     MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
                 }
@@ -163,7 +164,7 @@ public class LibraryFragment extends Fragment {
                 mAppViewModel.changeSortType(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_show_hidden:
-                setHideMenuTitle(item,mAppViewModel.toggleHiddenSongs() );
+                setHideMenuTitle(item, mAppViewModel.toggleHiddenSongs());
                 return true;
             case R.id.direction_asc:
                 mAppViewModel.changeSortDirection(mCurrentSortResource, true);
