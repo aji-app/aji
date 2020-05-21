@@ -288,6 +288,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         });
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
 
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

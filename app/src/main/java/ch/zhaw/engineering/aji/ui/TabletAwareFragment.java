@@ -11,6 +11,7 @@ import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 public abstract class TabletAwareFragment extends Fragment {
 
     protected AppViewModel mAppViewModel;
+    private boolean mInBackground = true;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -23,11 +24,19 @@ public abstract class TabletAwareFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mInBackground = false;
         triggerTabletLogic();
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mInBackground = true;
+    }
+
     protected void triggerTabletLogic() {
-        if (mAppViewModel.isTwoPane()) {
+        if (mAppViewModel.isTwoPane() && !mInBackground) {
             showDetails();
         }
     }

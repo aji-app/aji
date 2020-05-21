@@ -138,4 +138,5 @@
     <string name="no_favorites_prompt">Start by adding some songs to your favorites</string>
     <string name="no_radios_prompt">Start by adding a radio station</string>
     <string name="search_no_result">Your search did not return any result</string>
+    <string name="no_filters">No filters available</string>
 </resources>

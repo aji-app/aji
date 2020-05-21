@@ -13,13 +13,14 @@ import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FilterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilterFragment extends Fragment {
+public class FilterFragment extends TabletAwareFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -30,6 +31,11 @@ public class FilterFragment extends Fragment {
 
     public FilterFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    protected void showDetails() {
+        mAppViewModel.setPlaceholderText(R.string.no_filters);
     }
 
     /**
