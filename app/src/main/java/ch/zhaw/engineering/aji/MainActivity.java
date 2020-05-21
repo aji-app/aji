@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -198,6 +199,12 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @Override
     public void onOpenAbout() {
         if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
@@ -310,6 +317,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
                 .commit();
+
+        Log.i(TAG, "Bottom sheet is collapsed ? " + (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED));
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
