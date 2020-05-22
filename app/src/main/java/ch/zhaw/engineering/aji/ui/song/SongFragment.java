@@ -60,16 +60,8 @@ public class SongFragment extends TabletAwareFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-
             mAppViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
-                String searchText = mAppViewModel.getSearchString(SortResource.SONGS);
-                if (mAppViewModel.showHiddenSongs()) {
-                    mAppViewModel.setPlaceholderText(R.string.no_hidden);
-                } else if (searchText != null && !searchText.equals("")) {
-                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
-                } else {
-                    mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
-                }
+                setPlaceholderText();
                 if (songs.isEmpty()) {
                     mTopSong = null;
                 } else {
@@ -85,6 +77,21 @@ public class SongFragment extends TabletAwareFragment {
         super.onResume();
         mShowFirst = true;
         configureFab();
+        setPlaceholderText();
+    }
+
+    private void setPlaceholderText() {
+        if (mAppViewModel == null) {
+            return;
+        }
+        String searchText = mAppViewModel.getSearchString(SortResource.SONGS);
+        if (mAppViewModel.showHiddenSongs()) {
+            mAppViewModel.setPlaceholderText(R.string.no_hidden);
+        } else if (searchText != null && !searchText.equals("")) {
+            mAppViewModel.setPlaceholderText(R.string.search_no_result);
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+        }
     }
 
     private void configureFab() {

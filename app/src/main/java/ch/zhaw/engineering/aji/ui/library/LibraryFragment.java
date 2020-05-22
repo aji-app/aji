@@ -85,9 +85,6 @@ public class LibraryFragment extends Fragment {
                         setMenuItemStates(true, true, true);
                 }
                 toggleMenuItems();
-                if (mMenu != null) {
-                    MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
-                }
             }
         });
         new TabLayoutMediator(mBinding.tabLayout, mBinding.pager,
@@ -118,6 +115,9 @@ public class LibraryFragment extends Fragment {
     }
 
     private void toggleMenuItems() {
+        if (mMenu != null) {
+            MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
+        }
         for (MenuItem item : mSongMenuItems) {
             item.setVisible(mShowSongMenuItems);
         }

@@ -38,7 +38,6 @@ public class ArtistFragment extends TabletAwareFragment {
     protected void showDetails() {
         if (mTopSong != null) {
             mListener.onSongSelected(mTopSong.getSongId(), 0);
-
         } else {
             mListener.showEmptyDetails();
         }
@@ -48,14 +47,7 @@ public class ArtistFragment extends TabletAwareFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-            String searchText = mAppViewModel.getSearchString(SortResource.ARTISTS);
-            if (mAppViewModel.showHiddenSongs()) {
-                mAppViewModel.setPlaceholderText(R.string.no_hidden);
-            } else  if (searchText != null && !searchText.equals("")) {
-                mAppViewModel.setPlaceholderText(R.string.search_no_result);
-            } else {
-                mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
-            }
+            setPlaceholderText();
             AsyncTask.execute(() -> {
                 if (artists.size() > 0) {
                     mTopSong = mAppViewModel.getFirstSongOfArtist(artists.get(0));
@@ -88,9 +80,21 @@ public class ArtistFragment extends TabletAwareFragment {
     public void onResume() {
         super.onResume();
         configureFab();
-//        if (mListener != null) {
-//            mListener.showEmptyDetails();
-//        }
+        setPlaceholderText();
+    }
+
+    private void setPlaceholderText() {
+        if (mAppViewModel == null) {
+            return;
+        }
+        String searchText = mAppViewModel.getSearchString(SortResource.ALBUMS);
+        if (mAppViewModel.showHiddenSongs()) {
+            mAppViewModel.setPlaceholderText(R.string.no_hidden);
+        } else if (searchText != null && !searchText.equals("")) {
+            mAppViewModel.setPlaceholderText(R.string.search_no_result);
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+        }
     }
 
     private void configureFab() {

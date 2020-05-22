@@ -25,7 +25,7 @@ public class AllSongsListFragment extends SongListFragment {
         if (getActivity() != null) {
             SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
             appViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
-                Log.i(TAG, "Updating songs for song fragment");
+                Log.i(TAG, "Updating songs for song fragment: " + songs.size());
                 mSongs = songs;
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
