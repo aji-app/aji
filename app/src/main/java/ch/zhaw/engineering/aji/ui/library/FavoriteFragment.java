@@ -48,7 +48,7 @@ public class FavoriteFragment extends TabletAwareFragment {
 
     @Override
     protected void showDetails() {
-
+        mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
         if (mTopSong != null) {
             mListener.onSongSelected(mTopSong.getSongId(), 0);
         } else {
