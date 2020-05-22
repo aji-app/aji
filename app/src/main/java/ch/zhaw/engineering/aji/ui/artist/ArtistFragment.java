@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.artist;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +9,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.SortResource;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
-public class ArtistFragment extends Fragment {
+public class ArtistFragment extends TabletAwareFragment {
 
     private ArtistFragmentListener mListener;
+    private Song mTopSong;
 
     public static ArtistFragment newInstance() {
         return new ArtistFragment();
@@ -31,13 +35,42 @@ public class ArtistFragment extends Fragment {
     }
 
     @Override
+    protected void showDetails() {
+        if (mTopSong != null) {
+            mListener.onSongSelected(mTopSong.getSongId(), 0);
+
+        } else {
+            mListener.showEmptyDetails();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+            String searchText = mAppViewModel.getSearchString(SortResource.ARTISTS);
+            if (mAppViewModel.showHiddenSongs()) {
+                mAppViewModel.setPlaceholderText(R.string.no_hidden);
+            } else  if (searchText != null && !searchText.equals("")) {
+                mAppViewModel.setPlaceholderText(R.string.search_no_result);
+            } else {
+                mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+            }
+            AsyncTask.execute(() -> {
+                if (artists.size() > 0) {
+                    mTopSong = mAppViewModel.getFirstSongOfArtist(artists.get(0));
+                } else {
+                    mTopSong = null;
+                }
+                triggerTabletLogic();
+            });
+        });
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_artist, container, false);
-    }
-
-    public void onShown() {
-        configureFab();
     }
 
     @Override
@@ -45,7 +78,6 @@ public class ArtistFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof ArtistFragmentListener) {
             mListener = (ArtistFragmentListener) context;
-            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
@@ -53,13 +85,18 @@ public class ArtistFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         configureFab();
+//        if (mListener != null) {
+//            mListener.showEmptyDetails();
+//        }
     }
 
     private void configureFab() {
-        mListener.disableFab();
+        if (mListener != null) {
+            mListener.disableFab();
+        }
     }
 
     @Override
@@ -69,5 +106,8 @@ public class ArtistFragment extends Fragment {
     }
 
     public interface ArtistFragmentListener extends FabCallbackListener {
+        void showEmptyDetails();
+
+        void onSongSelected(long songId, int position);
     }
 }

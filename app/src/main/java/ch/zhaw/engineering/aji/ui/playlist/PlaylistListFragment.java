@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.playlist;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +19,9 @@ import java.util.List;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentPlaylistListBinding;
 import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
@@ -27,6 +30,8 @@ public class PlaylistListFragment extends ListFragment {
     private static final String TAG = "PlaylistListFragment";
     private PlaylistFragmentListener mListener;
     private PlaylistRecyclerViewAdapter mAdapter;
+    private AppViewModel mAppViewModel;
+    private FragmentPlaylistListBinding mBinding;
 
     @SuppressWarnings("unused")
     public static PlaylistListFragment newInstance() {
@@ -38,24 +43,23 @@ public class PlaylistListFragment extends ListFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-        return view;
+        mBinding = FragmentPlaylistListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            AppViewModel viewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            viewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), this::onPlaylistsChanged);
+            mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+                mBinding.songPrompt.setText(text);
+            });
         }
     }
 
@@ -80,6 +84,7 @@ public class PlaylistListFragment extends ListFragment {
         Log.i(TAG, "Updating playlists for playlist list fragment");
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
+                mBinding.songPrompt.setVisibility(!playlists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                 if (mAdapter == null) {
                     mAdapter = new PlaylistRecyclerViewAdapter(playlists, mListener, getActivity());
                 } else {
@@ -109,6 +114,5 @@ public class PlaylistListFragment extends ListFragment {
         void onPlaylistQueue(int playlist);
 
         void onPlaylistDelete(int playlist);
-
     }
 }

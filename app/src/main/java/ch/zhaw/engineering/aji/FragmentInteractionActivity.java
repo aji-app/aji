@@ -72,10 +72,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onSongSelected(long songId, int position) {
-        AsyncTask.execute(() -> {
-            Song song = mSongDao.getSongById(songId);
-            Log.i(TAG, "onSongSelected: " + song.getTitle());
-        });
         navigateToSongDetails(songId);
     }
 
@@ -385,12 +381,14 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
 
     @Override
     public void onRadioStationEdited(RadioStationDto updatedRadioStation) {
-        AsyncTask.execute(() -> {
-            if (updatedRadioStation.getId() != null) {
-                mRadioStationDao.updateRadioStation(updatedRadioStation);
-            }
-            Log.i(TAG, "onRadioStationEdit: " + updatedRadioStation.getName());
-        });
+        if (updatedRadioStation != null) {
+            AsyncTask.execute(() -> {
+                if (updatedRadioStation.getId() != null) {
+                    mRadioStationDao.updateRadioStation(updatedRadioStation);
+                }
+                Log.i(TAG, "onRadioStationEdit: " + updatedRadioStation.getName());
+            });
+        }
     }
 
     @Override

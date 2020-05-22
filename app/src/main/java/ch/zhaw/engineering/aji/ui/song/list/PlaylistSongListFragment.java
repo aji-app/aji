@@ -2,6 +2,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
@@ -79,15 +80,13 @@ public class PlaylistSongListFragment extends SongListFragment {
 
     @Override
     protected void initializeRecyclerView(AppViewModel appViewModel) {
+        mBinding.songPrompt.setText(R.string.empty_playlist_prompt);
         appViewModel.getSongsForPlaylist(mPlaylistId).observe(getViewLifecycleOwner(), songs -> {
             if (getActivity() != null) {
                 Log.i(TAG, "Got Songs for Playlist Song View " + songs.size());
                 getActivity().runOnUiThread(() -> {
-                    if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
-                        mListener.onSongSelected(songs.get(0).getSongId(), 0);
-                    }
-
-                    setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener), mPlaylistId, this));
+                    mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
+                    setAdapter(new SongRecyclerViewAdapter(songs, mListener, mPlaylistId, this));
                     ItemTouchHelper.Callback callback =
                             new SongRecyclerViewAdapter.SimpleItemTouchHelperCallback(getAdapter(), getActivity());
                     mItemTouchHelper = new ItemTouchHelper(callback);

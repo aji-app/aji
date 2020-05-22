@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -108,8 +109,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     setupMediaStoreIntegration();
                 }
 
-                mSynchronizerControl = new SynchronizerControl(useMediaStore);
-                mSynchronizerControl.synchronizeSongsPeriodically(this);
+                mSynchronizerControl = new SynchronizerControl(useMediaStore, this);
                 preferenceHelper.observeMediaStoreSetting(enabled -> {
                     mSynchronizerControl.setMediaStore(enabled);
                     if (enabled) {
@@ -169,10 +169,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.VISIBLE);
                     break;
             }
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
 
-        handleStartIntent();
+        handleStartIntent(getIntent());
     }
 
     @Override
@@ -195,6 +196,12 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             mAudioFileContentObserver.unregister();
             mAudioFileContentObserver = null;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
@@ -223,9 +230,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         });
     }
 
-    private void handleStartIntent() {
-        if (getIntent() != null) {
-            Bundle extras = getIntent().getExtras();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleStartIntent(intent);
+    }
+
+    private void handleStartIntent(Intent intent) {
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
             if (extras != null) {
                 if (extras.containsKey(EXTRA_NOTIFICATION_ID)) {
                     NotificationManagerCompat.from(this).cancel(extras.getInt(EXTRA_NOTIFICATION_ID));
@@ -282,7 +295,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             }
         });
         bottomSheetBehavior = BottomSheetBehavior.from(mBinding.layoutAppBarMain.persistentControls.persistentControls);
-
         mBinding.layoutAppBarMain.persistentControls.persistentControls.setOnClickListener(v -> {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -306,6 +318,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                 .replace(R.id.expanded_persistent_controls_container, new ExpandedControlsFragment())
                 .commit();
 
+        Log.i(TAG, "Bottom sheet is collapsed ? " + (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED));
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -480,6 +493,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mAppViewModel.setOpenFirstInList(true);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
 
@@ -560,6 +574,15 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         mFabCallback = null;
         if (mBinding != null) {
             mBinding.layoutAppBarMain.layoutContentMain.fab.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showEmptyDetails() {
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_placeholder_details);
+            return;
         }
     }
 

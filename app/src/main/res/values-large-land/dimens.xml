@@ -2,4 +2,5 @@
 <resources>
     <dimen name="fragment_margin_bottom">70dp</dimen>
     <dimen name="expanded_controls_button_size">60dp</dimen>
+    <dimen name="divider_tablet_margin_bottom">95dp</dimen>
 </resources>

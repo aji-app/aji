@@ -39,16 +39,11 @@ public class LibraryFragment extends Fragment {
     private SortResource mCurrentSortResource = SortResource.SONGS;
     private Menu mMenu;
     private List<MenuItem> mSongMenuItems = new ArrayList<>();
-    private List<MenuItem> mDirectionMenuItems = new ArrayList<>();
+    private List<MenuItem> mGeneralMenuItems = new ArrayList<>();
     private MenuItem mSearchMenuItem;
-
-    private ArtistFragment mArtistFragment;
-    private AlbumFragment mAlbumFragment;
-    private FavoriteFragment mFavoriteFragment;
-    private SongFragment mSongsFragment;
-    private boolean mTriggerArtistOnShown = false;
-    private boolean mTriggerAlbumOnShown = false;
-    private boolean mTriggerFavoriteOnShown = false;
+    private boolean mShowSongMenuItems;
+    private boolean mShowDirectionMenuItems;
+    private boolean mShowSearchItem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,40 +70,21 @@ public class LibraryFragment extends Fragment {
                 switch (current) {
                     case ARTISTS:
                         mCurrentSortResource = SortResource.ARTISTS;
-                        toggleMenuItems(false, true, true);
-                        if (mArtistFragment != null) {
-                            mArtistFragment.onShown();
-                        } else {
-                            mTriggerArtistOnShown = true;
-                        }
+                        setMenuItemStates(false, true, true);
                         break;
                     case ALBUMS:
                         mCurrentSortResource = SortResource.ALBUMS;
-                        toggleMenuItems(false, true, true);
-                        if (mAlbumFragment != null) {
-                            mAlbumFragment.onShown();
-                        } else {
-                            mTriggerAlbumOnShown = true;
-                        }
+                        setMenuItemStates(false, true, true);
                         break;
                     case FAVORITES:
-                        toggleMenuItems(false, false, false);
-                        if (mFavoriteFragment != null) {
-                            mFavoriteFragment.onShown();
-                        } else {
-                            mTriggerFavoriteOnShown = true;
-                        }
+                        setMenuItemStates(false, false, false);
                         break;
                     case SONGS:
                     default:
                         mCurrentSortResource = SortResource.SONGS;
-                        toggleMenuItems(true, true, true);
-                        if (showFirstSong() && mSongsFragment != null) {
-                            mSongsFragment.onShown();
-                        } else {
-                            mAppViewModel.setOpenFirstInList(true);
-                        }
+                        setMenuItemStates(true, true, true);
                 }
+                toggleMenuItems();
                 if (mMenu != null) {
                     MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
                 }
@@ -135,42 +111,44 @@ public class LibraryFragment extends Fragment {
         ).attach();
     }
 
-    private boolean showFirstSong() {
-        return mAppViewModel.isOpenFirstInList();
+    private void setMenuItemStates(boolean showSongMenuItems, boolean showDirectionMenuItems, boolean showSearchItem) {
+        mShowSongMenuItems = showSongMenuItems;
+        mShowDirectionMenuItems = showDirectionMenuItems;
+        mShowSearchItem = showSearchItem;
     }
 
-    private void toggleMenuItems(boolean showSongMenuItems, boolean showDirectionMenuItems, boolean showSearchItem) {
+    private void toggleMenuItems() {
         for (MenuItem item : mSongMenuItems) {
-            item.setVisible(showSongMenuItems);
+            item.setVisible(mShowSongMenuItems);
         }
-        for (MenuItem item : mDirectionMenuItems) {
-            item.setVisible(showDirectionMenuItems);
+        for (MenuItem item : mGeneralMenuItems) {
+            item.setVisible(mShowDirectionMenuItems);
         }
         if (mSearchMenuItem != null) {
-            mSearchMenuItem.setVisible(showSearchItem);
+            mSearchMenuItem.setVisible(mShowSearchItem);
         }
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         mMenu = menu;
-        super.onCreateOptionsMenu(menu, inflater);
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.filter_list_menu_song, menu);
-        MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
         mSongMenuItems = new ArrayList<>(4);
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_album));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_artist));
         mSongMenuItems.add(mMenu.findItem(R.id.song_meta_order_title));
         MenuItem showHidden = mMenu.findItem(R.id.song_meta_show_hidden);
         setHideMenuTitle(showHidden, mAppViewModel.showHiddenSongs());
-        mDirectionMenuItems.add(showHidden);
+        mGeneralMenuItems.add(showHidden);
 
-        mDirectionMenuItems = new ArrayList<>(3);
-        mDirectionMenuItems.add(mMenu.findItem(R.id.direction_asc));
-        mDirectionMenuItems.add(mMenu.findItem(R.id.direction_desc));
+        mGeneralMenuItems = new ArrayList<>(3);
+        mGeneralMenuItems.add(mMenu.findItem(R.id.direction_asc));
+        mGeneralMenuItems.add(mMenu.findItem(R.id.direction_desc));
+        mGeneralMenuItems.add(showHidden);
 
         mSearchMenuItem = menu.findItem(R.id.search);
+        toggleMenuItems();
     }
 
     @Override
@@ -186,7 +164,7 @@ public class LibraryFragment extends Fragment {
                 mAppViewModel.changeSortType(SongDao.SortType.TITLE);
                 return true;
             case R.id.song_meta_show_hidden:
-                setHideMenuTitle(item,mAppViewModel.toggleHiddenSongs() );
+                setHideMenuTitle(item, mAppViewModel.toggleHiddenSongs());
                 return true;
             case R.id.direction_asc:
                 mAppViewModel.changeSortDirection(mCurrentSortResource, true);
@@ -231,30 +209,14 @@ public class LibraryFragment extends Fragment {
             Tab current = Tab.fromPosition(position);
             switch (current) {
                 case ARTISTS:
-                    ArtistFragment artistfragment = ArtistFragment.newInstance();
-                    mLibraryFragment.setArtistFragment(artistfragment);
-                    if(mLibraryFragment.mTriggerArtistOnShown) {
-                        artistfragment.onShown();
-                    }
-                    return artistfragment;
+                    return ArtistFragment.newInstance();
                 case ALBUMS:
-                    AlbumFragment albumFragment = AlbumFragment.newInstance();
-                    mLibraryFragment.setAlbumFragment(albumFragment);
-                    if(mLibraryFragment.mTriggerAlbumOnShown) {
-                        albumFragment.onShown();
-                    }
-                    return albumFragment;
+                    return AlbumFragment.newInstance();
                 case FAVORITES:
-                    FavoriteFragment favoritesFragment = FavoriteFragment.newInstance();
-                    mLibraryFragment.setFavoritesFragment(favoritesFragment);
-                    if(mLibraryFragment.mTriggerFavoriteOnShown) {
-                        favoritesFragment.onShown();
-                    }
-                    return favoritesFragment;
+                    return FavoriteFragment.newInstance();
                 case SONGS:
                 default:
                     SongFragment songFragment = SongFragment.newInstance();
-                    mLibraryFragment.setSongsFragment(songFragment);
                     return songFragment;
             }
         }
@@ -263,22 +225,6 @@ public class LibraryFragment extends Fragment {
         public int getItemCount() {
             return 4;
         }
-    }
-
-    private void setArtistFragment(ArtistFragment fragment) {
-        mArtistFragment = fragment;
-    }
-
-    private void setAlbumFragment(AlbumFragment fragment) {
-        mAlbumFragment = fragment;
-    }
-
-    private void setFavoritesFragment(FavoriteFragment fragment) {
-        mFavoriteFragment = fragment;
-    }
-
-    private void setSongsFragment(SongFragment fragment) {
-        mSongsFragment = fragment;
     }
 
     private enum Tab {

@@ -230,26 +230,29 @@ public class RadioStationDetailsFragment extends Fragment {
 
     private boolean updateRadioStationData() {
         boolean changed = false;
-        if (mBinding.radiostationName.getText().length() > 0 && !mRadioStation.getName().equals(mBinding.radiostationName.getText())) {
-            mRadioStation.setName(mBinding.radiostationName.getText().toString());
-            changed = true;
-        }
-
-        if (mBinding.radiostationUrl.getText().length() > 0 && !mRadioStation.getUrl().equals(mBinding.radiostationUrl.getText())) {
-            mRadioStation.setUrl(mBinding.radiostationUrl.getText().toString());
-            changed = true;
-        }
-        List<String> genres = mAdapter.getGenres();
-        boolean genresChanged = false;
-        for (String genre : genres) {
-            if (!mRadioStation.getGenres().contains(genre)) {
-                genresChanged = true;
-                break;
+        if (mBinding != null) {
+            if (mBinding.radiostationName.getText().length() > 0 && !mRadioStation.getName().equals(mBinding.radiostationName.getText().toString())) {
+                mRadioStation.setName(mBinding.radiostationName.getText().toString());
+                changed = true;
+            }
+            if (mBinding.radiostationUrl.getText().length() > 0 && !mRadioStation.getUrl().equals(mBinding.radiostationUrl.getText().toString())) {
+                mRadioStation.setUrl(mBinding.radiostationUrl.getText().toString());
+                changed = true;
             }
         }
-        if (mRadioStation.getGenres().size()!= genres.size() || genresChanged) {
-            mRadioStation.setGenres(genres);
-            changed = true;
+        if (mAdapter != null) {
+            List<String> genres = mAdapter.getGenres();
+            boolean genresChanged = false;
+            for (String genre : genres) {
+                if (!mRadioStation.getGenres().contains(genre)) {
+                    genresChanged = true;
+                    break;
+                }
+            }
+            if (mRadioStation.getGenres().size() != genres.size() || genresChanged) {
+                mRadioStation.setGenres(genres);
+                changed = true;
+            }
         }
 
         return changed;

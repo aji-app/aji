@@ -52,7 +52,8 @@ public class SupportedFileTypeFilter implements FileFilter {
         OGG,
         MP3,
         WAV,
-        MP4
+        MP4,
+        M4A
     }
 
 }

@@ -8,22 +8,21 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongBinding;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.SortResource;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.AllSongsListFragment;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
-public class SongFragment extends Fragment {
-
-    private FragmentSongBinding mBinding;
+public class SongFragment extends TabletAwareFragment {
     private SongFragmentListener mListener;
-    private AllSongsListFragment mListFragment;
-    private AppViewModel mAppViewModel;
+    private boolean mShowFirst = true;
+    private Song mTopSong;
+    private FragmentSongBinding mBinding;
 
     @SuppressWarnings("unused")
     public static SongFragment newInstance() {
@@ -34,32 +33,62 @@ public class SongFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            mListFragment = AllSongsListFragment.newInstance();
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.bottom_container, mListFragment)
-                    .commitNow();
+    protected void showDetails() {
+        if (!mShowFirst) {
+            return;
+        }
+        if (mTopSong != null) {
+            mListener.onSongSelected(mTopSong.getSongId(), 0);
+        } else {
+
+            mListener.showEmptyDetails();
         }
     }
 
-    public void onShown() {
-        if (mAppViewModel != null && mAppViewModel.isTwoPane()) {
-            mListFragment.showFirst();
-        }
-        configureFab();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        AllSongsListFragment listFragment = AllSongsListFragment.newInstance();
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.bottom_container, listFragment)
+                .commitNow();
+
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
 
+            mAppViewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.SONGS);
+                if (mAppViewModel.showHiddenSongs()) {
+                    mAppViewModel.setPlaceholderText(R.string.no_hidden);
+                } else if (searchText != null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.no_songs_prompt);
+                }
+                if (songs.isEmpty()) {
+                    mTopSong = null;
+                } else {
+                    mTopSong = songs.get(0);
+                }
+                triggerTabletLogic();
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mShowFirst = true;
+        configureFab();
     }
 
     private void configureFab() {
-        if (getActivity()  != null) {
-            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+        if (getActivity() != null) {
             PreferenceHelper helper = new PreferenceHelper(getActivity());
             configureFab(!helper.isMediaStoreEnabled());
         }
@@ -74,7 +103,10 @@ public class SongFragment extends Fragment {
     private void configureFab(boolean enabled) {
         if (mListener != null) {
             if (enabled) {
-                mListener.configureFab(v -> mListener.onAddSongsButtonClick(), R.drawable.ic_add);
+                mListener.configureFab(v -> {
+                    mShowFirst = false;
+                    mListener.onAddSongsButtonClick();
+                }, R.drawable.ic_add);
             } else {
                 mListener.disableFab();
             }
@@ -86,17 +118,10 @@ public class SongFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof SongFragmentListener) {
             mListener = (SongFragmentListener) context;
-            configureFab();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement SongFragmentListener");
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        configureFab();
     }
 
     @Override
@@ -107,5 +132,9 @@ public class SongFragment extends Fragment {
 
     public interface SongFragmentListener extends FabCallbackListener {
         void onAddSongsButtonClick();
+
+        void onSongSelected(long songId, int position);
+
+        void showEmptyDetails();
     }
 }

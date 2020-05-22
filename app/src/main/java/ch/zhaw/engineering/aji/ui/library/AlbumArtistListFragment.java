@@ -2,32 +2,28 @@ package ch.zhaw.engineering.aji.ui.library;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ch.zhaw.engineering.aji.R;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import ch.zhaw.engineering.aji.databinding.FragmentAlbumArtistListBinding;
 import ch.zhaw.engineering.aji.ui.ListFragment;
 import ch.zhaw.engineering.aji.ui.album.AlbumRecyclerViewAdapter;
 import ch.zhaw.engineering.aji.ui.artist.ArtistRecyclerViewAdapter;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AlbumArtistListFragment extends ListFragment {
     private static final String ARG_MODE = "mode";
 
     private Mode mMode;
     private AlbumArtistListFragmentListener mListener;
+    private AppViewModel mAppViewModel;
+    private FragmentAlbumArtistListBinding mBinding;
 
     public static AlbumArtistListFragment newArtistsInstance() {
         AlbumArtistListFragment fragment = new AlbumArtistListFragment();
@@ -54,33 +50,42 @@ public class AlbumArtistListFragment extends ListFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_album_artist_list, container, false);
-
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-
-        return view;
+        mBinding = FragmentAlbumArtistListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            final AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+                mBinding.songPrompt.setText(text);
+            });
             if (mMode == Mode.ALBUM) {
-                appViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
-                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, appViewModel.showHiddenSongs());
-                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
+                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs());
+                    getActivity().runOnUiThread(() -> {
+                        mBinding.songPrompt.setVisibility(!albums.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
+                        mRecyclerView.setAdapter(adapter);
+                    });
                 });
             } else if (mMode == Mode.ARTIST) {
-                appViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, appViewModel.showHiddenSongs());
-                    getActivity().runOnUiThread(() -> mRecyclerView.setAdapter(adapter));
+                mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
+                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs());
+                    getActivity().runOnUiThread(() -> {
+                        mBinding.songPrompt.setVisibility(!artists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
+                        mRecyclerView.setAdapter(adapter);
+                    });
                 });
             }
         }
@@ -114,7 +119,6 @@ public class AlbumArtistListFragment extends ListFragment {
         void onAlbumSelected(String album);
 
         void onArtistPlay(String artist);
-
 
         void onArtistQueue(String artist);
 

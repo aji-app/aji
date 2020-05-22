@@ -2,6 +2,7 @@ package ch.zhaw.engineering.aji.ui.song.list;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
@@ -37,6 +38,7 @@ public class ArtistSongListFragment extends SongListFragment {
             Log.i(TAG, "Updating songs for song fragment");
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
+                    mBinding.songPrompt.setVisibility(!songs.isEmpty() || appViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
                     if (appViewModel.isTwoPane() && songs != null && songs.size() > 0) {
                         mListener.onSongSelected(songs.get(0).getSongId(), 0);
                     }
@@ -47,37 +49,11 @@ public class ArtistSongListFragment extends SongListFragment {
                             mRecyclerView.setAdapter(getAdapter());
                         }
                     } else {
-                        setAdapter(new SongRecyclerViewAdapter(songs, new CustomListener(mListener)));
+                        setAdapter(new SongRecyclerViewAdapter(songs, mListener));
                         mRecyclerView.setAdapter(getAdapter());
                     }
                 });
             }
         });
-    }
-
-    private static class CustomListener implements SongListFragmentListener {
-
-        @Delegate(excludes = CustomDelegates.class)
-        private final SongListFragmentListener mListener;
-
-        private CustomListener(SongListFragmentListener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        public void onSongSelected(long songId, int position) {
-            mListener.onSongSelected(songId, position);
-        }
-
-        @Override
-        public void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems) {
-           mListener.onSongMenu(songId, position);
-        }
-
-        private interface CustomDelegates {
-            void onSongSelected(long songId, int position);
-
-            void onSongMenu(long songId, Integer position, FragmentInteractionActivity.ContextMenuItem... additionalItems);
-        }
     }
 }

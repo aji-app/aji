@@ -3,8 +3,11 @@ package ch.zhaw.engineering.aji.ui.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -38,6 +41,16 @@ public class AppViewModel extends AndroidViewModel {
     @Getter
     @Setter
     private boolean mOpenFirstInList;
+
+    private MutableLiveData<Integer> mPlaceholderText = new MutableLiveData<>();
+
+    public void setPlaceholderText(@StringRes int placeholder) {
+        mPlaceholderText.postValue(placeholder);
+    }
+
+    public LiveData<Integer> getPlaceholderText() {
+        return mPlaceholderText;
+    }
 
     @Getter
     @Setter
@@ -99,6 +112,7 @@ public class AppViewModel extends AndroidViewModel {
         return true;
     }
 
+    @Nullable
     public String getSearchString(SortResource sortResource) {
         FilteringViewModel currentViewModel = getCurrentViewModel(sortResource);
         if (currentViewModel != null) {
@@ -110,6 +124,10 @@ public class AppViewModel extends AndroidViewModel {
 
     public LiveData<List<Song>> getSongsForPlaylist(Integer id) {
         return mSongDao.getSongsForPlaylist(id);
+    }
+
+    public Song getFirstSongOfPlaylist(Integer id) {
+        return mSongDao.getFirstSongOfPlaylist(id);
     }
 
 
@@ -158,5 +176,13 @@ public class AppViewModel extends AndroidViewModel {
 
     public boolean showHiddenSongs() {
         return mSongViewModel.showHiddenSongs();
+    }
+
+    public Song getFirstSongOfAlbum(AlbumDto albumDto) {
+        return mSongDao.getFirstSongOfAlbum(albumDto.getName());
+    }
+
+    public Song getFirstSongOfArtist(ArtistDto artistDto) {
+        return mSongDao.getFirstSongOfArtist(artistDto.getName());
     }
 }
