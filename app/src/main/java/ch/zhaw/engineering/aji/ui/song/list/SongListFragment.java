@@ -17,6 +17,7 @@ import java.util.List;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentSongListBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
@@ -43,6 +44,8 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     private SongRecyclerViewAdapter mAdapter;
     private Long mPlayingSongId;
     private Integer mPlayingPosition;
+    protected FragmentSongListBinding mBinding;
+    private AppViewModel mAppViewModel;
 
     public SongListFragment() {
         this(true, false);
@@ -52,14 +55,6 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
         super();
         mHighlightCurrentSong = highlightCurrentSong;
         mHighlightCurrentSongOnlyWithCorrectPosition = respectPosition;
-    }
-
-    public void showFirst() {
-        if (mSongs != null && mSongs.size() > 0) {
-            mListener.onSongSelected(mSongs.get(0).getSongId(), 0);
-        } else {
-            mShowFirst = true;
-        }
     }
 
     public void setAdapter(SongRecyclerViewAdapter adapter) {
@@ -73,17 +68,11 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_song_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-
-        return view;
+        mBinding = FragmentSongListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     protected abstract void initializeRecyclerView(AppViewModel appViewModel);
@@ -92,8 +81,11 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            initializeRecyclerView(appViewModel);
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+               mBinding.songPrompt.setText(text);
+            });
+            initializeRecyclerView(mAppViewModel);
 
             if (mHighlightCurrentSong) {
                 mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
@@ -104,7 +96,13 @@ public abstract class SongListFragment extends ListFragment implements SongRecyc
                         }
                     } else if (!song.isRadio()) {
                         if (getAdapter() != null) {
-                            getAdapter().setHighlighted(song.getId(), mHighlightCurrentSongOnlyWithCorrectPosition ? song.getPositionInQueue() : null);
+                            if (mHighlightCurrentSongOnlyWithCorrectPosition) {
+                                int position = song.getPositionInQueue();
+                                getAdapter().setHighlighted(song.getId(), position);
+                                mRecyclerView.scrollToPosition(position);
+                            } else {
+                                getAdapter().setHighlighted(song.getId(), null);
+                            }
                         } else {
                             mPlayingSongId = song.getId();
                         }

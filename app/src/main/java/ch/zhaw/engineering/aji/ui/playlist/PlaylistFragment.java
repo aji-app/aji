@@ -1,6 +1,7 @@
 package ch.zhaw.engineering.aji.ui.playlist;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,20 +17,38 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistBinding;
+import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.SortResource;
+import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
-public class PlaylistFragment extends Fragment {
+public class PlaylistFragment extends TabletAwareFragment {
     private PlaylistFragmentListener mListener;
-    private AppViewModel mAppViewModel;
+    private PlaylistWithSongCount mTopPlaylist;
+    private Song mTopSong;
 
     public static PlaylistFragment newInstance() {
         PlaylistFragment fragment = new PlaylistFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    protected void showDetails() {
+        if (mTopPlaylist != null) {
+            if (mTopSong != null) {
+                mListener.onSongSelected(mTopSong.getSongId(), 0);
+            } else {
+                mAppViewModel.setPlaceholderText(R.string.empty_playlist_prompt);
+                mListener.showEmptyDetails();
+            }
+        } else {
+            mListener.showEmptyDetails();
+        }
     }
 
     @Override
@@ -89,7 +108,25 @@ public class PlaylistFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getAllPlaylists().observe(getViewLifecycleOwner(), playlists -> {
+                String searchText = mAppViewModel.getSearchString(SortResource.PLAYLISTS);
+                if (searchText != null && !searchText.equals("")) {
+                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
+                } else {
+                    mAppViewModel.setPlaceholderText(R.string.empty_playlists_prompt);
+                }
+                if (playlists.size() > 0) {
+                    mTopPlaylist = playlists.get(0);
+                    AsyncTask.execute(() -> {
+                        mTopSong = mAppViewModel.getFirstSongOfPlaylist(mTopPlaylist.getPlaylistId());
+                        triggerTabletLogic();
+                    });
+                } else {
+                    mTopPlaylist = null;
+                    mTopSong = null;
+                }
+                triggerTabletLogic();
+            });
         }
     }
 
@@ -110,5 +147,11 @@ public class PlaylistFragment extends Fragment {
 
     public interface PlaylistFragmentListener extends FabCallbackListener {
         void onCreatePlaylist(Long songToAdd);
+
+        void onPlaylistSelected(int playlist);
+
+        void showEmptyDetails();
+
+        public void onSongSelected(long songId, int position);
     }
 }

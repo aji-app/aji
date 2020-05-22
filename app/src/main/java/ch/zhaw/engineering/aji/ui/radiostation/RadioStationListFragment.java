@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentRadiostationListBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
@@ -32,6 +33,8 @@ public class RadioStationListFragment extends ListFragment {
     private RadioStationFragmentInteractionListener mListener;
     private RadioStationRecyclerViewAdapter mAdapter;
     private Long mPlayingRadioId;
+    private FragmentRadiostationListBinding mBinding;
+    private AppViewModel mAppViewModel;
 
     @SuppressWarnings("unused")
     public static RadioStationListFragment newInstance(Long radioStationId) {
@@ -46,34 +49,21 @@ public class RadioStationListFragment extends ListFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_radiostation_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-        return view;
+        mBinding = FragmentRadiostationListBinding.inflate(inflater, container, false);
+        mRecyclerView = mBinding.list;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mRecyclerView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            boolean hasRadioStationIdExtra = getArguments() != null && getArguments().containsKey(EXTRA_RADIOSTATION_ID);
-            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-            appViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
-                if (appViewModel.isTwoPane() && radios != null && radios.size() > 0) {
-                    if (!hasRadioStationIdExtra) {
-                        mListener.onRadioStationSelected(radios.get(0).getId());
-                    } else {
-                        appViewModel.setOpenFirstInList(true);
-                    }
-                }
-
-                this.onRadiosChanged(radios);
+            mAppViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            mAppViewModel.getRadios().observe(getViewLifecycleOwner(), this::onRadiosChanged);
+            mAppViewModel.getPlaceholderText().observe(getViewLifecycleOwner(), text -> {
+                mBinding.songPrompt.setText(text);
             });
             mListener.getCurrentSong().observe(getViewLifecycleOwner(), song -> {
                 if (song != null && song.isRadio()) {
@@ -107,6 +97,7 @@ public class RadioStationListFragment extends ListFragment {
     private void onRadiosChanged(List<RadioStationDto> radios) {
         Log.i(TAG, "Updating radios for playlist list fragment");
         if (getActivity() != null) {
+            mBinding.songPrompt.setVisibility(!radios.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
             getActivity().runOnUiThread(() -> {
                 if (mAdapter == null) {
                     mAdapter = new RadioStationRecyclerViewAdapter(radios, mListener, getActivity());
@@ -130,12 +121,20 @@ public class RadioStationListFragment extends ListFragment {
             });
         }
     }
+
     public interface RadioStationFragmentInteractionListener extends FabCallbackListener {
         void onRadioStationSelected(long radioStationId);
+
         void onRadioStationPlay(long radioStationId);
+
         void onRadioStationMenu(long radioStationId);
+
         void onRadioStationDelete(long radioStationId);
+
         void onCreateRadioStation();
+
         LiveData<AudioService.SongInformation> getCurrentSong();
+
+        void showEmptyDetails();
     }
 }

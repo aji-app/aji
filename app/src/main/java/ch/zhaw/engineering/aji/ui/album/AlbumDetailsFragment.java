@@ -79,9 +79,13 @@ public class AlbumDetailsFragment extends Fragment {
         AsyncTask.execute(() -> {
             SongDao dao = AppDatabase.getInstance(getActivity()).songDao();
             AlbumDto album = dao.getAlbum(mAlbum);
-            if (album.getCoverPath() != null && getActivity() != null) {
+            if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Picasso.get().load(new File(album.getCoverPath())).into(mBinding.albumCover);
+                    if (album.getCoverPath() != null) {
+                        Picasso.get().load(new File(album.getCoverPath())).into(mBinding.albumCover);
+                    } else {
+                        mBinding.albumCover.setImageResource(R.drawable.ic_placeholder_image);
+                    }
                 });
             }
         });

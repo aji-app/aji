@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.List;
 
+import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentAlbumItemBinding;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
@@ -56,6 +57,8 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
         if (holder.album.getCoverPath() != null) {
             Picasso.get().load(new File(holder.album.getCoverPath())).into(holder.binding.albumCover);
+        } else {
+            holder.binding.albumCover.setImageResource(R.drawable.ic_placeholder_image);
         }
     }
 

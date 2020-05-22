@@ -6,29 +6,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:layout_marginBottom="@dimen/persistent_controls_peek_height"
+    android:layout_marginBottom="@dimen/fragment_margin_bottom"
     tools:showIn="@layout/app_bar_main">
 
     <fragment
-        android:id="@+id/nav_host_fragment"
+        android:id="@+id/nav_details_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:layout_constraintHorizontal_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:maxHeight="250dp"
+        app:defaultNavHost="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/nav_details_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/mobile_navigation"
+        app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
+        app:navGraph="@navigation/detail_navigation"
         tools:ignore="FragmentTagUsage" />
     <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:background="?attr/content_divider_color"
-        app:layout_constraintStart_toEndOf="@id/nav_host_fragment"
-        app:layout_constraintEnd_toStartOf="@id/nav_details_fragment"
-        android:layout_marginTop="@dimen/divider_tablet_margin_left_right_top"
-        android:layout_marginBottom="@dimen/divider_tablet_margin_bottom"/>
+        app:layout_constraintTop_toBottomOf="@id/nav_details_fragment"
+        app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
+        android:layout_marginStart="@dimen/divider_tablet_margin_left_right_top"
+        android:layout_marginEnd="@dimen/divider_tablet_margin_left_right_top"
+        android:layout_marginBottom="10dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -38,20 +41,20 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:contentDescription="@string/add_playlist"
         android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/nav_host_fragment" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/nav_host_fragment" />
 
     <fragment
-        android:id="@+id/nav_details_fragment"
+        android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        app:defaultNavHost="false"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintStart_toEndOf="@id/nav_host_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/detail_navigation"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:navGraph="@navigation/mobile_navigation"
         tools:ignore="FragmentTagUsage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

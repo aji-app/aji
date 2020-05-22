@@ -58,9 +58,9 @@ public abstract class SongDao {
                 case TITLE:
                     return getSongsSortedByTitle(ascending, onlyHidden);
                 case ARTIST:
-                    return getSongsSortedByArtist(ascending, onlyHidden);
+                    return ascending ? getSongsSortedByArtistAsc(onlyHidden) : getSongsSortedByArtistDesc(onlyHidden);
                 case ALBUM:
-                    return getSongsSortedByAlbum(ascending, onlyHidden);
+                    return ascending ? getSongsSortedByAlbumAsc(onlyHidden) : getSongsSortedByAlbumDesc(onlyHidden);
             }
         }
         String searchQuery = "%" + searchText + "%";
@@ -69,9 +69,9 @@ public abstract class SongDao {
             case TITLE:
                 return getSongsSortedByTitle(searchQuery, ascending, onlyHidden);
             case ARTIST:
-                return getSongsSortedByArtist(searchQuery, ascending, onlyHidden);
+                return ascending ? getSongsSortedByArtistAsc(searchQuery, onlyHidden) : getSongsSortedByArtistDesc(searchQuery, onlyHidden);
             case ALBUM:
-                return getSongsSortedByAlbum(searchQuery, ascending, onlyHidden);
+                return ascending ? getSongsSortedByAlbumAsc(searchQuery, onlyHidden) : getSongsSortedByAlbumDesc(searchQuery, onlyHidden);
         }
 
         return new MutableLiveData<>();
@@ -101,6 +101,9 @@ public abstract class SongDao {
     @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId ORDER BY ps.`order`")
     public abstract LiveData<List<Song>> getSongsForPlaylist(long playlistId);
 
+    @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId and ps.`order` = 0 LIMIT 1")
+    public abstract Song getFirstSongOfPlaylist(long playlistId);
+
     @Query("SELECT s.* FROM Song s JOIN PlaylistSongCrossRef ps ON ps.songId = s.songId WHERE s.deleted = 0 AND ps.playlistId = :playlistId ORDER BY ps.`order`")
     public abstract List<Song> getSongsForPlaylistAsList(long playlistId);
 
@@ -116,6 +119,9 @@ public abstract class SongDao {
 
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.favorite = 1")
     public abstract LiveData<List<Song>> getFavorites();
+
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.favorite = 1")
+    public abstract List<Song> getFavoritesAsList();
 
     @Query("SELECT DISTINCT song.album as name, song.albumArtPath as coverPath FROM Song WHERE song.deleted = 0 ORDER BY song.album ASC")
     public abstract LiveData<List<AlbumDto>> getAlbums();
@@ -145,16 +151,19 @@ public abstract class SongDao {
     @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.album = :album ORDER BY song.trackNumber, song.title ASC")
     public abstract List<Song> getSongsForAlbumAsList(String album);
 
-    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.title ASC")
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.album, song.trackNumber, song.title ASC")
     public abstract LiveData<List<Song>> getSongsForArtist(String artist);
 
-    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.title ASC")
+    @Query("SELECT * FROM Song WHERE song.deleted = 0 AND song.artist = :artist ORDER BY song.album, song.trackNumber, song.title ASC")
     public abstract List<Song> getSongsForArtistAsList(String artist);
 
     @Query("SELECT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath FROM Song song " +
             "WHERE song.album = :album " +
             "GROUP BY song.album ")
     public abstract AlbumDto getAlbum(String album);
+
+    @Query("SELECT Count(song.songID) as name FROM Song song WHERE song.album = :album ")
+    public abstract int getAlbumSongCount(String album);
 
     @Query("SELECT * from Song where songId in (:songIds)")
     public abstract LiveData<List<Song>> getSongs(List<Long> songIds);
@@ -196,6 +205,12 @@ public abstract class SongDao {
     @Query("DELETE FROM Song")
     public abstract void removeAllSongs();
 
+    @Query("SELECT * from Song where song.album = :name ORDER BY song.trackNumber, song.title LIMIT 1")
+    public abstract Song getFirstSongOfAlbum(String name);
+
+    @Query("SELECT * from Song where song.artist= :name ORDER BY song.album, song.trackNumber, song.title LIMIT 1")
+    public abstract Song getFirstSongOfArtist(String name);
+
     /*
      * Protected Helper Methods
      *
@@ -230,27 +245,44 @@ public abstract class SongDao {
     protected abstract LiveData<List<Song>> getSongsSortedByTitle(String text, boolean asc, boolean deleted);
 
     @Query("SELECT * FROM Song WHERE song.deleted = :deleted AND (song.title like :text OR song.album like :text OR song.artist like :text) " +
-            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
-    protected abstract LiveData<List<Song>> getSongsSortedByAlbum(String text, boolean asc, boolean deleted);
+            "ORDER BY song.album, song.trackNumber ASC")
+    protected abstract LiveData<List<Song>> getSongsSortedByAlbumAsc(String text, boolean deleted);
+
+    @Query("SELECT * FROM Song WHERE song.deleted = :deleted AND (song.title like :text OR song.album like :text OR song.artist like :text) " +
+            "ORDER BY song.album, song.trackNumber DESC")
+    protected abstract LiveData<List<Song>> getSongsSortedByAlbumDesc(String text, boolean deleted);
 
     @Query("SELECT * FROM Song WHERE song.deleted = :deleted AND (song.title like :text OR song.album like :text OR song.artist like :text)" +
-            " ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
-    protected abstract LiveData<List<Song>> getSongsSortedByArtist(String text, boolean asc, boolean deleted);
+            " ORDER BY song.artist, song.album, song.trackNumber ASC")
+    protected abstract LiveData<List<Song>> getSongsSortedByArtistAsc(String text, boolean deleted);
+
+    @Query("SELECT * FROM Song WHERE song.deleted = :deleted AND (song.title like :text OR song.album like :text OR song.artist like :text)" +
+            " ORDER BY song.artist, song.album, song.trackNumber DESC")
+    protected abstract LiveData<List<Song>> getSongsSortedByArtistDesc(String text, boolean deleted);
 
     @Query("SELECT * FROM Song WHERE song.deleted = :deleted " +
             "ORDER BY CASE WHEN :asc = 1 THEN song.title END ASC, CASE WHEN :asc = 0 THEN song.title END DESC")
     protected abstract LiveData<List<Song>> getSongsSortedByTitle(boolean asc, boolean deleted);
 
     @Query("SELECT * FROM Song WHERE song.deleted = :deleted " +
-            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
-    protected abstract LiveData<List<Song>> getSongsSortedByAlbum(boolean asc, boolean deleted);
+            "ORDER BY song.album, song.trackNumber ASC")
+    protected abstract LiveData<List<Song>> getSongsSortedByAlbumAsc(boolean deleted);
 
     @Query("SELECT * FROM Song WHERE song.deleted = :deleted " +
-            "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
-    protected abstract LiveData<List<Song>> getSongsSortedByArtist(boolean asc, boolean deleted);
+            "ORDER BY song.album, song.trackNumber DESC")
+    protected abstract LiveData<List<Song>> getSongsSortedByAlbumDesc(boolean deleted);
+
+    @Query("SELECT * FROM Song WHERE song.deleted = :deleted " +
+            "ORDER BY song.artist, song.album, song.trackNumber ASC")
+    protected abstract LiveData<List<Song>> getSongsSortedByArtistAsc(boolean deleted);
+
+    @Query("SELECT * FROM Song WHERE song.deleted = :deleted " +
+            "ORDER BY song.artist, song.album, song.trackNumber DESC")
+    protected abstract LiveData<List<Song>> getSongsSortedByArtistDesc(boolean deleted);
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+
 
     public enum SortType {
         TITLE, ARTIST, ALBUM

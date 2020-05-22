@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/fragment_margin">
 
@@ -20,8 +20,7 @@
             android:layout_height="70dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="0"
-            android:contentDescription="@string/contentDescription_album_art"
-            android:src="@drawable/ic_placeholder_image" />
+            android:contentDescription="@string/contentDescription_album_art" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -106,9 +105,9 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:gravity="bottom|start"
+            android:text="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="@null"
             tools:text="0:17" />
 
         <SeekBar

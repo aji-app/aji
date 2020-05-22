@@ -94,6 +94,9 @@ public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.song = mValues.get(position);
+        if (holder.song == null) {
+            return;
+        }
         holder.binding.songTitle.setText(mValues.get(position).getTitle());
         holder.binding.songArtist.setText(mValues.get(position).getArtist());
         holder.binding.songAlbum.setText(mValues.get(position).getAlbum());

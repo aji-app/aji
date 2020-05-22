@@ -15,11 +15,11 @@ public class PreferenceHelper {
     private static final String PREF_MEDIA_STORE = "mediastore_sync";
     private final Context mContext;
     private final SharedPreferences mSharedPreferences;
-    private List<AudioBackend.Callback<Boolean>> callbacks = new ArrayList<>();
+    private static List<AudioBackend.Callback<Boolean>> callbacks = new ArrayList<>();
     private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = (prefs, key) -> {
         if (PREF_MEDIA_STORE.equals(key)) {
             boolean shouldUseMediaStore = prefs.getBoolean(PREF_MEDIA_STORE, true);
-            for (AudioBackend.Callback callback : callbacks) {
+            for (AudioBackend.Callback<Boolean> callback : callbacks) {
                 callback.receiveValue(shouldUseMediaStore);
             }
         }

@@ -63,7 +63,7 @@ public abstract class RadioStationDao {
        return insertRadioStation(radioStation.toRadioStation());
     }
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long insertRadioStation(RadioStation station);
 
     @Query("DELETE FROM RadioStation WHERE id = :id")
