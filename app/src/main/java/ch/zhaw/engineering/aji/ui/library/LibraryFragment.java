@@ -148,6 +148,7 @@ public class LibraryFragment extends Fragment {
         mGeneralMenuItems.add(showHidden);
 
         mSearchMenuItem = menu.findItem(R.id.search);
+        MenuHelper.setupSearchView(mCurrentSortResource, mAppViewModel, mMenu);
         toggleMenuItems();
     }
 

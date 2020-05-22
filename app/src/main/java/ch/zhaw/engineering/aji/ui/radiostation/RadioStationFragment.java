@@ -54,9 +54,10 @@ public class RadioStationFragment extends TabletAwareFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         setupFab();
+        setPlaceholderText();
     }
 
     private void setupFab() {
@@ -97,12 +98,7 @@ public class RadioStationFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel.getRadios().observe(getViewLifecycleOwner(), radios -> {
-                String searchText = mAppViewModel.getSearchString(SortResource.RADIOS);
-                if (searchText != null && !searchText.equals("")) {
-                    mAppViewModel.setPlaceholderText(R.string.search_no_result);
-                } else {
-                    mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
-                }
+                setPlaceholderText();
                 if (radios.size() > 0) {
                     mTopRadio = radios.get(0);
                 } else {
@@ -110,6 +106,18 @@ public class RadioStationFragment extends TabletAwareFragment {
                 }
                 triggerTabletLogic();
             });
+        }
+    }
+
+    private void setPlaceholderText() {
+        if (mAppViewModel == null) {
+            return;
+        }
+        String searchText = mAppViewModel.getSearchString(SortResource.RADIOS);
+        if (searchText != null && !searchText.equals("")) {
+            mAppViewModel.setPlaceholderText(R.string.search_no_result);
+        } else {
+            mAppViewModel.setPlaceholderText(R.string.no_radios_prompt);
         }
     }
 

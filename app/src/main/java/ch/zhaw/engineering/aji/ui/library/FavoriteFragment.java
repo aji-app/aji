@@ -13,6 +13,7 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentFavoriteBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
+import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
 
@@ -35,7 +36,7 @@ public class FavoriteFragment extends TabletAwareFragment {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
             mAppViewModel.getFavorites().observe(getViewLifecycleOwner(), songs -> {
-                mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
+                setPlaceholderText();
                 if (songs.isEmpty()) {
                     mTopSong = null;
                 } else {
@@ -48,7 +49,6 @@ public class FavoriteFragment extends TabletAwareFragment {
 
     @Override
     protected void showDetails() {
-        mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
         if (mTopSong != null) {
             mListener.onSongSelected(mTopSong.getSongId(), 0);
         } else {
@@ -60,6 +60,7 @@ public class FavoriteFragment extends TabletAwareFragment {
     public void onResume() {
         super.onResume();
         configureFab();
+        setPlaceholderText();
     }
 
     @Override
@@ -81,6 +82,13 @@ public class FavoriteFragment extends TabletAwareFragment {
             throw new RuntimeException(context.toString()
                     + " must implement FavoritesFragmentListener");
         }
+    }
+
+    private void setPlaceholderText() {
+        if (mAppViewModel == null) {
+            return;
+        }
+        mAppViewModel.setPlaceholderText(R.string.no_favorites_prompt);
     }
 
     private void configureFab() {
