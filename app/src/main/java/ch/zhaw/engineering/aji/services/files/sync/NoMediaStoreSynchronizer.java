@@ -20,7 +20,10 @@ public class NoMediaStoreSynchronizer {
         SongDao dao = AppDatabase.getInstance(mContext).songDao();
         for (Song song : dao.getAllSongs()) {
             if (!new File(song.getFilepath()).exists()) {
-                StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+                int albumSongCount = dao.getAlbumSongCount(song.getAlbum());
+                if (albumSongCount == 1) {
+                    StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
+                }
                 dao.deleteSongById(song.getSongId());
                 Log.i(TAG, "Deleted song '" + song.getFilepath() + "' from Database");
             }
