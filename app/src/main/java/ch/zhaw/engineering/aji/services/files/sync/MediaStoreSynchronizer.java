@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.dto.SongDto;
+import ch.zhaw.engineering.aji.services.database.dto.SongWithOnlyAlbumAndIds;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import lombok.Value;
@@ -36,6 +37,8 @@ public class MediaStoreSynchronizer {
     private Handler mHandler;
     private BackgroundSyncTask mWaitForLotsOfUpdates = new BackgroundSyncTask();
     private final static long WAIT_TIME = 5 * 1000;
+    private final static int QUERY_LIMIT = 100;
+    private final List<SongDto> mCurrentlyProcessingSongs = new ArrayList<>(QUERY_LIMIT);
 
     public MediaStoreSynchronizer(Context context) {
         HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
@@ -55,60 +58,71 @@ public class MediaStoreSynchronizer {
 
     public void synchronizeAllSongs() {
         Log.i(TAG, "Synchronizing all songs");
+        int offset = 0;
+        int processed = 0;
+        do {
+            processed = syncSongs(offset);
+            offset += processed;
+        } while (processed == QUERY_LIMIT);
+        deleteSongsNotInMediaStore();
+    }
+
+    private int syncSongs(int offset) {
+        Log.i(TAG, "Processing songs " + offset + " to " + (offset + QUERY_LIMIT));
         String onlyAudioSelection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
         Cursor cursor = mContext.getContentResolver().query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, onlyAudioSelection, null,
-                MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.buildUpon().encodedQuery("limit=" + offset + "," + QUERY_LIMIT).build()
+                , null, onlyAudioSelection, null,
+                MediaStore.Audio.Media._ID);
         if (cursor == null) {
-            return;
+            return 0;
         }
-        List<SongDto> songs = new ArrayList<>(cursor.getCount());
+        final int processedCount = cursor.getCount();
+        mCurrentlyProcessingSongs.clear();
         while (cursor.moveToNext()) {
             SongDto song = loadFromCursor(cursor);
-            songs.add(song);
+            mCurrentlyProcessingSongs.add(song);
         }
         cursor.close();
-        List<Long> mediaStoreIds = new ArrayList<>(songs.size());
-        for (SongDto song : songs) {
+        for (SongDto song : mCurrentlyProcessingSongs) {
             DatabaseSynchronizer.synchronizeSongWithDb(mContext, song);
-            mediaStoreIds.add(song.getMediaStoreSongId());
         }
+        return processedCount;
+    }
 
-        SongDao songDao = AppDatabase.getInstance(mContext).songDao();
-        List<Song> potentiallyDeletedSongs = songDao.getSongsNotMatchingMediaStoreIds(mediaStoreIds);
-        Set<String> nonExistingMediaStoreIds = new HashSet<>();
-        Map<Long, Song> nonExistingSongs = new HashMap<>();
-        for (Song song : potentiallyDeletedSongs) {
-            if (song.getMediaStoreSongId() != null) {
-                nonExistingMediaStoreIds.add(song.getMediaStoreSongId().toString());
-                nonExistingSongs.put(song.getMediaStoreSongId(), song);
-            }
-        }
-        String selection = onlyAudioSelection + " AND " + MediaStore.Audio.Media._ID + " IN (?)";
-        cursor = mContext.getContentResolver().query(
+    private void deleteSongsNotInMediaStore() {
+        String onlyAudioSelection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null,
-                selection,
-                new String[]{TextUtils.join(",", nonExistingMediaStoreIds)},
-                MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+                new String[] { MediaStore.Audio.Media._ID }, onlyAudioSelection, null,
+                MediaStore.Audio.Media._ID);
         if (cursor == null) {
             return;
         }
+        Set<Long> mediaStoreIds = new HashSet<>(cursor.getCount());
         while (cursor.moveToNext()) {
             Long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-            nonExistingSongs.remove(id);
-
+            mediaStoreIds.add(id);
         }
-
+        cursor.close();
+        Log.i(TAG, "Found " + mediaStoreIds.size() + " songs");
+        SongDao songDao = AppDatabase.getInstance(mContext).songDao();
+        List<SongWithOnlyAlbumAndIds> allSongs = songDao.getAllSongsForSync();
+        List<SongWithOnlyAlbumAndIds> songsNotInMediaStore = new ArrayList<>();
+        for (SongWithOnlyAlbumAndIds song : allSongs) {
+            if (!mediaStoreIds.contains(song.getMediaStoreSongId())) {
+                songsNotInMediaStore.add(song);
+            }
+        }
         List<Long> songsToDelete = new ArrayList<>();
-        for (Song song : nonExistingSongs.values()) {
+        for (SongWithOnlyAlbumAndIds song : songsNotInMediaStore) {
             int albumSongCount = songDao.getAlbumSongCount(song.getAlbum());
             if (albumSongCount == 1) {
                 StorageHelper.deleteAlbumArt(song.getAlbumArtPath());
             }
             songsToDelete.add(song.getSongId());
         }
-
+        Log.i(TAG, "Deleting " + songsToDelete.size() + " songs");
         songDao.deleteSongsByIds(songsToDelete);
     }
 
