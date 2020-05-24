@@ -106,7 +106,7 @@ public class NotificationManager {
         String currentPlaylistName = currentSongInformation == null || currentSongInformation.getPlaylistName() == null ? "" : (" - " + currentSongInformation.getPlaylistName());
         Bitmap iconBig = currentSongInformation != null && currentSongInformation.getAlbumPath() != null ?
                 BitmapFactory.decodeFile(currentSongInformation.getAlbumPath()) :
-                BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_icon);
+                BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_round_light);
 
 
         return builder
