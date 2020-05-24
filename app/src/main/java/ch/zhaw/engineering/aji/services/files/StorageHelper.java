@@ -63,4 +63,19 @@ public class StorageHelper {
     private static String getAlbumArtPath(String identifier) {
         return FOLDER + "_" + identifier + ".png";
     }
+
+    public static void deleteAllAlbumArt(Context context) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(FOLDER, Context.MODE_PRIVATE);
+        deleteDirectory(directory);
+    }
+    private static void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
+    }
 }

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -227,6 +228,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             AppDatabase database = AppDatabase.getInstance(this);
             database.playlistDao().removeAllPlaylists();
             database.songDao().removeAllSongs();
+            StorageHelper.deleteAllAlbumArt(this);
         });
     }
 
