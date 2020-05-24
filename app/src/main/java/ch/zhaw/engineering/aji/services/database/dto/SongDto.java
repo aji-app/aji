@@ -19,6 +19,19 @@ public class SongDto {
 
     public Bitmap albumArt;
 
+    public SongDto clear() {
+        id = null;
+        mediaStoreSongId = null;
+        filepath = null;
+        title = null;
+        album = null;
+        artist = null;
+        trackNumber = null;
+        duration = 0;
+        albumArt = null;
+        return this;
+    }
+
     public Song toSong(String albumArtPath) {
         Song.SongBuilder songBuilder = Song.builder()
                 .mediaStoreSongId(mediaStoreSongId)

@@ -35,6 +35,10 @@ public class StorageHelper {
         String filenameIdentifier = song.getAlbum().replaceAll("\\s|[\\\\/]", "_");
         File albumArtPath = new File(directory, getAlbumArtPath(filenameIdentifier));
 
+        if (albumArtPath.exists()) {
+            // We already stored this album art
+            return albumArtPath.getAbsolutePath();
+        }
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(albumArtPath);
