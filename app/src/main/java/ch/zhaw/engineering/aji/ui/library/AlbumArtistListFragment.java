@@ -24,6 +24,8 @@ public class AlbumArtistListFragment extends ListFragment {
     private AlbumArtistListFragmentListener mListener;
     private AppViewModel mAppViewModel;
     private FragmentAlbumArtistListBinding mBinding;
+    private AlbumRecyclerViewAdapter mAlbumAdapter;
+    private ArtistRecyclerViewAdapter mArtistAdapter;
 
     public static AlbumArtistListFragment newArtistsInstance() {
         AlbumArtistListFragment fragment = new AlbumArtistListFragment();
@@ -73,18 +75,31 @@ public class AlbumArtistListFragment extends ListFragment {
             });
             if (mMode == Mode.ALBUM) {
                 mAppViewModel.getAlbums().observe(getViewLifecycleOwner(), albums -> {
-                    AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs());
+                    if (mAlbumAdapter == null) {
+                        mAlbumAdapter = new AlbumRecyclerViewAdapter(albums, mListener, mAppViewModel.showHiddenSongs(), mRecyclerView);
+                    } else {
+                        mAlbumAdapter.updateAlbums(albums);
+                    }
+
                     getActivity().runOnUiThread(() -> {
                         mBinding.songPrompt.setVisibility(!albums.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
-                        mRecyclerView.setAdapter(adapter);
+                        if (mRecyclerView.getAdapter() == null) {
+                            mRecyclerView.setAdapter(mAlbumAdapter);
+                        }
                     });
                 });
             } else if (mMode == Mode.ARTIST) {
                 mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-                    ArtistRecyclerViewAdapter adapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs());
+                    if (mAlbumAdapter == null) {
+                        mArtistAdapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs(), mRecyclerView);
+                    } else {
+                        mArtistAdapter.updateArtists(artists);
+                    }
                     getActivity().runOnUiThread(() -> {
                         mBinding.songPrompt.setVisibility(!artists.isEmpty() || mAppViewModel.isTwoPane() ? View.GONE : View.VISIBLE);
-                        mRecyclerView.setAdapter(adapter);
+                        if (mRecyclerView.getAdapter() == null) {
+                            mRecyclerView.setAdapter(mArtistAdapter);
+                        }
                     });
                 });
             }
