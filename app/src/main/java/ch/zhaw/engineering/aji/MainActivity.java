@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
+import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import ch.zhaw.engineering.aji.services.files.WebRadioPlsParser;
 import ch.zhaw.engineering.aji.services.files.sync.AudioFileContentObserver;
 import ch.zhaw.engineering.aji.services.files.sync.SynchronizerControl;
@@ -227,6 +229,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
             AppDatabase database = AppDatabase.getInstance(this);
             database.playlistDao().removeAllPlaylists();
             database.songDao().removeAllSongs();
+            StorageHelper.deleteAllAlbumArt(this);
         });
     }
 
@@ -257,7 +260,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     private void setupMediaStoreIntegration() {
         if (mAudioFileContentObserver == null) {
-            HandlerThread thread = new HandlerThread("AudioFileObserver", Thread.NORM_PRIORITY);
+            HandlerThread thread = new HandlerThread("AudioFileObserver", Process.THREAD_PRIORITY_BACKGROUND);
             thread.start();
             Handler handler = new Handler(thread.getLooper());
             mAudioFileContentObserver = new AudioFileContentObserver(handler, this);

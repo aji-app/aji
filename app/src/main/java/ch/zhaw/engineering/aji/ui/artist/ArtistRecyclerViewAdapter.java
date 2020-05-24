@@ -15,14 +15,16 @@ import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
 
 public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecyclerViewAdapter.ViewHolder> {
-    private final List<ArtistDto> mAlbums;
+    private List<ArtistDto> mArtists;
     private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
     private boolean mShowHidden;
+    private RecyclerView mRecyclerView;
 
-    public ArtistRecyclerViewAdapter(List<ArtistDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden) {
-        mAlbums = albums;
+    public ArtistRecyclerViewAdapter(List<ArtistDto> artists, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden, RecyclerView recyclerView) {
+        mArtists = artists;
         mListener = listener;
         mShowHidden = showHidden;
+        mRecyclerView = recyclerView;
     }
 
     @NonNull
@@ -37,7 +39,7 @@ public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.artist = mAlbums.get(position);
+        holder.artist = mArtists.get(position);
         holder.binding.artistName.setText(holder.artist.getName());
         holder.binding.artistItemPlay.setOnClickListener(v -> mListener.onArtistPlay(holder.artist.getName()));
         holder.binding.artistItemOverflow.setOnClickListener(v -> mListener.onArtistMenu(holder.artist.getName()));
@@ -53,9 +55,16 @@ public class ArtistRecyclerViewAdapter extends RecyclerView.Adapter<ArtistRecycl
         holder.binding.artistItemPlay.setVisibility(mShowHidden ? View.GONE : View.VISIBLE);
     }
 
+    public void updateArtists(List<ArtistDto> artists) {
+        int position = mRecyclerView.getVerticalScrollbarPosition();
+        mArtists = artists;
+        notifyDataSetChanged();
+        mRecyclerView.setVerticalScrollbarPosition(position);
+    }
+
     @Override
     public int getItemCount() {
-        return mAlbums.size();
+        return mArtists.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

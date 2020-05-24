@@ -21,6 +21,7 @@ import java.util.Set;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
 import ch.zhaw.engineering.aji.services.database.dto.ArtistDto;
+import ch.zhaw.engineering.aji.services.database.dto.SongWithOnlyAlbumAndIds;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 
 @Dao
@@ -178,11 +179,8 @@ public abstract class SongDao {
         });
     }
 
-    @Query("SELECT * from Song where mediaStoreSongId not in (:mediaStoreIds)")
-    public abstract List<Song> getSongsNotMatchingMediaStoreIds(List<Long> mediaStoreIds);
-
-    @Query("DELETE from Song where mediaStoreSongId in (:mediaStoreIds)")
-    public abstract void deleteSongsByMediaStoreIds(Set<Long> mediaStoreIds);
+    @Query("SELECT songId, album, albumArtPath, mediaStoreSongId from Song")
+    public abstract List<SongWithOnlyAlbumAndIds> getAllSongsForSync();
 
     @Query("DELETE from Song where songId in (:ids)")
     public abstract void deleteSongsByIds(Collection<Long> ids);

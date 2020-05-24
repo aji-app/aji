@@ -15,18 +15,21 @@ import java.util.List;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentAlbumItemBinding;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
+import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
-    private final List<AlbumDto> mAlbums;
+    private List<AlbumDto> mAlbums;
     private final AlbumArtistListFragment.AlbumArtistListFragmentListener mListener;
     private boolean mShowHidden;
+    private RecyclerView mRecyclerView;
 
-    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden) {
+    public AlbumRecyclerViewAdapter(List<AlbumDto> albums, AlbumArtistListFragment.AlbumArtistListFragmentListener listener, boolean showHidden, RecyclerView recyclerView) {
         mAlbums = albums;
         mListener = listener;
         mShowHidden = showHidden;
+        mRecyclerView = recyclerView;
     }
 
     @NonNull
@@ -60,6 +63,13 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         } else {
             holder.binding.albumCover.setImageResource(R.drawable.ic_placeholder_image);
         }
+    }
+
+    public void updateAlbums(List<AlbumDto> songs) {
+        int position = mRecyclerView.getVerticalScrollbarPosition();
+        mAlbums = songs;
+        notifyDataSetChanged();
+        mRecyclerView.setVerticalScrollbarPosition(position);
     }
 
     @Override

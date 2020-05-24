@@ -31,9 +31,14 @@ public class StorageHelper {
                 return null;
             }
         }
-        String filenameIdentifier = song.getAlbum();
+        // java strings are annoying, this regex is: \s|[\/]
+        String filenameIdentifier = song.getAlbum().replaceAll("\\s|[\\\\/]", "_");
         File albumArtPath = new File(directory, getAlbumArtPath(filenameIdentifier));
 
+        if (albumArtPath.exists()) {
+            // We already stored this album art
+            return albumArtPath.getAbsolutePath();
+        }
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(albumArtPath);
@@ -47,7 +52,6 @@ public class StorageHelper {
     }
 
     public static void deleteAlbumArt(String albumArtPath) {
-        // TODO: Check that we don't delete albums we still have
         if (albumArtPath == null) {
             return;
         }
@@ -62,5 +66,20 @@ public class StorageHelper {
 
     private static String getAlbumArtPath(String identifier) {
         return FOLDER + "_" + identifier + ".png";
+    }
+
+    public static void deleteAllAlbumArt(Context context) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(FOLDER, Context.MODE_PRIVATE);
+        deleteDirectory(directory);
+    }
+    private static void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
     }
 }
