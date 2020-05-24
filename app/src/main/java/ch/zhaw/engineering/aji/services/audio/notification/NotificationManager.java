@@ -11,16 +11,13 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.LiveData;
 
 import ch.zhaw.engineering.aji.MainActivity;
-import ch.zhaw.engineering.aji.MainActivityOld;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.media.app.NotificationCompat.MediaStyle;
 import static ch.zhaw.engineering.aji.services.audio.AudioService.EXTRAS_COMMAND;
 import static ch.zhaw.engineering.aji.util.Duration.getPositionDurationString;
@@ -106,7 +103,7 @@ public class NotificationManager {
         String currentPlaylistName = currentSongInformation == null || currentSongInformation.getPlaylistName() == null ? "" : (" - " + currentSongInformation.getPlaylistName());
         Bitmap iconBig = currentSongInformation != null && currentSongInformation.getAlbumPath() != null ?
                 BitmapFactory.decodeFile(currentSongInformation.getAlbumPath()) :
-                BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.universal_icon);
+                BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher);
 
 
         return builder
