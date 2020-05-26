@@ -14,6 +14,7 @@
         <item name="link_color">@color/brown_pink_linkColor</item>
         <item name="content_divider_color">@color/brown_pink_divider</item>
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownPink</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.BrownPink</item>
     </style>
 
     <!-- Theme PurpleLime -->
@@ -30,6 +31,7 @@
         <item name="link_color">@color/purple_lime_linkColor</item>
         <item name="content_divider_color">@color/purple_lime_divider</item>
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.PurpleLime</item>
     </style>
 
     <!-- Theme Purple Lime -->
@@ -45,8 +47,8 @@
         <item name="disabledColor">@color/darkpurple_amber_secondaryText</item>
         <item name="link_color">@color/darkpurple_amber_linkColor</item>
         <item name="content_divider_color">@color/darkpurple_amber_divider</item>
-        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.DarkPurpleAmber
-        </item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.DarkPurpleAmber</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.DarkPurpleAmber</item>
     </style>
 
     <!-- Theme Purple Amber -->
@@ -63,6 +65,7 @@
         <item name="link_color">@color/purple_amber_linkColor</item>
         <item name="content_divider_color">@color/purple_amber_divider</item>
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleAmber</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.PurpleAmber</item>
     </style>
 
     <!-- Theme Brown Amber -->
@@ -79,6 +82,7 @@
         <item name="link_color">@color/brown_amber_linkColor</item>
         <item name="content_divider_color">@color/brown_amber_divider</item>
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownAmber</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.BrownAmber</item>
     </style>
 
     <!-- Night -->
@@ -94,9 +98,11 @@
         <item name="disabledColor">@color/night_secondaryText</item>
         <item name="link_color">@color/night_linkColor</item>
         <item name="content_divider_color">@color/night_divider</item>
-        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.Night</item>
-
         <item name="backgroundColorApp">@color/night_background</item>
+
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.Night</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.Night</item>
+
     </style>
 
     <!-- Bottom Sheet Themes -->
@@ -156,6 +162,75 @@
     </style>
 
     <style name="Theme.App.BottomSheetDialog.Night" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_colorAccent</item>
+        <item name="primaryTextColor">@color/night_primaryText</item>
+        <item name="secondaryTextColor">@color/night_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_primaryText</item>
+        <item name="backgroundColorApp">@color/night_background</item>
+    </style>
+
+    <!-- Navigation View Themes -->
+    <style name="Theme.App.NavigationView.PurpleLime" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/purple_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_lime_primaryText</item>
+        <item name="backgroundColor">?attr/backgroundColorApp</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.BrownPink" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/brown_pink_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_pink_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_pink_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_pink_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_pink_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_pink_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_pink_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_pink_primaryText</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.PurpleAmber" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/purple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_amber_primaryText</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.BrownAmber" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/brown_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_amber_primaryText</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.DarkPurpleAmber" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/darkpurple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/darkpurple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/darkpurple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/darkpurple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/darkpurple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/darkpurple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/darkpurple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.Night" parent="ThemeOverlay.AppCompat.Dark">
         <item name="colorPrimary">@color/night_colorPrimary</item>
         <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
         <item name="colorAccent">@color/night_colorAccent</item>
