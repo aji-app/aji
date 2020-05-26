@@ -96,7 +96,7 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getTheme().applyStyle(R.style.ThemeOverlay_BrownPink, true);
+        getTheme().applyStyle(R.style.ThemeOverlay_PurpleAmber, true);
 
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         if (mFabCallback != null) {

@@ -30,6 +30,21 @@
         <item name="content_divider_color">@color/purplelime_divider</item>
     </style>
 
+    <!-- Theme PurpleLime -->
+    <style name="ThemeOverlay.PurpleAmber" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/purple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_amber_primaryText</item>
+        <item name="disabledColor">@color/purple_amber_secondaryText</item>
+        <item name="link_color">@color/purple_amber_linkColor</item>
+        <item name="content_divider_color">@color/purple_amber_divider</item>
+    </style>
+
 
     <!-- Base application theme. -->
     <style name="Theme.App.Base" parent="Theme.AppCompat.Light.NoActionBar">
