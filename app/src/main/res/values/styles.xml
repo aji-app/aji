@@ -13,6 +13,7 @@
         <item name="disabledColor">@color/brown_pink_secondaryText</item>
         <item name="link_color">@color/brown_pink_linkColor</item>
         <item name="content_divider_color">@color/brown_pink_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownPink</item>
     </style>
 
     <!-- Theme PurpleLime -->
@@ -28,6 +29,7 @@
         <item name="disabledColor">@color/purple_lime_secondaryText</item>
         <item name="link_color">@color/purple_lime_linkColor</item>
         <item name="content_divider_color">@color/purple_lime_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleLime</item>
     </style>
 
     <!-- Theme Purple Lime -->
@@ -43,6 +45,8 @@
         <item name="disabledColor">@color/darkpurple_amber_secondaryText</item>
         <item name="link_color">@color/darkpurple_amber_linkColor</item>
         <item name="content_divider_color">@color/darkpurple_amber_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.DarkPurpleAmber
+        </item>
     </style>
 
     <!-- Theme Purple Amber -->
@@ -58,9 +62,10 @@
         <item name="disabledColor">@color/purple_amber_secondaryText</item>
         <item name="link_color">@color/purple_amber_linkColor</item>
         <item name="content_divider_color">@color/purple_amber_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.PurpleAmber</item>
     </style>
 
-    <!-- Theme Purple Amber -->
+    <!-- Theme Brown Amber -->
     <style name="ThemeOverlay.BrownAmber" parent="Theme.App.Base">
         <item name="colorPrimary">@color/brown_amber_colorPrimary</item>
         <item name="colorPrimaryDark">@color/brown_amber_colorPrimaryDark</item>
@@ -73,8 +78,64 @@
         <item name="disabledColor">@color/brown_amber_secondaryText</item>
         <item name="link_color">@color/brown_amber_linkColor</item>
         <item name="content_divider_color">@color/brown_amber_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownAmber</item>
     </style>
 
+    <!-- Bottom Sheet Themes -->
+    <style name="Theme.App.BottomSheetDialog.BrownPink" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/brown_pink_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_pink_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_pink_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_pink_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_pink_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_pink_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_pink_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_pink_primaryText</item>
+    </style>
+
+    <style name="Theme.App.BottomSheetDialog.PurpleLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/purple_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_lime_primaryText</item>
+    </style>
+
+    <style name="Theme.App.BottomSheetDialog.PurpleAmber" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/purple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_amber_primaryText</item>
+    </style>
+
+    <style name="Theme.App.BottomSheetDialog.BrownAmber" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/brown_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_amber_primaryText</item>
+    </style>
+
+    <style name="Theme.App.BottomSheetDialog.DarkPurpleAmber" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/darkpurple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/darkpurple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/darkpurple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/darkpurple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/darkpurple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/darkpurple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/darkpurple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="Theme.App.Base" parent="Theme.AppCompat.Light.NoActionBar">
