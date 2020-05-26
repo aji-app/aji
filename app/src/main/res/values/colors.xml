@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Purple Lime Colors -->
-    <color name="purplelime_colorPrimary">#9C27B0</color>
-    <color name="purplelime_colorPrimaryDark">#7B1FA2</color>
-    <color name="purplelime_colorPrimaryLight">#E1BBE7</color>
-    <color name="purplelime_colorAccent">#CDDC39</color>
-    <color name="purplelime_iconText">#FFFFFF</color>
-    <color name="purplelime_divider">#4DBDBDBD</color>
-    <color name="purplelime_primaryText">#212121</color>
-    <color name="purplelime_secondaryText">#757575</color>
-    <color name="purplelime_linkColor">#0000EE</color>
+    <color name="purple_lime_colorPrimary">#9C27B0</color>
+    <color name="purple_lime_colorPrimaryDark">#7B1FA2</color>
+    <color name="purple_lime_colorPrimaryLight">#E1BBE7</color>
+    <color name="purple_lime_colorAccent">#CDDC39</color>
+    <color name="purple_lime_iconText">#FFFFFF</color>
+    <color name="purple_lime_divider">#4DBDBDBD</color>
+    <color name="purple_lime_primaryText">#212121</color>
+    <color name="purple_lime_secondaryText">#757575</color>
+    <color name="purple_lime_linkColor">#0000EE</color>
+
+    <!-- Purple Amber Colors -->
+    <color name="purple_amber_colorPrimary">#9C27B0</color>
+    <color name="purple_amber_colorPrimaryDark">#7B1FA2</color>
+    <color name="purple_amber_colorPrimaryLight">#E1BBE7</color>
+    <color name="purple_amber_colorAccent">#FFC107</color>
+    <color name="purple_amber_iconText">#FFFFFF</color>
+    <color name="purple_amber_divider">#4DBDBDBD</color>
+    <color name="purple_amber_primaryText">#212121</color>
+    <color name="purple_amber_secondaryText">#757575</color>
+    <color name="purple_amber_linkColor">#0000EE</color>
 
     <!-- Brown Pink Colors -->
     <color name="brown_pink_colorPrimary">#795548</color>
@@ -22,14 +33,25 @@
     <color name="brown_pink_secondaryText">#757575</color>
     <color name="brown_pink_linkColor">#0000EE</color>
 
-    <!-- Purple Amber Colors -->
-    <color name="purple_amber_colorPrimary">#673AB7</color>
-    <color name="purple_amber_colorPrimaryDark">#512DA8</color>
-    <color name="purple_amber_colorPrimaryLight">#D1C4E9</color>
-    <color name="purple_amber_colorAccent">#FFC107</color>
-    <color name="purple_amber_iconText">#FFFFFF</color>
-    <color name="purple_amber_divider">#4DBDBDBD</color>
-    <color name="purple_amber_primaryText">#212121</color>
-    <color name="purple_amber_secondaryText">#757575</color>
-    <color name="purple_amber_linkColor">#0000EE</color>
+    <!-- Brown Amber Colors -->
+    <color name="brown_amber_colorPrimary">#795548</color>
+    <color name="brown_amber_colorPrimaryDark">#5D4037</color>
+    <color name="brown_amber_colorPrimaryLight">#D7CCC8</color>
+    <color name="brown_amber_colorAccent">#FFC107</color>
+    <color name="brown_amber_iconText">#FFFFFF</color>
+    <color name="brown_amber_divider">#4DBDBDBD</color>
+    <color name="brown_amber_primaryText">#212121</color>
+    <color name="brown_amber_secondaryText">#757575</color>
+    <color name="brown_amber_linkColor">#0000EE</color>
+
+    <!-- Dark Purple Amber Colors -->
+    <color name="darkpurple_amber_colorPrimary">#673AB7</color>
+    <color name="darkpurple_amber_colorPrimaryDark">#512DA8</color>
+    <color name="darkpurple_amber_colorPrimaryLight">#D1C4E9</color>
+    <color name="darkpurple_amber_colorAccent">#FFC107</color>
+    <color name="darkpurple_amber_iconText">#FFFFFF</color>
+    <color name="darkpurple_amber_divider">#4DBDBDBD</color>
+    <color name="darkpurple_amber_primaryText">#212121</color>
+    <color name="darkpurple_amber_secondaryText">#757575</color>
+    <color name="darkpurple_amber_linkColor">#0000EE</color>
 </resources>

@@ -12,6 +12,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
+import ch.zhaw.engineering.aji.util.Themes;
 
 public class PreferenceFragment extends PreferenceFragmentCompat {
     private PreferenceListener mListener;
@@ -30,6 +31,11 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
 
             dialogBuilder.show();
+            return true;
+        });
+
+        findPreference(Themes.KEY_THEME).setOnPreferenceChangeListener((pref, newValue) -> {
+            mListener.themeChanged();
             return true;
         });
 
@@ -87,5 +93,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         void onShowOpenSourceLicenses();
 
         void cleanupDatabase();
+
+        void themeChanged();
     }
 }

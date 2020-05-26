@@ -1,4 +1,22 @@
 <resources>
+    <string name="theme">Theme</string>
+    <string name="default_theme">Purple Lime</string>
+    <string-array name="themes_list">
+        <item>Purple Lime</item>
+        <item>Purple Amber</item>
+        <item>Brown Lime</item>
+        <item>Brown Amber</item>
+        <item>Deep Purple Amber</item>
+    </string-array>
+
+    <string-array name="themes_list_values">
+        <item>PL</item>
+        <item>PA</item>
+        <item>BL</item>
+        <item>BA</item>
+        <item>DPA</item>
+    </string-array>
+
     <string name="app_name">Aji</string>
     <string name="unknown">&lt;unknown&gt;</string>
     <plurals name="song_count">

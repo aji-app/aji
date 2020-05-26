@@ -17,20 +17,35 @@
 
     <!-- Theme PurpleLime -->
     <style name="ThemeOverlay.PurpleLime" parent="Theme.App.Base">
-        <item name="colorPrimary">@color/purplelime_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/purplelime_colorPrimaryDark</item>
-        <item name="colorAccent">@color/purplelime_colorAccent</item>
-        <item name="primaryTextColor">@color/purplelime_primaryText</item>
-        <item name="secondaryTextColor">@color/purplelime_secondaryText</item>
-        <item name="buttonNormalColor">@color/purplelime_colorPrimary</item>
-        <item name="buttonHighlightColor">@color/purplelime_colorPrimaryLight</item>
-        <item name="buttonTextColor">@color/purplelime_primaryText</item>
-        <item name="disabledColor">@color/purplelime_secondaryText</item>
-        <item name="link_color">@color/purplelime_linkColor</item>
-        <item name="content_divider_color">@color/purplelime_divider</item>
+        <item name="colorPrimary">@color/purple_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/purple_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/purple_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/purple_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/purple_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/purple_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/purple_lime_primaryText</item>
+        <item name="disabledColor">@color/purple_lime_secondaryText</item>
+        <item name="link_color">@color/purple_lime_linkColor</item>
+        <item name="content_divider_color">@color/purple_lime_divider</item>
     </style>
 
-    <!-- Theme PurpleLime -->
+    <!-- Theme Purple Lime -->
+    <style name="ThemeOverlay.DarkPurpleAmber" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/darkpurple_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/darkpurple_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/darkpurple_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/darkpurple_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/darkpurple_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/darkpurple_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/darkpurple_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>s
+        <item name="disabledColor">@color/darkpurple_amber_secondaryText</item>
+        <item name="link_color">@color/darkpurple_amber_linkColor</item>
+        <item name="content_divider_color">@color/darkpurple_amber_divider</item>
+    </style>
+
+    <!-- Theme Purple Amber -->
     <style name="ThemeOverlay.PurpleAmber" parent="Theme.App.Base">
         <item name="colorPrimary">@color/purple_amber_colorPrimary</item>
         <item name="colorPrimaryDark">@color/purple_amber_colorPrimaryDark</item>
@@ -43,6 +58,21 @@
         <item name="disabledColor">@color/purple_amber_secondaryText</item>
         <item name="link_color">@color/purple_amber_linkColor</item>
         <item name="content_divider_color">@color/purple_amber_divider</item>
+    </style>
+
+    <!-- Theme Purple Amber -->
+    <style name="ThemeOverlay.BrownAmber" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/brown_amber_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_amber_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_amber_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_amber_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_amber_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_amber_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_amber_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_amber_primaryText</item>
+        <item name="disabledColor">@color/brown_amber_secondaryText</item>
+        <item name="link_color">@color/brown_amber_linkColor</item>
+        <item name="content_divider_color">@color/brown_amber_divider</item>
     </style>
 
 

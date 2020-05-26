@@ -37,7 +37,6 @@ import ch.zhaw.engineering.aji.databinding.ActivityMainBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationImporter;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
-import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.services.files.AudioFileScanner;
 import ch.zhaw.engineering.aji.services.files.StorageHelper;
 import ch.zhaw.engineering.aji.services.files.WebRadioPlsParser;
@@ -51,7 +50,6 @@ import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
-import ch.zhaw.engineering.aji.ui.library.FavoriteFragment;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistFragmentDirections;
@@ -67,13 +65,13 @@ import ch.zhaw.engineering.aji.ui.song.SongFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.PermissionChecker;
 import ch.zhaw.engineering.aji.util.PreferenceHelper;
+import ch.zhaw.engineering.aji.util.Themes;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 import static ch.zhaw.engineering.aji.ui.directories.DirectoryFragment.ARG_SELECT_FILES_ONLY;
-import static ch.zhaw.engineering.aji.util.Color.getColorFromAttr;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
@@ -96,7 +94,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getTheme().applyStyle(R.style.ThemeOverlay_PurpleAmber, true);
+        int theme = Themes.getSelectedTheme(this);
+        getTheme().applyStyle(theme, true);
 
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         if (mFabCallback != null) {
@@ -224,6 +223,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     public void onShowOpenSourceLicenses() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.nav_licenses);
+    }
+
+    @Override
+    public void themeChanged() {
+        recreate();
     }
 
     @Override
