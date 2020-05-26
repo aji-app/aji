@@ -102,6 +102,7 @@
 
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.Night</item>
         <item name="navigationViewTheme">@style/Theme.App.NavigationView.Night</item>
+        <item name="preferenceTheme">@style/App.Theme.PreferenceOverlay.Night</item>
 
     </style>
 
@@ -242,6 +243,11 @@
         <item name="backgroundColorApp">@color/night_background</item>
     </style>
 
+    <style name="App.Theme.PreferenceOverlay.Night" parent="@style/PreferenceThemeOverlay">
+        <item name="android:textColor">@color/night_primaryText</item>
+    </style>
+
+
     <!-- Base application theme. -->
     <style name="Theme.App.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="backgroundColorApp">?android:attr/colorBackground</item>
@@ -252,6 +258,7 @@
         <item name="textAppearanceListItem">@style/Theme.App.Widget.ListItemTextView</item>
 
         <item name="android:textAppearance">@style/Theme.App.Widget.TextView</item>
+
 
         <item name="textAppearanceListItemSecondary">
             @style/Theme.App.Widget.ListItemTextViewSecondary
