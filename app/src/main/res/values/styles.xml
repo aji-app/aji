@@ -104,8 +104,6 @@
         <item name="navigationViewTheme">@style/Theme.App.NavigationView.Night</item>
         <item name="preferenceTheme">@style/App.Theme.PreferenceOverlay.Night</item>
         <item name="actionOverflowMenuStyle">@style/App.Theme.ActionMenu.Night</item>
-
-
         <item name="toolbarTheme">@style/Theme.App.PopupOverlay.Night</item>
 
     </style>
@@ -245,6 +243,7 @@
         <item name="buttonHighlightColor">@color/night_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/night_primaryText</item>
         <item name="backgroundColorApp">@color/night_background</item>
+        <item name="android:textColorPrimary">@color/night_primaryText</item>
     </style>
 
     <style name="App.Theme.PreferenceOverlay.Night" parent="@style/PreferenceThemeOverlay">
@@ -320,6 +319,8 @@
     </style>
 
     <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <style name="Theme.App.PopupOverlay.Night" parent="ThemeOverlay.AppCompat.Dark" />
+    <style name="Theme.App.PopupOverlay.Night" parent="ThemeOverlay.AppCompat.Dark" >
+        <item name="android:textColor">@color/night_primaryText</item>
+    </style>
 
 </resources>
