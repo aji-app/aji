@@ -73,6 +73,7 @@ import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificat
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_SONG_ID;
 import static ch.zhaw.engineering.aji.services.files.AudioFileScanner.EXTRA_SCRAPE_ROOT_FOLDER;
 import static ch.zhaw.engineering.aji.ui.directories.DirectoryFragment.ARG_SELECT_FILES_ONLY;
+import static ch.zhaw.engineering.aji.util.Color.getColorFromAttr;
 import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
@@ -94,6 +95,9 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getTheme().applyStyle(R.style.ThemeOverlay_BrownPink, true);
+
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         if (mFabCallback != null) {
             configureFab(mFabCallback, mFabIcon);
@@ -128,7 +132,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
 
         RadioStationImporter.loadDefaultRadioStations(this);
-
         setContentView(mBinding.getRoot());
         setSupportActionBar(mBinding.layoutAppBarMain.toolbar);
 

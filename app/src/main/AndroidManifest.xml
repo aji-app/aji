@@ -14,13 +14,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App.PurpleLime"
+        android:theme="@style/ThemeOverlay.PurpleLime"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name="ch.zhaw.engineering.aji.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.App.PurpleLime.NoActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

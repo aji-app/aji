@@ -21,7 +21,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         addPreferencesFromResource(R.xml.root_preferences);
 
         findPreference("remove_all_songs").setOnPreferenceClickListener(preference -> {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_App_AlertDialog_PurpleLime)
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.remove_all_songs)
                     .setMessage(R.string.remove_all_songs_and_playlists)
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {

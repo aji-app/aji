@@ -9,4 +9,14 @@
     <color name="purplelime_primaryText">#212121</color>
     <color name="purplelime_secondaryText">#757575</color>
     <color name="purplelime_linkColor">#0000EE</color>
+
+    <color name="brown_pink_colorPrimary">#795548</color>
+    <color name="brown_pink_colorPrimaryDark">#5D4037</color>
+    <color name="brown_pink_colorPrimaryLight">#D7CCC8</color>
+    <color name="brown_pink_colorAccent">#E040FB</color>
+    <color name="brown_pink_iconText">#FFFFFF</color>
+    <color name="brown_pink_divider">#4DBDBDBD</color>
+    <color name="brown_pink_primaryText">#212121</color>
+    <color name="brown_pink_secondaryText">#757575</color>
+    <color name="brown_pink_linkColor">#0000EE</color>
 </resources>
