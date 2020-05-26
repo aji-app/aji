@@ -54,4 +54,16 @@
     <color name="darkpurple_amber_primaryText">#212121</color>
     <color name="darkpurple_amber_secondaryText">#757575</color>
     <color name="darkpurple_amber_linkColor">#0000EE</color>
+
+    <!-- Night Colors -->
+    <color name="night_colorPrimary">#9C75E1</color>
+    <color name="night_colorPrimaryDark">#6D50B3</color>
+    <color name="night_colorPrimaryLight">#D1C4E9</color>
+    <color name="night_colorAccent">#FFC107</color>
+    <color name="night_iconText">#FFFFFF</color>
+    <color name="night_divider">#4DBDBDBD</color>
+    <color name="night_primaryText">#C1B9B9</color>
+    <color name="night_secondaryText">#757575</color>
+    <color name="night_background">#000000</color>
+    <color name="night_linkColor">#0000EE</color>
 </resources>

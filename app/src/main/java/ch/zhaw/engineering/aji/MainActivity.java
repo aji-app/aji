@@ -227,7 +227,8 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     @Override
     public void themeChanged() {
-        recreate();
+        finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override

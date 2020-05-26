@@ -81,6 +81,24 @@
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownAmber</item>
     </style>
 
+    <!-- Night -->
+    <style name="ThemeOverlay.Night" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_colorAccent</item>
+        <item name="primaryTextColor">@color/night_primaryText</item>
+        <item name="secondaryTextColor">@color/night_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_primaryText</item>
+        <item name="disabledColor">@color/night_secondaryText</item>
+        <item name="link_color">@color/night_linkColor</item>
+        <item name="content_divider_color">@color/night_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.Night</item>
+
+        <item name="backgroundColorApp">@color/night_background</item>
+    </style>
+
     <!-- Bottom Sheet Themes -->
     <style name="Theme.App.BottomSheetDialog.BrownPink" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="colorPrimary">@color/brown_pink_colorPrimary</item>
@@ -137,6 +155,18 @@
         <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>
     </style>
 
+    <style name="Theme.App.BottomSheetDialog.Night" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_colorAccent</item>
+        <item name="primaryTextColor">@color/night_primaryText</item>
+        <item name="secondaryTextColor">@color/night_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_primaryText</item>
+        <item name="backgroundColorApp">@color/night_background</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="Theme.App.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="backgroundColorApp">?android:attr/colorBackground</item>
@@ -162,6 +192,8 @@
     <style name="App.Theme.TabLayoutStyle" parent="Base.Widget.Design.TabLayout">
         <item name="android:textSize">16sp</item>
         <item name="android:textAllCaps">true</item>
+        <item name="backgroundColor">?attr/backgroundColorApp</item>
+        <item name="android:textColor">?attr/primaryTextColor</item>
     </style>
 
     <style name="Theme.App.Widget.ListItemTextView" parent="@android:style/Widget.Material.TextView">
@@ -187,7 +219,11 @@
 
     </style>
 
-    <style name="Theme.App.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.App.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"></style>
+
+    <style name="Theme.App.NavOverlay" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="backgroundColor">?attr/backgroundColorApp</item>
+    </style>
 
     <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

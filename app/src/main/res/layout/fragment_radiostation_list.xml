@@ -21,6 +21,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
         android:gravity="center"
+        android:textColor="?attr/secondaryTextColor"
         android:text="@string/no_radios_prompt"
         android:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

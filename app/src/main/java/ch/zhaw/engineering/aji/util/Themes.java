@@ -31,6 +31,8 @@ public class Themes {
                 return R.style.ThemeOverlay_PurpleLime;
             case "PA":
                 return R.style.ThemeOverlay_PurpleAmber;
+            case "N":
+                return R.style.ThemeOverlay_Night;
             case "DPA":
             default:
                 return R.style.ThemeOverlay_DarkPurpleAmber;
