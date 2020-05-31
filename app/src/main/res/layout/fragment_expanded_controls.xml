@@ -106,6 +106,7 @@
             android:layout_height="wrap_content"
             android:gravity="bottom|start"
             android:text="@null"
+            android:textColor="?attr/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="0:17" />
@@ -133,6 +134,7 @@
             android:gravity="bottom|end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="?attr/primaryTextColor"
             tools:text="3:52" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

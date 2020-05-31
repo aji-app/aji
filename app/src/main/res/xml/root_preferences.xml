@@ -12,6 +12,13 @@
         app:defaultValue="true"
         app:title="@string/settings_media_store_title" />
 
+    <ListPreference
+        app:key="theme"
+        app:defaultValue="@string/default_theme"
+        app:title="@string/theme"
+        app:entries="@array/themes_list"
+        app:entryValues="@array/themes_list_values"/>
+
     <Preference
         app:key="remove_all_songs"
         android:title="@string/remove_all_songs" />

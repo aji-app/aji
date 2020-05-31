@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/hint_playlist_name"
         android:inputType="text"
+        android:textColorHint="?attr/secondaryTextColor"
         android:importantForAutofill="no"
         />
 </LinearLayout>

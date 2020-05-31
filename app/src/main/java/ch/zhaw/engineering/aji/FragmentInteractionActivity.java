@@ -612,7 +612,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
             }
         });
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.Theme_App_AlertDialog_PurpleLime)
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .setTitle(R.string.create_playlist)
                 .setPositiveButton(R.string.save, null)

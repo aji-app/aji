@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:tint="?attr/colorPrimary"
+        android:textColor="?attr/secondaryTextColor"
         android:gravity="center_vertical"
         app:drawableTint="?attr/colorPrimary"
         android:drawablePadding="@dimen/button_with_image_padding"

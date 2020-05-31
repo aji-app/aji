@@ -16,4 +16,6 @@
     <attr name="app_icon_nav" format="reference" />
     <attr name="link_color" format="reference" />
     <attr name="content_divider_color" format="reference" />
+    <attr name="navigationViewTheme" format="reference" />
+    <attr name="toolbarTheme" format="reference" />
 </resources>
