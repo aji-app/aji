@@ -9,7 +9,7 @@
     <color name="purple_lime_divider">#4DBDBDBD</color>
     <color name="purple_lime_primaryText">#212121</color>
     <color name="purple_lime_secondaryText">#757575</color>
-    <color name="purple_lime_linkColor">#0000EE</color>
+    <color name="purple_lime_linkColor">#9C27B0</color>
 
     <!-- Purple Amber Colors -->
     <color name="purple_amber_colorPrimary">#9C27B0</color>
@@ -20,7 +20,7 @@
     <color name="purple_amber_divider">#4DBDBDBD</color>
     <color name="purple_amber_primaryText">#212121</color>
     <color name="purple_amber_secondaryText">#757575</color>
-    <color name="purple_amber_linkColor">#0000EE</color>
+    <color name="purple_amber_linkColor">#9C27B0</color>
 
     <!-- Brown Pink Colors -->
     <color name="brown_pink_colorPrimary">#795548</color>
@@ -31,7 +31,7 @@
     <color name="brown_pink_divider">#4DBDBDBD</color>
     <color name="brown_pink_primaryText">#212121</color>
     <color name="brown_pink_secondaryText">#757575</color>
-    <color name="brown_pink_linkColor">#0000EE</color>
+    <color name="brown_pink_linkColor">#795548</color>
 
     <!-- Brown Amber Colors -->
     <color name="brown_amber_colorPrimary">#795548</color>
@@ -42,7 +42,7 @@
     <color name="brown_amber_divider">#4DBDBDBD</color>
     <color name="brown_amber_primaryText">#212121</color>
     <color name="brown_amber_secondaryText">#757575</color>
-    <color name="brown_amber_linkColor">#0000EE</color>
+    <color name="brown_amber_linkColor">#795548</color>
 
     <!-- Brown Lime Colors -->
     <color name="brown_lime_colorPrimary">#795548</color>
@@ -53,7 +53,7 @@
     <color name="brown_lime_divider">#4DBDBDBD</color>
     <color name="brown_lime_primaryText">#212121</color>
     <color name="brown_lime_secondaryText">#757575</color>
-    <color name="brown_lime_linkColor">#0000EE</color>
+    <color name="brown_lime_linkColor">#795548</color>
 
     <!-- Dark Purple Amber Colors -->
     <color name="darkpurple_amber_colorPrimary">#673AB7</color>
@@ -64,7 +64,7 @@
     <color name="darkpurple_amber_divider">#4DBDBDBD</color>
     <color name="darkpurple_amber_primaryText">#212121</color>
     <color name="darkpurple_amber_secondaryText">#757575</color>
-    <color name="darkpurple_amber_linkColor">#0000EE</color>
+    <color name="darkpurple_amber_linkColor">#673AB7</color>
 
     <!-- Night (OLED) Colors -->
     <color name="night_oled_colorPrimary">#7300e6</color>
@@ -76,7 +76,7 @@
     <color name="night_oled_primaryText">#C1B9B9</color>
     <color name="night_oled_secondaryText">#757575</color>
     <color name="night_oled_background">#000000</color>
-    <color name="night_oled_linkColor">#0000EE</color>
+    <color name="night_oled_linkColor">#BF80FF</color>
 
     <!-- Night Colors -->
     <color name="night_colorPrimary">#7300e6</color>
@@ -88,5 +88,5 @@
     <color name="night_primaryText">#C1B9B9</color>
     <color name="night_secondaryText">#757575</color>
     <color name="night_background">#232323</color>
-    <color name="night_linkColor">#0000EE</color>
+    <color name="night_linkColor">#BF80FF</color>
 </resources>
