@@ -43,7 +43,11 @@ import java.util.regex.Pattern;
 
         String streamTitle = data.get("StreamTitle");
         if (streamTitle != null) {
-            String title = streamTitle.substring(0, streamTitle.indexOf("-"));
+            int index = streamTitle.indexOf("-");
+            if (index == -1) {
+                return streamTitle.trim();
+            }
+            String title = streamTitle.substring(0, index);
             return title.trim();
         }
         return "";
