@@ -116,6 +116,10 @@
         <item name="link_color">@color/night_linkColor</item>
         <item name="content_divider_color">@color/night_divider</item>
         <item name="backgroundColorApp">@color/night_background</item>
+        <item name="backgroundColorInverted">@color/night_colorPrimaryDark</item>
+        <item name="primaryTextColorInverted">@color/night_primaryText</item>
+        <item name="primaryColorInverted">@color/night_primaryText</item>
+        <item name="secondaryTextColorInverted">@color/night_primaryText</item>
 
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.Night</item>
         <item name="navigationViewTheme">@style/Theme.App.NavigationView.Night</item>
@@ -143,6 +147,10 @@
         <item name="link_color">@color/night_oled_linkColor</item>
         <item name="content_divider_color">@color/night_oled_divider</item>
         <item name="backgroundColorApp">@color/night_oled_background</item>
+        <item name="backgroundColorInverted">@color/night_oled_colorPrimaryDark</item>
+        <item name="primaryTextColorInverted">@color/night_oled_primaryText</item>
+        <item name="primaryColorInverted">@color/night_oled_primaryText</item>
+        <item name="secondaryTextColorInverted">@color/night_oled_primaryText</item>
 
         <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.NightOled</item>
         <item name="navigationViewTheme">@style/Theme.App.NavigationView.NightOled</item>

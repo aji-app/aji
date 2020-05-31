@@ -68,7 +68,7 @@
 
     <!-- Night (OLED) Colors -->
     <color name="night_oled_colorPrimary">#7300e6</color>
-    <color name="night_oled_colorPrimaryDark">#6D50B3</color>
+    <color name="night_oled_colorPrimaryDark">#400080</color>
     <color name="night_oled_colorPrimaryLight">#BF80FF</color>
     <color name="night_oled_colorAccent">#006666</color>
     <color name="night_oled_iconText">#FFFFFF</color>
@@ -80,7 +80,7 @@
 
     <!-- Night Colors -->
     <color name="night_colorPrimary">#7300e6</color>
-    <color name="night_colorPrimaryDark">#6D50B3</color>
+    <color name="night_colorPrimaryDark">#400080</color>
     <color name="night_colorPrimaryLight">#BF80FF</color>
     <color name="night_colorAccent">#006666</color>
     <color name="night_iconText">#FFFFFF</color>
