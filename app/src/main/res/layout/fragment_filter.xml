@@ -3,5 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/margin_around_lists"
+    android:layout_marginRight="@dimen/margin_around_lists"
+    android:layout_marginBottom="@dimen/fragment_margin_bottom"
     tools:context=".ui.filter.FilterFragment">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Echo" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/echo_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 </FrameLayout>

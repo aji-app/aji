@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentFilterBinding;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 
@@ -28,6 +29,7 @@ public class FilterFragment extends TabletAwareFragment {
     private String mParam1;
     private String mParam2;
     private FilterFragmentListener mListener;
+    private FragmentFilterBinding mBinding;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -66,8 +68,13 @@ public class FilterFragment extends TabletAwareFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mBinding = FragmentFilterBinding.inflate(inflater, container, false);
+
+        mBinding.echoSwitch.setOnCheckedChangeListener((v, checked) -> {
+            mListener.modifyEchoFilter(checked);
+        });
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -101,5 +108,6 @@ public class FilterFragment extends TabletAwareFragment {
 
     public interface FilterFragmentListener  extends FabCallbackListener {
         void showEmptyDetails();
+        void modifyEchoFilter(boolean enabled);
     }
 }

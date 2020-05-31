@@ -76,7 +76,7 @@ import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
 public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener,
-        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
+        DirectoryFragment.OnDirectoryFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;

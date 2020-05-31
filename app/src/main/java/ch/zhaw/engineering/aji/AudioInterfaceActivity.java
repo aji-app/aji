@@ -36,13 +36,14 @@ import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.song.list.QueueSongListFragment;
 import lombok.Builder;
 import lombok.Value;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.NotificationManager.SHUTDOWN_INTENT;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener, FilterFragment.FilterFragmentListener {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
@@ -198,6 +199,13 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     public void onSkipToSong(int songId) {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().skipToSong(songId);
+        }
+    }
+
+    @Override
+    public void modifyEchoFilter(boolean enabled) {
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().modifyFilter(AudioService.Filter.EchoFilter, enabled);
         }
     }
 

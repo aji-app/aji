@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.exoplayer.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.aji.services.audio.filter.EchoFilter;
 import ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager;
 import ch.zhaw.engineering.aji.services.audio.notification.NotificationManager;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
@@ -80,6 +80,7 @@ public class AudioService extends LifecycleService {
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
     private RadioStationMetadataRunnable mUpdateSongInfoRunnable;
+    private Map<Filter, AudioBackend.AudioFilter> filters = new HashMap<>();
 
     public AudioService() {
     }
@@ -92,6 +93,12 @@ public class AudioService extends LifecycleService {
 
         setupBackgroundThreads();
         setupMediaSession();
+
+        EchoFilter filter = new EchoFilter(1, 50000, true);
+        filters.put(Filter.EchoFilter, filter);
+        AudioBackend.AudioFilter[] filters = new AudioBackend.AudioFilter[]{
+                filter
+        };
 
         mSongRepository = SongDao.getInstance(getApplication());
         mAudioBackend.initialize(
@@ -138,9 +145,17 @@ public class AudioService extends LifecycleService {
 
                         Log.i(TAG, "ERROR");
                     }
-                });
+                }
+                , filters
+        );
 
         mNotificationManager.start();
+    }
+
+    private void setFilterEnabled(Filter filter, boolean enabled) {
+        if (filters.containsKey(filter)) {
+            filters.get(filter).setEnabled(enabled);
+        }
     }
 
     @Override
@@ -585,6 +600,10 @@ public class AudioService extends LifecycleService {
         public void skipToSong(int position) {
             playbackControlSkipToSongAtPosition(position);
         }
+
+        public void modifyFilter(Filter filter, boolean enabled) {
+            setFilterEnabled(filter, enabled);
+        }
     }
 
     public enum PlayState {
@@ -667,6 +686,10 @@ public class AudioService extends LifecycleService {
     private static class SongTag {
         long songId;
         int position;
+    }
+
+    public enum Filter {
+        EchoFilter
     }
 
 }
