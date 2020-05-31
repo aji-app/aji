@@ -8,6 +8,7 @@
         <item>Brown Amber</item>
         <item>Brown Pink</item>
         <item>Deep Purple Amber</item>
+        <item>Night (OLED)</item>
         <item>Night</item>
     </string-array>
 
@@ -18,6 +19,7 @@
         <item>BA</item>
         <item>BP</item>
         <item>DPA</item>
+        <item>NO</item>
         <item>N</item>
     </string-array>
 

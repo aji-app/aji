@@ -27,10 +27,14 @@ public class Themes {
                 return R.style.ThemeOverlay_BrownAmber;
             case "BP":
                 return R.style.ThemeOverlay_BrownPink;
+            case "BL":
+                return R.style.ThemeOverlay_BrownLime;
             case "PL":
                 return R.style.ThemeOverlay_PurpleLime;
             case "PA":
                 return R.style.ThemeOverlay_PurpleAmber;
+            case "NO":
+                return R.style.ThemeOverlay_NightOled;
             case "N":
                 return R.style.ThemeOverlay_Night;
             case "DPA":

@@ -17,6 +17,23 @@
         <item name="navigationViewTheme">@style/Theme.App.NavigationView.BrownPink</item>
     </style>
 
+    <!-- Theme BrownPink -->
+    <style name="ThemeOverlay.BrownLime" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/brown_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_lime_primaryText</item>
+        <item name="disabledColor">@color/brown_lime_secondaryText</item>
+        <item name="link_color">@color/brown_lime_linkColor</item>
+        <item name="content_divider_color">@color/brown_lime_divider</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.BrownLime</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.BrownLime</item>
+    </style>
+
     <!-- Theme PurpleLime -->
     <style name="ThemeOverlay.PurpleLime" parent="Theme.App.Base">
         <item name="colorPrimary">@color/purple_lime_colorPrimary</item>
@@ -106,6 +123,37 @@
         <item name="actionOverflowMenuStyle">@style/App.Theme.ActionMenu.Night</item>
         <item name="toolbarTheme">@style/Theme.App.PopupOverlay.Night</item>
 
+
+        <item name="dialogTheme">@style/App.Theme.Dialog.Night</item>
+        <item name="alertDialogTheme">@style/App.Theme.AlertDialog.Night</item>
+
+    </style>
+
+    <!-- Night -->
+    <style name="ThemeOverlay.NightOled" parent="Theme.App.Base">
+        <item name="colorPrimary">@color/night_oled_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_oled_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_oled_colorAccent</item>
+        <item name="primaryTextColor">@color/night_oled_primaryText</item>
+        <item name="secondaryTextColor">@color/night_oled_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_oled_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_oled_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_oled_primaryText</item>
+        <item name="disabledColor">@color/night_oled_secondaryText</item>
+        <item name="link_color">@color/night_oled_linkColor</item>
+        <item name="content_divider_color">@color/night_oled_divider</item>
+        <item name="backgroundColorApp">@color/night_oled_background</item>
+
+        <item name="bottomSheetDialogTheme">@style/Theme.App.BottomSheetDialog.NightOled</item>
+        <item name="navigationViewTheme">@style/Theme.App.NavigationView.NightOled</item>
+        <item name="preferenceTheme">@style/App.Theme.PreferenceOverlay.NightOled</item>
+        <item name="actionOverflowMenuStyle">@style/App.Theme.ActionMenu.NightOled</item>
+        <item name="toolbarTheme">@style/Theme.App.PopupOverlay.NightOled</item>
+
+
+        <item name="dialogTheme">@style/App.Theme.Dialog.NightOled</item>
+        <item name="alertDialogTheme">@style/App.Theme.AlertDialog.NightOled</item>
+
     </style>
 
     <!-- Bottom Sheet Themes -->
@@ -118,6 +166,17 @@
         <item name="buttonNormalColor">@color/brown_pink_colorPrimary</item>
         <item name="buttonHighlightColor">@color/brown_pink_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/brown_pink_primaryText</item>
+    </style>
+
+    <style name="Theme.App.BottomSheetDialog.BrownLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/brown_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_lime_primaryText</item>
     </style>
 
     <style name="Theme.App.BottomSheetDialog.PurpleLime" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
@@ -164,6 +223,18 @@
         <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>
     </style>
 
+    <style name="Theme.App.BottomSheetDialog.NightOled" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/night_oled_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_oled_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_oled_colorAccent</item>
+        <item name="primaryTextColor">@color/night_oled_primaryText</item>
+        <item name="secondaryTextColor">@color/night_oled_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_oled_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_oled_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_oled_primaryText</item>
+        <item name="backgroundColorApp">@color/night_oled_background</item>
+    </style>
+
     <style name="Theme.App.BottomSheetDialog.Night" parent="@style/Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="colorPrimary">@color/night_colorPrimary</item>
         <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
@@ -186,6 +257,18 @@
         <item name="buttonNormalColor">@color/purple_lime_colorPrimary</item>
         <item name="buttonHighlightColor">@color/purple_lime_colorPrimaryLight</item>
         <item name="buttonTextColor">@color/purple_lime_primaryText</item>
+        <item name="backgroundColor">?attr/backgroundColorApp</item>
+    </style>
+
+    <style name="Theme.App.NavigationView.BrownLime" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/brown_lime_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/brown_lime_colorPrimaryDark</item>
+        <item name="colorAccent">@color/brown_lime_colorAccent</item>
+        <item name="primaryTextColor">@color/brown_lime_primaryText</item>
+        <item name="secondaryTextColor">@color/brown_lime_secondaryText</item>
+        <item name="buttonNormalColor">@color/brown_lime_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/brown_lime_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/brown_lime_primaryText</item>
         <item name="backgroundColor">?attr/backgroundColorApp</item>
     </style>
 
@@ -233,8 +316,21 @@
         <item name="buttonTextColor">@color/darkpurple_amber_primaryText</item>
     </style>
 
+    <style name="Theme.App.NavigationView.NightOled" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorPrimary">@color/night_oled_colorPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/night_oled_colorPrimaryDark</item>
+        <item name="colorAccent">@color/night_oled_colorAccent</item>
+        <item name="primaryTextColor">@color/night_oled_primaryText</item>
+        <item name="secondaryTextColor">@color/night_oled_secondaryText</item>
+        <item name="buttonNormalColor">@color/night_oled_colorPrimary</item>
+        <item name="buttonHighlightColor">@color/night_oled_colorPrimaryLight</item>
+        <item name="buttonTextColor">@color/night_oled_primaryText</item>
+        <item name="backgroundColorApp">@color/night_oled_background</item>
+        <item name="android:textColorPrimary">@color/night_oled_primaryText</item>
+    </style>
+
     <style name="Theme.App.NavigationView.Night" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimary">@color/night_colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
         <item name="colorAccent">@color/night_colorAccent</item>
         <item name="primaryTextColor">@color/night_primaryText</item>
@@ -246,6 +342,14 @@
         <item name="android:textColorPrimary">@color/night_primaryText</item>
     </style>
 
+    <style name="App.Theme.PreferenceOverlay.NightOled" parent="@style/PreferenceThemeOverlay">
+        <item name="android:textColor">@color/night_oled_primaryText</item>
+    </style>
+
+    <style name="App.Theme.ActionMenu.NightOled" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:popupBackground">@color/night_oled_background</item>
+    </style>
+
     <style name="App.Theme.PreferenceOverlay.Night" parent="@style/PreferenceThemeOverlay">
         <item name="android:textColor">@color/night_primaryText</item>
     </style>
@@ -253,6 +357,55 @@
     <style name="App.Theme.ActionMenu.Night" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:popupBackground">@color/night_background</item>
     </style>
+
+    <!-- Alert Dialog Theme -->
+    <style name="App.Theme.Dialog.NightOled" parent="Theme.AppCompat.Dialog">
+        <item name="android:textColorPrimary">@color/night_oled_primaryText</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/night_oled_background</item>
+        <item name="android:colorBackground">@color/night_oled_background</item>
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/night_oled_colorAccent</item>
+
+        <item name="colorPrimary">@color/night_oled_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_oled_colorPrimaryDark</item>
+    </style>
+    <style name="App.Theme.AlertDialog.NightOled" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/night_oled_primaryText</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/night_oled_background</item>
+        <item name="android:colorBackground">@color/night_oled_background</item>
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/night_oled_colorAccent</item>
+
+        <item name="colorPrimary">@color/night_oled_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_oled_colorPrimaryDark</item>
+    </style>
+
+    <!-- Alert Dialog Theme -->
+    <style name="App.Theme.Dialog.Night" parent="Theme.AppCompat.Dialog">
+        <item name="android:textColorPrimary">@color/night_primaryText</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/night_background</item>
+        <item name="android:colorBackground">@color/night_background</item>
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/night_colorAccent</item>
+
+        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
+    </style>
+    <style name="App.Theme.AlertDialog.Night" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/night_primaryText</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/night_background</item>
+        <item name="android:colorBackground">@color/night_background</item>
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/night_colorAccent</item>
+
+        <item name="colorPrimary">@color/night_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/night_colorPrimaryDark</item>
+    </style>
+
 
     <style name="App.Theme.ActionMenu" parent="Widget.AppCompat.PopupMenu.Overflow" />
 
@@ -319,6 +472,10 @@
     </style>
 
     <style name="Theme.App.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.App.PopupOverlay.NightOled" parent="ThemeOverlay.AppCompat.Dark" >
+        <item name="android:textColor">@color/night_oled_primaryText</item>
+    </style>
+
     <style name="Theme.App.PopupOverlay.Night" parent="ThemeOverlay.AppCompat.Dark" >
         <item name="android:textColor">@color/night_primaryText</item>
     </style>
