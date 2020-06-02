@@ -90,7 +90,7 @@ public class AlbumArtistListFragment extends ListFragment {
                 });
             } else if (mMode == Mode.ARTIST) {
                 mAppViewModel.getArtists().observe(getViewLifecycleOwner(), artists -> {
-                    if (mAlbumAdapter == null) {
+                    if (mArtistAdapter == null) {
                         mArtistAdapter = new ArtistRecyclerViewAdapter(artists, mListener, mAppViewModel.showHiddenSongs(), mRecyclerView);
                     } else {
                         mArtistAdapter.updateArtists(artists);
