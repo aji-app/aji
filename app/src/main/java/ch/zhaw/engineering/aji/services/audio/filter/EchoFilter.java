@@ -2,18 +2,39 @@ package ch.zhaw.engineering.aji.services.audio.filter;
 
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 
 public class EchoFilter extends AudioBackend.AudioFilter {
-    private static final String TAG = "PhaserFilter";
-    private final int mId;
-    private final int mBatchSize;
+    private static final String TAG = "EchoFilter";
     public static final int SAMPLE_RATE = 44100;
+    public static final int ASSUMED_CHANNEL_COUNT = 2;
+    private final int mId;
+    private final int mBatchSize = 2 * ASSUMED_CHANNEL_COUNT * SAMPLE_RATE;
+    private short[] mEcho;
+    private int position = 0;
+    private double mEchoStrength;
+    private int mEchoInFrames;
 
-    public EchoFilter(int id, int batchSize, boolean enabled) {
+
+    public EchoFilter(int id, boolean enabled) {
         mId = id;
-        mBatchSize = batchSize;
         setEnabled(enabled);
+        setEchoInSeconds(1.0);
+        setEchoStrength(0.3);
+    }
+
+    public void setEchoStrength(double strength) {
+        mEchoStrength = Math.max(0.0, Math.min(strength, 1.0));
+    }
+
+    public void setEchoInSeconds(double seconds) {
+        seconds = Math.max(0.0, Math.min(seconds, 2.0));
+
+        mEchoInFrames = (int) (SAMPLE_RATE * seconds * ASSUMED_CHANNEL_COUNT);
+        mEcho = new short[mEchoInFrames];
     }
 
     @Override
@@ -28,15 +49,48 @@ public class EchoFilter extends AudioBackend.AudioFilter {
 
     @Override
     public byte[] apply(byte[] bytes, AudioBackend.AudioFormat format) {
+        short[] bytesAsShort = bytesToShort(bytes);
+        short[] out = bytesAsShort.clone();
 
-        byte[] temp = bytes.clone();
-        int N = mBatchSize / 4;
-        for (int n = N + 1; n < bytes.length; n++) {
-            bytes[n] = (byte) (temp[n] + temp[n - N]);
+        for (int i = 0; i < bytesAsShort.length; i++) {
+            out[i] = (short) (bytesAsShort[i] + mEchoStrength * mEcho[position]);
+            mEcho[position] = bytesAsShort[i];
+            position++;
+            if (position == mEcho.length) {
+                position = 0;
+            }
         }
 
         Log.i(TAG, String.format("Applying noop %d filter to %d bytes (%d frames) with %d bytes per sample", mId, bytes.length, bytes.length / format.getBytesPerFrame(), format.getBytesPerFrame() / format.getChannelCount()));
-        return bytes;
+        return shortsToBytes(out);
+    }
+
+    private short[] bytesToShort(byte[] bytes) {
+        int length = bytes.length;
+        if (bytes.length % 2 != 0) {
+            length += 1;
+        }
+        ByteBuffer byteBuffer = ByteBuffer.allocate(length).order(ByteOrder.nativeOrder());
+        byteBuffer.put(bytes);
+        if (bytes.length % 2 != 0) {
+            byteBuffer.put((byte) 0);
+        }
+        byteBuffer.flip();
+        short[] shortArray = new short[length / 2];
+        byteBuffer.asShortBuffer().get(shortArray);
+        return shortArray;
+    }
+
+    private byte[] shortsToBytes(short[] shorts) {
+        int length = shorts.length;
+        ByteBuffer byteBuffer = ByteBuffer.allocate(length * 2).order(ByteOrder.nativeOrder());
+        for (short s : shorts) {
+            byteBuffer.putShort(s);
+        }
+        byteBuffer.flip();
+        byte[] byteArray = new byte[length * 2];
+        byteBuffer.get(byteArray);
+        return byteArray;
     }
 
     @Override

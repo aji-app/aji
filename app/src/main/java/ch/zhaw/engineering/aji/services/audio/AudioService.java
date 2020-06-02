@@ -97,7 +97,7 @@ public class AudioService extends LifecycleService {
 
         PreferenceHelper preferenceHelper = new PreferenceHelper(this);
 
-        EchoFilter filter = new EchoFilter(1, 50000, preferenceHelper.isFilterEnbaled(Filter.EchoFilter));
+        EchoFilter filter = new EchoFilter(1, preferenceHelper.isFilterEnbaled(Filter.EchoFilter));
         filters.put(Filter.EchoFilter, filter);
         AudioBackend.AudioFilter[] filters = new AudioBackend.AudioFilter[]{
                 filter
