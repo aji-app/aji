@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_nav_filters_to_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_filters_to_nav_echo_filtr_details"
+            app:destination="@id/nav_echo_filter_details" />
     </fragment>
 
     <fragment
@@ -178,4 +181,10 @@
             app:argType="boolean"
             app:defaultValue="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_echo_filter_details"
+        android:name="ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment"
+        android:label="@string/menu_echo_filter_details"
+        tools:layout="@layout/fragment_echo_filter_configuration" />
 </navigation>

@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.exoplayer.ExoPlayerAudioBackend;
+import ch.zhaw.engineering.aji.services.audio.filter.EchoFilter;
 import ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager;
 import ch.zhaw.engineering.aji.services.audio.notification.NotificationManager;
 import ch.zhaw.engineering.aji.services.audio.webradio.RadioStationMetadataRunnable;
@@ -36,9 +36,15 @@ import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
+
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.DELAY_DEFAULT;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.DELAY_KEY;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.STRENGTH_DEFAULT;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.STRENGTH_KEY;
 
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
@@ -80,6 +86,7 @@ public class AudioService extends LifecycleService {
     private Song mAutoQueueSong;
     private boolean mTrackingPosition;
     private RadioStationMetadataRunnable mUpdateSongInfoRunnable;
+    private Map<Filter, AudioBackend.AudioFilter> filters = new HashMap<>();
 
     public AudioService() {
     }
@@ -92,6 +99,16 @@ public class AudioService extends LifecycleService {
 
         setupBackgroundThreads();
         setupMediaSession();
+
+        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+        double delay = preferenceHelper.getFilterValue(Filter.EchoFilter, DELAY_KEY, DELAY_DEFAULT);
+        double strength = preferenceHelper.getFilterValue(Filter.EchoFilter, STRENGTH_KEY, STRENGTH_DEFAULT);
+
+        EchoFilter filter = new EchoFilter(1, preferenceHelper.isFilterEnbaled(Filter.EchoFilter), strength, delay);
+        filters.put(Filter.EchoFilter, filter);
+        AudioBackend.AudioFilter[] filters = new AudioBackend.AudioFilter[]{
+                filter
+        };
 
         mSongRepository = SongDao.getInstance(getApplication());
         mAudioBackend.initialize(
@@ -138,9 +155,17 @@ public class AudioService extends LifecycleService {
 
                         Log.i(TAG, "ERROR");
                     }
-                });
+                }
+                , filters
+        );
 
         mNotificationManager.start();
+    }
+
+    private void modifyFilter(Filter filter, boolean enabled, double... params) {
+        if (filters.containsKey(filter)) {
+            filters.get(filter).modify(enabled, params);
+        }
     }
 
     @Override
@@ -585,6 +610,10 @@ public class AudioService extends LifecycleService {
         public void skipToSong(int position) {
             playbackControlSkipToSongAtPosition(position);
         }
+
+        public void modifyFilter(Filter filter, boolean enabled, double... parameters) {
+            AudioService.this.modifyFilter(filter, enabled, parameters);
+        }
     }
 
     public enum PlayState {
@@ -667,6 +696,10 @@ public class AudioService extends LifecycleService {
     private static class SongTag {
         long songId;
         int position;
+    }
+
+    public enum Filter {
+        EchoFilter
     }
 
 }

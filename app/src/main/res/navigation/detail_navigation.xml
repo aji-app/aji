@@ -84,4 +84,9 @@
         android:id="@+id/nav_placeholder_details"
         android:name="ch.zhaw.engineering.aji.ui.placeholder.PlaceholderFragment"
         android:label="" />
+    <fragment
+        android:id="@+id/nav_echo_filter_details"
+        android:name="ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment"
+        android:label="@string/menu_echo_filter_details"
+        tools:layout="@layout/fragment_echo_filter_configuration" />
 </navigation>

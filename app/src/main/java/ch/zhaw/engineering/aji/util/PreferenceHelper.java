@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 
 public class PreferenceHelper {
@@ -39,4 +40,29 @@ public class PreferenceHelper {
         return mSharedPreferences.getBoolean(PREF_MEDIA_STORE, true);
     }
 
+    public boolean isFilterEnbaled(AudioService.Filter filter) {
+        return mSharedPreferences.getBoolean(getFilterKey(filter), false);
+    }
+
+    public void setFilterEnabled(AudioService.Filter filter, boolean enabled) {
+        mSharedPreferences.edit().putBoolean(getFilterKey(filter), enabled).apply();
+    }
+
+    public void setFilterValue(AudioService.Filter filter, String name, double value) {
+        mSharedPreferences.edit().putLong(getFilterKey(filter, name), Double.doubleToRawLongBits(value)).apply();
+    }
+
+    public double getFilterValue(AudioService.Filter filter, String name, double defaultValue) {
+        return Double.longBitsToDouble(mSharedPreferences.getLong(getFilterKey(filter, name), Double.doubleToRawLongBits(defaultValue)));
+    }
+
+
+    private String getFilterKey(AudioService.Filter filter) {
+        return "filter_" + filter.name();
+    }
+
+
+    private String getFilterKey(AudioService.Filter filter, String name) {
+        return "filter_" + filter.name() + "_" + name;
+    }
 }

@@ -208,6 +208,8 @@ public interface AudioBackend {
         }
 
         public abstract String getIdentifier();
+
+        public abstract void modify(boolean enabled, double[] params);
     }
 
     /**

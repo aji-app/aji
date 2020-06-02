@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
+import ch.zhaw.engineering.aji.databinding.FragmentFilterBinding;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +31,8 @@ public class FilterFragment extends TabletAwareFragment {
     private String mParam1;
     private String mParam2;
     private FilterFragmentListener mListener;
+    private FragmentFilterBinding mBinding;
+    private PreferenceHelper mPreferenceHelper;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -66,8 +71,13 @@ public class FilterFragment extends TabletAwareFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mBinding = FragmentFilterBinding.inflate(inflater, container, false);
+
+        mBinding.echoFilter.setOnClickListener(v -> {
+            mListener.onFilterSelected(AudioService.Filter.EchoFilter);
+        });
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -82,6 +92,8 @@ public class FilterFragment extends TabletAwareFragment {
                     + " must implement FilterFragmentListener");
         }
     }
+
+
 
     @Override
     public void onStart() {
@@ -101,5 +113,6 @@ public class FilterFragment extends TabletAwareFragment {
 
     public interface FilterFragmentListener  extends FabCallbackListener {
         void showEmptyDetails();
+        void onFilterSelected(AudioService.Filter filter);
     }
 }

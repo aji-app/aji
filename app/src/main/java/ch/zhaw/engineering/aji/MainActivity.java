@@ -76,7 +76,7 @@ import static ch.zhaw.engineering.aji.util.Margins.setBottomMargin;
 
 
 public class MainActivity extends FragmentInteractionActivity implements PreferenceFragment.PreferenceListener, LicenseInformationFragment.LicenseListFragmentListener, SongFragment.SongFragmentListener,
-        DirectoryFragment.OnDirectoryFragmentListener, FilterFragment.FilterFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
+        DirectoryFragment.OnDirectoryFragmentListener, AlbumDetailsFragment.AlbumDetailsListener, ArtistDetailsFragment.ArtistDetailsListener {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -478,6 +478,23 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     break;
             }
         }
+    }
+
+    @Override
+    protected void navigateToFilterDetails(AudioService.Filter filter) {
+        switch (filter) {
+            case EchoFilter:
+                if (mAppViewModel.isTwoPane()) {
+                    NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+                    navController.navigate(R.id.nav_echo_filter_details, FilterFragmentDirections.actionNavFiltersToNavEchoFiltrDetails().getArguments());
+                    return;
+                }
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                navController.navigate(R.id.nav_echo_filter_details, FilterFragmentDirections.actionNavFiltersToNavEchoFiltrDetails().getArguments());
+                break;
+        }
+
     }
 
     @Override
