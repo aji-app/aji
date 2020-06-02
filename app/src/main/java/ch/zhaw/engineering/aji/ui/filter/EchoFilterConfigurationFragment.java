@@ -17,9 +17,6 @@ import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 import static ch.zhaw.engineering.aji.services.audio.AudioService.Filter.EchoFilter;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class EchoFilterConfigurationFragment extends Fragment {
 
     public static final String DELAY_KEY = "delay";
@@ -28,8 +25,8 @@ public class EchoFilterConfigurationFragment extends Fragment {
     public static final double DELAY_DEFAULT = 1.0;
     public static final double STRENGTH_DEFAULT = 0.4;
 
-    public static final double DELAY_MAX = 2.0;
-    public static final double STRENGTH_MAX = 1.0;
+    private static final double DELAY_MAX = 2.0;
+    private static final double STRENGTH_MAX = 1.0;
 
     private FragmentEchoFilterConfigurationBinding mBinding;
     private PreferenceHelper mPreferenceHelper;
@@ -38,11 +35,6 @@ public class EchoFilterConfigurationFragment extends Fragment {
     private double mDelay;
     private double mStrength;
     private boolean mEnabled;
-
-    public EchoFilterConfigurationFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,11 +97,11 @@ public class EchoFilterConfigurationFragment extends Fragment {
             mBinding.enabled.setChecked(mPreferenceHelper.isFilterEnbaled(EchoFilter));
 
             double delay = mPreferenceHelper.getFilterValue(EchoFilter, DELAY_KEY, DELAY_DEFAULT);
-            mBinding.delaySeekbar.setProgress((int)(delay * mBinding.delaySeekbar.getMax() / DELAY_MAX));
+            mBinding.delaySeekbar.setProgress((int) (delay * mBinding.delaySeekbar.getMax() / DELAY_MAX));
             setDelay(delay);
 
             double strength = mPreferenceHelper.getFilterValue(EchoFilter, STRENGTH_KEY, STRENGTH_DEFAULT);
-            mBinding.strengthSeekbar.setProgress((int)(strength * mBinding.strengthSeekbar.getMax() / STRENGTH_MAX));
+            mBinding.strengthSeekbar.setProgress((int) (strength * mBinding.strengthSeekbar.getMax() / STRENGTH_MAX));
             setStrength(strength);
         }
     }
