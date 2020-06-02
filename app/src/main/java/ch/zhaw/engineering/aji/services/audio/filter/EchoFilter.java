@@ -16,14 +16,13 @@ public class EchoFilter extends AudioBackend.AudioFilter {
     private short[] mEcho;
     private int position = 0;
     private double mEchoStrength;
-    private double mEchoInSeconds;
+    private double mDelay;
     private boolean mApplyEcho = false;
 
 
     public EchoFilter(int id, boolean enabled) {
         mId = id;
-        setEnabled(enabled);
-        setEchoInSeconds(1.0);
+        setDelay(1.0);
         setEchoStrength(0.4);
     }
 
@@ -31,11 +30,45 @@ public class EchoFilter extends AudioBackend.AudioFilter {
         mEchoStrength = Math.max(0.0, Math.min(strength, 1.0));
     }
 
-    public void setEchoInSeconds(double seconds) {
+    public void setDelay(double seconds) {
         seconds = Math.max(0.0, Math.min(seconds, 2.0));
-        mEchoInSeconds = seconds;
+        mDelay = seconds;
         int echoInFrames = (int) (SAMPLE_RATE * seconds * ASSUMED_CHANNEL_COUNT);
-        mEcho = new short[echoInFrames];
+        if (!mApplyEcho) {
+            mEcho = new short[echoInFrames];
+            position = 0;
+            return;
+        }
+        // Modify echo buffer length to keep existing echo samples if possible
+        if (echoInFrames > mEcho.length) {
+            short[] echo = new short[echoInFrames];
+            int shift = echoInFrames - mEcho.length;
+            int lengthPart1 = mEcho.length - position;
+            System.arraycopy(mEcho, position, echo, shift, lengthPart1);
+            System.arraycopy(mEcho, 0, echo, shift + lengthPart1, position);
+            mEcho = echo;
+            position = 0;
+        } else {
+            short[] echo = new short[echoInFrames];
+            int lengthPart1 = Math.max(0, mEcho.length - position);
+            lengthPart1 = Math.min(lengthPart1, echoInFrames);
+            System.arraycopy(mEcho, position, echo, 0, lengthPart1);
+            if (lengthPart1 < echoInFrames) {
+                int lengthPart2 = echoInFrames - lengthPart1;
+                System.arraycopy(mEcho, 0, echo, lengthPart1, lengthPart2);
+            }
+            mEcho = echo;
+            position = 0;
+        }
+    }
+
+    @Override
+    public void modify(boolean enabled, double... params) {
+        setEnabled(enabled);
+        if (params.length == 2) {
+            setEchoStrength(params[0]);
+            setDelay(params[1]);
+        }
     }
 
     @Override
@@ -57,7 +90,7 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             return bytes;
         }
         Log.i(TAG, String.format("Applying echo filter (%.2fs, %.2f strength) to %d bytes (%d frames) with %d bytes per sample",
-                mEchoInSeconds, mEchoStrength, bytes.length, bytes.length / format.getBytesPerFrame(), format.getBytesPerFrame() / format.getChannelCount()));
+                mDelay, mEchoStrength, bytes.length, bytes.length / format.getBytesPerFrame(), format.getBytesPerFrame() / format.getChannelCount()));
         short[] bytesAsShort = bytesToShort(bytes);
         short[] out = bytesAsShort.clone();
 

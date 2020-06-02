@@ -155,9 +155,9 @@ public class AudioService extends LifecycleService {
         mNotificationManager.start();
     }
 
-    private void setFilterEnabled(Filter filter, boolean enabled) {
+    private void modifyFilter(Filter filter, boolean enabled, double... params) {
         if (filters.containsKey(filter)) {
-            filters.get(filter).setEnabled(enabled);
+            filters.get(filter).modify(enabled, params);
         }
     }
 
@@ -604,8 +604,8 @@ public class AudioService extends LifecycleService {
             playbackControlSkipToSongAtPosition(position);
         }
 
-        public void modifyFilter(Filter filter, boolean enabled) {
-            setFilterEnabled(filter, enabled);
+        public void modifyFilter(Filter filter, boolean enabled, double... parameters) {
+            AudioService.this.modifyFilter(filter, enabled, parameters);
         }
     }
 

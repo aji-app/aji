@@ -206,7 +206,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     @Override
     public void modifyEchoFilter(boolean enabled, double strength, double delay) {
         if (mAudioService.getValue() != null) {
-            mAudioService.getValue().modifyFilter(AudioService.Filter.EchoFilter, enabled);
+            mAudioService.getValue().modifyFilter(AudioService.Filter.EchoFilter, enabled, strength, delay);
         }
     }
 
