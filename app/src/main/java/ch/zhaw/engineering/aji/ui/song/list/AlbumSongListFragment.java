@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.experimental.Delegate;
 

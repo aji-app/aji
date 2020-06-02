@@ -7,8 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import lombok.Setter;
-
 public class SynchronizerControl {
     private boolean mMediaStore;
     private Context mContext;

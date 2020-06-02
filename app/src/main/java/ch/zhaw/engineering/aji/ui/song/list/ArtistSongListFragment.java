@@ -4,11 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import ch.zhaw.engineering.aji.FragmentInteractionActivity;
-import ch.zhaw.engineering.aji.R;
-import ch.zhaw.engineering.aji.ui.contextmenu.ContextMenuFragment;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
-import lombok.experimental.Delegate;
 
 public class ArtistSongListFragment extends SongListFragment {
     private static final String TAG = "ArtistSongsFragment";

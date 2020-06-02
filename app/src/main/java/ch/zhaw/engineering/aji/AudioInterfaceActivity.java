@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -23,11 +22,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;

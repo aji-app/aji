@@ -1,21 +1,18 @@
 package ch.zhaw.engineering.aji.ui.directories;
 
-import android.os.AsyncTask;
-
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.files.AudioFileFilter;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Value;
 
 @Value
 @AllArgsConstructor
 public class DirectoryItem {
     File mFile;
-    private String[] mFileExtensions;
+    String[] mFileExtensions;
     String mName;
     boolean mIsDirectory;
 

@@ -17,13 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentRadiostationListBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.dto.RadioStationDto;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_RADIOSTATION_ID;

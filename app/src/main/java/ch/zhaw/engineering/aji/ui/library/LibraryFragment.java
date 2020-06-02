@@ -216,8 +216,7 @@ public class LibraryFragment extends Fragment {
                     return FavoriteFragment.newInstance();
                 case SONGS:
                 default:
-                    SongFragment songFragment = SongFragment.newInstance();
-                    return songFragment;
+                    return SongFragment.newInstance();
             }
         }
 

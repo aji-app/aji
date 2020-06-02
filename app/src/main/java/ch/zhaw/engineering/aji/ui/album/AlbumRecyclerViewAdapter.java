@@ -15,7 +15,6 @@ import java.util.List;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentAlbumItemBinding;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
-import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.library.AlbumArtistListFragment;
 
 

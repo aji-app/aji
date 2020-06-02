@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistBinding;
@@ -23,7 +21,6 @@ import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.menu.MenuHelper;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 
 public class PlaylistFragment extends TabletAwareFragment {
     private PlaylistFragmentListener mListener;
@@ -161,6 +158,6 @@ public class PlaylistFragment extends TabletAwareFragment {
 
         void showEmptyDetails();
 
-        public void onSongSelected(long songId, int position);
+        void onSongSelected(long songId, int position);
     }
 }

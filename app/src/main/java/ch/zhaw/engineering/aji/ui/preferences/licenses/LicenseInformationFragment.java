@@ -3,7 +3,9 @@ package ch.zhaw.engineering.aji.ui.preferences.licenses;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,13 +71,11 @@ public class LicenseInformationFragment extends ListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
             List<LicenseInformation> items = Licenses.ITEMS;
-            Collections.sort(items, (i1, i2) -> {
-                Context context = getActivity();
-                return context.getString(i1.getLibraryName()).compareTo(context.getString(i2.getLibraryName()));
-            });
-            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            Collections.sort(items, (i1, i2) -> activity.getString(i1.getLibraryName()).compareTo(activity.getString(i2.getLibraryName())));
+            AppViewModel appViewModel = new ViewModelProvider(activity).get(AppViewModel.class);
             if (appViewModel.isTwoPane() && items.size() > 0) {
                 mListener.onLicenseSelected(items.get(0));
             }
@@ -85,7 +85,7 @@ public class LicenseInformationFragment extends ListFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof LicenseListFragmentListener) {
             mListener = (LicenseListFragmentListener) context;

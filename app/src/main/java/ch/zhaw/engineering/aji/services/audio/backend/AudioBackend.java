@@ -147,7 +147,7 @@ public interface AudioBackend {
     }
 
     @Value
-    public class SongInfo {
+    class SongInfo {
         Object tag;
         int position;
     }

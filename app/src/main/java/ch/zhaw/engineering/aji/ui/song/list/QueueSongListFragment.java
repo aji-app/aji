@@ -8,9 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
@@ -23,7 +21,6 @@ public class QueueSongListFragment extends SongListFragment {
     private static final String TAG = "QueueSongListFragment";
     private ItemTouchHelper mItemTouchHelper;
     private QueueListFragmentListener mQueueListener;
-    private final Map<Long, Integer> mSongIdToPosition = new HashMap<>();
 
     public static SongListFragment newInstance() {
         return new QueueSongListFragment();
@@ -70,13 +67,6 @@ public class QueueSongListFragment extends SongListFragment {
         if (getActivity() != null) {
             mQueueListener.getCurrentQueue().observe(getViewLifecycleOwner(), songs -> {
                 mBinding.songPrompt.setVisibility(View.GONE);
-                mSongIdToPosition.clear();
-                for (int i = 0; i < songs.size(); i++) {
-                    Song song = songs.get(i);
-                    if (song != null) {
-                        mSongIdToPosition.put(song.getSongId(), i);
-                    }
-                }
                 if (getAdapter() != null) {
                     getAdapter().setSongs(songs);
                     if (mRecyclerView.getAdapter() == null) {

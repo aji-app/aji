@@ -1,8 +1,6 @@
 package ch.zhaw.engineering.aji.ui.preferences.licenses;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
@@ -31,7 +29,7 @@ public class LicenseInformationRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_license_information, parent, false);
         return new ViewHolder(view);

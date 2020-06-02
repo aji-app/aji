@@ -1,6 +1,5 @@
 package ch.zhaw.engineering.aji.services.audio.notification;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,17 +12,12 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.TaskStackBuilder;
 import androidx.lifecycle.LifecycleService;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDeepLinkBuilder;
 
 import ch.zhaw.engineering.aji.MainActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
-import ch.zhaw.engineering.aji.ui.radiostation.RadioStationFragmentDirections;
 
 public class ErrorNotificationManager {
     private static final String TAG = "ErrorNotification";

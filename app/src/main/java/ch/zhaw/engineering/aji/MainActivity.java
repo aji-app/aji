@@ -20,10 +20,12 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,7 +50,6 @@ import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragment;
 import ch.zhaw.engineering.aji.ui.artist.ArtistDetailsFragmentDirections;
 import ch.zhaw.engineering.aji.ui.directories.DirectoryFragment;
 import ch.zhaw.engineering.aji.ui.expandedcontrols.ExpandedControlsFragment;
-import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragmentDirections;
 import ch.zhaw.engineering.aji.ui.library.LibraryFragmentDirections;
 import ch.zhaw.engineering.aji.ui.playlist.PlaylistDetailsFragmentDirections;
@@ -163,10 +164,13 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                     mBinding.layoutAppBarMain.persistentControls.persistentControls.setVisibility(View.GONE);
                     break;
                 case R.id.nav_directory:
-                    if (arguments != null && arguments.containsKey(ARG_SELECT_FILES_ONLY)) {
-                        getSupportActionBar().setTitle(R.string.menu_select_file);
-                    } else {
-                        getSupportActionBar().setTitle(R.string.menu_directory_selection);
+                    ActionBar supportActionBar = getSupportActionBar();
+                    if (supportActionBar != null) {
+                        if (arguments != null && arguments.containsKey(ARG_SELECT_FILES_ONLY)) {
+                            supportActionBar.setTitle(R.string.menu_select_file);
+                        } else {
+                            supportActionBar.setTitle(R.string.menu_directory_selection);
+                        }
                     }
                 default:
                     setBottomMargin(mBinding.layoutAppBarMain.layoutContentMain.layoutContentMain, mainContentMarginBottom);
@@ -354,15 +358,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
                             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                         }
                         break;
-                    default:
-                        break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        break;
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                        break;
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        break;
                     case BottomSheetBehavior.STATE_SETTLING:
+                    default:
                         break;
                 }
             }
@@ -431,7 +431,11 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
 
     protected String getCurrentActionBarTitle() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return navController.getCurrentDestination().getLabel().toString();
+        NavDestination currentDestination = navController.getCurrentDestination();
+        if (currentDestination != null && currentDestination.getLabel() != null) {
+            return currentDestination.getLabel().toString();
+        }
+        return "";
     }
 
     @Override
@@ -610,7 +614,6 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         if (mAppViewModel.isTwoPane()) {
             NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
             navController.navigate(R.id.nav_placeholder_details);
-            return;
         }
     }
 

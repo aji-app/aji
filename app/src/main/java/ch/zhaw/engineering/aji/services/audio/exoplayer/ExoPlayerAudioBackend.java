@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
