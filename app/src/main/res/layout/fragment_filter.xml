@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/margin_around_lists"
+    android:layout_marginTop="@dimen/margin_around_lists"
     android:layout_marginRight="@dimen/margin_around_lists"
     android:layout_marginBottom="@dimen/fragment_margin_bottom"
+    android:orientation="vertical"
     tools:context=".ui.filter.FilterFragment">
 
     <LinearLayout
@@ -14,11 +16,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
+        <ch.zhaw.engineering.aji.view.TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Echo" />
+            android:text="@string/filter_echo"
+            android:textSize="18sp"
+            android:textColor="?attr/primaryTextColor" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/echo_switch"
@@ -26,4 +30,4 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>

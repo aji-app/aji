@@ -164,4 +164,5 @@
     <string name="search_no_result">Your search did not return any result</string>
     <string name="no_filters">No filters available</string>
     <string name="no_hidden">No hidden songs available. Show all songs in the menu</string>
+    <string name="filter_echo">Echo</string>
 </resources>

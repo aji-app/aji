@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentFilterBinding;
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +32,7 @@ public class FilterFragment extends TabletAwareFragment {
     private String mParam2;
     private FilterFragmentListener mListener;
     private FragmentFilterBinding mBinding;
+    private PreferenceHelper mPreferenceHelper;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -72,6 +75,7 @@ public class FilterFragment extends TabletAwareFragment {
 
         mBinding.echoSwitch.setOnCheckedChangeListener((v, checked) -> {
             mListener.modifyEchoFilter(checked);
+            mPreferenceHelper.setFilterEnabled(AudioService.Filter.EchoFilter, checked);
         });
         // Inflate the layout for this fragment
         return mBinding.getRoot();
@@ -87,6 +91,15 @@ public class FilterFragment extends TabletAwareFragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement FilterFragmentListener");
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mPreferenceHelper = new PreferenceHelper(getActivity());
+            mBinding.echoSwitch.setChecked(mPreferenceHelper.isFilterEnbaled(AudioService.Filter.EchoFilter));
         }
     }
 

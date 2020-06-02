@@ -36,6 +36,7 @@ import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.util.PreferenceHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -94,7 +95,9 @@ public class AudioService extends LifecycleService {
         setupBackgroundThreads();
         setupMediaSession();
 
-        EchoFilter filter = new EchoFilter(1, 50000, true);
+        PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+
+        EchoFilter filter = new EchoFilter(1, 50000, preferenceHelper.isFilterEnbaled(Filter.EchoFilter));
         filters.put(Filter.EchoFilter, filter);
         AudioBackend.AudioFilter[] filters = new AudioBackend.AudioFilter[]{
                 filter
