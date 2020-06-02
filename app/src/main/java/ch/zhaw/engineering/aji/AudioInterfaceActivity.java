@@ -36,6 +36,7 @@ import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment;
 import ch.zhaw.engineering.aji.ui.filter.FilterFragment;
 import ch.zhaw.engineering.aji.ui.song.list.QueueSongListFragment;
 import lombok.Builder;
@@ -43,7 +44,7 @@ import lombok.Value;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.NotificationManager.SHUTDOWN_INTENT;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener, FilterFragment.FilterFragmentListener {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener, FilterFragment.FilterFragmentListener, EchoFilterConfigurationFragment.EchoFilterDetailsListener {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
@@ -203,7 +204,7 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void modifyEchoFilter(boolean enabled) {
+    public void modifyEchoFilter(boolean enabled, double strength, double delay) {
         if (mAudioService.getValue() != null) {
             mAudioService.getValue().modifyFilter(AudioService.Filter.EchoFilter, enabled);
         }

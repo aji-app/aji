@@ -10,24 +10,11 @@
     android:orientation="vertical"
     tools:context=".ui.filter.FilterFragment">
 
-    <LinearLayout
-
+    <ch.zhaw.engineering.aji.view.TextView
+        android:id="@+id/echo_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ch.zhaw.engineering.aji.view.TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/filter_echo"
-            android:textSize="18sp"
-            android:textColor="?attr/primaryTextColor" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/echo_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:text="@string/filter_echo"
+        android:textSize="18sp"
+        android:textColor="?attr/primaryTextColor" />
 </LinearLayout>

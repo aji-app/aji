@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.dao.PlaylistDao;
 import ch.zhaw.engineering.aji.services.database.dao.RadioStationDao;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
@@ -51,7 +52,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationListFragment.RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener,
-        FavoriteFragment.FavoritesFragmentListener, ArtistFragment.ArtistFragmentListener, AlbumFragment.AlbumFragmentListener {
+        FavoriteFragment.FavoritesFragmentListener, ArtistFragment.ArtistFragmentListener, AlbumFragment.AlbumFragmentListener{
 
     private static final String TAG = "FragmentInteractions";
     private static final int REQUEST_CODE_PLS_SELECT = 2;
@@ -580,6 +581,13 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         });
     }
 
+    @Override
+    public void onFilterSelected(AudioService.Filter filter) {
+        runOnUiThread(() -> {
+            navigateToFilterDetails(filter);
+        });
+    }
+
     private void showCreatePlaylistDialog(Long songToAdd, boolean showConfirmation) {
         View dialogView = View.inflate(this, R.layout.alert_create_playlist, null);
         EditText editText = dialogView.findViewById(R.id.playlist_name);
@@ -709,6 +717,8 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     protected abstract void navigateToArtist(String artist);
 
     protected abstract void navigateToSongDetails(long songId);
+
+    protected abstract void navigateToFilterDetails(AudioService.Filter filter);
 
     @Value
     @Builder

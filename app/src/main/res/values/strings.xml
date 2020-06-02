@@ -165,4 +165,13 @@
     <string name="no_filters">No filters available</string>
     <string name="no_hidden">No hidden songs available. Show all songs in the menu</string>
     <string name="filter_echo">Echo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="filter_delay">Delay</string>
+    <string name="menu_echo_filter_details">Echo Filter</string>
+    <string name="filter_enabled">Enabled</string>
+    <string name="filter_strength">Echo Strength</string>
+    <string name="filter_slider_seconds">%.2fs</string>
+    <string name="filter_slider_percent">%d%%</string>
 </resources>

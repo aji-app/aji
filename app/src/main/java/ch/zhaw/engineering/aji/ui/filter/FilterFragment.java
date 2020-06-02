@@ -73,9 +73,8 @@ public class FilterFragment extends TabletAwareFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentFilterBinding.inflate(inflater, container, false);
 
-        mBinding.echoSwitch.setOnCheckedChangeListener((v, checked) -> {
-            mListener.modifyEchoFilter(checked);
-            mPreferenceHelper.setFilterEnabled(AudioService.Filter.EchoFilter, checked);
+        mBinding.echoFilter.setOnClickListener(v -> {
+            mListener.onFilterSelected(AudioService.Filter.EchoFilter);
         });
         // Inflate the layout for this fragment
         return mBinding.getRoot();
@@ -94,14 +93,7 @@ public class FilterFragment extends TabletAwareFragment {
         }
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
-            mPreferenceHelper = new PreferenceHelper(getActivity());
-            mBinding.echoSwitch.setChecked(mPreferenceHelper.isFilterEnbaled(AudioService.Filter.EchoFilter));
-        }
-    }
+
 
     @Override
     public void onStart() {
@@ -121,6 +113,6 @@ public class FilterFragment extends TabletAwareFragment {
 
     public interface FilterFragmentListener  extends FabCallbackListener {
         void showEmptyDetails();
-        void modifyEchoFilter(boolean enabled);
+        void onFilterSelected(AudioService.Filter filter);
     }
 }

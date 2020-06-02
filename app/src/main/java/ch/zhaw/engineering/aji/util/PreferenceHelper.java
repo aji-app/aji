@@ -48,8 +48,21 @@ public class PreferenceHelper {
         mSharedPreferences.edit().putBoolean(getFilterKey(filter), enabled).apply();
     }
 
+    public void setFilterValue(AudioService.Filter filter, String name, double value) {
+        mSharedPreferences.edit().putLong(getFilterKey(filter, name), Double.doubleToRawLongBits(value)).apply();
+    }
+
+    public double getFilterValue(AudioService.Filter filter, String name, double defaultValue) {
+        return Double.longBitsToDouble(mSharedPreferences.getLong(getFilterKey(filter, name), Double.doubleToRawLongBits(defaultValue)));
+    }
+
 
     private String getFilterKey(AudioService.Filter filter) {
         return "filter_" + filter.name();
+    }
+
+
+    private String getFilterKey(AudioService.Filter filter, String name) {
+        return "filter_" + filter.name() + "_" + name;
     }
 }

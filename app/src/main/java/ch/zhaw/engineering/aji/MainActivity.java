@@ -481,6 +481,23 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
     }
 
     @Override
+    protected void navigateToFilterDetails(AudioService.Filter filter) {
+        switch (filter) {
+            case EchoFilter:
+                if (mAppViewModel.isTwoPane()) {
+                    NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+                    navController.navigate(R.id.nav_echo_filter_details, FilterFragmentDirections.actionNavFiltersToNavEchoFiltrDetails().getArguments());
+                    return;
+                }
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                navController.navigate(R.id.nav_echo_filter_details, FilterFragmentDirections.actionNavFiltersToNavEchoFiltrDetails().getArguments());
+                break;
+        }
+
+    }
+
+    @Override
     protected void navigateToArtist(String artist) {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.navigate(R.id.action_nav_library_to_artist_details, LibraryFragmentDirections.actionNavLibraryToArtistDetails(artist).getArguments());
