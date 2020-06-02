@@ -22,14 +22,14 @@ import static ch.zhaw.engineering.aji.services.audio.AudioService.Filter.EchoFil
  */
 public class EchoFilterConfigurationFragment extends Fragment {
 
-    private static final String DELAY_KEY = "delay";
-    private static final String STRENGTH_KEY = "delay";
+    public static final String DELAY_KEY = "delay";
+    public static final String STRENGTH_KEY = "strength";
 
-    private static final double DELAY_DEFAULT = 1.0;
-    private static final double STRENGTH_DEFAULT = 0.4;
+    public static final double DELAY_DEFAULT = 1.0;
+    public static final double STRENGTH_DEFAULT = 0.4;
 
-    private static final double DELAY_MAX = 2.0;
-    private static final double STRENGTH_MAX = 1.0;
+    public static final double DELAY_MAX = 2.0;
+    public static final double STRENGTH_MAX = 1.0;
 
     private FragmentEchoFilterConfigurationBinding mBinding;
     private PreferenceHelper mPreferenceHelper;

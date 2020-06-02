@@ -20,10 +20,9 @@ public class EchoFilter extends AudioBackend.AudioFilter {
     private boolean mApplyEcho = false;
 
 
-    public EchoFilter(int id, boolean enabled) {
+    public EchoFilter(int id, boolean enabled, double strength, double delay) {
         mId = id;
-        setDelay(1.0);
-        setEchoStrength(0.4);
+        modify(enabled, strength, delay);
     }
 
     public void setEchoStrength(double strength) {
@@ -37,6 +36,9 @@ public class EchoFilter extends AudioBackend.AudioFilter {
         if (!mApplyEcho) {
             mEcho = new short[echoInFrames];
             position = 0;
+            return;
+        }
+        if (echoInFrames == mEcho.length) {
             return;
         }
         // Modify echo buffer length to keep existing echo samples if possible
@@ -98,6 +100,8 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             if (mApplyEcho) {
                 double value = (bytesAsShort[i] + mEchoStrength * mEcho[position]);
                 out[i] = (short) (value / (1 + mEchoStrength));
+            } else {
+                out[i] = (short) ((double) out[i] / (1 + mEchoStrength));
             }
             mEcho[position] = bytesAsShort[i];
             position++;

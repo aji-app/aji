@@ -41,6 +41,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.DELAY_DEFAULT;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.DELAY_KEY;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.STRENGTH_DEFAULT;
+import static ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment.STRENGTH_KEY;
+
 public class AudioService extends LifecycleService {
     public static final String EXTRAS_COMMAND = "extra-code";
     private final static String TAG = "AjiAudioService";
@@ -96,8 +101,10 @@ public class AudioService extends LifecycleService {
         setupMediaSession();
 
         PreferenceHelper preferenceHelper = new PreferenceHelper(this);
+        double delay = preferenceHelper.getFilterValue(Filter.EchoFilter, DELAY_KEY, DELAY_DEFAULT);
+        double strength = preferenceHelper.getFilterValue(Filter.EchoFilter, STRENGTH_KEY, STRENGTH_DEFAULT);
 
-        EchoFilter filter = new EchoFilter(1, preferenceHelper.isFilterEnbaled(Filter.EchoFilter));
+        EchoFilter filter = new EchoFilter(1, preferenceHelper.isFilterEnbaled(Filter.EchoFilter), strength, delay);
         filters.put(Filter.EchoFilter, filter);
         AudioBackend.AudioFilter[] filters = new AudioBackend.AudioFilter[]{
                 filter
