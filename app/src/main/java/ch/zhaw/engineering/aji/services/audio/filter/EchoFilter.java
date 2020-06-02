@@ -46,6 +46,13 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             short[] echo = new short[echoInFrames];
             int shift = echoInFrames - mEcho.length;
             int lengthPart1 = mEcho.length - position;
+            if (shift % 2 != 0) {
+                shift -= 1;
+            }
+            if (lengthPart1 % 2 != 0) {
+                lengthPart1 -= 1;
+            }
+
             System.arraycopy(mEcho, position, echo, shift, lengthPart1);
             System.arraycopy(mEcho, 0, echo, shift + lengthPart1, position);
             mEcho = echo;
@@ -54,6 +61,9 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             short[] echo = new short[echoInFrames];
             int lengthPart1 = Math.max(0, mEcho.length - position);
             lengthPart1 = Math.min(lengthPart1, echoInFrames);
+            if (lengthPart1 % 2 != 0) {
+                lengthPart1 -= 1;
+            }
             System.arraycopy(mEcho, position, echo, 0, lengthPart1);
             if (lengthPart1 < echoInFrames) {
                 int lengthPart2 = echoInFrames - lengthPart1;
