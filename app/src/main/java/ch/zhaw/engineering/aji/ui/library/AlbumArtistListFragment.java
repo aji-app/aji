@@ -52,11 +52,6 @@ public class AlbumArtistListFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentAlbumArtistListBinding.inflate(inflater, container, false);
         mRecyclerView = mBinding.list;

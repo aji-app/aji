@@ -2,7 +2,6 @@ package ch.zhaw.engineering.aji.util;
 
 import android.Manifest;
 import android.content.Context;
-import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 

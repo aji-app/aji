@@ -37,7 +37,7 @@ public class EchoFilterConfigurationFragment extends Fragment {
     private boolean mEnabled;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentEchoFilterConfigurationBinding.inflate(inflater, container, false);
         mBinding.enabled.setOnCheckedChangeListener((v, checked) -> {

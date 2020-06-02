@@ -188,14 +188,16 @@ public class RadioStationDetailsFragment extends Fragment {
     }
 
     private void setFabCallback(boolean enabled) {
-        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-        if (!appViewModel.isTwoPane()) {
-            if (enabled) {
-                mListener.configureFab(v -> {
-                    save();
-                }, R.drawable.ic_save);
-            } else {
-                mListener.disableFab();
+        if (getActivity() != null) {
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            if (!appViewModel.isTwoPane()) {
+                if (enabled) {
+                    mListener.configureFab(v -> {
+                        save();
+                    }, R.drawable.ic_save);
+                } else {
+                    mListener.disableFab();
+                }
             }
         }
     }
@@ -204,10 +206,12 @@ public class RadioStationDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setFabCallback(mInEditMode);
-        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-        if (appViewModel.getImportedRadioStation() != null) {
-            useImportedRadioStation(appViewModel.getImportedRadioStation());
-            appViewModel.setImportedRadioStation(null);
+        if (getActivity() != null) {
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            if (appViewModel.getImportedRadioStation() != null) {
+                useImportedRadioStation(appViewModel.getImportedRadioStation());
+                appViewModel.setImportedRadioStation(null);
+            }
         }
     }
 
@@ -274,7 +278,6 @@ public class RadioStationDetailsFragment extends Fragment {
             // Display alert
             mListener.showProgressSpinner(false);
             showInvalidUrlAlert(callback);
-            return;
         }
     }
 

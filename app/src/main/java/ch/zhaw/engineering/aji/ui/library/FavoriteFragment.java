@@ -13,7 +13,6 @@ import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentFavoriteBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
-import ch.zhaw.engineering.aji.ui.SortResource;
 import ch.zhaw.engineering.aji.ui.TabletAwareFragment;
 import ch.zhaw.engineering.aji.ui.song.list.FavoritesSongListFragment;
 

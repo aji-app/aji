@@ -23,7 +23,6 @@ import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.SortResource;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 public class AppViewModel extends AndroidViewModel {
     private final SongDao mSongDao;

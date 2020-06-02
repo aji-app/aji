@@ -1,14 +1,10 @@
 package ch.zhaw.engineering.aji.ui.directories;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.TextViewCompat;

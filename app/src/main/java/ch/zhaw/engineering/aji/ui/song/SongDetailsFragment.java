@@ -3,17 +3,15 @@ package ch.zhaw.engineering.aji.ui.song;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,14 +19,11 @@ import java.io.File;
 
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongDetailsBinding;
-import ch.zhaw.engineering.aji.services.audio.notification.NotificationHelper;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.ui.FabCallbackListener;
 import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
-
-import static ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager.EXTRA_NOTIFICATION_ID;
 
 public class SongDetailsFragment extends Fragment {
 
@@ -78,9 +73,11 @@ public class SongDetailsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
-        if (!appViewModel.isTwoPane()) {
-            mListener.disableFab();
+        if (getActivity() != null) {
+            AppViewModel appViewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
+            if (!appViewModel.isTwoPane()) {
+                mListener.disableFab();
+            }
         }
     }
 

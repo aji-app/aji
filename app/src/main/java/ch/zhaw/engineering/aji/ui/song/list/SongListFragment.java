@@ -16,13 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ch.zhaw.engineering.aji.FragmentInteractionActivity;
-import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentSongListBinding;
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
-
 import ch.zhaw.engineering.aji.ui.ListFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import lombok.Getter;
 
 /**

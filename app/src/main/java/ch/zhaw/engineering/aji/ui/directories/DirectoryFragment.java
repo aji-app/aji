@@ -17,12 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
@@ -150,12 +147,15 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
                     }
                     return false;
                 });
+                if (currentFiles == null) {
+                    currentFiles = new File[0];
+                }
                 for (File file : currentFiles) {
                     DirectoryItem directoryItem = new DirectoryItem(file, mFileExtensions);
                     directories.add(directoryItem);
                 }
                 Collections.sort(directories, (d1, d2) -> {
-                    if (d1.isDirectory() == d2.isDirectory()){
+                    if (d1.isDirectory() == d2.isDirectory()) {
                         return d1.getName().compareTo(d2.getName());
                     }
                     return d1.isDirectory() ? -1 : 1;
@@ -184,7 +184,7 @@ public class DirectoryFragment extends Fragment implements DirectoryAdapter.Dire
         if (!mMultiSelect) {
             if (directory.isDirectory()) {
                 mListener.onSelectionFinished(directory.getFile());
-            } else  {
+            } else {
                 onFileSelected(directory);
             }
         }

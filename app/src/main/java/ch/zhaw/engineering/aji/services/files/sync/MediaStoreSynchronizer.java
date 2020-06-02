@@ -58,7 +58,7 @@ public class MediaStoreSynchronizer {
         Log.i(TAG, "Synchronizing all songs");
         TimingLogger logger = new TimingLogger(TAG, "synchronizeAllSongs");
         int offset = 0;
-        int processed = 0;
+        int processed;
 
         do {
             processed = syncSongs(offset);

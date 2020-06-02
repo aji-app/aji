@@ -1,7 +1,6 @@
 package ch.zhaw.engineering.aji.ui.playlist;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,9 +20,8 @@ import ch.zhaw.engineering.aji.FragmentInteractionActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.databinding.FragmentPlaylistListBinding;
 import ch.zhaw.engineering.aji.services.database.dto.PlaylistWithSongCount;
-import ch.zhaw.engineering.aji.services.database.entity.Song;
-import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.ui.ListFragment;
+import ch.zhaw.engineering.aji.ui.viewmodel.AppViewModel;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
 
 public class PlaylistListFragment extends ListFragment {

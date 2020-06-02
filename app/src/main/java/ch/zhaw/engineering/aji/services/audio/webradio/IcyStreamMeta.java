@@ -138,7 +138,7 @@ import java.util.regex.Pattern;
         int b;
         int count = 0;
         int metaDataLength = 4080; // 4080 is the max length
-        boolean inData = false;
+        boolean inData;
         StringBuilder metaData = new StringBuilder();
         // Stream position should be either at the beginning or right after headers
         while ((b = stream.read()) != -1) {

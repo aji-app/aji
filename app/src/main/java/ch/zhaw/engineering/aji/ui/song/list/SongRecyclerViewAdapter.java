@@ -29,7 +29,6 @@ import ch.zhaw.engineering.aji.databinding.FragmentSongItemBinding;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 import ch.zhaw.engineering.aji.util.Color;
 import ch.zhaw.engineering.aji.util.SwipeToDeleteCallback;
-import lombok.Setter;
 
 public class SongRecyclerViewAdapter extends RecyclerView.Adapter<SongRecyclerViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "SongRecyclerViewAdapter";
