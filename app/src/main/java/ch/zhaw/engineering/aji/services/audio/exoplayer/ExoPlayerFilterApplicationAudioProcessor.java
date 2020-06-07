@@ -14,6 +14,7 @@ import java.nio.ByteOrder;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
 import ch.zhaw.engineering.aji.services.audio.filter.FilterApplication;
 import ch.zhaw.engineering.aji.services.audio.resampling.Resampler;
+import ch.zhaw.engineering.aji.services.files.AudioFileFilter;
 
 import static android.os.Process.THREAD_PRIORITY_URGENT_AUDIO;
 import static ch.zhaw.engineering.aji.services.audio.exoplayer.ExoPlayerAudioFormatHelper.fromExoplayerAudioFormat;
@@ -47,12 +48,15 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
     @Override
     public AudioProcessor.AudioFormat configure(@NonNull AudioProcessor.AudioFormat inputAudioFormat) throws UnhandledAudioFormatException {
         mPendingInputFormat = inputAudioFormat;
+        for (AudioBackend.AudioFilter filter : mFilters) {
+            filter.init();
+        }
         return mPendingInputFormat;
     }
 
     @Override
     public boolean isActive() {
-        return mPendingInputFormat != null && mFilters.length > 0;
+        return (mPendingInputFormat != null || mInputAudioFormat != null) && mFilters.length > 0;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
                 boolean flushFilters = mInputEnded;
                 FilterApplication.Result currentResult = new FilterApplication.Result(input, fromExoplayerAudioFormat(mInputAudioFormat));
                 for (FilterApplication application : mFilterApplications) {
-                    currentResult = application.apply(currentResult.getOutput(), flushFilters, currentResult.getFormat());
+                    currentResult = application.apply(currentResult.getOutput(), flushFilters, isActive(), currentResult.getFormat());
                 }
                 byte[] res = new byte[currentResult.getOutput().remaining()];
                 currentResult.getOutput().get(res);
@@ -129,8 +133,12 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
         mInputEnded = false;
         mRunningFilters = false;
         mInputAudioFormat = mPendingInputFormat;
+        mPendingInputFormat = null;
         for (int i = 0; i < mFilters.length; i++) {
             mFilterApplications[i] = new FilterApplication(mFilters[i]);
+        }
+        for (AudioBackend.AudioFilter filter : mFilters) {
+            filter.flush(isActive());
         }
         Log.i(TAG, "Flushing processor");
         mGotFlushed = true;
@@ -145,5 +153,8 @@ public class ExoPlayerFilterApplicationAudioProcessor implements AudioProcessor 
         mInputEnded = false;
         mRunningFilters = false;
         Log.i(TAG, "Resetting processor");
+        for (AudioBackend.AudioFilter filter : mFilters) {
+            filter.reset();
+        }
     }
 }
