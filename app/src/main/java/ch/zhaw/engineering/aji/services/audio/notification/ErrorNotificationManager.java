@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,40 +13,54 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.LifecycleService;
 
 import ch.zhaw.engineering.aji.MainActivity;
 import ch.zhaw.engineering.aji.R;
 import ch.zhaw.engineering.aji.services.database.entity.RadioStation;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
+import lombok.Setter;
 
 public class ErrorNotificationManager {
     private static final String TAG = "ErrorNotification";
     public static final String EXTRA_NOTIFICATION_ID = "notification-id";
     public static final String EXTRA_RADIOSTATION_ID = "radiostation-id";
     public static final String EXTRA_SONG_ID = "song-id";
-    private final LifecycleService mContext;
+    private final Context mContext;
     private final NotificationManagerCompat mNotificationManager;
     private static final int NOTIFICATION_ID_SONG_OFFSET = 10000000;
     private static final int NOTIFICATION_ID_RADIO_OFFSET = 10000;
 
-    public ErrorNotificationManager(LifecycleService context) {
+    @Setter
+    private AlertErrorHandler mErrorHandler;
+
+    public ErrorNotificationManager(Context context) {
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
     }
 
     public void notifyError(@Nullable Song song) {
+        // API 25 or lower
         if (song != null) {
-            int id = (int) (NOTIFICATION_ID_SONG_OFFSET + song.getSongId());
-            mNotificationManager.notify(id, createNotification(song, id));
+            String text = mContext.getString(R.string.playback_error_song_text, song.getTitle(), song.getArtist());
+            String title = mContext.getString(R.string.playback_error_song_title);
+            int notificationId = (int) (NOTIFICATION_ID_SONG_OFFSET + song.getSongId());
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 && mErrorHandler != null) {
+                mErrorHandler.showSongError(text, title, song.getSongId(), notificationId);
+            }
+            mNotificationManager.notify(notificationId, createNotification(song, notificationId, text, title));
         }
     }
 
     public void notifyError(@Nullable RadioStation station) {
         Log.i(TAG, "Error playing radiostation ");
         if (station != null) {
-            int id = (int) station.getId() + NOTIFICATION_ID_RADIO_OFFSET;
-            mNotificationManager.notify(id, createNotification(station, id));
+            String text = mContext.getString(R.string.playback_error_radio_text, station.getName());
+            String title = mContext.getString(R.string.plaback_error_radio_title);
+            int notificationId = (int) station.getId() + NOTIFICATION_ID_RADIO_OFFSET;
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 && mErrorHandler != null) {
+                mErrorHandler.showRadioError(text, title, station.getId(), notificationId);
+            }
+            mNotificationManager.notify(notificationId, createNotification(station, notificationId, text, title));
         }
     }
 
@@ -62,17 +77,13 @@ public class ErrorNotificationManager {
         return channelId;
     }
 
-    private Notification createNotification(Song song, int notificationId) {
-        String text = mContext.getString(R.string.playback_error_song_text, song.getTitle(), song.getArtist());
+    private Notification createNotification(Song song, int notificationId, String text, String title) {
         NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_details, mContext.getString(R.string.go_to_songdetails), getSongDetailsIntent(song.getSongId(), notificationId));
-        String title = mContext.getString(R.string.playback_error_song_title);
         return createNotification(text, title, action, notificationId);
     }
 
-    private Notification createNotification(RadioStation station, int notificationId) {
-        String text = mContext.getString(R.string.playback_error_radio_text, station.getName());
+    private Notification createNotification(RadioStation station, int notificationId, String text, String title) {
         NotificationCompat.Action action = new NotificationCompat.Action(R.drawable.ic_details, mContext.getString(R.string.go_to_radiodetails), getRadioDetailsIntent(station.getId(), notificationId));
-        String title = mContext.getString(R.string.plaback_error_radio_title);
         return createNotification(text, title, action, notificationId);
     }
 
@@ -117,5 +128,11 @@ public class ErrorNotificationManager {
         intent.setAction("radio-details " + radioId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return PendingIntent.getActivity(mContext, (int) radioId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public interface AlertErrorHandler {
+        void showRadioError(String text, String title, long id, int notificationId);
+
+        void showSongError(String text, String title, long id, int notificationId);
     }
 }

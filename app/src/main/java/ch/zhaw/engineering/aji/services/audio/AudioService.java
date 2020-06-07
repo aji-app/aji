@@ -614,6 +614,10 @@ public class AudioService extends LifecycleService {
         public void modifyFilter(Filter filter, boolean enabled, double... parameters) {
             AudioService.this.modifyFilter(filter, enabled, parameters);
         }
+
+        public void setAlertErrorHandler(ErrorNotificationManager.AlertErrorHandler errorHandler) {
+            mErrorNotificationManager.setErrorHandler(errorHandler);
+        }
     }
 
     public enum PlayState {

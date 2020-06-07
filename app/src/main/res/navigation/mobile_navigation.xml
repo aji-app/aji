@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_nav_library_to_nav_directory"
             app:destination="@id/nav_directory" />
+        <action
+            android:id="@+id/action_nav_library_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
 
     <fragment
@@ -35,6 +38,9 @@
         <action
             android:id="@+id/action_nav_playlists_to_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_playlists_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
 
     <fragment
@@ -61,6 +67,9 @@
         <action
             android:id="@+id/action_nav_filters_to_nav_echo_filtr_details"
             app:destination="@id/nav_echo_filter_details" />
+        <action
+            android:id="@+id/action_nav_filters_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
 
     <fragment
@@ -76,6 +85,12 @@
         <action
             android:id="@+id/action_nav_settings_to_licenseInformationFragment"
             app:destination="@id/nav_licenses" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_song_details2"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_playlist_details"
@@ -88,6 +103,9 @@
         <action
             android:id="@+id/action_playlist_details_to_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_playlist_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
 
     <fragment
@@ -119,6 +137,9 @@
         <action
             android:id="@+id/action_song_details_self"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_song_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_album_details"
@@ -131,6 +152,9 @@
         <action
             android:id="@+id/action_nav_album_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_album_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_artist_details"
@@ -143,6 +167,9 @@
         <action
             android:id="@+id/action_nav_artist_details_to_nav_song_details"
             app:destination="@id/nav_song_details" />
+        <action
+            android:id="@+id/action_nav_artist_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
     </fragment>
 
     <fragment
@@ -150,6 +177,12 @@
         android:name="ch.zhaw.engineering.aji.ui.preferences.AboutFragment"
         android:label="@string/menu_about"
         tools:layout="@layout/fragment_about" >
+        <action
+            android:id="@+id/action_nav_about_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+        <action
+            android:id="@+id/action_nav_about_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_licenses"
@@ -159,6 +192,12 @@
         <action
             android:id="@+id/action_nav_licenses_to_license_details"
             app:destination="@id/nav_license_details" />
+        <action
+            android:id="@+id/action_nav_licenses_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+        <action
+            android:id="@+id/action_nav_licenses_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
 
     <fragment
@@ -168,6 +207,12 @@
         <argument
             android:name="license-text-id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_nav_license_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+        <action
+            android:id="@+id/action_nav_license_details_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
     <fragment
         android:id="@+id/nav_directory"
@@ -180,11 +225,21 @@
             android:name="select-files-only"
             app:argType="boolean"
             app:defaultValue="false" />
+        <action
+            android:id="@+id/action_nav_directory_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+        <action
+            android:id="@+id/action_nav_directory_to_nav_song_details"
+            app:destination="@id/nav_song_details" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_echo_filter_details"
         android:name="ch.zhaw.engineering.aji.ui.filter.EchoFilterConfigurationFragment"
         android:label="@string/menu_echo_filter_details"
-        tools:layout="@layout/fragment_echo_filter_configuration" />
+        tools:layout="@layout/fragment_echo_filter_configuration" >
+        <action
+            android:id="@+id/action_nav_echo_filter_details_to_nav_radiostation_details"
+            app:destination="@id/nav_radiostation_details" />
+    </fragment>
 </navigation>

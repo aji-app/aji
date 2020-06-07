@@ -394,6 +394,14 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private void navigateToRadioStationFromLibrary(Long radioStationId) {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_RADIOSTATION_ID, radioStationId);
+        navController.navigate(R.id.nav_radiostations, args);
+        navigateToRadioStation(radioStationId);
+    }
+
     @Override
     protected void navigateToRadioStation(Long radioStationId) {
         if (mAppViewModel.isTwoPane()) {
@@ -415,12 +423,63 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         }
     }
 
-    private void navigateToRadioStationFromLibrary(Long radioStationId) {
+    @Override
+    protected void navigateToRadioStationForAlert(Long radioStationId) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        Bundle args = radioStationId != null ? RadioStationFragmentDirections.actionNavRadiostationsToRadiostationDetails(radioStationId).getArguments() : null;
+        if (mAppViewModel.isTwoPane()) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_details_fragment);
+            navController.navigate(R.id.nav_radiostation_details, args);
+            return;
+        }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        Bundle args = new Bundle();
-        args.putLong(EXTRA_RADIOSTATION_ID, radioStationId);
-        navController.navigate(R.id.nav_radiostations, args);
-        navigateToRadioStation(radioStationId);
+        if (navController.getCurrentDestination() != null) {
+            int currentDestinationId = navController.getCurrentDestination().getId();
+            switch (currentDestinationId) {
+                case R.id.nav_library:
+                    navController.navigate(R.id.action_nav_library_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_playlists:
+                    navController.navigate(R.id.action_nav_playlists_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_radiostations:
+                    navController.navigate(R.id.action_nav_radiostations_to_radiostation_details, args, new NavOptions.Builder().setPopUpTo(R.id.nav_radiostations, false).build());
+                    break;
+                case R.id.nav_filters:
+                    navController.navigate(R.id.action_nav_filters_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_settings:
+                    navController.navigate(R.id.action_nav_settings_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_playlist_details:
+                    navController.navigate(R.id.action_nav_playlist_details_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_radiostation_details:
+                    navController.navigate(R.id.action_nav_radiostation_details_self, args, new NavOptions.Builder().setPopUpTo(R.id.nav_radiostation_details, true).build());
+                    break;
+                case R.id.nav_song_details:
+                    navController.navigate(R.id.action_nav_song_details_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_album_details:
+                    navController.navigate(R.id.action_nav_album_details_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_artist_details:
+                    navController.navigate(R.id.action_nav_artist_details_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_about:
+                    navController.navigate(R.id.action_nav_about_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_licenses:
+                    navController.navigate(R.id.action_nav_licenses_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_license_details:
+                    navController.navigate(R.id.action_nav_license_details_to_nav_radiostation_details, args);
+                    break;
+                case R.id.nav_directory:
+                    navController.navigate(R.id.action_nav_directory_to_nav_radiostation_details, args);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -447,39 +506,51 @@ public class MainActivity extends FragmentInteractionActivity implements Prefere
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        Bundle args = LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments();
         if (navController.getCurrentDestination() != null) {
             int id = navController.getCurrentDestination().getId();
             switch (id) {
                 case R.id.nav_library:
-                    navController.navigate(R.id.action_nav_library_to_song_details, LibraryFragmentDirections.actionNavLibraryToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_library_to_song_details, args);
                     break;
                 case R.id.nav_playlists:
-                    navController.navigate(R.id.action_nav_playlists_to_song_details, PlaylistFragmentDirections.actionNavPlaylistsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_playlists_to_song_details, args);
                     break;
                 case R.id.nav_radiostations:
-                    navController.navigate(R.id.action_nav_radiostations_to_song_details, RadioStationFragmentDirections.actionNavRadiostationsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_radiostations_to_song_details, args);
                     break;
                 case R.id.nav_filters:
-                    navController.navigate(R.id.action_nav_filters_to_song_details, FilterFragmentDirections.actionNavFiltersToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_filters_to_song_details, args);
                     break;
                 case R.id.nav_settings:
-                    navController.navigate(R.id.action_nav_settings_to_nav_song_details, PreferenceFragmentDirections.actionNavSettingsToNavSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_settings_to_nav_song_details, args);
                     break;
                 case R.id.nav_playlist_details:
-                    navController.navigate(R.id.action_playlist_details_to_song_details, PlaylistDetailsFragmentDirections.actionPlaylistDetailsToSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_playlist_details_to_song_details, args);
                     break;
                 case R.id.nav_radiostation_details:
-                    navController.navigate(R.id.action_nav_radiostation_details_to_nav_song_details, RadioStationDetailsFragmentDirections.actionNavRadiostationDetailsToNavSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_radiostation_details_to_nav_song_details, args);
                     break;
                 case R.id.nav_song_details:
-                    navController.navigate(R.id.action_song_details_self, SongDetailsFragmentDirections.actionSongDetailsSelf(songId).getArguments(), new NavOptions.Builder().setPopUpTo(R.id.nav_song_details, true).build());
+                    navController.navigate(R.id.action_song_details_self, args, new NavOptions.Builder().setPopUpTo(R.id.nav_song_details, true).build());
                     break;
                 case R.id.nav_album_details:
-                    navController.navigate(R.id.action_nav_album_details_to_nav_song_details, AlbumDetailsFragmentDirections.actionNavAlbumDetailsToNavSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_album_details_to_nav_song_details, args);
                     break;
                 case R.id.nav_artist_details:
-                    navController.navigate(R.id.action_nav_artist_details_to_nav_song_details, ArtistDetailsFragmentDirections.actionNavArtistDetailsToNavSongDetails(songId).getArguments());
+                    navController.navigate(R.id.action_nav_artist_details_to_nav_song_details, args);
                     break;
+                case R.id.nav_about:
+                    navController.navigate(R.id.action_nav_about_to_nav_song_details, args);
+                    break;
+                case R.id.nav_licenses:
+                    navController.navigate(R.id.action_nav_licenses_to_nav_song_details, args);
+                    break;
+                case R.id.nav_license_details:
+                    navController.navigate(R.id.action_nav_license_details_to_nav_song_details, args);
+                    break;
+                case R.id.nav_directory:
+                    navController.navigate(R.id.action_nav_directory_to_nav_song_details, args);
             }
         }
     }
