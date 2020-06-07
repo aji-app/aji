@@ -25,8 +25,8 @@ public class Themes {
             // These values must match R.array.themes_list_values (in strings.xml)
             case "BA":
                 return R.style.ThemeOverlay_BrownAmber;
-            case "BP":
-                return R.style.ThemeOverlay_BrownPink;
+            case "GP":
+                return R.style.ThemeOverlay_GreyPurple;
             case "BL":
                 return R.style.ThemeOverlay_BrownLime;
             case "PL":

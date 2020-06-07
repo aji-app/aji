@@ -23,15 +23,15 @@
     <color name="purple_amber_linkColor">#9C27B0</color>
 
     <!-- Brown Pink Colors -->
-    <color name="brown_pink_colorPrimary">#795548</color>
-    <color name="brown_pink_colorPrimaryDark">#5D4037</color>
-    <color name="brown_pink_colorPrimaryLight">#D7CCC8</color>
-    <color name="brown_pink_colorAccent">#E040FB</color>
-    <color name="brown_pink_iconText">#FFFFFF</color>
-    <color name="brown_pink_divider">#4DBDBDBD</color>
-    <color name="brown_pink_primaryText">#212121</color>
-    <color name="brown_pink_secondaryText">#757575</color>
-    <color name="brown_pink_linkColor">#795548</color>
+    <color name="grey_purple_colorPrimary">#607D8B</color>
+    <color name="grey_purple_colorPrimaryDark">#455A64</color>
+    <color name="grey_purple_colorPrimaryLight">#CFD8DC</color>
+    <color name="grey_purple_colorAccent">#E040FB</color>
+    <color name="grey_purple_iconText">#FFFFFF</color>
+    <color name="grey_purple_divider">#4DBDBDBD</color>
+    <color name="grey_purple_primaryText">#212121</color>
+    <color name="grey_purple_secondaryText">#757575</color>
+    <color name="grey_purple_linkColor">#795548</color>
 
     <!-- Brown Amber Colors -->
     <color name="brown_amber_colorPrimary">#795548</color>
