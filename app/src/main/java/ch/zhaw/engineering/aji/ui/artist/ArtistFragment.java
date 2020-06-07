@@ -87,7 +87,7 @@ public class ArtistFragment extends TabletAwareFragment {
         if (mAppViewModel == null) {
             return;
         }
-        String searchText = mAppViewModel.getSearchString(SortResource.ALBUMS);
+        String searchText = mAppViewModel.getSearchString(SortResource.ARTISTS);
         if (mAppViewModel.showHiddenSongs()) {
             mAppViewModel.setPlaceholderText(R.string.no_hidden);
         } else if (searchText != null && !searchText.equals("")) {

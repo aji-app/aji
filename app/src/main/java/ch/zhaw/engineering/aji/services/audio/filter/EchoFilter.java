@@ -18,6 +18,7 @@ public class EchoFilter extends AudioBackend.AudioFilter {
     private double mEchoStrength;
     private double mDelay;
     private boolean mApplyEcho = false;
+    private int mEchoInFrames;
 
 
     public EchoFilter(int id, boolean enabled, double strength, double delay) {
@@ -32,19 +33,18 @@ public class EchoFilter extends AudioBackend.AudioFilter {
     public void setDelay(double seconds) {
         seconds = Math.max(0.0, Math.min(seconds, 2.0));
         mDelay = seconds;
-        int echoInFrames = (int) (SAMPLE_RATE * seconds * ASSUMED_CHANNEL_COUNT);
         if (!mApplyEcho) {
-            mEcho = new short[echoInFrames];
+            mEcho = new short[mEchoInFrames];
             position = 0;
             return;
         }
-        if (echoInFrames == mEcho.length) {
+        if (mEchoInFrames == mEcho.length) {
             return;
         }
         // Modify echo buffer length to keep existing echo samples if possible
-        if (echoInFrames > mEcho.length) {
-            short[] echo = new short[echoInFrames];
-            int shift = echoInFrames - mEcho.length;
+        if (mEchoInFrames > mEcho.length) {
+            short[] echo = new short[mEchoInFrames];
+            int shift = mEchoInFrames - mEcho.length;
             int lengthPart1 = mEcho.length - position;
             if (shift % 2 != 0) {
                 shift -= 1;
@@ -58,15 +58,15 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             mEcho = echo;
             position = 0;
         } else {
-            short[] echo = new short[echoInFrames];
+            short[] echo = new short[mEchoInFrames];
             int lengthPart1 = Math.max(0, mEcho.length - position);
-            lengthPart1 = Math.min(lengthPart1, echoInFrames);
+            lengthPart1 = Math.min(lengthPart1, mEchoInFrames);
             if (lengthPart1 % 2 != 0) {
                 lengthPart1 -= 1;
             }
             System.arraycopy(mEcho, position, echo, 0, lengthPart1);
-            if (lengthPart1 < echoInFrames) {
-                int lengthPart2 = echoInFrames - lengthPart1;
+            if (lengthPart1 < mEchoInFrames) {
+                int lengthPart2 = mEchoInFrames - lengthPart1;
                 System.arraycopy(mEcho, 0, echo, lengthPart1, lengthPart2);
             }
             mEcho = echo;
@@ -81,6 +81,28 @@ public class EchoFilter extends AudioBackend.AudioFilter {
             setEchoStrength(params[0]);
             setDelay(params[1]);
         }
+    }
+
+    @Override
+    public void init() {
+        mEchoInFrames = (int) (SAMPLE_RATE * mDelay * ASSUMED_CHANNEL_COUNT);
+        position = 0;
+    }
+
+    @Override
+    public void reset() {
+        mEcho = null;
+        position = 0;
+    }
+
+    @Override
+    public void flush(boolean isActive) {
+        if (isActive) {
+            mEcho = new short[mEchoInFrames];
+        } else {
+            mEcho = null;
+        }
+        position = 0;
     }
 
     @Override

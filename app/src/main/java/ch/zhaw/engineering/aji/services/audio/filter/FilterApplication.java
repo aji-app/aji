@@ -39,7 +39,7 @@ public final class FilterApplication {
      * @return The processed bytes
      */
     @NonNull
-    public Result apply(ByteBuffer input, boolean flush, @NonNull AudioBackend.AudioFormat inputFormat) {
+    public Result apply(ByteBuffer input, boolean flush, boolean isActive, @NonNull AudioBackend.AudioFormat inputFormat) {
         AudioBackend.AudioFormat outputFormat = mFilter.getRequestedAudioFormat(inputFormat);
         if (!mFilter.isEnabled()) {
             // Check if we have unprocessed data and resample if necesary
@@ -93,6 +93,8 @@ public final class FilterApplication {
             filterInputBuffer.get(batchContent, 0, filterInputBuffer.remaining());
             byte[] batchResult = mFilter.apply(batchContent, outputFormat);
             output.put(batchResult);
+        } else if (flush) {
+            mFilter.flush(isActive);
         }
 
         Log.i(TAG, String.format("Did not apply %d bytes to Filter %s", filterInputBuffer.remaining(), mFilter.getIdentifier()));

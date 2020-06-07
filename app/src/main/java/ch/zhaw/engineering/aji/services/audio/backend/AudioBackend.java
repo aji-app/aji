@@ -210,6 +210,12 @@ public interface AudioBackend {
         public abstract String getIdentifier();
 
         public abstract void modify(boolean enabled, double[] params);
+
+        public abstract void reset();
+
+        public abstract void flush(boolean isActive);
+
+        public abstract void init();
     }
 
     /**
