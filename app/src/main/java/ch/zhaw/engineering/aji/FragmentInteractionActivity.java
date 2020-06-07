@@ -52,7 +52,7 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
         PlaylistListFragment.PlaylistFragmentListener, PlaylistFragment.PlaylistFragmentListener, PlaylistDetailsFragment.PlaylistDetailsFragmentListener,
         RadioStationListFragment.RadioStationFragmentInteractionListener, RadioStationDetailsFragment.RadioStationDetailsFragmentListener, ExpandedControlsFragment.ExpandedControlsFragmentListener,
         SongDetailsFragment.SongDetailsFragmentListener, AlbumArtistListFragment.AlbumArtistListFragmentListener, PlaylistSelectionFragment.PlaylistSelectionListener,
-        FavoriteFragment.FavoritesFragmentListener, ArtistFragment.ArtistFragmentListener, AlbumFragment.AlbumFragmentListener{
+        FavoriteFragment.FavoritesFragmentListener, ArtistFragment.ArtistFragmentListener, AlbumFragment.AlbumFragmentListener {
 
     private static final String TAG = "FragmentInteractions";
     private static final int REQUEST_CODE_PLS_SELECT = 2;
@@ -715,8 +715,6 @@ public abstract class FragmentInteractionActivity extends AudioInterfaceActivity
     protected abstract void navigateToAlbum(String album);
 
     protected abstract void navigateToArtist(String artist);
-
-    protected abstract void navigateToSongDetails(long songId);
 
     protected abstract void navigateToFilterDetails(AudioService.Filter filter);
 

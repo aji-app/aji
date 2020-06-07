@@ -13,7 +13,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -26,6 +28,8 @@ import java.util.List;
 
 import ch.zhaw.engineering.aji.services.audio.AudioService;
 import ch.zhaw.engineering.aji.services.audio.backend.AudioBackend;
+import ch.zhaw.engineering.aji.services.audio.notification.ErrorNotificationManager;
+import ch.zhaw.engineering.aji.services.audio.notification.NotificationManager;
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dao.SongDao;
 import ch.zhaw.engineering.aji.services.database.entity.Playlist;
@@ -39,7 +43,7 @@ import lombok.Value;
 
 import static ch.zhaw.engineering.aji.services.audio.notification.NotificationManager.SHUTDOWN_INTENT;
 
-public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener, FilterFragment.FilterFragmentListener, EchoFilterConfigurationFragment.EchoFilterDetailsListener {
+public abstract class AudioInterfaceActivity extends AppCompatActivity implements AudioControlListener, QueueSongListFragment.QueueListFragmentListener, FilterFragment.FilterFragmentListener, EchoFilterConfigurationFragment.EchoFilterDetailsListener, ErrorNotificationManager.AlertErrorHandler {
     private static final String TAG = "AudioInterfaceActivity";
     private final static String EXTRAS_STARTED = "extras-service-started";
     private boolean mServiceStarted = false;
@@ -118,25 +122,28 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         }
 
         mAudioService.observe(this, audioService -> {
-            if (audioService != null && startAction != null) {
-                if (startAction.getSong() != null) {
-                    if (startAction.mQueue) {
-                        audioService.queue(startAction.getSong());
-                    } else {
-                        audioService.play(startAction.getSong());
+            if (audioService != null) {
+                audioService.setAlertErrorHandler(this);
+                if (startAction != null) {
+                    if (startAction.getSong() != null) {
+                        if (startAction.mQueue) {
+                            audioService.queue(startAction.getSong());
+                        } else {
+                            audioService.play(startAction.getSong());
+                        }
+                    } else if (startAction.getPlaylist() != null) {
+                        if (startAction.mQueue) {
+                            audioService.queue(startAction.getPlaylist());
+                        } else {
+                            audioService.play(startAction.getPlaylist());
+                        }
+                    } else if (startAction.getRadioStation() != null) {
+                        audioService.play(startAction.getRadioStation());
+                    } else if (startAction.getSongs() != null) {
+                        audioService.play(startAction.getSongs());
                     }
-                } else if (startAction.getPlaylist() != null) {
-                    if (startAction.mQueue) {
-                        audioService.queue(startAction.getPlaylist());
-                    } else {
-                        audioService.play(startAction.getPlaylist());
-                    }
-                } else if (startAction.getRadioStation() != null) {
-                    audioService.play(startAction.getRadioStation());
-                } else if (startAction.getSongs() != null) {
-                    audioService.play(startAction.getSongs());
+                    startAction = null;
                 }
-                startAction = null;
             }
         });
     }
@@ -152,6 +159,22 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         registerReceiver(mShutdownBroadcastReceiver, filter);
         if (!mServiceStarted) {
             startService();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().setAlertErrorHandler(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAudioService.getValue() != null) {
+            mAudioService.getValue().setAlertErrorHandler(null);
         }
     }
 
@@ -287,6 +310,47 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
         return mRepeatMode;
     }
 
+    @Override
+    public void showRadioError(String text, String title, long id, int notificationId) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton(R.string.details, (dialog, which) -> {
+                    notificationManager.cancel(notificationId);
+                    dialog.dismiss();
+                    runOnUiThread(() -> {
+                        navigateToRadioStationForAlert(id);
+                    });
+                })
+                .setNegativeButton(R.string.ignore, (dialog, which) -> {
+                    notificationManager.cancel(notificationId);
+                    dialog.dismiss();
+                });
+
+        dialogBuilder.show();
+    }
+
+    @Override
+    public void showSongError(String text, String title, long id, int notificationId) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton(R.string.details, (dialog, which) -> {
+                    notificationManager.cancel(notificationId);
+                    dialog.dismiss();
+                    runOnUiThread(() -> {
+                        navigateToSongDetails(id);
+                    });
+                })
+                .setNegativeButton(R.string.ignore, (dialog, which) -> {
+                    notificationManager.cancel(notificationId);
+                    dialog.dismiss();
+                });
+
+        dialogBuilder.show();
+    }
 
     final void toggleShuffle() {
         if (mAudioService.getValue() != null) {
@@ -360,6 +424,10 @@ public abstract class AudioInterfaceActivity extends AppCompatActivity implement
     public LiveData<List<Song>> getCurrentQueue() {
         return mCurrentQueue;
     }
+
+    protected abstract void navigateToRadioStationForAlert(Long radioStationId);
+
+    protected abstract void navigateToSongDetails(long songId);
 
     @Value
     @Builder
