@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:textSize="25sp"
-            tools:text="Make it Fake 1" />
+            tools:text="Album Name" />
     </LinearLayout>
 
 
