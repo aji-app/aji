@@ -316,6 +316,7 @@ public class AudioService extends LifecycleService {
     }
 
     private void playbackControlStop() {
+        mAutoQueueSong = null;
         mCurrentState.postValue(PlayState.STOPPED);
         mCurrentSong.postValue(null);
         mAudioBackend.stop();
@@ -347,6 +348,9 @@ public class AudioService extends LifecycleService {
         mUpdateSongInfoRunnable = null;
         trackPosition();
         registerReceiver(mNoisyAudioStreamReceiver, mNoisyAudioIntentFilter);
+        if (mAutoQueueRandomTrack && mAutoQueueSong == null) {
+            updateNextSong();
+        }
     }
 
     private void playbackControlQueueSong(Song song) {
