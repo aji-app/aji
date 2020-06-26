@@ -19,7 +19,9 @@ import java.util.Map;
 
 import ch.zhaw.engineering.aji.services.database.AppDatabase;
 import ch.zhaw.engineering.aji.services.database.dto.AlbumDto;
+import ch.zhaw.engineering.aji.services.database.dto.AlbumWithSongCountDto;
 import ch.zhaw.engineering.aji.services.database.dto.ArtistDto;
+import ch.zhaw.engineering.aji.services.database.dto.ArtistWithAlbumCountDto;
 import ch.zhaw.engineering.aji.services.database.dto.SongWithOnlyAlbumAndIds;
 import ch.zhaw.engineering.aji.services.database.entity.Song;
 
@@ -279,7 +281,21 @@ public abstract class SongDao {
 
     @Query("DELETE FROM PlaylistSongCrossRef where playlistId = :playlistId")
     protected abstract void deleteSongsFromPlaylist(long playlistId);
+    
+    @Query("SELECT DISTINCT song.album as name, (SELECT s2.albumArtPath FROM song s2 WHERE song.album = s2.album AND s2.albumArtPath is not null) as coverPath " +
+            ", (SELECT COUNT(DISTINCT song.songId) FROM Song s3 WHERE song.album = s3.album) as songCount " +
+            "FROM Song song " +
+            "WHERE song.deleted = :showHidden AND song.album IS NOT NULL " +
+            "GROUP BY song.album " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.album END ASC, CASE WHEN :asc = 0 THEN song.album END DESC")
+    public abstract List<AlbumWithSongCountDto> getFilteredAlbumsWithSongCount(boolean asc, boolean showHidden);
 
+    @Query("SELECT DISTINCT song.artist as name" +
+            ", (SELECT COUNT(DISTINCT s3.album) FROM Song s3 WHERE song.artist = s3.artist) as albumCount " +
+            "FROM Song song " +
+            "WHERE song.deleted = :showHidden AND song.artist IS NOT NULL " +
+            "ORDER BY CASE WHEN :asc = 1 THEN song.artist END ASC, CASE WHEN :asc = 0 THEN song.artist END DESC")
+    public abstract List<ArtistWithAlbumCountDto> getFilteredArtistsWithAlbumCounts(boolean asc, boolean showHidden);
 
     public enum SortType {
         TITLE, ARTIST, ALBUM
